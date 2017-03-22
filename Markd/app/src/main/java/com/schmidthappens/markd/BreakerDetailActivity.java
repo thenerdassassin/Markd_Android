@@ -40,6 +40,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private String breakerType;
     private boolean isDoublePoleBottom;
     private String breakerAmperage;
+    private boolean isAddBreaker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,33 +87,76 @@ public class BreakerDetailActivity extends AppCompatActivity {
 
         Intent intentThatStartedThisActivity = getIntent();
         if(intentThatStartedThisActivity != null) {
-            if(intentThatStartedThisActivity.hasExtra("breakerNumber")) {
+            String source = "";
+            if(intentThatStartedThisActivity.hasExtra("source")) {
+                source = intentThatStartedThisActivity.getStringExtra("source");
+            }
+
+            if (intentThatStartedThisActivity.hasExtra("breakerNumber")) {
                 breakerNumberString = String.valueOf(intentThatStartedThisActivity.getIntExtra("breakerNumber", -1));
                 setTitle("Breaker " + breakerNumberString);
             }
 
-            if(intentThatStartedThisActivity.hasExtra("breakerDescription")) {
+            if (intentThatStartedThisActivity.hasExtra("breakerDescription")) {
                 breakerDescription = intentThatStartedThisActivity.getStringExtra("breakerDescription");
-                if (breakerDescription.equals("")) {
-                    breakerDescription = "No Breaker";
-                }
+
             }
 
-            if(intentThatStartedThisActivity.hasExtra("breakerAmperage")) {
+            if (intentThatStartedThisActivity.hasExtra("breakerAmperage")) {
                 breakerAmperage = intentThatStartedThisActivity.getStringExtra("breakerAmperage");
             }
 
-            if(intentThatStartedThisActivity.hasExtra("breakerType")) {
+            if (intentThatStartedThisActivity.hasExtra("breakerType")) {
                 breakerType = intentThatStartedThisActivity.getStringExtra("breakerType");
                 //Breaker is Bottom of Double Pole
-                if(breakerType.equals(BreakerType.DoublePoleBottom.toString())) {
+                if (breakerType.equals(BreakerType.DoublePoleBottom.toString())) {
                     breakerType = BreakerType.DoublePole.toString();
                     isDoublePoleBottom = true;
                 }
             }
 
-            updateViewingMode();
-            updateEditingView();
+            if(source.equals("MainActivity.viewBreaker")) {
+            /*    if (intentThatStartedThisActivity.hasExtra("breakerNumber")) {
+                    breakerNumberString = String.valueOf(intentThatStartedThisActivity.getIntExtra("breakerNumber", -1));
+                    setTitle("Breaker " + breakerNumberString);
+                }
+
+                if (intentThatStartedThisActivity.hasExtra("breakerDescription")) {
+                    breakerDescription = intentThatStartedThisActivity.getStringExtra("breakerDescription");
+                    if (breakerDescription.equals("")) {
+                        breakerDescription = "No Breaker";
+                    }
+                }
+
+                if (intentThatStartedThisActivity.hasExtra("breakerAmperage")) {
+                    breakerAmperage = intentThatStartedThisActivity.getStringExtra("breakerAmperage");
+                }
+
+                if (intentThatStartedThisActivity.hasExtra("breakerType")) {
+                    breakerType = intentThatStartedThisActivity.getStringExtra("breakerType");
+                    //Breaker is Bottom of Double Pole
+                    if (breakerType.equals(BreakerType.DoublePoleBottom.toString())) {
+                        breakerType = BreakerType.DoublePole.toString();
+                        isDoublePoleBottom = true;
+                    }
+                }*/
+
+                isAddBreaker = false;
+
+                if (breakerDescription.equals("")) {
+                    breakerDescription = "No Breaker";
+                }
+
+                updateViewingMode();
+                updateEditingView();
+            }
+
+            else if(source.equals("MainActivity.addBreaker")) {
+                isAddBreaker = true;
+                updateEditingView();
+                changeEditMode();
+                deleteBreakerButton.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -143,17 +187,25 @@ public class BreakerDetailActivity extends AppCompatActivity {
                     //Change to Edit Mode
                     changeEditMode();
                 } else if(buttonText.equals("Save")) {
-                    hideKeyboard();
-                    //Collect Updated Info
-                    Breaker updatedBreaker = makeBreaker();
-
                     //TODO: Change to http call to Server in Future
                     TempPanelData panel = TempPanelData.getInstance();
-                    panel.updateBreaker(Integer.parseInt(breakerNumberString), updatedBreaker);
+                    if(isAddBreaker) {
+                        //TODO call add breaker
+                        panel.addBreaker(makeBreaker());
+                        //TODO go back to MainActivity
+                        goBackToMain();
+                    } else {
+                        hideKeyboard();
+                        //Collect Updated Info
+                        Breaker updatedBreaker = makeBreaker();
 
-                    //Change to View Mode
-                    changeViewMode();
-                    updateViewingMode();
+                        //TODO: Change to http call to Server in Future
+                        panel.updateBreaker(Integer.parseInt(breakerNumberString), updatedBreaker);
+
+                        //Change to View Mode
+                        changeViewMode();
+                        updateViewingMode();
+                    }
                 }
             }
         });
@@ -213,10 +265,10 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private void deleteBreaker() {
         Context context = BreakerDetailActivity.this;
         Class destinationClass = MainActivity.class;
-        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra("actionType", "Delete Breaker");
-        intentToStartDetailActivity.putExtra("breakerNumber", breakerNumberString);
-        startActivity(intentToStartDetailActivity);
+        Intent intentToStartMainActivity = new Intent(context, destinationClass);
+        intentToStartMainActivity.putExtra("actionType", "Delete Breaker");
+        intentToStartMainActivity.putExtra("breakerNumber", breakerNumberString);
+        startActivity(intentToStartMainActivity);
     }
 
     private void updateViewingMode() {
@@ -238,6 +290,13 @@ public class BreakerDetailActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void goBackToMain() {
+        Context context = BreakerDetailActivity.this;
+        Class destinationClass = MainActivity.class;
+        Intent intentToStartMainActivity = new Intent(context, destinationClass);
+        startActivity(intentToStartMainActivity);
     }
 
     private View.OnTouchListener spinnerOnTouch = new View.OnTouchListener() {

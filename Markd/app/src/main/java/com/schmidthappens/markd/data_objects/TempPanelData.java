@@ -20,9 +20,9 @@ public  class TempPanelData {
         breakerList.add(new Breaker(4, "Master Bathroom Floor Heat"));
         breakerList.add(new Breaker(5, "Bedroom Receptacles"));
         breakerList.add(new Breaker(6, "2nd Floor Hallway Lighting"));
-        breakerList.add(new Breaker(7, "Washing Machine", BreakerType.DoublePole));
+        breakerList.add(new Breaker(7, "Washing Machine"));
         breakerList.add(new Breaker(8, "Dryer"));
-        breakerList.add(new Breaker(9, "Hot water Heater", BreakerType.DoublePoleBottom));
+        breakerList.add(new Breaker(9, "Hot water Heater"));
         breakerList.add(new Breaker(10, "Well pump"));
         breakerList.add(new Breaker(11, "Refrigerator"));
         breakerList.add(new Breaker(12, "Microwave"));
@@ -84,6 +84,11 @@ public  class TempPanelData {
 
     public Panel updateBreaker(int breakerNumber, Breaker newBreaker) {
         this.panels[currentPanel].editBreaker(breakerNumber, newBreaker);
+        return this.panels[currentPanel];
+    }
+
+    public Panel addBreaker(Breaker newBreaker) {
+        this.panels[currentPanel].addBreaker(newBreaker);
         return this.panels[currentPanel];
     }
 

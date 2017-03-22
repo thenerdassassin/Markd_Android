@@ -1,7 +1,5 @@
 package com.schmidthappens.markd.data_objects;
 
-import android.util.Log;
-
 import java.util.List;
 
 /**
@@ -83,7 +81,7 @@ public class Panel {
     }
 
     //Helper functions
-    private int breakerCount(){
+    public int breakerCount(){
         return breakerList.size();
     }
     public Panel deleteBreaker(int breakerNumber) {
@@ -162,6 +160,16 @@ public class Panel {
             }
         }
 
+        return this;
+    }
+
+    public Panel addBreaker(Breaker newBreaker) {
+        this.breakerList.add(newBreaker);
+
+        if(newBreaker.getBreakerType().equals(BreakerType.DoublePole)) {
+            this.breakerList.add(new Breaker(this.breakerCount()+1, ""));
+            this.breakerList.add(new Breaker(this.breakerCount()+1, newBreaker.getBreakerDescription(), newBreaker.getAmperage(), BreakerType.DoublePoleBottom));
+        }
         return this;
     }
 }

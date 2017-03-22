@@ -83,10 +83,20 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_breaker:
-                Log.d("Options Item", "Add Breaker");
+                int nextBreakerInt = myPanels.getPanel(currentPanel).breakerCount()+1;
+                Breaker newBreakerToAdd = new Breaker(nextBreakerInt, "");
+
+                Context context = this;
+                Class destinationClass = BreakerDetailActivity.class;
+                Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+                intentToStartDetailActivity.putExtra("source", "MainActivity.addBreaker");
+                passBreakerData(intentToStartDetailActivity, newBreakerToAdd);
+                startActivity(intentToStartDetailActivity);
+
                 return true;
             case R.id.action_add_panel:
                 Log.d("Options Item", "Add Panel");
+                //TODO action add panel
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -99,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
         Context context = this;
         Class destinationClass = BreakerDetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra("source", "MainActivity.viewBreaker");
         passBreakerData(intentToStartDetailActivity, breakerClicked);
         startActivity(intentToStartDetailActivity);
     }
