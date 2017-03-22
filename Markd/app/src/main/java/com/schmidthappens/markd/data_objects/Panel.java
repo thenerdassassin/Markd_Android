@@ -1,5 +1,7 @@
 package com.schmidthappens.markd.data_objects;
 
+import android.util.Log;
+
 import java.util.List;
 
 /**
@@ -78,5 +80,88 @@ public class Panel {
         panelTitleString += this.amperage.toString();
 
         return panelTitleString;
+    }
+
+    //Helper functions
+    private int breakerCount(){
+        return breakerList.size();
+    }
+    public Panel deleteBreaker(int breakerNumber) {
+        int breakerIndex = breakerNumber-1;
+
+        //Error check
+        if(breakerNumber > breakerList.size()) {
+            return this;
+        }
+        Breaker lastBreaker = breakerList.get(breakerList.size()-1);
+        Breaker breakerToDelete = breakerList.get(breakerIndex);
+
+        if(breakerToDelete.getBreakerType().equals(BreakerType.DoublePoleBottom)) {
+            Breaker previousBreaker = breakerList.get(breakerIndex-2);
+            previousBreaker.setBreakerType(BreakerType.SinglePole);
+        }
+        else if(breakerToDelete.getBreakerType().equals(BreakerType.DoublePole)) {
+            breakerToDelete.setBreakerType(BreakerType.SinglePole);
+            Breaker nextBreaker = breakerList.get(breakerIndex+2);
+            nextBreaker.setBreakerType(BreakerType.SinglePole);
+        }
+        if(breakerToDelete.equals(lastBreaker)) {
+            breakerList.remove(breakerToDelete);
+        }
+        else {
+            //Reset to default values
+            breakerToDelete.setBreakerDescription("");
+            breakerToDelete.setBreakerType(BreakerType.SinglePole);
+            breakerToDelete.setAmperage(BreakerAmperage.TWENTY);
+        }
+        return this;
+    }
+
+    public Panel editBreaker(int breakerNumber, Breaker updatedBreaker) {
+        int breakerIndex = breakerNumber-1;
+        this.breakerList.set(breakerIndex, updatedBreaker);
+        // Updated Breaker is top of Double-Pole
+        if(updatedBreaker.getBreakerType().equals(BreakerType.DoublePole)) {
+            // Add Breakers to Panel if needed
+            if(breakerIndex + 2  >= this.breakerCount()) {
+                while(breakerIndex+2 > this.breakerCount()) {
+                    this.breakerList.add(this.breakerCount(), new Breaker(this.breakerCount()+1, ""));
+                }
+                this.breakerList.add(this.breakerCount(), new Breaker(this.breakerCount()+1, updatedBreaker.getBreakerDescription(), updatedBreaker.getAmperage(), BreakerType.DoublePoleBottom));
+            }
+            // Simply update the bottom of Double Pole
+            else {
+                Breaker bottomDoublePole = this.breakerList.get(breakerIndex+2);
+                bottomDoublePole.setBreakerType(BreakerType.DoublePoleBottom);
+                bottomDoublePole.setBreakerDescription(updatedBreaker.getBreakerDescription());
+                bottomDoublePole.setAmperage(updatedBreaker.getAmperage());
+            }
+        }
+        // Updated Breaker is bottom of Double-Pole
+        else if(updatedBreaker.getBreakerType().equals(BreakerType.DoublePoleBottom)) {
+            //Copy Changes to Upper Part of Double-Pole
+            Breaker topDoublePole = this.breakerList.get(breakerIndex-2);
+            topDoublePole.setBreakerDescription(updatedBreaker.getBreakerDescription());
+            topDoublePole.setAmperage(updatedBreaker.getAmperage());
+        }
+        // Updated Breaker is Single-Pole
+        else {
+            //Set above breaker to single pole
+            if(breakerIndex > 1) {
+                Breaker aboveBreaker = this.getBreakerList().get(breakerIndex-2);
+                if(aboveBreaker.getBreakerType().equals(BreakerType.DoublePole)) {
+                    aboveBreaker.setBreakerType(BreakerType.SinglePole);
+                }
+            }
+            //Set below breaker to single pole
+            if(breakerIndex+2 < this.breakerCount()) {
+                Breaker belowBreaker = this.getBreakerList().get(breakerIndex+2);
+                if(belowBreaker.getBreakerType().equals(BreakerType.DoublePoleBottom)) {
+                    belowBreaker.setBreakerType(BreakerType.SinglePole);
+                }
+            }
+        }
+
+        return this;
     }
 }

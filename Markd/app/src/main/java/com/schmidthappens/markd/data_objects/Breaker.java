@@ -7,14 +7,14 @@ package com.schmidthappens.markd.data_objects;
 
 public class Breaker {
     private int number;
-    private String breaker_description;
+    private String breakerDescription;
     private BreakerAmperage amperage;
     private BreakerType breakerType;
 
     // Mark:- Constructors
-    public Breaker(int number, String breaker_description, BreakerAmperage amperage, BreakerType breakerType) {
+    public Breaker(int number, String breakerDescription, BreakerAmperage amperage, BreakerType breakerType) {
         this.number = number;
-        this.breaker_description = breaker_description;
+        this.breakerDescription = breakerDescription;
         this.amperage = amperage;
         this.breakerType = breakerType;
     }
@@ -36,12 +36,12 @@ public class Breaker {
         this.number = number;
     }
 
-    public String getBreaker_description() {
-        return breaker_description;
+    public String getBreakerDescription() {
+        return breakerDescription;
     }
 
-    public void setBreaker_description(String breaker_description) {
-        this.breaker_description = breaker_description;
+    public void setBreakerDescription(String breakerDescription) {
+        this.breakerDescription = breakerDescription;
     }
 
     public BreakerAmperage getAmperage() {
@@ -70,7 +70,7 @@ public class Breaker {
         Breaker breaker = (Breaker) o;
 
         if (number != breaker.number) return false;
-        if (!breaker_description.equals(breaker.breaker_description)) return false;
+        if (!breakerDescription.equals(breaker.breakerDescription)) return false;
         if (amperage != breaker.amperage) return false;
         return breakerType == breaker.breakerType;
 
@@ -79,7 +79,7 @@ public class Breaker {
     @Override
     public int hashCode() {
         int result = number;
-        result = 31 * result + breaker_description.hashCode();
+        result = 31 * result + breakerDescription.hashCode();
         result = 31 * result + amperage.hashCode();
         result = 31 * result + breakerType.hashCode();
         return result;

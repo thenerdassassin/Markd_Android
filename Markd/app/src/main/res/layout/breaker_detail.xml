@@ -2,15 +2,120 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView   android:id="@+id/breaker_description"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical|start"
-        android:paddingLeft="6dp"
-        android:fontFamily="monospace"
-        android:textSize="12sp"
-        tools:text="Breaker Description"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="10dp">
+        <EditText
+            android:id="@+id/breaker_description_edit"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="9"
+            android:layout_gravity="center_vertical|start"
+            android:paddingLeft="6dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="monospace"
+            android:textSize="20sp"
+            android:visibility="gone"
+            android:background="@drawable/default_edit_text"
+            tools:text="Breaker Description"
+            android:imeOptions="actionDone"/>
+        <TextView
+            android:id="@+id/breaker_description"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="9"
+            android:layout_gravity="center_vertical|start"
+            android:paddingLeft="6dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="monospace"
+            android:textSize="20sp"
+            tools:text="Breaker Description"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/amperage_spinner"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:textAlignment="center"
+            android:visibility="gone"/>
+        <Spinner
+            android:id="@+id/breaker_type_spinner"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:textAlignment="center"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/amperage_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="monospace"
+            android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/breaker_type_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="monospace"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/edit_breaker"
+            android:layout_weight="1"
+            android:text="Edit"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+
+            android:layout_width="270dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@drawable/defaultbutton"/>
+
+        <Button
+            android:id="@+id/delete_breaker"
+            android:layout_weight="1"
+            android:text="Delete"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+
+            android:layout_width="270dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginRight="30dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@drawable/deletebutton"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"/>
 </LinearLayout>

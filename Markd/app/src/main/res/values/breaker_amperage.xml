@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="breaker_amperage">
+        <item>15A</item>
+        <item>20A </item>
+        <item>30A</item>
+        <item>40A</item>
+        <item>50A</item>
+        <item>60A</item>
+        <item>70A</item>
+        <item>80A</item>
+        <item>100A</item>
+        <item>125A</item>
+        <item>150A</item>
+        <item>200A</item>
+    </string-array>
+</resources>

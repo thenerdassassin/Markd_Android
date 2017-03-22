@@ -71,4 +71,20 @@ public enum BreakerAmperage {
     public static int count() {
         return BreakerAmperage.values().length;
     }
+
+    public static String[] getValues() {
+        String[] tmp = new String[BreakerAmperage.count()];
+        for(BreakerAmperage amp: BreakerAmperage.values())
+            tmp[amp.ordinal()] = amp.toString();
+        return tmp;
+    }
+
+    public static BreakerAmperage fromString(String text) {
+        for (BreakerAmperage b : BreakerAmperage.values()) {
+            if (b.toString().equalsIgnoreCase(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }

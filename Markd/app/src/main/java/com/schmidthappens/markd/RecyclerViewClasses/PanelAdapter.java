@@ -2,26 +2,16 @@ package com.schmidthappens.markd.RecyclerViewClasses;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
+import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.Panel;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 
 /**
@@ -53,8 +43,22 @@ public class PanelAdapter extends RecyclerView.Adapter<PanelAdapter.BreakerViewH
     @Override
     public void onBindViewHolder(BreakerViewHolder breakerViewHolder, int index) {
         Breaker breaker = panel.getBreakerList().get(index);
-        breakerViewHolder.breaker_description_textview.setText(breaker.getBreaker_description());
+        breakerViewHolder.breaker_description_textview.setText(breaker.getBreakerDescription());
         breakerViewHolder.breaker_number_textview.setText(String.valueOf(breaker.getNumber()));
+
+        //Check if DoublePole
+        if(breaker.getBreakerType().equals(BreakerType.DoublePole)) {
+            breakerViewHolder.breaker_bottom_views.setVisibility(View.VISIBLE);
+        } else {
+            breakerViewHolder.breaker_bottom_views.setVisibility(View.INVISIBLE);
+        }
+
+        //Check if bottom of DoublePole
+        if(breaker.getBreakerType().equals(BreakerType.DoublePoleBottom)) {
+            breakerViewHolder.breaker_top_views.setVisibility(View.VISIBLE);
+        } else {
+            breakerViewHolder.breaker_top_views.setVisibility(View.INVISIBLE);
+        }
     }
 
     /* This gets called when the RecyclerView is laid out.
@@ -74,11 +78,15 @@ public class PanelAdapter extends RecyclerView.Adapter<PanelAdapter.BreakerViewH
     public class BreakerViewHolder extends ViewHolder implements View.OnClickListener {
         protected TextView breaker_description_textview;
         protected TextView breaker_number_textview;
+        protected LinearLayout breaker_bottom_views;
+        protected LinearLayout breaker_top_views;
 
         public BreakerViewHolder(View v){
             super(v);
             breaker_description_textview = (TextView) v.findViewById(R.id.breaker_item_description);
             breaker_number_textview = (TextView) v.findViewById(R.id.breaker_item_number);
+            breaker_bottom_views = (LinearLayout) v.findViewById(R.id.double_pole_bottom);
+            breaker_top_views = (LinearLayout) v.findViewById(R.id.double_pole_top);
             v.setOnClickListener(this);
         }
 
