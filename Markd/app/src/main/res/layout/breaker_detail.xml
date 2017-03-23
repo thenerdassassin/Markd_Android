@@ -115,6 +115,7 @@
             android:background="@drawable/deletebutton"/>
     </LinearLayout>
 
+    <!-- Eating up some white space -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"

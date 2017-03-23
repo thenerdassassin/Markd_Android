@@ -50,6 +50,23 @@ public enum MainPanelAmperage implements PanelAmperage {
 
     // Returns the number of possible MainPanelAmperages
     public int count() {
-        return BreakerAmperage.values().length;
+        return MainPanelAmperage.values().length;
+    }
+
+    // String array of Values
+    public static String[] getValues() {
+        String[] tmp = new String[OneThousandTwoHundred.count()];
+        for(MainPanelAmperage amp: MainPanelAmperage.values())
+            tmp[amp.ordinal()] = amp.toString();
+        return tmp;
+    }
+
+    public static MainPanelAmperage fromString(String text) {
+        for (MainPanelAmperage b : MainPanelAmperage.values()) {
+            if (b.toString().equalsIgnoreCase(text)) {
+                return b;
+            }
+        }
+        return null;
     }
 }

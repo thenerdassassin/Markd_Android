@@ -66,7 +66,7 @@ public  class TempPanelData {
 
         this.panels = new Panel[2];
         this.panels[0] = new Panel(breakerList);
-        this.panels[1] = new Panel(breakerList2);
+        this.panels[1] = new Panel(false, SubPanelAmperage.OneHundredTwentyFive, breakerList2);
     }
 
     public static TempPanelData getInstance() {
@@ -89,6 +89,11 @@ public  class TempPanelData {
 
     public Panel addBreaker(Breaker newBreaker) {
         this.panels[currentPanel].addBreaker(newBreaker);
+        return this.panels[currentPanel];
+    }
+
+    public Panel updatePanel(boolean isMainPanel, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
+        this.panels[currentPanel].updatePanel(isMainPanel, panelAmperage, manufacturer);
         return this.panels[currentPanel];
     }
 

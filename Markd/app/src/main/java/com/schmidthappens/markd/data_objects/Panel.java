@@ -114,7 +114,6 @@ public class Panel {
         }
         return this;
     }
-
     public Panel editBreaker(int breakerNumber, Breaker updatedBreaker) {
         int breakerIndex = breakerNumber-1;
         this.breakerList.set(breakerIndex, updatedBreaker);
@@ -162,7 +161,6 @@ public class Panel {
 
         return this;
     }
-
     public Panel addBreaker(Breaker newBreaker) {
         this.breakerList.add(newBreaker);
 
@@ -170,6 +168,12 @@ public class Panel {
             this.breakerList.add(new Breaker(this.breakerCount()+1, ""));
             this.breakerList.add(new Breaker(this.breakerCount()+1, newBreaker.getBreakerDescription(), newBreaker.getAmperage(), BreakerType.DoublePoleBottom));
         }
+        return this;
+    }
+    public Panel updatePanel(boolean isMainPanel, PanelAmperage amperage, PanelManufacturer manufacturer) {
+        this.isMainPanel = isMainPanel;
+        this.amperage = amperage;
+        this.manufacturer = manufacturer;
         return this;
     }
 }

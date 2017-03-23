@@ -116,31 +116,6 @@ public class BreakerDetailActivity extends AppCompatActivity {
             }
 
             if(source.equals("MainActivity.viewBreaker")) {
-            /*    if (intentThatStartedThisActivity.hasExtra("breakerNumber")) {
-                    breakerNumberString = String.valueOf(intentThatStartedThisActivity.getIntExtra("breakerNumber", -1));
-                    setTitle("Breaker " + breakerNumberString);
-                }
-
-                if (intentThatStartedThisActivity.hasExtra("breakerDescription")) {
-                    breakerDescription = intentThatStartedThisActivity.getStringExtra("breakerDescription");
-                    if (breakerDescription.equals("")) {
-                        breakerDescription = "No Breaker";
-                    }
-                }
-
-                if (intentThatStartedThisActivity.hasExtra("breakerAmperage")) {
-                    breakerAmperage = intentThatStartedThisActivity.getStringExtra("breakerAmperage");
-                }
-
-                if (intentThatStartedThisActivity.hasExtra("breakerType")) {
-                    breakerType = intentThatStartedThisActivity.getStringExtra("breakerType");
-                    //Breaker is Bottom of Double Pole
-                    if (breakerType.equals(BreakerType.DoublePoleBottom.toString())) {
-                        breakerType = BreakerType.DoublePole.toString();
-                        isDoublePoleBottom = true;
-                    }
-                }*/
-
                 isAddBreaker = false;
 
                 if (breakerDescription.equals("")) {

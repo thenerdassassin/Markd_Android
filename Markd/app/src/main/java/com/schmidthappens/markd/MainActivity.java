@@ -12,9 +12,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 
 import com.schmidthappens.markd.RecyclerViewClasses.PanelAdapter;
 import com.schmidthappens.markd.data_objects.Breaker;
+import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 
 interface PanelSwipeHandler {
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
 
     private SwipeableRecyclerView recList;
     private PanelAdapter panelAdapter;
+    private TextView panelTitle;
 
     private TempPanelData myPanels;
     public int currentPanel = 0;
@@ -33,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recList = (SwipeableRecyclerView) findViewById(R.id.recycler_view);
+        recList = (SwipeableRecyclerView)findViewById(R.id.recycler_view);
         recList.setHasFixedSize(true);
 
         //Set RecyclerView Layout
@@ -43,12 +47,22 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
 
         //TODO: Change to http call for user in future
         myPanels = TempPanelData.getInstance();
+        //Can probably remove in future
+        currentPanel = myPanels.currentPanel;
 
         //Attach PanelAdapter to View
-        panelAdapter = new PanelAdapter(myPanels.getPanel(myPanels.currentPanel), this);
+        panelAdapter = new PanelAdapter(myPanels.getPanel(currentPanel), this);
         recList.setAdapter(panelAdapter);
+
         //Attach Interface to recList
         recList.setPanelSwipeHandler(this);
+
+        //Set Panel Title
+        panelTitle = (TextView)findViewById(R.id.panel_title);
+        panelTitle.setText(myPanels.getPanel(myPanels.currentPanel).getPanelTitle());
+
+        //Attach onClick Listener to panelTitle
+        panelTitle.setOnClickListener(panelTitleOnClickListener);
     }
 
     @Override
@@ -126,7 +140,20 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
         Log.d("onSwipe-----", currentPanel + "");
         myPanels.currentPanel = currentPanel;
         panelAdapter.switchPanel(myPanels.getPanel(currentPanel));
+        panelTitle.setText(myPanels.getPanel(currentPanel).getPanelTitle());
     }
+
+    private View.OnClickListener panelTitleOnClickListener = new View.OnClickListener() {
+        public void onClick(View view){
+            Log.d("Clicked", "Panel Title Was Clicked");
+            //Pass to PanelDetailActivity
+            Context context = MainActivity.this;
+            Class destinationClass = PanelDetailActivity.class;
+            Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+            passPanelData(intentToStartDetailActivity, myPanels.getPanel(currentPanel));
+            startActivity(intentToStartDetailActivity);
+        }
+    };
 
     // Mak:-- Helper functions
     private void passBreakerData(Intent intent, Breaker breaker) {
@@ -135,6 +162,13 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
         intent.putExtra("breakerAmperage", breaker.getAmperage().toString());
         intent.putExtra("breakerType", breaker.getBreakerType().toString());
     }
+
+    private void passPanelData(Intent intent, Panel panel) {
+        intent.putExtra("isMainPanel", panel.getIsMainPanel());
+        intent.putExtra("panelAmperage", panel.getAmperage().toString());
+        intent.putExtra("manufacturer", panel.getManufacturer().toString());
+    }
+
     public static class SwipeableRecyclerView extends RecyclerView {
         //Variables used to determine swipe
         private float x1, x2;

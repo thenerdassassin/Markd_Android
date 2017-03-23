@@ -62,4 +62,20 @@ public enum PanelManufacturer {
 
     public static int count() { return PanelManufacturer.values().length;}
 
+    // String array of Values
+    public static String[] getValues() {
+        String[] tmp = new String[PanelManufacturer.count()];
+        for(PanelManufacturer amp: PanelManufacturer.values())
+            tmp[amp.ordinal()] = amp.toString();
+        return tmp;
+    }
+
+    public static PanelManufacturer fromString(String text) {
+        for (PanelManufacturer b : PanelManufacturer.values()) {
+            if (b.toString().equalsIgnoreCase(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }

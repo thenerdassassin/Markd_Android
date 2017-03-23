@@ -14,25 +14,41 @@ public enum SubPanelAmperage implements PanelAmperage {
     OneHundredTwentyFive {
         @Override
         public String toString() {
-            return "200A";
+            return "125A";
         }
     },
     OneHundredFifty {
         @Override
         public String toString() {
-            return "400A";
+            return "150A";
         }
     },
     TwoHundred {
         @Override
         public String toString() {
-            return "600A";
+            return "200A";
         }
     };
 
     // Returns the number of possible MainPanelAmperages
     public int count() {
-            return BreakerAmperage.values().length;
+            return SubPanelAmperage.values().length;
         }
 
+    // String array of Values
+    public static String[] getValues() {
+        String[] tmp = new String[TwoHundred.count()];
+        for(SubPanelAmperage amp: SubPanelAmperage.values())
+            tmp[amp.ordinal()] = amp.toString();
+        return tmp;
+    }
+
+    public static SubPanelAmperage fromString(String text) {
+        for (SubPanelAmperage b : SubPanelAmperage.values()) {
+            if (b.toString().equalsIgnoreCase(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }

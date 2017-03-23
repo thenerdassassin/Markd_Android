@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="4dp"
-        android:background="@color/colorLabel"
+        android:background="@drawable/rounded_label"
         android:orientation="horizontal"
         android:layout_weight="49">
         <TextView
@@ -81,7 +81,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorLabel"/>
+            android:background="@color/colorLabel" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
