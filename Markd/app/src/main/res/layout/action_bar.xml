@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/burger_menu"
+        app:srcCompat="@drawable/burger_menu_white"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|start"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:clickable="true"
+        />
+    <!-- TODO Change to Logo -->
+    <TextView
+        android:id="@+id/title_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:text="Markd"
+        android:textColor="#ffffff"
+        android:textAlignment="center"
+        android:textSize="30sp"/>
+    <ImageView
+        android:id="@+id/edit_mode"
+        app:srcCompat="@drawable/edit_action_white"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:clickable="true"
+        />
+</RelativeLayout>

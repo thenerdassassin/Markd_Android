@@ -3,16 +3,24 @@ package com.schmidthappens.markd;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.RecyclerViewClasses.PanelAdapter;
@@ -25,10 +33,18 @@ interface PanelSwipeHandler {
 }
 
 public class MainActivity extends AppCompatActivity implements PanelSwipeHandler, PanelAdapter.PanelAdapterOnClickHandler {
-
+    //Recycler View
     private SwipeableRecyclerView recList;
     private PanelAdapter panelAdapter;
     private TextView panelTitle;
+
+    private ActionBar actionBar;
+    private ActionBarDrawerToggle drawerToggle;
+
+    //NavigationDrawer
+    private String[] menuOptions;
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
 
     private TempPanelData myPanels;
     public int currentPanel = 0;
@@ -37,13 +53,19 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recList = (SwipeableRecyclerView)findViewById(R.id.recycler_view);
-        recList.setHasFixedSize(true);
+
+        //Set up ActionBar
+        setUpActionBar();
+
+        //Initialize DrawerList
+        drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer_layout);
+        drawerList = (ListView) findViewById(R.id.left_drawer);
+
+        setUpDrawerMenu();
 
         //Set RecyclerView Layout
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        recList.setLayoutManager(gridLayoutManager);
+        recList = (SwipeableRecyclerView)findViewById(R.id.recycler_view);
+        setUpRecyclerView();
 
         //TODO: Change to http call for user in future
         myPanels = TempPanelData.getInstance();
@@ -85,13 +107,13 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
         }
     }
 
-    //Create OptionsMenu
+    /*//Create OptionsMenu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -111,6 +133,10 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
             case R.id.action_add_panel:
                 Log.d("Options Item", "Add Panel");
                 //TODO action add panel
+                return true;
+            case R.id.edit_mode:
+                Log.d("Options Item", "Edit MODE");
+                //TODO
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -167,6 +193,86 @@ public class MainActivity extends AppCompatActivity implements PanelSwipeHandler
         intent.putExtra("isMainPanel", panel.getIsMainPanel());
         intent.putExtra("panelAmperage", panel.getAmperage().toString());
         intent.putExtra("manufacturer", panel.getManufacturer().toString());
+    }
+
+    private void setUpActionBar() {
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.action_bar);
+        //Set up actionBarButtons
+        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(Gravity.START);
+                } else {
+                    drawerLayout.openDrawer(Gravity.START);
+                }
+            }
+        });
+        ImageView editButton = (ImageView)findViewById(R.id.edit_mode);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Hit button action", "Edit Mode Activated");
+            }
+        });
+    }
+
+    //Mark:- DrawerMenu
+    private void setUpDrawerMenu() {
+        menuOptions = getResources().getStringArray(R.array.menu_options);
+        // Set the adapter for the list view
+        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, menuOptions));
+        // Set the list's click listener
+        drawerList.setOnItemClickListener(new DrawerItemClickListener());
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                //getActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                //getActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        drawerLayout.addDrawerListener(drawerToggle);
+    }
+
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
+        ImageView editButton = (ImageView)findViewById(R.id.edit_mode);
+        editButton.setClickable(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    private void selectItem(int position) {
+        //TODO intent to new page
+        drawerLayout.closeDrawer(drawerList);
+    }
+    // Mark:- RecyclerView
+    private void setUpRecyclerView() {
+        recList.setHasFixedSize(true);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        recList.setLayoutManager(gridLayoutManager);
     }
 
     public static class SwipeableRecyclerView extends RecyclerView {
