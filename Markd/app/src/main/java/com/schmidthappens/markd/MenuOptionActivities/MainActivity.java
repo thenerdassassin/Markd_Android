@@ -26,7 +26,6 @@ import android.widget.ListView;
 import com.schmidthappens.markd.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
@@ -71,23 +70,23 @@ public class MainActivity extends AppCompatActivity {
                 return;
             } else {
                 File picture = new File(Environment.getExternalStorageDirectory() + "/temp.jpg");
-                Uri imgUri=Uri.fromFile(picture);
+                Uri imgUri = Uri.fromFile(picture);
                 homeImage.setImageURI(imgUri);
-            }
 
-            try {
-                //Used for Gallery
-                InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                homeFrame.setBackgroundColor(Color.TRANSPARENT);
-                homeImage.setLayoutParams(
-                        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-                );
-                homeImage.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                //Used for Camera
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                homeImage.setImageBitmap(photo);
+                try {
+                    //Used for Gallery
+                    InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    homeFrame.setBackgroundColor(Color.TRANSPARENT);
+                    homeImage.setLayoutParams(
+                            new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+                    );
+                    homeImage.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    //Used for Camera
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    homeImage.setImageBitmap(photo);
+                }
             }
         }
     }
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.action_bar);
         //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
+        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +131,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
+
+        ImageView logo = (ImageView)findViewById(R.id.title_logo);
+
+        ImageView editButton = (ImageView)findViewById(R.id.edit_mode);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@color/colorPrimary">
 
     <ImageView
         android:id="@+id/burger_menu"
@@ -16,15 +17,15 @@
         android:clickable="true"
         />
     <!-- TODO Change to Logo -->
-    <TextView
+    <ImageView
         android:id="@+id/title_logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:text="Markd"
-        android:textColor="#ffffff"
-        android:textAlignment="center"
-        android:textSize="30sp"/>
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        app:srcCompat="@drawable/white_transparent_logo"/>
     <ImageView
         android:id="@+id/edit_mode"
         app:srcCompat="@drawable/edit_action_white"
