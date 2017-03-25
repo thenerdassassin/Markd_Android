@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
+        homeImage.setTag("0");
+        homeFrame.setOnClickListener(photoClick);
         homeFrame.setOnLongClickListener(photoLongClick);
     }
     @Override
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
                     homeImage.setImageBitmap(photo);
                 }
+                homeImage.setTag("1");
             }
         }
     }
@@ -112,7 +115,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
+    private View.OnClickListener photoClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(homeImage.getTag().equals("0")) {
+                Intent pickIntent = new Intent();
+                pickIntent.setType("image/*");
+                pickIntent.setAction(Intent.ACTION_GET_CONTENT);
+                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                String pickTitle = "Take or select a photo";
+                Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
+                startActivityForResult(chooserIntent, 1); //PHOTO_CAPTURE_CODE
+            }
+        }
+    };
     // Mark:- SetUp Functions
     private void setUpActionBar() {
         actionBar = getSupportActionBar();
