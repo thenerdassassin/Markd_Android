@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
+        //TODO change to only set as "0" if no image available from http call
         homeImage.setTag("0");
         homeFrame.setOnClickListener(photoClick);
         homeFrame.setOnLongClickListener(photoLongClick);
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener photoClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            //Only resets image if no image exists
             if(homeImage.getTag().equals("0")) {
                 Intent pickIntent = new Intent();
                 pickIntent.setType("image/*");
