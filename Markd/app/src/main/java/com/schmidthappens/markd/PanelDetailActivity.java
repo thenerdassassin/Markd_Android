@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
+import com.schmidthappens.markd.MenuOptionActivities.ViewPanelActivity;
 import com.schmidthappens.markd.data_objects.MainPanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelManufacturer;
@@ -140,7 +141,7 @@ public class PanelDetailActivity extends AppCompatActivity {
 
     private void backToMain() {
         Context context = PanelDetailActivity.this;
-        Class destinationClass = MainActivity.class;
+        Class destinationClass = ViewPanelActivity.class;
         Intent intentToStartMainActivity = new Intent(context, destinationClass);
         intentToStartMainActivity.putExtra("source", "PanelDetailActivity");
         startActivity(intentToStartMainActivity);

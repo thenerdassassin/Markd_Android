@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.data_objects;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 public  class TempPanelData {
     private static final TempPanelData myData = new TempPanelData();
-    private Panel[] panels;
+    private List<Panel> panels;
     public int currentPanel;
 
     private TempPanelData() {
@@ -64,40 +65,44 @@ public  class TempPanelData {
         breakerList2.add(new Breaker(11, "Refrigerator"));
         breakerList2.add(new Breaker(12, "Microwave"));
 
-        this.panels = new Panel[2];
-        this.panels[0] = new Panel(breakerList);
-        this.panels[1] = new Panel(false, SubPanelAmperage.OneHundredTwentyFive, breakerList2);
+        this.panels = new ArrayList<Panel>();
+        this.panels.add(0, new Panel(0, true, MainPanelAmperage.TwoHundred, breakerList));
+        this.panels.get(0).setPanelDescription("Attic Panel");
+        this.panels.get(0).setInstallDate("11", "07", "16");
+
+        this.panels.add(1, new Panel(1, false, SubPanelAmperage.OneHundredTwentyFive, breakerList2));
+        this.panels.get(1).setPanelDescription("Basement Panel");
+        this.panels.get(1).setInstallDate("01", "11", "17");
     }
 
     public static TempPanelData getInstance() {
         return myData;
     }
-
-    public Panel getPanel(int currentPanel) {
-        return panels[currentPanel];
+    public List<Panel> getPanels() {
+        return new ArrayList<Panel>(panels);
+    }
+    public Panel getPanel(int panelId) {
+        return panels.get(panelId);
     }
 
     public Panel updatePanel(Panel newPanel) {
-        this.panels[currentPanel] = newPanel;
-        return this.panels[currentPanel];
+        this.panels.set(currentPanel, newPanel);
+        return this.panels.get(currentPanel);
     }
-
     public Panel updateBreaker(int breakerNumber, Breaker newBreaker) {
-        this.panels[currentPanel].editBreaker(breakerNumber, newBreaker);
-        return this.panels[currentPanel];
+        this.panels.get(currentPanel).editBreaker(breakerNumber, newBreaker);
+        return this.panels.get(currentPanel);
     }
-
     public Panel addBreaker(Breaker newBreaker) {
-        this.panels[currentPanel].addBreaker(newBreaker);
-        return this.panels[currentPanel];
+        this.panels.get(currentPanel).addBreaker(newBreaker);
+        return this.panels.get(currentPanel);
     }
-
     public Panel updatePanel(boolean isMainPanel, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
-        this.panels[currentPanel].updatePanel(isMainPanel, panelAmperage, manufacturer);
-        return this.panels[currentPanel];
+        this.panels.get(currentPanel).updatePanel(isMainPanel, panelAmperage, manufacturer);
+        return this.panels.get(currentPanel);
     }
 
     public int count() {
-        return this.panels.length;
+        return this.panels.size();
     }
 }

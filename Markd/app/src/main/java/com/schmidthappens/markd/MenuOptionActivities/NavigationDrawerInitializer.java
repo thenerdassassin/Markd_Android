@@ -1,0 +1,63 @@
+package com.schmidthappens.markd.MenuOptionActivities;
+
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.schmidthappens.markd.R;
+
+/**
+ * Created by Josh on 3/24/2017.
+ */
+
+public class NavigationDrawerInitializer {
+
+    Context context;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle drawerToggle;
+    ListView drawerList;
+    String[] menuOptions;
+
+    public NavigationDrawerInitializer(Context context, DrawerLayout drawerLayout, ListView drawerList, ActionBarDrawerToggle drawerToggle){
+        this.context = context;
+        this.drawerLayout = drawerLayout;
+        this.drawerList = drawerList;
+        this.drawerToggle = drawerToggle;
+        menuOptions = context.getResources().getStringArray(R.array.menu_options);
+    }
+
+    public void setUp() {
+        drawerList.setAdapter(new ArrayAdapter<String>(context, R.layout.drawer_list_item, menuOptions));
+        drawerList.setOnItemClickListener(new DrawerItemClickListener());
+        drawerLayout.addDrawerListener(drawerToggle);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    private void selectItem(int position) {
+        //TODO intent to new page
+        Log.i("Selected Item", menuOptions[position]);
+        if(menuOptions[position].equals("Electrical")) {
+            Class destinationClass = ElectricalActivity.class;
+            Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartElectricalActivity);
+        } else if(menuOptions[position].equals("Home")) {
+            Class destinationClass = MainActivity.class;
+            Intent intentToStartHomeActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartHomeActivity);
+        }
+        drawerLayout.closeDrawer(drawerList);
+    }
+
+}

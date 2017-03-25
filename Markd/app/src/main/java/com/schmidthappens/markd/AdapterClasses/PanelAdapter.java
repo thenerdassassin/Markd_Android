@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.RecyclerViewClasses;
+package com.schmidthappens.markd.AdapterClasses;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;

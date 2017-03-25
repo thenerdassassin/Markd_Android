@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.schmidthappens.markd.MenuOptionActivities.ViewPanelActivity;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.BreakerAmperage;
 import com.schmidthappens.markd.data_objects.BreakerType;
@@ -168,7 +169,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
                         //TODO call add breaker
                         panel.addBreaker(makeBreaker());
                         //TODO go back to MainActivity
-                        goBackToMain();
+                        goBackToViewPanel();
                     } else {
                         hideKeyboard();
                         //Collect Updated Info
@@ -239,11 +240,11 @@ public class BreakerDetailActivity extends AppCompatActivity {
 
     private void deleteBreaker() {
         Context context = BreakerDetailActivity.this;
-        Class destinationClass = MainActivity.class;
-        Intent intentToStartMainActivity = new Intent(context, destinationClass);
-        intentToStartMainActivity.putExtra("actionType", "Delete Breaker");
-        intentToStartMainActivity.putExtra("breakerNumber", breakerNumberString);
-        startActivity(intentToStartMainActivity);
+        Class destinationClass = ViewPanelActivity.class;
+        Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
+        intentToStartViewPanelActivity.putExtra("actionType", "Delete Breaker");
+        intentToStartViewPanelActivity.putExtra("breakerNumber", breakerNumberString);
+        startActivity(intentToStartViewPanelActivity);
     }
 
     private void updateViewingMode() {
@@ -267,9 +268,9 @@ public class BreakerDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void goBackToMain() {
+    private void goBackToViewPanel() {
         Context context = BreakerDetailActivity.this;
-        Class destinationClass = MainActivity.class;
+        Class destinationClass = ViewPanelActivity.class;
         Intent intentToStartMainActivity = new Intent(context, destinationClass);
         startActivity(intentToStartMainActivity);
     }

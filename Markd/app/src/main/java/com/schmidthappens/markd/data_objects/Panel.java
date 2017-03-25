@@ -7,60 +7,83 @@ import java.util.List;
  */
 
 public class Panel {
+    private int panelId;
     private boolean isMainPanel;
     private PanelAmperage amperage;
+    private String panelDescription;
+    private String installDate;
     private List<Breaker> breakerList;
     private PanelManufacturer manufacturer;
 
     // Mark:- Constructors
-    public Panel(boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList, PanelManufacturer manufacturer) {
+    public Panel(int panelId, boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList, PanelManufacturer manufacturer) {
+        this.panelId = panelId;
         this.isMainPanel = isMainPanel;
         this.amperage = amperage;
         this.breakerList = breakerList;
         this.manufacturer = manufacturer;
     }
-
-    public Panel(boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList) {
-        this(isMainPanel, amperage, breakerList, PanelManufacturer.UNKNOWN);
+    public Panel(int panelId, boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList) {
+        this(panelId, isMainPanel, amperage, breakerList, PanelManufacturer.UNKNOWN);
     }
-
-    public Panel(PanelAmperage amperage, List<Breaker> breakerList) {
-        this(true, amperage, breakerList, PanelManufacturer.UNKNOWN);
+    public Panel(int panelId, PanelAmperage amperage, List<Breaker> breakerList) {
+        this(panelId, true, amperage, breakerList, PanelManufacturer.UNKNOWN);
     }
-
-    public Panel(List<Breaker> breakerList) {
-        this(true, MainPanelAmperage.OneThousand, breakerList, PanelManufacturer.UNKNOWN);
+    public Panel(int panelId, List<Breaker> breakerList) {
+        this(panelId, true, MainPanelAmperage.OneThousand, breakerList, PanelManufacturer.UNKNOWN);
     }
 
     // Mark:- Getters/Setters
     public boolean getIsMainPanel() {
         return isMainPanel;
     }
-
     public void setIsMainPanel(boolean isMainPanel) {
         this.isMainPanel = isMainPanel;
     }
-
     public PanelAmperage getAmperage() {
         return amperage;
     }
-
     public void setAmperage(PanelAmperage amperage) {
         this.amperage = amperage;
     }
+    public String getPanelDescription() {
+        return this.panelDescription;
+    }
+    public void setPanelDescription(String panelDescription) {
+        this.panelDescription = panelDescription;
+    }
+    public String getInstallDate() {
+        return this.installDate;
+    }
+    public boolean setInstallDate(String month, String day, String year) {
+        String newInstallDate = "";
+        if(month.length() == 2 && day.length() == 2 && year.length() == 2) {
+            try {
+                Integer.parseInt(month);
+                newInstallDate += month;
+                Integer.parseInt(day);
+                newInstallDate += "." + day;
+                Integer.parseInt(year);
+                newInstallDate += "." + year;
+            } catch(NumberFormatException e) {
+                return false;
+            }
+            installDate = newInstallDate;
 
+        } else {
+            return false;
+        }
+        return true;
+    }
     public List<Breaker> getBreakerList() {
         return breakerList;
     }
-
     public void setBreakerList(List<Breaker> breakerList) {
         this.breakerList = breakerList;
     }
-
     public PanelManufacturer getManufacturer() {
         return manufacturer;
     }
-
     public void setManufacturer(PanelManufacturer manufacturer) {
         this.manufacturer = manufacturer;
     }

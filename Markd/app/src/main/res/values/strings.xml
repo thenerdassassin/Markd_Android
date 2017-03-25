@@ -14,4 +14,6 @@
     </string-array>
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer closed</string>
+    <string name="middot">&#8226;</string>
+    <string name="contact"><u>Contact</u></string>
 </resources>

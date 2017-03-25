@@ -4,6 +4,11 @@
 
     <!-- Necessary to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Used to get from gallery or take picture -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -12,26 +17,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity">
+            android:name=".MenuOptionActivities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MenuOptionActivities.ViewPanelActivity"
+            android:value=".MenuOptionActivities.ViewPanelActivity"/>
         <activity
             android:name=".BreakerDetailActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MenuOptionActivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".PanelDetailActivity" />
         </activity>
         <activity
             android:name=".PanelDetailActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MenuOptionActivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MenuOptionActivities.ViewPanelActivity" />
         </activity>
+        <activity android:name=".MenuOptionActivities.ElectricalActivity"
+            android:value=".MenuOptionActivities.ElectricalActivity">
+         </activity>
     </application>
 
 </manifest>
