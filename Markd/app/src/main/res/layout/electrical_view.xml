@@ -74,6 +74,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:scaleType="fitCenter"
+                android:clickable="true"
                 app:srcCompat="@drawable/connwestlogocrop"/>
             <LinearLayout
                 android:layout_marginLeft="30dp"
@@ -93,16 +94,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:textColor="@android:color/white"
+                    android:textColorLink="@android:color/holo_blue_dark"
+                    android:textStyle="normal"
                     android:text="203.922.2011"
+                    android:autoLink="phone"
+                    android:linksClickable="true"
                     />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:textColor="@android:color/white"
+                    android:textColorLink="@android:color/holo_blue_dark"
                     android:text="connwestelectric.com"
                     android:layout_marginBottom="10dp"
+                    android:autoLink="web"
                     />
             </LinearLayout>
         </RelativeLayout>

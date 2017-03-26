@@ -1,16 +1,28 @@
 <resources>
     <string name="app_name">Markd</string>
     <string-array name="menu_options">
-        <item>Sign In / Sign Up</item>
         <item>Home</item>
         <item>Plumbing</item>
         <item>HVAC</item>
         <item>Electrical</item>
         <item>Landscaping</item>
-        <item>Painter</item>
+        <item>Painting</item>
         <item>FAQs</item>
         <item>Notifications</item>
         <item>Settings</item>
+        <item>Sign Out</item>
+    </string-array>
+    <string-array name="menu_icons">
+        <item>ic_action_home</item>
+        <item>ic_action_plumbing</item>
+        <item>ic_action_hvac</item>
+        <item>ic_action_electrical</item>
+        <item>ic_action_landscaping</item>
+        <item>ic_action_painter</item>
+        <item>ic_action_faqs</item>
+        <item>ic_action_notifications</item>
+        <item>ic_action_settings</item>
+        <item>ic_action_sign_out</item>
     </string-array>
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer closed</string>

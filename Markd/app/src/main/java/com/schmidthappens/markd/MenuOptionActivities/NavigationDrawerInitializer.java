@@ -7,10 +7,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.data_objects.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Josh on 3/24/2017.
@@ -23,6 +27,7 @@ public class NavigationDrawerInitializer {
     ActionBarDrawerToggle drawerToggle;
     ListView drawerList;
     String[] menuOptions;
+    String[] menuIconStrings;
 
     public NavigationDrawerInitializer(Context context, DrawerLayout drawerLayout, ListView drawerList, ActionBarDrawerToggle drawerToggle){
         this.context = context;
@@ -30,10 +35,17 @@ public class NavigationDrawerInitializer {
         this.drawerList = drawerList;
         this.drawerToggle = drawerToggle;
         menuOptions = context.getResources().getStringArray(R.array.menu_options);
+        menuIconStrings = context.getResources().getStringArray(R.array.menu_icons);
     }
 
     public void setUp() {
-        drawerList.setAdapter(new ArrayAdapter<String>(context, R.layout.drawer_list_item, menuOptions));
+        List<MenuItem> menuItemList = new ArrayList<MenuItem>();
+
+        for(int i = 0; i < menuOptions.length; i++) {
+            menuItemList.add(new MenuItem(menuIconStrings[i],menuOptions[i]));
+        }
+
+        drawerList.setAdapter(new MenuDrawerListAdapter(context, R.layout.drawer_list_item, menuItemList));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout.addDrawerListener(drawerToggle);
     }
