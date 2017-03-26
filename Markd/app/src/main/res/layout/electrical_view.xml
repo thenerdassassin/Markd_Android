@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -51,17 +52,60 @@
 
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="80dp"
             android:layout_gravity="bottom"
             android:orientation="horizontal"
-            android:background="@color/colorAccent">
-            <TextView
+            android:background="#000d1a">
+            <View
                 android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/darker_gray"/>
+            <ImageView
+                android:id="@+id/electrical_logo"
                 android:layout_height="match_parent"
-                android:text="TESTING"/>
-        </LinearLayout>
+                android:layout_width="80dp"
+                android:layout_marginLeft="20dp"
+                android:maxWidth="80dp"
+                android:maxHeight="80dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/connwestlogocrop"/>
+            <LinearLayout
+                android:layout_marginLeft="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/electrical_logo"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="10dp"
+                    android:text="Conn-West Electric"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/white"
+                    android:text="203.922.2011"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/white"
+                    android:text="connwestelectric.com"
+                    android:layout_marginBottom="10dp"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
     </FrameLayout>
 
     <ListView
