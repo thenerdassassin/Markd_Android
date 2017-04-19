@@ -41,20 +41,20 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         Panel p = getItem(position);
 
         if (p != null) {
-            TextView tt1 = (TextView) v.findViewById(R.id.panel_description);
-            TextView tt2 = (TextView) v.findViewById(R.id.panel_amperage);
-            TextView tt3 = (TextView) v.findViewById(R.id.panel_install_date);
+            TextView panelDescriptionTextView = (TextView) v.findViewById(R.id.panel_description);
+            TextView panelAmperageTextView = (TextView) v.findViewById(R.id.panel_amperage);
+            TextView panelInstallDateTextView = (TextView) v.findViewById(R.id.panel_install_date);
 
-            if (tt1 != null) {
-                tt1.setText(p.getPanelDescription());
+            if (panelDescriptionTextView != null) {
+                panelDescriptionTextView.setText(p.getPanelDescription());
             }
 
-            if (tt2 != null) {
-                tt2.setText(p.getAmperage().toString());
+            if (panelAmperageTextView != null) {
+                panelAmperageTextView.setText(p.getAmperage().toString());
             }
 
-            if (tt3 != null) {
-                tt3.setText(p.getInstallDate());
+            if (panelInstallDateTextView != null) {
+                panelInstallDateTextView.setText(p.getInstallDate());
             }
         }
 
