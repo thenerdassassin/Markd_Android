@@ -43,7 +43,10 @@
         </activity>
         <activity android:name=".MenuOptionActivities.ElectricalActivity"
             android:value=".MenuOptionActivities.ElectricalActivity">
-         </activity>
+        </activity>
+        <activity android:name=".MenuOptionActivities.PlumbingActivity"
+            android:value=".MenuOptionActivities.PlumbingActivity">
+        </activity>
     </application>
 
 </manifest>

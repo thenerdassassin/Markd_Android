@@ -68,6 +68,10 @@ public class NavigationDrawerInitializer {
             Class destinationClass = MainActivity.class;
             Intent intentToStartHomeActivity = new Intent(context, destinationClass);
             context.startActivity(intentToStartHomeActivity);
+        } else if(menuOptions[position].equals("Plumbing")) {
+            Class destinationClass = PlumbingActivity.class;
+            Intent intentToStartPlumbingActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartPlumbingActivity);
         }
         drawerLayout.closeDrawer(drawerList);
     }
