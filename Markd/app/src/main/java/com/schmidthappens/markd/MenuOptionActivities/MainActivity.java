@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     //XML Objects
     FrameLayout homeFrame;
     ImageView homeImage;
+    ImageView homeImagePlaceholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         drawerList = (ListView)findViewById(R.id.left_drawer);
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
         homeImage = (ImageView)findViewById(R.id.home_image);
+        homeImagePlaceholder = (ImageView) findViewById(R.id.home_image_placeholder);
 
         //Set up ActionBar
         setUpActionBar();
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     homeImage.setImageBitmap(photo);
                 }
                 homeImage.setTag("1");
+                homeImagePlaceholder.setVisibility(View.GONE);
             }
         }
     }
