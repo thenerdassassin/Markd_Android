@@ -9,166 +9,367 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_texture">
-        <LinearLayout
+
+        <!-- Main View -->
+        <ScrollView
+            android:id="@+id/plumbing_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <!-- Domestic Hot Water Title -->
+            android:layout_height="wrap_content">
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:layout_marginTop="25dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:text="Domestic Hot Water"
-                    android:textSize="25sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1.5dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@android:color/darker_gray" />
-
-                <ImageView
-                    android:id="@+id/hot_water_edit"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    app:srcCompat="@drawable/edit_action_dark" />
-            </RelativeLayout>
-
-            <!--Manufacturer -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
-                android:layout_marginTop="10dp">
-                <TextView
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="16sp"
-                    android:text="Manufacturer:"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="16sp"
-                    android:text="Bosch"/>
-            </RelativeLayout>
-
-            <!--Model -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
-                android:layout_marginTop="3dp">
-                <TextView
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="16sp"
-                    android:text="Model:"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="16sp"
-                    android:text="C950 ES NG"/>
-            </RelativeLayout>
-
-            <!-- Install Date -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
-                android:layout_marginTop="3dp">
-                <TextView
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="16sp"
-                    android:text="Installed on:"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="16sp"
-                    android:text="1/17/14"/>
-            </RelativeLayout>
-
-            <!-- Projected LifeSpan -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
-                android:layout_marginTop="3dp">
-                <TextView
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="16sp"
-                    android:text="Projected Life Span:"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="16sp"
-                    android:text="12 years"/>
-            </RelativeLayout>
-
-            <!-- ContractorService History Title -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="3dp">
-                <TextView
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textSize="18sp"
-                    android:text="Service History"/>
-                <ImageView
-                    android:id="@+id/add_hot_water_service_button"
-                    android:layout_alignParentRight="true"
-                    android:layout_width="@dimen/square_icon"
-                    android:layout_height="@dimen/square_icon"
-                    android:src="@drawable/add_button_round_black"/>
-            </RelativeLayout>
-
-            <!-- History of Contractor Services -->
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="35dp"
-                android:layout_marginTop="3dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <ListView
-                    android:id="@+id/hot_water_service_list"
+                <!-- Domestic Hot Water -->
+                <LinearLayout
+                    android:id="@+id/plumbing_domestic_hot_water"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <!-- Domestic Hot Water Title -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginTop="25dp"
+                        android:orientation="horizontal">
 
-            </LinearLayout>
-        </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:text="Domestic Hot Water"
+                            android:textSize="25sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1.5dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@android:color/darker_gray" />
+
+                        <ImageView
+                            android:id="@+id/plumbing_hot_water_edit"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentTop="true"
+                            app:srcCompat="@drawable/edit_action_dark" />
+                    </RelativeLayout>
+
+                    <!--Manufacturer -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Manufacturer:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="Bosch"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!--Model -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Model:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="C950 ES NG"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!-- Install Date -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Installed on:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="1/17/14"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!-- Projected LifeSpan -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Projected Life Span:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="12 years"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!-- ContractorService History Title -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Service History"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/plumbing_add_hot_water_service_button"
+                            android:layout_width="@dimen/square_icon"
+                            android:layout_height="@dimen/square_icon"
+                            android:layout_alignParentRight="true"
+                            android:src="@drawable/add_button_round_black" />
+                    </RelativeLayout>
+
+                    <!-- History of Contractor Services -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/plumbing_hot_water_service_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Boiler -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/plumbing_domestic_hot_water"
+                    android:orientation="vertical">
+                    <!-- Boiler Title -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginTop="25dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:text="Boiler"
+                            android:textSize="25sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1.5dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@android:color/darker_gray" />
+
+                        <ImageView
+                            android:id="@+id/plumbing_boiler_edit"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentTop="true"
+                            app:srcCompat="@drawable/edit_action_dark" />
+                    </RelativeLayout>
+
+                    <!--Manufacturer -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Manufacturer:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="Westinghouse"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!--Model -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Model:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="WBRCLP140W"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!-- Install Date -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Installed on:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="11/7/12"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!-- Projected LifeSpan -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Projected Life Span:"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginLeft="5dp"
+                            android:text="9 years"
+                            android:textSize="16sp" />
+                    </RelativeLayout>
+
+                    <!-- ContractorService History Title -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentLeft="true"
+                            android:text="Service History"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:id="@+id/plumbing_add_boiler_service_button"
+                            android:layout_width="@dimen/square_icon"
+                            android:layout_height="@dimen/square_icon"
+                            android:layout_alignParentRight="true"
+                            android:src="@drawable/add_button_round_black" />
+                    </RelativeLayout>
+
+                    <!-- History of Contractor Services -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="3dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/plumbing_boiler_service_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </ScrollView>
 
         <!-- Plumbing Footer -->
         <RelativeLayout

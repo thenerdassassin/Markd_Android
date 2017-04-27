@@ -8,16 +8,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.schmidthappens.markd.AdapterClasses.ServiceListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 
 /**
@@ -35,8 +38,14 @@ public class PlumbingActivity extends AppCompatActivity {
 
     //XML Objects
     ImageView hotWaterEditButton;
-    ListView hotWaterServiceList;
+    LinearLayout hotWaterServiceList;
     ImageView hotWaterAddServiceButton;
+
+    ImageView boilerEditButton;
+    LinearLayout boilerServiceList;
+    ImageView boilerAddServiceButton;
+
+    ScrollView plumbingScrollView;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -54,25 +63,54 @@ public class PlumbingActivity extends AppCompatActivity {
         ndi.setUp();
 
         //Initialize XML Objects
-        hotWaterEditButton = (ImageView)findViewById(R.id.hot_water_edit);
-        hotWaterAddServiceButton = (ImageView)findViewById(R.id.add_hot_water_service_button);
-        hotWaterServiceList = (ListView)findViewById(R.id.hot_water_service_list);
+        hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
+        hotWaterAddServiceButton = (ImageView)findViewById(R.id.plumbing_add_hot_water_service_button);
+        hotWaterServiceList = (LinearLayout)findViewById(R.id.plumbing_hot_water_service_list);
+
+        boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
+        boilerAddServiceButton = (ImageView)findViewById(R.id.plumbing_add_boiler_service_button);
+        boilerServiceList = (LinearLayout)findViewById(R.id.plumbing_boiler_service_list);
+
+        plumbingScrollView = (ScrollView)findViewById(R.id.plumbing_scroll_view);
+        ViewGroup.LayoutParams params = plumbingScrollView.getLayoutParams();
+        params.height -= 800; //Size of footer
+        plumbingScrollView.setLayoutParams(params);
 
         //Set Up Buttons
         hotWaterEditButton.setOnClickListener(hotWaterEditButtonClickListener);
         hotWaterAddServiceButton.setOnClickListener(hotWaterAddServiceClickListener);
+        boilerEditButton.setOnClickListener(boilerEditButtonClickListener);
+        boilerAddServiceButton.setOnClickListener(boilerAddServiceClickListener);
 
-        //TODO change to http call to get service list
+        hotWaterServiceList.setScrollContainer(false);
+
+        //TODO change to http call to get service lists
         final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
-        ArrayAdapter hotWaterAdapter = new ServiceListAdapter(this, R.layout.service_list_row, serviceData.getHotWaterServices());
-        hotWaterServiceList.setAdapter(hotWaterAdapter);
-        hotWaterServiceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO move to detailed view
-                Toast.makeText(getApplicationContext(), serviceData.getHotWaterServices().get(position).getComments(), Toast.LENGTH_LONG).show();
-            }
-        });
+
+        //TODO: may need to paginate at some point
+        for(int i = 0; i < serviceData.getHotWaterServices().size(); i++) {
+            View toAdd = getServiceView(serviceData.getHotWaterServices().get(i));
+            toAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO move to detailed view
+                    Toast.makeText(getApplicationContext(), "Move to Detailed View", Toast.LENGTH_LONG).show();
+                }
+            });
+            hotWaterServiceList.addView(toAdd);
+        }
+
+        for(int i = 0; i < serviceData.getBoilerServices().size(); i++) {
+            View toAdd = getServiceView(serviceData.getBoilerServices().get(i));
+            toAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO move to detailed view
+                    Toast.makeText(getApplicationContext(), "Move to Detailed View", Toast.LENGTH_LONG).show();
+                }
+            });
+            boilerServiceList.addView(toAdd);
+        }
     }
 
     // Mark: SetUp Function
@@ -97,6 +135,28 @@ public class PlumbingActivity extends AppCompatActivity {
         editButton.setVisibility(View.GONE);
     }
 
+    private View getServiceView(ContractorService service) {
+        View v = null;
+        LayoutInflater vi;
+        vi = LayoutInflater.from(this);
+        v = vi.inflate(R.layout.service_list_row, null);
+
+        if(service != null) {
+            TextView contractorTextView = (TextView) v.findViewById(R.id.contractor_name);
+            TextView serviceDate = (TextView) v.findViewById(R.id.service_date);
+
+            if(contractorTextView != null) {
+                contractorTextView.setText(service.getContractor());
+            }
+
+            if(serviceDate != null) {
+                serviceDate.setText(service.getDate());
+            }
+        }
+
+        return v;
+    }
+
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -108,9 +168,25 @@ public class PlumbingActivity extends AppCompatActivity {
     private View.OnClickListener hotWaterAddServiceClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New Service", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Add New Hot Water Service", Toast.LENGTH_SHORT).show();
         }
     };
+
+    private View.OnClickListener boilerEditButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d("Click:", "Boiler Edit");
+            Toast.makeText(getApplicationContext(), "Boiler Edit Clicked!", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private View.OnClickListener boilerAddServiceClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getApplicationContext(), TempContractorServiceData.getInstance().getBoilerServices().size() + "", Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
     // Mark:- DrawerMenu
     /* Called whenever we call invalidateOptionsMenu() */
