@@ -2,8 +2,9 @@ package com.schmidthappens.markd.MenuOptionActivities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,13 +16,19 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPanelData;
+
+import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer.createServiceListView;
 
 /**
  * Created by Josh on 3/24/2017.
@@ -39,12 +46,18 @@ public class ElectricalActivity extends AppCompatActivity {
 
     //XML Objects
     ListView panelList;
-    ImageView electricianLogo;
+    FrameLayout electricalContractor;
+    FrameLayout electricalServiceList;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.electrical_view);
+
+        //Initialize XML Objects
+        electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
+        electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
+
 
         //Initialize ActionBar
         setUpActionBar();
@@ -72,18 +85,17 @@ public class ElectricalActivity extends AppCompatActivity {
             }
         });
 
-        //Set ElectricianLogo to website
-        electricianLogo = (ImageView)findViewById(R.id.electrical_logo);
-        electricianLogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setData(Uri.parse("http://connwestelectric.com"));
-                startActivity(intent);
-            }
-        });
+        //Set up ElectricalService List
+        //TODO change to http call for electrical services
+        TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
+
+        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), electricalOnClickListener);
+        electricalServiceList.addView(electricalServiceListView);
+
+        //Set up ElectricalContractor
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.connwestlogocrop);
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "Conn-West Electric", "203.922.2011", "connwestelectric.com");
+        electricalContractor.addView(v);
     }
 
     // Mark:- SetUp Functions
@@ -112,6 +124,14 @@ public class ElectricalActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Mark:- OnClick Listeners
+    private View.OnClickListener electricalOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getApplicationContext(), "Add Electrical Service", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     // Mark:- DrawerMenu
     /* Called whenever we call invalidateOptionsMenu() */

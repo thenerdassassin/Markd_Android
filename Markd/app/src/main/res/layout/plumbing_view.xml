@@ -15,14 +15,13 @@
             android:id="@+id/plumbing_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:layout_marginBottom="80dp">
+            android:layout_marginBottom="80dp"
+            android:fillViewport="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
                 <!-- Domestic Hot Water -->
                 <LinearLayout
                     android:id="@+id/plumbing_domestic_hot_water"
@@ -155,47 +154,13 @@
                             android:text="12 years"
                             android:textSize="16sp" />
                     </RelativeLayout>
-
-                    <!-- ContractorService History Title -->
-                    <RelativeLayout
+                    <!-- Service History -->
+                    <FrameLayout
+                        android:id="@+id/plumbing_hot_water_service_list"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:layout_marginLeft="35dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="3dp">
+                        android:layout_height="wrap_content" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentLeft="true"
-                            android:text="Service History"
-                            android:textSize="18sp" />
 
-                        <ImageView
-                            android:id="@+id/plumbing_add_hot_water_service_button"
-                            android:layout_width="@dimen/square_icon"
-                            android:layout_height="@dimen/square_icon"
-                            android:layout_alignParentRight="true"
-                            android:src="@drawable/add_button_round_black" />
-                    </RelativeLayout>
-
-                    <!-- History of Contractor Services -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginRight="35dp"
-                        android:layout_marginTop="3dp"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:id="@+id/plumbing_hot_water_service_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Boiler -->
@@ -331,55 +296,20 @@
                             android:textSize="16sp" />
                     </RelativeLayout>
 
-                    <!-- ContractorService History Title -->
-                    <RelativeLayout
+                    <!-- Service History  -->
+                    <FrameLayout
+                        android:id="@+id/plumbing_boiler_service_list"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
-                        android:layout_marginLeft="35dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="3dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentLeft="true"
-                            android:text="Service History"
-                            android:textSize="18sp" />
-
-                        <ImageView
-                            android:id="@+id/plumbing_add_boiler_service_button"
-                            android:layout_width="@dimen/square_icon"
-                            android:layout_height="@dimen/square_icon"
-                            android:layout_alignParentRight="true"
-                            android:src="@drawable/add_button_round_black" />
-                    </RelativeLayout>
-
-                    <!-- History of Contractor Services -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginRight="35dp"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:id="@+id/plumbing_boiler_service_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"/>
-
-                    </LinearLayout>
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </RelativeLayout>
         </ScrollView>
 
         <FrameLayout
             android:id="@+id/plumbing_footer"
-            android:layout_gravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="80dp">
+            android:layout_height="80dp"
+            android:layout_gravity="bottom">
 
         </FrameLayout>
 
