@@ -14,8 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.AdapterClasses.PanelAdapter;
-import com.schmidthappens.markd.BreakerDetailActivity;
-import com.schmidthappens.markd.PanelDetailActivity;
+import com.schmidthappens.markd.ElectricalSubActivities.BreakerDetailActivity;
+import com.schmidthappens.markd.ElectricalSubActivities.PanelDetailActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;

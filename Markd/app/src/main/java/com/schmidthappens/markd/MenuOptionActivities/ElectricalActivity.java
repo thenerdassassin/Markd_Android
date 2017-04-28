@@ -20,6 +20,7 @@ import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 
 /**

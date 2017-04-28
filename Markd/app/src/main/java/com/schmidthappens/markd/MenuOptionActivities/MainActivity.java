@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 
 import java.io.File;
 import java.io.InputStream;

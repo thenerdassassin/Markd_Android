@@ -28,14 +28,14 @@
         <activity android:name=".MenuOptionActivities.ViewPanelActivity"
             android:value=".MenuOptionActivities.ViewPanelActivity"/>
         <activity
-            android:name=".BreakerDetailActivity"
+            android:name=".ElectricalSubActivities.BreakerDetailActivity"
             android:parentActivityName=".MenuOptionActivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PanelDetailActivity" />
+                android:value=".ElectricalSubActivities.PanelDetailActivity" />
         </activity>
         <activity
-            android:name=".PanelDetailActivity"
+            android:name=".ElectricalSubActivities.PanelDetailActivity"
             android:parentActivityName=".MenuOptionActivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

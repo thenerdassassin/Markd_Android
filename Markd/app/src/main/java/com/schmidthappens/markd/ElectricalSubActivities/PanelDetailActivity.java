@@ -1,4 +1,4 @@
-package com.schmidthappens.markd;
+package com.schmidthappens.markd.ElectricalSubActivities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 
 import com.schmidthappens.markd.MenuOptionActivities.ViewPanelActivity;
+import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.MainPanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelManufacturer;

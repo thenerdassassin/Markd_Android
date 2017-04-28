@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.MenuOptionActivities;
+package com.schmidthappens.markd.ViewInitializers;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
+import com.schmidthappens.markd.MenuOptionActivities.ElectricalActivity;
+import com.schmidthappens.markd.MenuOptionActivities.MainActivity;
+import com.schmidthappens.markd.MenuOptionActivities.PlumbingActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.MenuItem;
 
