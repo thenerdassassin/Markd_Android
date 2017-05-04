@@ -27,6 +27,12 @@ public class ServiceListViewInitializer {
         ImageView addButton = (ImageView)view.findViewById(R.id.add_service_button);
         addButton.setOnClickListener(addListener);
 
+        if(services.size() == 0) {
+            View v = viewInflater.inflate(R.layout.service_list_row, null);
+            TextView contractorTextView = (TextView) v.findViewById(R.id.contractor_name);
+            contractorTextView.setText("No services yet!");
+            listOfServices.addView(v);
+        }
         //Add all services to list
         for (final ContractorService service : services) {
             View v = viewInflater.inflate(R.layout.service_list_row, null);

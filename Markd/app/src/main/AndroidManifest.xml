@@ -47,6 +47,9 @@
         <activity android:name=".MenuOptionActivities.PlumbingActivity"
             android:value=".MenuOptionActivities.PlumbingActivity">
         </activity>
+        <activity android:name=".MenuOptionActivities.HvacActivity"
+            android:value=".MenuOptionActivities.HvacActivity">
+        </activity>
     </application>
 
 </manifest>

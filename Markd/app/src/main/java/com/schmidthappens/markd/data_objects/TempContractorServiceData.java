@@ -11,7 +11,9 @@ public class TempContractorServiceData {
     private static final TempContractorServiceData serviceData = new TempContractorServiceData();
     private List<ContractorService> hotWaterServices = new ArrayList<>();
     private List<ContractorService> boilerServices = new ArrayList<>();
-    public List<ContractorService> electricalServices = new ArrayList<>();
+    private List<ContractorService> electricalServices = new ArrayList<>();
+    private List<ContractorService> compressorServices = new ArrayList<>();
+    private List<ContractorService> airHandlerServices = new ArrayList<>();
 
     private TempContractorServiceData() {
         hotWaterServices.add(new ContractorService(8, 2, 16, "SDR Plumbing & Heating", "Routine Maintenance"));
@@ -22,12 +24,13 @@ public class TempContractorServiceData {
         boilerServices.add(new ContractorService(11, 7, 12, "Bruni & Campsi", "Installed new boiler"));
 
         electricalServices.add(new ContractorService(10, 6, 16, "ConnWest Electric", "Installed exterior lighting"));
+
+        compressorServices.add(new ContractorService(1, 27, 14, "AireServ", "Installed Goodman Compressor"));
     }
 
     public static TempContractorServiceData getInstance() {
         return serviceData;
     }
-
     public List<ContractorService> getHotWaterServices() {
         return hotWaterServices;
     }
@@ -36,5 +39,11 @@ public class TempContractorServiceData {
     }
     public List<ContractorService> getElectricalServices() {
         return electricalServices;
+    }
+    public List<ContractorService> getCompressorServices() {
+        return compressorServices;
+    }
+    public List<ContractorService> getAirHandlerServices() {
+        return airHandlerServices;
     }
 }

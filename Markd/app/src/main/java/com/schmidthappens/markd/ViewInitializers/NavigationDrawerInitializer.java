@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.MenuOptionActivities.ElectricalActivity;
+import com.schmidthappens.markd.MenuOptionActivities.HvacActivity;
 import com.schmidthappens.markd.MenuOptionActivities.MainActivity;
 import com.schmidthappens.markd.MenuOptionActivities.PlumbingActivity;
 import com.schmidthappens.markd.R;
@@ -63,11 +64,7 @@ public class NavigationDrawerInitializer {
     private void selectItem(int position) {
         //TODO intent to new page
         Log.i("Selected Item", menuOptions[position]);
-        if(menuOptions[position].equals("Electrical")) {
-            Class destinationClass = ElectricalActivity.class;
-            Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartElectricalActivity);
-        } else if(menuOptions[position].equals("Home")) {
+        if(menuOptions[position].equals("Home")) {
             Class destinationClass = MainActivity.class;
             Intent intentToStartHomeActivity = new Intent(context, destinationClass);
             context.startActivity(intentToStartHomeActivity);
@@ -75,6 +72,14 @@ public class NavigationDrawerInitializer {
             Class destinationClass = PlumbingActivity.class;
             Intent intentToStartPlumbingActivity = new Intent(context, destinationClass);
             context.startActivity(intentToStartPlumbingActivity);
+        } else if(menuOptions[position].equals("HVAC")) {
+            Class destinationClass = HvacActivity.class;
+            Intent intentToStartHvacActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartHvacActivity);
+        } else if(menuOptions[position].equals("Electrical")) {
+            Class destinationClass = ElectricalActivity.class;
+            Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartElectricalActivity);
         }
         drawerLayout.closeDrawer(drawerList);
     }
