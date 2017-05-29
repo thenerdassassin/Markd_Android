@@ -30,20 +30,20 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View v = convertView;
+        View panelListView = convertView;
 
-        if (v == null) {
-            LayoutInflater vi;
-            vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.panel_list_row, null);
+        if (panelListView == null) {
+            LayoutInflater inflater;
+            inflater = LayoutInflater.from(getContext());
+            panelListView = inflater.inflate(R.layout.panel_list_row, null);
         }
 
         Panel p = getItem(position);
 
         if (p != null) {
-            TextView panelDescriptionTextView = (TextView) v.findViewById(R.id.panel_description);
-            TextView panelAmperageTextView = (TextView) v.findViewById(R.id.panel_amperage);
-            TextView panelInstallDateTextView = (TextView) v.findViewById(R.id.panel_install_date);
+            TextView panelDescriptionTextView = (TextView) panelListView.findViewById(R.id.panel_description);
+            TextView panelAmperageTextView = (TextView) panelListView.findViewById(R.id.panel_amperage);
+            TextView panelInstallDateTextView = (TextView) panelListView.findViewById(R.id.panel_install_date);
 
             if (panelDescriptionTextView != null) {
                 panelDescriptionTextView.setText(p.getPanelDescription());
@@ -58,6 +58,6 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
             }
         }
 
-        return v;
+        return panelListView;
     }
 }

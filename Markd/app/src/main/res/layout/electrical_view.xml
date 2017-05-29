@@ -14,6 +14,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Panel Title -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
@@ -36,11 +37,14 @@
                     android:background="@android:color/darker_gray" />
             </RelativeLayout>
 
+            <!-- Panel List -->
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
                 android:layout_marginLeft="30dp"
-                android:layout_marginRight="25dp"
+                android:layout_marginRight="30dp"
                 android:layout_marginTop="15dp"
                 android:orientation="vertical">
 
@@ -51,6 +55,7 @@
 
             </LinearLayout>
 
+            <!-- Service List -->
             <FrameLayout
                 android:id="@+id/electrical_service_list"
                 android:layout_marginTop="20dp"
@@ -58,6 +63,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <!-- Contractor Footer -->
         <FrameLayout
             android:id="@+id/electrical_footer"
             android:layout_width="match_parent"
@@ -67,6 +73,7 @@
         </FrameLayout>
     </FrameLayout>
 
+    <!-- Navigation Menu -->
     <ListView
         android:id="@+id/left_drawer"
         android:layout_width="180dp"

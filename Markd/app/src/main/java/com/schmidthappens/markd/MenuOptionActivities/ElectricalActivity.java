@@ -72,16 +72,20 @@ public class ElectricalActivity extends AppCompatActivity {
         //TODO change to http call
         final TempPanelData panelData = TempPanelData.getInstance();
         panelList = (ListView)findViewById(R.id.panel_list);
+        View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, panelList, false);
+        panelList.addHeaderView(headerView);
         ArrayAdapter adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
         panelList.setAdapter(adapter);
         panelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Context context = ElectricalActivity.this;
-                Class destinationClass = ViewPanelActivity.class;
-                panelData.currentPanel = position;
-                Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
-                startActivity(intentToStartViewPanelActivity);
+                if(position != 0) {
+                    Context context = ElectricalActivity.this;
+                    Class destinationClass = ViewPanelActivity.class;
+                    panelData.currentPanel = position-1;
+                    Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
+                    startActivity(intentToStartViewPanelActivity);
+                }
             }
         });
 
