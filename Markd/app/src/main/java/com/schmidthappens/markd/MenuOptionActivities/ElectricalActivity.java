@@ -69,7 +69,7 @@ public class ElectricalActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
-        //TODO change to http call
+        //TODO change to http call for panels
         final TempPanelData panelData = TempPanelData.getInstance();
         panelList = (ListView)findViewById(R.id.panel_list);
         View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, panelList, false);
