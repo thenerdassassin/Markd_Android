@@ -8,17 +8,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.data_objects.TempPaintData;
 
 /**
  * Created by Josh on 5/29/2017.
@@ -33,8 +39,11 @@ public class PaintingActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ListView drawerList;
 
-    //ContractorFooter
+    //XML Objects
+    ImageView addPaintButton;
+    ListView paintList;
     private FrameLayout paintingContractor;
+
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -51,6 +60,19 @@ public class PaintingActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
+        //Initialize Add Button
+        addPaintButton = (ImageView)findViewById(R.id.painting_add_button);
+        addPaintButton.setOnClickListener(addPaintOnClickListener);
+
+        //Set Up PaintList
+        //TODO change to http call for paint
+        final TempPaintData paintData = TempPaintData.getInstance();
+        paintList = (ListView)findViewById(R.id.painting_paint_list);
+        /*View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, paintList, false); //change
+        paintList.addHeaderView(headerView);*/
+        ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints()); //change
+        paintList.setAdapter(adapter);
+        paintList.setOnItemClickListener(roomClickListener);
 
         //Initialize Contractor Footer
         //TODO change to http call to get painting contractor
@@ -62,6 +84,25 @@ public class PaintingActivity extends AppCompatActivity {
         //TODO change to http call to get service lists
         final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
     }
+
+    // Mark: OnClickListeners
+    private View.OnClickListener addPaintOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //TODO set onItemClick to add room
+            Log.d("Click:", "Add Room");
+            Toast.makeText(getApplicationContext(), "Add Room to Paint Page!", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private AdapterView.OnItemClickListener roomClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //TODO set onItemClick to edit paint
+            Log.d("Click:", "View Room");
+            Toast.makeText(getApplicationContext(), "Room Clicked", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     // Mark: SetUp Function
     private void setUpActionBar() {

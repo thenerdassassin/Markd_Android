@@ -10,15 +10,15 @@
         android:background="@drawable/background_texture">
 
         <!-- Main View -->
-        <ScrollView
-            android:id="@+id/painting_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="80dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- Rooms Title -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="25dp"
@@ -36,9 +36,35 @@
                     android:layout_height="1.5dp"
                     android:layout_alignParentBottom="true"
                     android:background="@android:color/darker_gray" />
+
+                <ImageView
+                    android:id="@+id/painting_add_button"
+                    android:layout_width="@dimen/square_icon"
+                    android:layout_height="@dimen/square_icon"
+                    android:layout_marginRight="-16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/add_button_round_black" />
             </RelativeLayout>
 
-        </ScrollView>
+            <!-- Room List -->
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/painting_paint_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </LinearLayout>
 
         <!-- Footer -->
         <FrameLayout
