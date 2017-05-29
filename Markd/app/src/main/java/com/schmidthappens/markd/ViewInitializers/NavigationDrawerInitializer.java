@@ -13,6 +13,7 @@ import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.MenuOptionActivities.ElectricalActivity;
 import com.schmidthappens.markd.MenuOptionActivities.HvacActivity;
 import com.schmidthappens.markd.MenuOptionActivities.MainActivity;
+import com.schmidthappens.markd.MenuOptionActivities.PaintingActivity;
 import com.schmidthappens.markd.MenuOptionActivities.PlumbingActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.MenuItem;
@@ -80,6 +81,10 @@ public class NavigationDrawerInitializer {
             Class destinationClass = ElectricalActivity.class;
             Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
             context.startActivity(intentToStartElectricalActivity);
+        } else if(menuOptions[position].equals("Painting")) {
+            Class destinationClass = PaintingActivity.class;
+            Intent intentToStartPaintingActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartPaintingActivity);
         }
         drawerLayout.closeDrawer(drawerList);
     }

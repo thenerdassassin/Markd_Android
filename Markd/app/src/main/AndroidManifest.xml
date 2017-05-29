@@ -50,6 +50,9 @@
         <activity android:name=".MenuOptionActivities.HvacActivity"
             android:value=".MenuOptionActivities.HvacActivity">
         </activity>
+        <activity android:name=".MenuOptionActivities.PaintingActivity"
+            android:value=".MenuOptionActivities.PaintingActivity">
+        </activity>
     </application>
 
 </manifest>
