@@ -7,8 +7,9 @@
         <item>Electrical</item>
         <item>Landscaping</item>
         <item>Painting</item>
-        <item>FAQs</item>
-        <item>Notifications</item>
+        <!-- Coming soon!-->
+        <!--<item>FAQs</item>
+        <item>Notifications</item>-->
         <item>Settings</item>
         <item>Sign Out</item>
     </string-array>
@@ -19,8 +20,8 @@
         <item>ic_action_electrical</item>
         <item>ic_action_landscaping</item>
         <item>ic_action_painter</item>
-        <item>ic_action_faqs</item>
-        <item>ic_action_notifications</item>
+        <!--<item>ic_action_faqs</item>
+        <item>ic_action_notifications</item>-->
         <item>ic_action_settings</item>
         <item>ic_action_sign_out</item>
     </string-array>
