@@ -53,6 +53,9 @@
         <activity android:name=".MenuOptionActivities.PaintingActivity"
             android:value=".MenuOptionActivities.PaintingActivity">
         </activity>
+        <activity android:name=".MenuOptionActivities.LandscapingActivity"
+            android:value=".MenuOptionActivities.LandscapingActivity">
+        </activity>
     </application>
 
 </manifest>

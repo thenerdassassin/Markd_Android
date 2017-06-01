@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.MenuOptionActivities.ElectricalActivity;
 import com.schmidthappens.markd.MenuOptionActivities.HvacActivity;
+import com.schmidthappens.markd.MenuOptionActivities.LandscapingActivity;
 import com.schmidthappens.markd.MenuOptionActivities.MainActivity;
 import com.schmidthappens.markd.MenuOptionActivities.PaintingActivity;
 import com.schmidthappens.markd.MenuOptionActivities.PlumbingActivity;
@@ -81,6 +82,10 @@ public class NavigationDrawerInitializer {
             Class destinationClass = ElectricalActivity.class;
             Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
             context.startActivity(intentToStartElectricalActivity);
+        }  else if(menuOptions[position].equals("Landscaping")) {
+            Class destinationClass = LandscapingActivity.class;
+            Intent intentToStartLandscapingActivity = new Intent(context, destinationClass);
+            context.startActivity(intentToStartLandscapingActivity);
         } else if(menuOptions[position].equals("Painting")) {
             Class destinationClass = PaintingActivity.class;
             Intent intentToStartPaintingActivity = new Intent(context, destinationClass);
