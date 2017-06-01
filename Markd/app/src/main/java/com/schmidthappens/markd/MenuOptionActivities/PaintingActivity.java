@@ -23,7 +23,6 @@ import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPaintData;
 
 /**
@@ -68,9 +67,7 @@ public class PaintingActivity extends AppCompatActivity {
         //TODO change to http call for paint
         final TempPaintData paintData = TempPaintData.getInstance();
         paintList = (ListView)findViewById(R.id.painting_paint_list);
-        /*View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, paintList, false); //change
-        paintList.addHeaderView(headerView);*/
-        ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints()); //change
+        ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints());
         paintList.setAdapter(adapter);
         paintList.setOnItemClickListener(roomClickListener);
 
@@ -80,9 +77,6 @@ public class PaintingActivity extends AppCompatActivity {
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
         View v = ContractorFooterViewInitializer.createFooterView(this, logo, "MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com");
         paintingContractor.addView(v);
-
-        //TODO change to http call to get service lists
-        final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
     }
 
     // Mark: OnClickListeners
