@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -116,19 +115,6 @@ public class PaintingActivity extends AppCompatActivity {
                 }
             }
         });
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setVisibility(View.GONE);
-    }
-
-    // Mark:- DrawerMenu
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setClickable(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
     }
 
     private void setUpDrawerToggle() {

@@ -16,7 +16,7 @@
         android:layout_alignParentLeft="true"
         android:clickable="true"
         />
-    <!-- TODO Change to Logo -->
+    <!-- Logo -->
     <ImageView
         android:id="@+id/title_logo"
         android:layout_width="160dp"
@@ -26,6 +26,7 @@
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
         app:srcCompat="@drawable/white_transparent_logo"/>
+    <!-- edit button not needed?
     <ImageView
         android:id="@+id/edit_mode"
         app:srcCompat="@drawable/edit_action_white"
@@ -35,5 +36,5 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:clickable="true"
-        />
+        /> -->
 </RelativeLayout>

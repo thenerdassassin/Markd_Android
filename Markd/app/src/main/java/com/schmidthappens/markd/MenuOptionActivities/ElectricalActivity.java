@@ -10,9 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -120,13 +118,6 @@ public class ElectricalActivity extends AppCompatActivity {
                 }
             }
         });
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Hit button action", "Edit Mode Activated");
-            }
-        });
     }
 
     //Mark:- OnClick Listeners
@@ -137,16 +128,6 @@ public class ElectricalActivity extends AppCompatActivity {
         }
     };
 
-    // Mark:- DrawerMenu
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setClickable(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {

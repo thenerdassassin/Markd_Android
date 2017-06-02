@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -31,7 +30,6 @@ import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializ
 
 public class HvacActivity extends AppCompatActivity {
     //ActionBar
-    private ActionBar actionBar;
     private ActionBarDrawerToggle drawerToggle;
 
     //NavigationDrawer
@@ -93,12 +91,12 @@ public class HvacActivity extends AppCompatActivity {
 
     // Mark: SetUp Function
     private void setUpActionBar() {
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.action_bar);
         //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
+        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,8 +107,6 @@ public class HvacActivity extends AppCompatActivity {
                 }
             }
         });
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setVisibility(View.GONE);
     }
 
     private View.OnClickListener airHandlerEditButtonClickListener = new View.OnClickListener() {
@@ -143,17 +139,6 @@ public class HvacActivity extends AppCompatActivity {
         }
     };
 
-
-    // Mark:- DrawerMenu
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setClickable(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {

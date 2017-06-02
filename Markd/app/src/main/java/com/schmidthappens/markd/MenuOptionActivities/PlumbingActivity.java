@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -109,8 +108,6 @@ public class PlumbingActivity extends AppCompatActivity {
                 }
             }
         });
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setVisibility(View.GONE);
     }
 
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
@@ -142,19 +139,7 @@ public class PlumbingActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), TempContractorServiceData.getInstance().getBoilerServices().size() + "", Toast.LENGTH_SHORT).show();
         }
     };
-
-
-    // Mark:- DrawerMenu
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerList);
-        ImageView editButton = (ImageView) findViewById(R.id.edit_mode);
-        editButton.setClickable(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
+    
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             /** Called when a drawer has settled in a completely closed state. */
