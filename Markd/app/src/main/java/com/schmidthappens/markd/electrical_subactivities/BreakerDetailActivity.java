@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.ElectricalSubActivities;
+package com.schmidthappens.markd.electrical_subactivities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.schmidthappens.markd.MenuOptionActivities.ViewPanelActivity;
+import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.BreakerAmperage;

@@ -10,12 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
-import com.schmidthappens.markd.MenuOptionActivities.ElectricalActivity;
-import com.schmidthappens.markd.MenuOptionActivities.HvacActivity;
-import com.schmidthappens.markd.MenuOptionActivities.LandscapingActivity;
-import com.schmidthappens.markd.MenuOptionActivities.MainActivity;
-import com.schmidthappens.markd.MenuOptionActivities.PaintingActivity;
-import com.schmidthappens.markd.MenuOptionActivities.PlumbingActivity;
+import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
+import com.schmidthappens.markd.menu_option_activities.HvacActivity;
+import com.schmidthappens.markd.menu_option_activities.LandscapingActivity;
+import com.schmidthappens.markd.menu_option_activities.MainActivity;
+import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
+import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.MenuItem;
 
@@ -34,6 +34,7 @@ public class NavigationDrawerInitializer {
     ListView drawerList;
     String[] menuOptions;
     String[] menuIconStrings;
+    private static final String TAG = "NavigationDrawer";
 
     public NavigationDrawerInitializer(Context context, DrawerLayout drawerLayout, ListView drawerList, ActionBarDrawerToggle drawerToggle){
         this.context = context;
@@ -65,7 +66,7 @@ public class NavigationDrawerInitializer {
 
     private void selectItem(int position) {
         //TODO intent to new page
-        Log.i("Selected Item", menuOptions[position]);
+        Log.i(TAG, "Selected Item-" + menuOptions[position]);
         if(menuOptions[position].equals("Home")) {
             Class destinationClass = MainActivity.class;
             Intent intentToStartHomeActivity = new Intent(context, destinationClass);

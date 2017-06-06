@@ -18,44 +18,63 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!-- Main -->
         <activity
-            android:name=".MenuOptionActivities.MainActivity">
+            android:name=".menu_option_activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MenuOptionActivities.ViewPanelActivity"
-            android:value=".MenuOptionActivities.ViewPanelActivity"/>
-        <activity
-            android:name=".ElectricalSubActivities.BreakerDetailActivity"
-            android:parentActivityName=".MenuOptionActivities.ViewPanelActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ElectricalSubActivities.PanelDetailActivity" />
-        </activity>
-        <activity
-            android:name=".ElectricalSubActivities.PanelDetailActivity"
-            android:parentActivityName=".MenuOptionActivities.ViewPanelActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MenuOptionActivities.ViewPanelActivity" />
-        </activity>
-        <activity android:name=".MenuOptionActivities.ElectricalActivity"
-            android:value=".MenuOptionActivities.ElectricalActivity">
-        </activity>
-        <activity android:name=".MenuOptionActivities.PlumbingActivity"
+
+        <!-- Plumbing -->
+        <activity android:name=".menu_option_activities.PlumbingActivity"
             android:value=".MenuOptionActivities.PlumbingActivity">
         </activity>
-        <activity android:name=".MenuOptionActivities.HvacActivity"
+            <!-- Plumbing Sub-Activities -->
+            <activity android:name=".plumbing_subactivities.PlumbingEditActivity"
+                android:value=".plumbing_subactivities.PlumbingEditActivity"
+                android:parentActivityName=".menu_option_activities.PlumbingActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".menu_option_activities.PlumbingActivity" />
+            </activity>
+        <!-- HVAC -->
+        <activity android:name=".menu_option_activities.HvacActivity"
             android:value=".MenuOptionActivities.HvacActivity">
         </activity>
-        <activity android:name=".MenuOptionActivities.PaintingActivity"
-            android:value=".MenuOptionActivities.PaintingActivity">
+
+        <!-- Electrical -->
+        <activity android:name=".menu_option_activities.ElectricalActivity"
+            android:value=".MenuOptionActivities.ElectricalActivity">
         </activity>
-        <activity android:name=".MenuOptionActivities.LandscapingActivity"
+            <!-- Electrical Sub-Activities -->
+            <activity android:name=".menu_option_activities.ViewPanelActivity"
+                android:value=".MenuOptionActivities.ViewPanelActivity"/>
+            <activity
+                android:name=".electrical_subactivities.BreakerDetailActivity"
+                android:parentActivityName=".menu_option_activities.ViewPanelActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".electrical_subactivities.PanelDetailActivity" />
+            </activity>
+            <activity
+                android:name=".electrical_subactivities.PanelDetailActivity"
+                android:parentActivityName=".menu_option_activities.ViewPanelActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".menu_option_activities.ViewPanelActivity" />
+            </activity>
+
+        <!-- Landscaping -->
+        <activity android:name=".menu_option_activities.LandscapingActivity"
             android:value=".MenuOptionActivities.LandscapingActivity">
         </activity>
-    </application>
 
+        <!-- Painting -->
+        <activity android:name=".menu_option_activities.PaintingActivity"
+            android:value=".MenuOptionActivities.PaintingActivity">
+        </activity>
+
+    </application>
 </manifest>
