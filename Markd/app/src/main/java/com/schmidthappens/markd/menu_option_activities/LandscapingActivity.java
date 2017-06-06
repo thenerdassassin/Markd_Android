@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.MenuOptionActivities;
+package com.schmidthappens.markd.menu_option_activities;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

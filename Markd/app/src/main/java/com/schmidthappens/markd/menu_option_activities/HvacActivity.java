@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.MenuOptionActivities;
+package com.schmidthappens.markd.menu_option_activities;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -28,9 +28,8 @@ import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializ
  * Created by Josh on 4/18/2017.
  */
 
-public class PlumbingActivity extends AppCompatActivity {
+public class HvacActivity extends AppCompatActivity {
     //ActionBar
-    private ActionBar actionBar;
     private ActionBarDrawerToggle drawerToggle;
 
     //NavigationDrawer
@@ -38,18 +37,18 @@ public class PlumbingActivity extends AppCompatActivity {
     private ListView drawerList;
 
     //XML Objects
-    ImageView hotWaterEditButton;
-    FrameLayout hotWaterServiceList;
+    ImageView airHandlerEditButton;
+    FrameLayout airHandlerServiceList;
 
-    ImageView boilerEditButton;
-    FrameLayout boilerServiceList;
+    ImageView compressorEditButton;
+    FrameLayout compressorServiceList;
 
-    FrameLayout plumbingContractor;
+    FrameLayout hvacContractor;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.plumbing_view);
+        setContentView(R.layout.hvac_view);
 
         //Initialize ActionBar
         setUpActionBar();
@@ -62,42 +61,42 @@ public class PlumbingActivity extends AppCompatActivity {
         ndi.setUp();
 
         //Initialize XML Objects
-        hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
-        hotWaterServiceList = (FrameLayout)findViewById(R.id.plumbing_hot_water_service_list);
+        airHandlerEditButton = (ImageView)findViewById(R.id.hvac_air_handler_edit);
+        airHandlerServiceList = (FrameLayout)findViewById(R.id.hvac_air_handler_service_list);
 
-        boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
-        boilerServiceList = (FrameLayout)findViewById(R.id.plumbing_boiler_service_list);
+        compressorEditButton = (ImageView)findViewById(R.id.hvac_compressor_edit);
+        compressorServiceList = (FrameLayout)findViewById(R.id.hvac_compressor_service_list);
 
         //Initialize Contractor Footer
-        //TODO change to http call to get plumbing contractor
-        plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.sdr_logo);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com");
-        plumbingContractor.addView(v);
+        //TODO change to http call to get hvac contractor
+        hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "AireServ", "203.348.2295", "aireserv.com");
+        hvacContractor.addView(v);
 
         //Set Up Buttons
-        hotWaterEditButton.setOnClickListener(hotWaterEditButtonClickListener);
-        boilerEditButton.setOnClickListener(boilerEditButtonClickListener);
+        airHandlerEditButton.setOnClickListener(airHandlerEditButtonClickListener);
+        compressorEditButton.setOnClickListener(compressorEditButtonClickListener);
 
         //TODO change to http call to get service lists
         final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
         //Set Up Service Lists
-        View hotWaterServiceListView = createServiceListView(this, serviceData.getHotWaterServices(), hotWaterAddServiceClickListener);
-        hotWaterServiceList.addView(hotWaterServiceListView);
+        View airHandlerServiceListView = createServiceListView(this, serviceData.getAirHandlerServices(), airHandlerAddServiceClickListener);
+        airHandlerServiceList.addView(airHandlerServiceListView);
 
-        View boilerServiceListView = ServiceListViewInitializer.createServiceListView(this, serviceData.getBoilerServices(), boilerAddServiceClickListener);
-        boilerServiceList.addView(boilerServiceListView);
+        View compressorServiceListView = ServiceListViewInitializer.createServiceListView(this, serviceData.getCompressorServices(), compressorAddServiceClickListener);
+        compressorServiceList.addView(compressorServiceListView);
     }
 
     // Mark: SetUp Function
     private void setUpActionBar() {
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.action_bar);
         //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
+        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,36 +109,37 @@ public class PlumbingActivity extends AppCompatActivity {
         });
     }
 
-    private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
+    private View.OnClickListener airHandlerEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.d("Click:", "Hot Water Edit");
-            Toast.makeText(getApplicationContext(), "Hot Water Edit Clicked!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Air Handler Edit Clicked!", Toast.LENGTH_SHORT).show();
         }
     };
 
-    private View.OnClickListener hotWaterAddServiceClickListener = new View.OnClickListener() {
+    private View.OnClickListener airHandlerAddServiceClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New Hot Water Service", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Add New Air Handler Service", Toast.LENGTH_SHORT).show();
         }
     };
 
-    private View.OnClickListener boilerEditButtonClickListener = new View.OnClickListener() {
+    private View.OnClickListener compressorEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.d("Click:", "Boiler Edit");
-            Toast.makeText(getApplicationContext(), "Boiler Edit Clicked!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Compressor Edit Clicked!", Toast.LENGTH_SHORT).show();
         }
     };
 
-    private View.OnClickListener boilerAddServiceClickListener = new View.OnClickListener() {
+    private View.OnClickListener compressorAddServiceClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), TempContractorServiceData.getInstance().getBoilerServices().size() + "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Add New Compressor Service", Toast.LENGTH_SHORT).show();
         }
     };
-    
+
+
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             /** Called when a drawer has settled in a completely closed state. */

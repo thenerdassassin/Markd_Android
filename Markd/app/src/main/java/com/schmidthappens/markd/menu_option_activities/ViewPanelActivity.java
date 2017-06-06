@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.MenuOptionActivities;
+package com.schmidthappens.markd.menu_option_activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.AdapterClasses.PanelAdapter;
-import com.schmidthappens.markd.ElectricalSubActivities.BreakerDetailActivity;
-import com.schmidthappens.markd.ElectricalSubActivities.PanelDetailActivity;
+import com.schmidthappens.markd.electrical_subactivities.BreakerDetailActivity;
+import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;

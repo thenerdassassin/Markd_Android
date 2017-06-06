@@ -1,5 +1,7 @@
-package com.schmidthappens.markd.MenuOptionActivities;
+package com.schmidthappens.markd.menu_option_activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -8,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,17 +19,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
+import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
-import com.schmidthappens.markd.data_objects.TempPaintData;
+import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.data_objects.TempPanelData;
+
+import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer.createServiceListView;
 
 /**
- * Created by Josh on 5/29/2017.
+ * Created by Josh on 3/24/2017.
  */
 
-public class PaintingActivity extends AppCompatActivity {
+
+public class ElectricalActivity extends AppCompatActivity {
     //ActionBar
     private ActionBar actionBar;
     private ActionBarDrawerToggle drawerToggle;
@@ -38,15 +43,18 @@ public class PaintingActivity extends AppCompatActivity {
     private ListView drawerList;
 
     //XML Objects
-    ImageView addPaintButton;
-    ListView paintList;
-    private FrameLayout paintingContractor;
-
+    ListView panelList;
+    FrameLayout electricalContractor;
+    FrameLayout electricalServiceList;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.painting_view);
+        setContentView(R.layout.electrical_view);
+
+        //Initialize XML Objects
+        electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
+        electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
 
         //Initialize ActionBar
         setUpActionBar();
@@ -58,46 +66,40 @@ public class PaintingActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
-        //Initialize Add Button
-        addPaintButton = (ImageView)findViewById(R.id.painting_add_button);
-        addPaintButton.setOnClickListener(addPaintOnClickListener);
+        //TODO change to http call for panels
+        final TempPanelData panelData = TempPanelData.getInstance();
+        panelList = (ListView)findViewById(R.id.panel_list);
+        View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, panelList, false);
+        panelList.addHeaderView(headerView);
+        ArrayAdapter adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
+        panelList.setAdapter(adapter);
+        panelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    Context context = ElectricalActivity.this;
+                    Class destinationClass = ViewPanelActivity.class;
+                    panelData.currentPanel = position-1;
+                    Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
+                    startActivity(intentToStartViewPanelActivity);
+                }
+            }
+        });
 
-        //Set Up PaintList
-        //TODO change to http call for paint
-        final TempPaintData paintData = TempPaintData.getInstance();
-        paintList = (ListView)findViewById(R.id.painting_paint_list);
-        ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints());
-        paintList.setAdapter(adapter);
-        paintList.setOnItemClickListener(roomClickListener);
+        //Set up ElectricalService List
+        //TODO change to http call for electrical services
+        TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
-        //Initialize Contractor Footer
-        //TODO change to http call to get painting contractor
-        paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com");
-        paintingContractor.addView(v);
+        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), electricalOnClickListener);
+        electricalServiceList.addView(electricalServiceListView);
+
+        //Set up ElectricalContractor
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.connwestlogocrop);
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "Conn-West Electric", "203.922.2011", "connwestelectric.com");
+        electricalContractor.addView(v);
     }
 
-    // Mark: OnClickListeners
-    private View.OnClickListener addPaintOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //TODO set onItemClick to add room
-            Log.d("Click:", "Add Room");
-            Toast.makeText(getApplicationContext(), "Add Room to Paint Page!", Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private AdapterView.OnItemClickListener roomClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //TODO set onItemClick to edit paint
-            Log.d("Click:", "View Room");
-            Toast.makeText(getApplicationContext(), "Room Clicked", Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    // Mark: SetUp Function
+    // Mark:- SetUp Functions
     private void setUpActionBar() {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
@@ -116,6 +118,15 @@ public class PaintingActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Mark:- OnClick Listeners
+    private View.OnClickListener electricalOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getApplicationContext(), "Add Electrical Service", Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
