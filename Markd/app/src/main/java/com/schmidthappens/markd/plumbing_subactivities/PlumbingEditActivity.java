@@ -75,7 +75,6 @@ public class PlumbingEditActivity extends AppCompatActivity {
     private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.i(TAG, "Save Hot Water Changes");
             hideKeyboard(PlumbingEditActivity.this.getCurrentFocus());
             savePlumbingChanges();
             goBackToPlumbingActivity();
@@ -85,7 +84,6 @@ public class PlumbingEditActivity extends AppCompatActivity {
     private View.OnClickListener setInstallDateButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.i(TAG, "Set Install Date");
             hideKeyboard(PlumbingEditActivity.this.getCurrentFocus());
             showDatePickerDialog(v);
         }
@@ -100,11 +98,13 @@ public class PlumbingEditActivity extends AppCompatActivity {
         //TODO change to http calls to save plumbing changes
         TempPlumbingData plumbingData = TempPlumbingData.getInstance();
         if(getTitle().equals("Domestic Hot Water")) {
+            Log.i(TAG, "Save Hot Water Changes");
             plumbingData.setHotWaterManufacturer(editManufacturer.getText().toString());
             plumbingData.setHotWaterModel(editModel.getText().toString());
             plumbingData.setHotWaterInstallDate(editInstallDate.getText().toString());
             plumbingData.setHotWaterLifeSpan(editLifeSpan.getText().toString());
         } else if(getTitle().equals("Boiler")) {
+            Log.i(TAG, "Save Boiler Changes");
             plumbingData.setBoilerManufacturer(editManufacturer.getText().toString());
             plumbingData.setBoilerModel(editModel.getText().toString());
             plumbingData.setBoilerInstallDate(editInstallDate.getText().toString());

@@ -82,7 +82,6 @@ public class PlumbingActivity extends AppCompatActivity {
         initializeHotWater();
         initializeBoiler();
 
-
         //Initialize Contractor Footer
         //TODO change to http call to get plumbing contractor
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
