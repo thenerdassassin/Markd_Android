@@ -13,6 +13,7 @@ public class Panel {
     private String panelDescription;
     private String installDate;
     private List<Breaker> breakerList;
+    private int numberOfBreakers;
     private PanelManufacturer manufacturer;
 
     // Mark:- Constructors
@@ -193,8 +194,10 @@ public class Panel {
         }
         return this;
     }
-    public Panel updatePanel(boolean isMainPanel, PanelAmperage amperage, PanelManufacturer manufacturer) {
+    public Panel updatePanel(String panelDescription, boolean isMainPanel, String panelInstallDate, PanelAmperage amperage, PanelManufacturer manufacturer) {
+        this.panelDescription = panelDescription;
         this.isMainPanel = isMainPanel;
+        this.installDate = panelInstallDate;
         this.amperage = amperage;
         this.manufacturer = manufacturer;
         return this;

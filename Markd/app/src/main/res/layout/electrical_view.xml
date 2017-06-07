@@ -49,9 +49,17 @@
                 android:orientation="vertical">
 
                 <ListView
-                    android:id="@+id/panel_list"
+                    android:id="@+id/electrical_panel_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/electrical_add_panel_hyperlink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:textColor="@color/hyperlink"
+                    android:textSize="12sp"
+                    android:text="@string/add_panel"/>
 
             </LinearLayout>
 

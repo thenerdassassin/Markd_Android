@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColorLink="@android:color/holo_blue_dark"
+            android:textColorLink="@color/hyperlink"
             android:textStyle="normal"
             android:autoLink="phone"
             android:linksClickable="true"
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColorLink="@android:color/holo_blue_dark"
+            android:textColorLink="@color/hyperlink"
             android:layout_marginBottom="10dp"
             android:autoLink="web"
             />

@@ -104,7 +104,7 @@
                             android:layout_marginLeft="5dp"
                             android:gravity="center_vertical|start"
                             android:textSize="14sp"
-                            android:textColor="@android:color/holo_blue_dark"
+                            android:textColor="@color/hyperlink"
                             android:text="@string/contact"/>
                     </LinearLayout>
 
@@ -128,7 +128,7 @@
                             android:clickable="true"
                             android:gravity="center_vertical|start"
                             android:text="@string/contact"
-                            android:textColor="@android:color/holo_blue_dark"
+                            android:textColor="@color/hyperlink"
                             android:textSize="14sp" />
                     </LinearLayout>
 
@@ -152,7 +152,7 @@
                             android:clickable="true"
                             android:gravity="center_vertical|start"
                             android:text="@string/contact"
-                            android:textColor="@android:color/holo_blue_dark"
+                            android:textColor="@color/hyperlink"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>

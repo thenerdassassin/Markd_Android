@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
@@ -44,8 +46,11 @@ public class ElectricalActivity extends AppCompatActivity {
 
     //XML Objects
     ListView panelList;
-    FrameLayout electricalContractor;
+    TextView addPanelHyperlink;
     FrameLayout electricalServiceList;
+    FrameLayout electricalContractor;
+
+    private static final String TAG = "ElectricalActivity";
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -67,13 +72,13 @@ public class ElectricalActivity extends AppCompatActivity {
         ndi.setUp();
 
         //TODO change to http call for panels
+        //Initialize Panel List
         final TempPanelData panelData = TempPanelData.getInstance();
-        panelList = (ListView)findViewById(R.id.panel_list);
+        panelList = (ListView)findViewById(R.id.electrical_panel_list);
         View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, panelList, false);
         panelList.addHeaderView(headerView);
-        ArrayAdapter adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
-        panelList.setAdapter(adapter);
-        panelList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(position != 0) {
@@ -83,6 +88,17 @@ public class ElectricalActivity extends AppCompatActivity {
                     Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
                     startActivity(intentToStartViewPanelActivity);
                 }
+            }
+        };
+        ArrayAdapter adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
+        panelList.setAdapter(adapter);
+
+        //Set Up Add Panel Hyperlink
+        addPanelHyperlink = (TextView)findViewById(R.id.electrical_add_panel_hyperlink);
+        addPanelHyperlink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Add Panel Clicked");
             }
         });
 

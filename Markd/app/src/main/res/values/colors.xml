@@ -7,4 +7,6 @@
     <color name="colorLabel">#FFFFFF</color>
     <color name="colorPanel">#B8B8B8</color>
     <color name="black">#000000</color>
+    <color name="hyperlink">@android:color/holo_blue_dark</color>
+    <color name="delete">@android:color/holo_red_dark</color>
 </resources>

@@ -97,8 +97,8 @@ public class TempPanelData {
         this.panels.get(currentPanel).addBreaker(newBreaker);
         return this.panels.get(currentPanel);
     }
-    public Panel updatePanel(boolean isMainPanel, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
-        this.panels.get(currentPanel).updatePanel(isMainPanel, panelAmperage, manufacturer);
+    public Panel updatePanel(String panelDescription, boolean isMainPanel, String panelInstallDate, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
+        this.panels.get(currentPanel).updatePanel(panelDescription, isMainPanel, panelInstallDate, panelAmperage, manufacturer);
         return this.panels.get(currentPanel);
     }
 

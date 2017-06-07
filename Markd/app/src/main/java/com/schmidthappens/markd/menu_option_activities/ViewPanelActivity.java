@@ -21,9 +21,6 @@ import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 
-interface PanelSwipeHandler {
-    void onSwipe(boolean isLeft);
-}
 //TODO remove extra stuff from home page
 public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter.PanelAdapterOnClickHandler {
     //Recycler View
@@ -33,6 +30,8 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
 
     private TempPanelData myPanels;
     public int currentPanel = 0;
+
+    private static final String TAG = "ViewPanelActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +68,12 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         Intent intentThatStartedThisActivity = getIntent();
         if(intentThatStartedThisActivity != null) {
             if(intentThatStartedThisActivity.hasExtra("actionType")) {
+
                 //Deleting a Breaker
                 if(intentThatStartedThisActivity.getStringExtra("actionType").equals("Delete Breaker")) {
                     if(intentThatStartedThisActivity.hasExtra("breakerNumber")) {
                         int breakerToDelete = Integer.parseInt(intentThatStartedThisActivity.getStringExtra("breakerNumber"));
+                        Log.i(TAG, "Delete Breaker " + breakerToDelete);
                         myPanels.updatePanel(myPanels.getPanel(myPanels.currentPanel).deleteBreaker(breakerToDelete));
                         panelAdapter.notifyDataSetChanged();
                     }
@@ -83,6 +84,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
 
     @Override
     public boolean onSupportNavigateUp(){
+        Log.i(TAG, "Navigate Up");
         Context context = ViewPanelActivity.this;
         Class destinationClass = ElectricalActivity.class;
         Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
@@ -94,13 +96,15 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.view_panel_menu, menu);
+        //inflater.inflate(R.menu.view_panel_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        //TODO Remove
+        /*switch (item.getItemId()) {
+            //TODO Remove
             case R.id.action_add_breaker:
                 int nextBreakerInt = myPanels.getPanel(currentPanel).breakerCount()+1;
                 Breaker newBreakerToAdd = new Breaker(nextBreakerInt, "");
@@ -115,12 +119,14 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
+        }*/
+        return super.onOptionsItemSelected(item);
     }
 
     // Mark:- Action Handlers
     @Override
     public void onClick(Breaker breakerClicked) {
+        Log.i(TAG, "Click Breaker " + breakerClicked.getNumber());
         Context context = this;
         Class destinationClass = BreakerDetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
@@ -131,7 +137,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
 
     private View.OnClickListener panelTitleOnClickListener = new View.OnClickListener() {
         public void onClick(View view){
-            Log.d("Clicked", "Panel Title Was Clicked");
+            Log.i(TAG, "Click Panel Title");
             //Pass to PanelDetailActivity
             Context context = ViewPanelActivity.this;
             Class destinationClass = PanelDetailActivity.class;
@@ -150,7 +156,9 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
     }
 
     private void passPanelData(Intent intent, Panel panel) {
+        intent.putExtra("panelDescription", panel.getPanelDescription());
         intent.putExtra("isMainPanel", panel.getIsMainPanel());
+        intent.putExtra("panelInstallDate", panel.getInstallDate());
         intent.putExtra("panelAmperage", panel.getAmperage().toString());
         intent.putExtra("manufacturer", panel.getManufacturer().toString());
     }
