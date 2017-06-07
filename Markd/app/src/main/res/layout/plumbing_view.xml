@@ -70,6 +70,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Manufacturer:"
                             android:textSize="16sp" />
 
@@ -78,8 +79,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="Bosch"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -95,15 +97,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Model:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_hot_water_model"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="C950 ES NG"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -119,15 +124,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Installed on:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_hot_water_install_date"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="1/17/14"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -143,15 +151,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Projected Life Span:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_hot_water_life_span"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="12 years"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
                     <!-- Service History -->
@@ -212,15 +223,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Manufacturer:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_boiler_manufacturer"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="Westinghouse"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -236,15 +250,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Model:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_boiler_model"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="WBRCLP140W"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -260,15 +277,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Installed on:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_boiler_install_date"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="11/7/12"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -284,15 +304,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Projected Life Span:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/plumbing_boiler_life_span"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="9 years"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 

@@ -24,6 +24,7 @@ import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
 
 import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer.createServiceListView;
@@ -44,13 +45,22 @@ public class PlumbingActivity extends AppCompatActivity {
     //XML Objects
     ImageView hotWaterEditButton;
     TextView hotWaterManufacturerView;
+    TextView hotWaterModelView;
+    TextView hotWaterInstallDateView;
+    TextView hotWaterLifeSpanView;
     FrameLayout hotWaterServiceList;
 
     ImageView boilerEditButton;
+    TextView boilerManufacturerView;
+    TextView boilerModelView;
+    TextView boilerInstallDateView;
+    TextView boilerLifeSpanView;
     FrameLayout boilerServiceList;
 
     FrameLayout plumbingContractor;
 
+    //TODO change to http call to get plumbing hot water/boiler data
+    TempPlumbingData plumbingData = TempPlumbingData.getInstance();
     private static final String TAG = "PlumbingActivity";
 
     @Override
@@ -69,12 +79,9 @@ public class PlumbingActivity extends AppCompatActivity {
         ndi.setUp();
 
         //Initialize XML Objects
-        hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
-        hotWaterManufacturerView =(TextView)findViewById(R.id.plumbing_hot_water_manufacturer);
-        hotWaterServiceList = (FrameLayout)findViewById(R.id.plumbing_hot_water_service_list);
+        initializeHotWater();
+        initializeBoiler();
 
-        boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
-        boilerServiceList = (FrameLayout)findViewById(R.id.plumbing_boiler_service_list);
 
         //Initialize Contractor Footer
         //TODO change to http call to get plumbing contractor
@@ -118,15 +125,50 @@ public class PlumbingActivity extends AppCompatActivity {
         });
     }
 
+    private void initializeHotWater() {
+        hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
+
+        hotWaterManufacturerView =(TextView)findViewById(R.id.plumbing_hot_water_manufacturer);
+        hotWaterManufacturerView.setText(plumbingData.getHotWaterManufacturer());
+
+        hotWaterModelView = (TextView)findViewById(R.id.plumbing_hot_water_model);
+        hotWaterModelView.setText(plumbingData.getHotWaterModel());
+
+        hotWaterInstallDateView = (TextView)findViewById(R.id.plumbing_hot_water_install_date);
+        hotWaterInstallDateView.setText(plumbingData.getHotWaterInstallDate());
+
+        hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
+        hotWaterLifeSpanView.setText(plumbingData.getHotWaterLifeSpan());
+
+        hotWaterServiceList = (FrameLayout)findViewById(R.id.plumbing_hot_water_service_list);
+    }
+
+    private void initializeBoiler() {
+        boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
+
+        boilerManufacturerView =(TextView)findViewById(R.id.plumbing_boiler_manufacturer);
+        boilerManufacturerView.setText(plumbingData.getBoilerManufacturer());
+
+        boilerModelView = (TextView)findViewById(R.id.plumbing_boiler_model);
+        boilerModelView.setText(plumbingData.getBoilerModel());
+
+        boilerInstallDateView = (TextView)findViewById(R.id.plumbing_boiler_install_date);
+        boilerInstallDateView.setText(plumbingData.getBoilerInstallDate());
+
+        boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
+        boilerLifeSpanView.setText(plumbingData.getBoilerLifeSpan());
+
+        boilerServiceList = (FrameLayout)findViewById(R.id.plumbing_boiler_service_list);
+    }
+
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.i(TAG, "Edit Hot Water");
-            Toast.makeText(getApplicationContext(), "Hot Water Edit Clicked!", Toast.LENGTH_SHORT).show();
             Class destinationClass = PlumbingEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
-            intentToStartPlumbingEditActivity.putExtra("manufacturer", hotWaterManufacturerView.getText());
+            intentToStartPlumbingEditActivity = putHotWaterExtras(intentToStartPlumbingEditActivity);
             startActivity(intentToStartPlumbingEditActivity);
         }
     };
@@ -141,8 +183,12 @@ public class PlumbingActivity extends AppCompatActivity {
     private View.OnClickListener boilerEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.i(TAG, "Edit Boiler Edit");
-            Toast.makeText(getApplicationContext(), "Boiler Edit Clicked!", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Edit Boiler");
+            Class destinationClass = PlumbingEditActivity.class;
+            Context context = PlumbingActivity.this;
+            Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
+            intentToStartPlumbingEditActivity = putBoilerExtras(intentToStartPlumbingEditActivity);
+            startActivity(intentToStartPlumbingEditActivity);
         }
     };
 
@@ -168,5 +214,23 @@ public class PlumbingActivity extends AppCompatActivity {
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
+    }
+
+    private Intent putHotWaterExtras(Intent intent) {
+        intent.putExtra("title", "Domestic Hot Water");
+        intent.putExtra("manufacturer", hotWaterManufacturerView.getText());
+        intent.putExtra("model", hotWaterModelView.getText());
+        intent.putExtra("installDate", hotWaterInstallDateView.getText());
+        intent.putExtra("lifespan", hotWaterLifeSpanView.getText());
+        return intent;
+    }
+
+    private Intent putBoilerExtras(Intent intent) {
+        intent.putExtra("title", "Boiler");
+        intent.putExtra("manufacturer", boilerManufacturerView.getText());
+        intent.putExtra("model", boilerModelView.getText());
+        intent.putExtra("installDate", boilerInstallDateView.getText());
+        intent.putExtra("lifespan", boilerLifeSpanView.getText());
+        return intent;
     }
 }
