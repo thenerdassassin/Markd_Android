@@ -43,6 +43,14 @@
         <activity android:name=".menu_option_activities.HvacActivity"
             android:value=".MenuOptionActivities.HvacActivity">
         </activity>
+            <!-- Hvac Sub-Activities -->
+            <activity android:name=".hvac_subactivities.HvacEditActivity"
+                android:value=".hvac_subactivities.HvacEditActivity"
+                android:parentActivityName=".menu_option_activities.HvacActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".menu_option_activities.HvacActivity" />
+            </activity>
 
         <!-- Electrical -->
         <activity android:name=".menu_option_activities.ElectricalActivity"

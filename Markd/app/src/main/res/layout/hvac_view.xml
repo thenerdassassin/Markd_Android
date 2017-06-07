@@ -54,7 +54,9 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_alignParentTop="true"
+                            android:contentDescription="Edit Button"
                             app:srcCompat="@drawable/edit_action_dark" />
                     </RelativeLayout>
 
@@ -70,15 +72,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Manufacturer:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_air_handler_manufacturer"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="Goodman"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -94,15 +99,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Model:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_air_handler_model"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="ARUF24B14"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -118,15 +126,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Installed on:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_air_handler_install_date"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="8/13/13"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -142,15 +153,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Projected Life Span:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_air_handler_life_span"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="20 years"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
                     <!-- Service History -->
@@ -195,6 +209,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_alignParentTop="true"
                             app:srcCompat="@drawable/edit_action_dark" />
                     </RelativeLayout>
@@ -211,15 +226,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Manufacturer:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_compressor_manufacturer"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="Goodman"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -235,15 +253,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Model:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_compressor_model"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="GSX130361"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -259,15 +280,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Installed on:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_compressor_install_date"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="1/27/14"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
@@ -283,15 +307,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
                             android:text="Projected Life Span:"
                             android:textSize="16sp" />
 
                         <TextView
+                            android:id="@+id/hvac_compressor_life_span"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_marginLeft="5dp"
-                            android:text="6 years"
+                            android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
 
