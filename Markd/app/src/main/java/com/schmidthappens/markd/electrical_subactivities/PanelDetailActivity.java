@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,16 +16,22 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.MainPanelAmperage;
+import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.PanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelManufacturer;
 import com.schmidthappens.markd.data_objects.SubPanelAmperage;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Josh on 3/22/2017.
@@ -33,6 +40,7 @@ import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 public class PanelDetailActivity extends AppCompatActivity {
     //XML Objects
     EditText panelDescription;
+    NumberPicker numberOfBreakers;
     CheckBox isSubPanel;
     TextView panelInstallDate;
     Button setPanelInstallDateButton;
@@ -43,20 +51,25 @@ public class PanelDetailActivity extends AppCompatActivity {
     ArrayAdapter<String> mainPanelAmpAdapter;
     ArrayAdapter<String> subPanelAmpAdapter;
 
+    boolean isNewPanel = false;
+    private static final String TAG = "PanelDetailActivity";
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.panel_detail_view);
 
         //Initialize XML Objects
         panelDescription = (EditText)findViewById(R.id.electrical_panel_description);
-        panelInstallDate = (TextView)findViewById(R.id.electrical_panel_install_date) ;
-        setPanelInstallDateButton = (Button)findViewById(R.id.electrical_panel_set_install_date);
+        numberOfBreakers = (NumberPicker)findViewById(R.id.electrical_panel_number_of_breakers);
         isSubPanel = (CheckBox)findViewById(R.id.is_sub_panel);
+        panelInstallDate = (TextView)findViewById(R.id.electrical_panel_install_date);
+        setPanelInstallDateButton = (Button)findViewById(R.id.electrical_panel_set_install_date);
         amperageSpinner = (Spinner)findViewById(R.id.panel_amperage_spinner);
         manufacturerSpinner = (Spinner)findViewById(R.id.panel_manufacturer_spinner);
         savePanelButton = (Button)findViewById(R.id.electrical_save_panel_button);
 
         setEnterButtonToKeyboardDismissal(panelDescription);
+        setUpNumberPicker(numberOfBreakers);
         setPanelInstallDateButton.setOnClickListener(panelInstallDateButtonClickListener);
 
         //Initialize SpinnerAdapters for Amperages
@@ -67,7 +80,6 @@ public class PanelDetailActivity extends AppCompatActivity {
         mainPanelAmpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subPanelAmpAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, subPanelAmperages);
         subPanelAmpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
 
         //Add Manufacturer Adapter to Spinner
         String[] panelManufacturers = PanelManufacturer.getValues();
@@ -88,8 +100,18 @@ public class PanelDetailActivity extends AppCompatActivity {
        if(intentThatStartedThisActivity != null) {
            String amperageString = "";
 
+           if(intentThatStartedThisActivity.hasExtra("newPanel")) {
+               isNewPanel = true;
+           } else {
+               isNewPanel = false;
+           }
+
            if(intentThatStartedThisActivity.hasExtra("panelDescription")) {
                panelDescription.setText(intentThatStartedThisActivity.getStringExtra("panelDescription"));
+           }
+
+           if(intentThatStartedThisActivity.hasExtra("numberOfBreakers")) {
+               numberOfBreakers.setValue(intentThatStartedThisActivity.getIntExtra("numberOfBreakers", 1));
            }
 
            if(intentThatStartedThisActivity.hasExtra("panelInstallDate")) {
@@ -109,7 +131,11 @@ public class PanelDetailActivity extends AppCompatActivity {
                } else {
                    isSubPanel.setChecked(false);
                    amperageSpinner.setAdapter(mainPanelAmpAdapter);
-                   amperageSpinner.setSelection(MainPanelAmperage.fromString(amperageString).ordinal());
+                   try {
+                       amperageSpinner.setSelection(MainPanelAmperage.fromString(amperageString).ordinal());
+                   } catch (NullPointerException e) {
+                       amperageSpinner.setSelection(0);
+                   }
                }
            }
 
@@ -125,12 +151,11 @@ public class PanelDetailActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             hideKeyboard(v);
-            if(v instanceof CheckBox) {
-                CheckBox isSubPanel = (CheckBox)v;
-                if(isSubPanel.isChecked()) {
+            if (v instanceof CheckBox) {
+                CheckBox isSubPanel = (CheckBox) v;
+                if (isSubPanel.isChecked()) {
                     amperageSpinner.setAdapter(subPanelAmpAdapter);
-                }
-                else {
+                } else {
                     amperageSpinner.setAdapter(mainPanelAmpAdapter);
                 }
             }
@@ -149,13 +174,21 @@ public class PanelDetailActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             hideKeyboard(v);
-            updatePanel();
+            Log.i(TAG, "Save Panel");
+            savePanel();
             backToMain();
         }
     };
 
+    //Mark:- Number Picker
+    public void setUpNumberPicker(NumberPicker picker) {
+        picker.setMinValue(1);
+        picker.setMaxValue(52);
+        picker.setWrapSelectorWheel(false);
+    }
+
     //Mark:- Date Picker
-    public void showDatePickerDialog(View v) {
+    private void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
     }
@@ -164,8 +197,8 @@ public class PanelDetailActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Create a new instance of DatePickerDialog and return it
-            DatePickerDialog datePicker = new DatePickerDialog(getActivity(), this, 2014, 0, 17);
-            return datePicker;
+            Calendar calendar = Calendar.getInstance();
+            return new DatePickerDialog(getActivity(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         }
 
         @Override
@@ -210,12 +243,13 @@ public class PanelDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void updatePanel() {
+    private void savePanel() {
         //TODO change to http call to update electrical panel
         TempPanelData myPanels = TempPanelData.getInstance();
 
         //Get Info
         String panelDescriptionString = panelDescription.getText().toString();
+        int breakersNumber = numberOfBreakers.getValue();
         boolean isSubPanelChecked = isSubPanel.isChecked();
         String panelInstallDateString = panelInstallDate.getText().toString();
         String panelAmpString = (String)amperageSpinner.getItemAtPosition(amperageSpinner.getSelectedItemPosition());
@@ -228,8 +262,15 @@ public class PanelDetailActivity extends AppCompatActivity {
         String manufacturerString = (String)manufacturerSpinner.getItemAtPosition(manufacturerSpinner.getSelectedItemPosition());
         PanelManufacturer manufacturer = PanelManufacturer.fromString(manufacturerString);
 
+
+        if(isNewPanel) {
+            //TODO change to http call to add Panel
+            myPanels.addPanel(new Panel(0, new ArrayList<Breaker>()));
+        }
         //Send Update
-        myPanels.updatePanel(panelDescriptionString, !isSubPanelChecked, panelInstallDateString, amps, manufacturer);
+        //TODO change to http call to update Panel
+        myPanels.updatePanel(panelDescriptionString, breakersNumber, !isSubPanelChecked, panelInstallDateString, amps, manufacturer);
+
     }
 
     private void backToMain() {

@@ -23,6 +23,7 @@ public class Panel {
         this.amperage = amperage;
         this.breakerList = breakerList;
         this.manufacturer = manufacturer;
+        this.numberOfBreakers = breakerList.size();
     }
     public Panel(int panelId, boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList) {
         this(panelId, isMainPanel, amperage, breakerList, PanelManufacturer.UNKNOWN);
@@ -82,6 +83,17 @@ public class Panel {
     public void setBreakerList(List<Breaker> breakerList) {
         this.breakerList = breakerList;
     }
+    public void setNumberOfBreakers(int numberOfBreakers) {
+        this.numberOfBreakers = numberOfBreakers;
+
+        while(breakerList.size() < numberOfBreakers) {
+            breakerList.add(new Breaker(breakerList.size()+1, ""));
+        }
+
+        while(breakerList.size() > numberOfBreakers) {
+            deleteBreaker(breakerList.size());
+        }
+    }
     public PanelManufacturer getManufacturer() {
         return manufacturer;
     }
@@ -106,8 +118,9 @@ public class Panel {
 
     //Helper functions
     public int breakerCount(){
-        return breakerList.size();
+        return numberOfBreakers;
     }
+
     public Panel deleteBreaker(int breakerNumber) {
         int breakerIndex = breakerNumber-1;
 
@@ -194,8 +207,10 @@ public class Panel {
         }
         return this;
     }
-    public Panel updatePanel(String panelDescription, boolean isMainPanel, String panelInstallDate, PanelAmperage amperage, PanelManufacturer manufacturer) {
+
+    public Panel updatePanel(String panelDescription, int numberOfBreakers, boolean isMainPanel, String panelInstallDate, PanelAmperage amperage, PanelManufacturer manufacturer) {
         this.panelDescription = panelDescription;
+        this.setNumberOfBreakers(numberOfBreakers);
         this.isMainPanel = isMainPanel;
         this.installDate = panelInstallDate;
         this.amperage = amperage;

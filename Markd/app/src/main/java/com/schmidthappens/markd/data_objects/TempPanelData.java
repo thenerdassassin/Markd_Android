@@ -85,6 +85,11 @@ public class TempPanelData {
         return panels.get(panelId);
     }
 
+    public List<Panel> addPanel(Panel newPanel) {
+        this.panels.add(newPanel);
+        this.currentPanel = this.count()-1;
+        return this.panels;
+    }
     public Panel updatePanel(Panel newPanel) {
         this.panels.set(currentPanel, newPanel);
         return this.panels.get(currentPanel);
@@ -97,9 +102,13 @@ public class TempPanelData {
         this.panels.get(currentPanel).addBreaker(newBreaker);
         return this.panels.get(currentPanel);
     }
-    public Panel updatePanel(String panelDescription, boolean isMainPanel, String panelInstallDate, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
-        this.panels.get(currentPanel).updatePanel(panelDescription, isMainPanel, panelInstallDate, panelAmperage, manufacturer);
+    public Panel updatePanel(String panelDescription, int numberOfBreakers, boolean isMainPanel, String panelInstallDate, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
+        this.panels.get(currentPanel).updatePanel(panelDescription, numberOfBreakers, isMainPanel, panelInstallDate, panelAmperage, manufacturer);
         return this.panels.get(currentPanel);
+    }
+    public boolean deletePanel(int position) {
+        this.panels.remove(position);
+        return true;
     }
 
     public int count() {

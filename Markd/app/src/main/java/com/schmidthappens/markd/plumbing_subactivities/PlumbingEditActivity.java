@@ -20,6 +20,8 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
 
+import java.util.Calendar;
+
 /**
  * Created by Josh on 6/6/2017.
  */
@@ -126,8 +128,8 @@ public class PlumbingEditActivity extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Create a new instance of DatePickerDialog and return it
-            DatePickerDialog datePicker = new DatePickerDialog(getActivity(), this, 2014, 0, 17);
-            return datePicker;
+            Calendar calendar = Calendar.getInstance();
+            return new DatePickerDialog(getActivity(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         }
 
         @Override

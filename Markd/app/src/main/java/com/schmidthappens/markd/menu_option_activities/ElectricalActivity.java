@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -27,6 +26,7 @@ import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
 
 import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer.createServiceListView;
 
@@ -50,6 +50,8 @@ public class ElectricalActivity extends AppCompatActivity {
     FrameLayout electricalServiceList;
     FrameLayout electricalContractor;
 
+    ArrayAdapter adapter;
+    TempPanelData panelData = TempPanelData.getInstance();
     private static final String TAG = "ElectricalActivity";
 
     @Override
@@ -71,36 +73,18 @@ public class ElectricalActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
-        //TODO change to http call for panels
         //Initialize Panel List
-        final TempPanelData panelData = TempPanelData.getInstance();
+        //TODO change to http call for panels
+        panelData = TempPanelData.getInstance();
         panelList = (ListView)findViewById(R.id.electrical_panel_list);
         View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, panelList, false);
         panelList.addHeaderView(headerView);
-
-        AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position != 0) {
-                    Context context = ElectricalActivity.this;
-                    Class destinationClass = ViewPanelActivity.class;
-                    panelData.currentPanel = position-1;
-                    Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
-                    startActivity(intentToStartViewPanelActivity);
-                }
-            }
-        };
-        ArrayAdapter adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
+        adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
         panelList.setAdapter(adapter);
 
         //Set Up Add Panel Hyperlink
         addPanelHyperlink = (TextView)findViewById(R.id.electrical_add_panel_hyperlink);
-        addPanelHyperlink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Add Panel Clicked");
-            }
-        });
+        addPanelHyperlink.setOnClickListener(addPanelOnClickListener);
 
         //Set up ElectricalService List
         //TODO change to http call for electrical services
@@ -139,10 +123,32 @@ public class ElectricalActivity extends AppCompatActivity {
     private View.OnClickListener electricalOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.d(TAG, "Add Electrical Service Clicked");
             Toast.makeText(getApplicationContext(), "Add Electrical Service", Toast.LENGTH_SHORT).show();
         }
     };
 
+    private View.OnClickListener addPanelOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "Add Panel Clicked");
+            Context context = ElectricalActivity.this;
+            Class destinationClass = PanelDetailActivity.class;
+            Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+            intentToStartDetailActivity.putExtra("isMainPanel", true);
+            intentToStartDetailActivity.putExtra("newPanel", true);
+            startActivity(intentToStartDetailActivity);
+        }
+    };
+
+    public void deletePanel(int position) {
+        //TODO change to http calls to delete panel
+        Log.i(TAG, "Delete Panel " + panelData.getPanel(position).getPanelDescription());
+        panelData.deletePanel(position);
+        adapter.clear();
+        adapter.addAll(panelData.getPanels());
+        adapter.notifyDataSetChanged();
+    }
 
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {

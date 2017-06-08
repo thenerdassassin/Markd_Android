@@ -7,24 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.AdapterClasses.PanelAdapter;
-import com.schmidthappens.markd.electrical_subactivities.BreakerDetailActivity;
-import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.electrical_subactivities.BreakerDetailActivity;
+import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
 
 //TODO remove extra stuff from home page
 public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter.PanelAdapterOnClickHandler {
     //Recycler View
-    private RecyclerView recList;
+    private RecyclerView recyclerList;
     private PanelAdapter panelAdapter;
     private TextView panelTitle;
 
@@ -40,7 +37,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Set RecyclerView Layout
-        recList = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerList = (RecyclerView) findViewById(R.id.recycler_view);
         setUpRecyclerView();
 
         //TODO: Change to http call for user in future
@@ -50,7 +47,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
 
         //Attach PanelAdapter to View
         panelAdapter = new PanelAdapter(myPanels.getPanel(currentPanel), this);
-        recList.setAdapter(panelAdapter);
+        recyclerList.setAdapter(panelAdapter);
 
         //Set Panel Title
         panelTitle = (TextView)findViewById(R.id.panel_title);
@@ -92,37 +89,6 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         return true;
     }
 
-    //Create OptionsMenu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.view_panel_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //TODO Remove
-        /*switch (item.getItemId()) {
-            //TODO Remove
-            case R.id.action_add_breaker:
-                int nextBreakerInt = myPanels.getPanel(currentPanel).breakerCount()+1;
-                Breaker newBreakerToAdd = new Breaker(nextBreakerInt, "");
-
-                Context context = this;
-                Class destinationClass = BreakerDetailActivity.class;
-                Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-                intentToStartDetailActivity.putExtra("source", "MainActivity.addBreaker");
-                passBreakerData(intentToStartDetailActivity, newBreakerToAdd);
-                startActivity(intentToStartDetailActivity);
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }*/
-        return super.onOptionsItemSelected(item);
-    }
-
     // Mark:- Action Handlers
     @Override
     public void onClick(Breaker breakerClicked) {
@@ -157,6 +123,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
 
     private void passPanelData(Intent intent, Panel panel) {
         intent.putExtra("panelDescription", panel.getPanelDescription());
+        intent.putExtra("numberOfBreakers", panel.getBreakerList().size());
         intent.putExtra("isMainPanel", panel.getIsMainPanel());
         intent.putExtra("panelInstallDate", panel.getInstallDate());
         intent.putExtra("panelAmperage", panel.getAmperage().toString());
@@ -165,9 +132,9 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
 
     // Mark:- RecyclerView
     private void setUpRecyclerView() {
-        recList.setHasFixedSize(true);
+        recyclerList.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        recList.setLayoutManager(gridLayoutManager);
+        recyclerList.setLayoutManager(gridLayoutManager);
     };
 }
