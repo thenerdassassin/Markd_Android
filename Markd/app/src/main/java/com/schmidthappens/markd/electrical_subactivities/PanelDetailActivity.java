@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
@@ -193,16 +194,29 @@ public class PanelDetailActivity extends AppCompatActivity {
         newFragment.show(getFragmentManager(), "datePicker");
     }
 
-    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Create a new instance of DatePickerDialog and return it
             Calendar calendar = Calendar.getInstance();
-            return new DatePickerDialog(getActivity(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            pickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+            return pickerDialog;
         }
 
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            Calendar selected = Calendar.getInstance();
+            selected.set(year, month, dayOfMonth);
+            Calendar current = Calendar.getInstance();
+
+            //Check to make sure date is not in future
+            if(selected.getTime().after(current.getTime())) {
+                Log.i(TAG, "Selected Invalid Date");
+                Toast.makeText(getActivity().getApplicationContext(), "Install date must not be in future.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String newDate = "";
             if(month < 9) {
                 newDate += "0";

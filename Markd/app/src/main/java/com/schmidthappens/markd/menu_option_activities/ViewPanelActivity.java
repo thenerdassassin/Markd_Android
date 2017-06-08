@@ -40,7 +40,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         recyclerList = (RecyclerView) findViewById(R.id.recycler_view);
         setUpRecyclerView();
 
-        //TODO: Change to http call for user in future
+        //TODO: Change to http get panel list
         myPanels = TempPanelData.getInstance();
         //Can probably remove in future
         currentPanel = myPanels.currentPanel;
