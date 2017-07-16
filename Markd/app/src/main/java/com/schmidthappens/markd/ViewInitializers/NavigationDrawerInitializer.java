@@ -65,7 +65,6 @@ public class NavigationDrawerInitializer {
     }
 
     private void selectItem(int position) {
-        //TODO intent to new page
         Log.i(TAG, "Selected Item-" + menuOptions[position]);
         if(menuOptions[position].equals("Home")) {
             Class destinationClass = MainActivity.class;

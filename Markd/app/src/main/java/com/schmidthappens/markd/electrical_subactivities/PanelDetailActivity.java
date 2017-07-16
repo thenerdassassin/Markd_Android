@@ -89,8 +89,6 @@ public class PanelDetailActivity extends AppCompatActivity {
         manufacturerSpinner.setAdapter(adapter);
 
         savePanelButton.setOnClickListener(onSaveClicked);
-
-        //TODO  onClick Listener to Checkbox to change adapter
         isSubPanel.setOnClickListener(isSubPanelClick);
     }
 
