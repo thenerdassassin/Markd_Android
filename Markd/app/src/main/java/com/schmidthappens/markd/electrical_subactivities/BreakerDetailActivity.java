@@ -14,12 +14,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.BreakerAmperage;
 import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 /**
  * Created by Josh on 3/8/2017.
@@ -28,13 +28,10 @@ import com.schmidthappens.markd.data_objects.TempPanelData;
 public class BreakerDetailActivity extends AppCompatActivity {
     //XML objects
     private EditText breakerDetailEdit;
-    private TextView breakerDetail;
     private Spinner amperageSpinner;
-    private TextView amperageText;
     private Spinner breakerTypeSpinner;
-    private TextView breakerTypeText;
     private Button deleteBreakerButton;
-    private Button editBreakerButton;
+    private Button saveBreakerButton;
 
 
     private String breakerNumberString;
@@ -42,7 +39,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private String breakerType;
     private boolean isDoublePoleBottom;
     private String breakerAmperage;
-    private boolean isAddBreaker;
+
+    private final static String TAG = "BreakerDetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +48,11 @@ public class BreakerDetailActivity extends AppCompatActivity {
         setContentView(R.layout.breaker_detail);
 
         //Set XML Objects
-        breakerDetail = (TextView)findViewById(R.id.breaker_description);
-        breakerDetailEdit = (EditText)findViewById(R.id.breaker_description_edit);
-        amperageSpinner = (Spinner) findViewById(R.id.amperage_spinner);
-        amperageText = (TextView)findViewById(R.id.amperage_text);
-        deleteBreakerButton = (Button)findViewById(R.id.delete_breaker);
-        editBreakerButton = (Button)findViewById(R.id.edit_breaker);
-        breakerTypeSpinner = (Spinner)findViewById(R.id.breaker_type_spinner);
-        breakerTypeText = (TextView)findViewById(R.id.breaker_type_text);
+        breakerDetailEdit = (EditText)findViewById(R.id.electrical_breaker_description);
+        amperageSpinner = (Spinner) findViewById(R.id.electrical_amperage_spinner);
+        deleteBreakerButton = (Button)findViewById(R.id.electrical_delete_breaker_button);
+        saveBreakerButton = (Button)findViewById(R.id.electrical_save_breaker_button);
+        breakerTypeSpinner = (Spinner)findViewById(R.id.electrical_breaker_type_spinner);
         //Used to dismiss keyboard on enter pressed
         breakerDetailEdit.setOnEditorActionListener(editOnAction);
 
@@ -80,7 +75,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
 
         //Set Button Listeners
         this.setDeleteBreakerListener(deleteBreakerButton);
-        this.setEditBreakerListener(editBreakerButton);
+        this.setSaveBreakerListener(saveBreakerButton);
     }
 
     @Override
@@ -89,11 +84,6 @@ public class BreakerDetailActivity extends AppCompatActivity {
 
         Intent intentThatStartedThisActivity = getIntent();
         if(intentThatStartedThisActivity != null) {
-            String source = "";
-            if(intentThatStartedThisActivity.hasExtra("source")) {
-                source = intentThatStartedThisActivity.getStringExtra("source");
-            }
-
             if (intentThatStartedThisActivity.hasExtra("breakerNumber")) {
                 breakerNumberString = String.valueOf(intentThatStartedThisActivity.getIntExtra("breakerNumber", -1));
                 setTitle("Breaker " + breakerNumberString);
@@ -101,7 +91,6 @@ public class BreakerDetailActivity extends AppCompatActivity {
 
             if (intentThatStartedThisActivity.hasExtra("breakerDescription")) {
                 breakerDescription = intentThatStartedThisActivity.getStringExtra("breakerDescription");
-
             }
 
             if (intentThatStartedThisActivity.hasExtra("breakerAmperage")) {
@@ -117,23 +106,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
                 }
             }
 
-            if(source.equals("MainActivity.viewBreaker")) {
-                isAddBreaker = false;
-
-                if (breakerDescription.equals("")) {
-                    breakerDescription = "No Breaker";
-                }
-
-                updateViewingMode();
-                updateEditingView();
-            }
-
-            else if(source.equals("MainActivity.addBreaker")) {
-                isAddBreaker = true;
-                updateEditingView();
-                changeEditMode();
-                deleteBreakerButton.setVisibility(View.GONE);
-            }
+            updateView();
         }
     }
 
@@ -141,83 +114,29 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private void setDeleteBreakerListener(final Button deleteButton) {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                String buttonText = deleteButton.getText().toString();
-                if(buttonText.equals("Delete")) {
-                    deleteBreaker();
-                } else if(buttonText.equals("Cancel")) {
-                    hideKeyboard();
-
-                    //Change to View Mode
-                    changeViewMode();
-                    updateEditingView();
-                }
+                deleteBreaker();
             }
         });
     }
 
-    private void setEditBreakerListener(final Button editButton) {
+    private void setSaveBreakerListener(final Button editButton) {
         editButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String buttonText = editButton.getText().toString();
-                if(buttonText.equals("Edit")) {
-                    //Change to Edit Mode
-                    changeEditMode();
-                } else if(buttonText.equals("Save")) {
-                    //TODO: Change to http call to Server in Future
-                    TempPanelData panel = TempPanelData.getInstance();
-                    if(isAddBreaker) {
-                        //TODO call add breaker
-                        panel.addBreaker(makeBreaker());
-                        //TODO go back to MainActivity
-                        goBackToViewPanel();
-                    } else {
-                        hideKeyboard();
-                        //Collect Updated Info
-                        Breaker updatedBreaker = makeBreaker();
+                //TODO: Change to http call to Server in Future
+                TempPanelData panel = TempPanelData.getInstance();
 
-                        //TODO: Change to http call to Server in Future
-                        panel.updateBreaker(Integer.parseInt(breakerNumberString), updatedBreaker);
+                hideKeyboard();
 
-                        //Change to View Mode
-                        changeViewMode();
-                        updateViewingMode();
-                    }
-                }
+                //TODO: Change to http call to Server in Future
+                panel.updateBreaker(Integer.parseInt(breakerNumberString), makeBreaker());
+
+                goBackToViewPanel();
             }
         });
-    }
-
-    //Mark :- Change Modes
-    private void changeViewMode() {
-        amperageText.setVisibility(View.VISIBLE);
-        amperageSpinner.setVisibility(View.GONE);
-
-        breakerTypeText.setVisibility(View.VISIBLE);
-        breakerTypeSpinner.setVisibility(View.GONE);
-
-        breakerDetail.setVisibility(View.VISIBLE);
-        breakerDetailEdit.setVisibility(View.GONE);
-
-        deleteBreakerButton.setText("Delete");
-        editBreakerButton.setText("Edit");
-    }
-
-    private void changeEditMode() {
-        amperageText.setVisibility(View.GONE);
-        amperageSpinner.setVisibility(View.VISIBLE);
-
-        breakerTypeText.setVisibility(View.GONE);
-        breakerTypeSpinner.setVisibility(View.VISIBLE);
-
-        breakerDetail.setVisibility(View.GONE);
-        breakerDetailEdit.setVisibility(View.VISIBLE);
-
-        deleteBreakerButton.setText("Cancel");
-        editBreakerButton.setText("Save");
     }
 
     //Mark: :- Helper functions
+    //Used to Collect Updated Info
     private Breaker makeBreaker() {
 
         //Get BreakerType Value
@@ -248,14 +167,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         startActivity(intentToStartViewPanelActivity);
     }
 
-    private void updateViewingMode() {
-        //Set TextView to New Values
-        amperageText.setText(breakerAmperage);
-        breakerTypeText.setText(breakerType);
-        breakerDetail.setText(breakerDescription);
-    }
-
-    private void updateEditingView() {
+    private void updateView() {
         amperageSpinner.setSelection(BreakerAmperage.fromString(breakerAmperage).ordinal());
         breakerTypeSpinner.setSelection(BreakerType.fromString(breakerType).ordinal());
         breakerDetailEdit.setText(breakerDescription);

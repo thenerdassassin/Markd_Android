@@ -96,7 +96,6 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         Context context = this;
         Class destinationClass = BreakerDetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra("source", "MainActivity.viewBreaker");
         passBreakerData(intentToStartDetailActivity, breakerClicked);
         startActivity(intentToStartDetailActivity);
     }
