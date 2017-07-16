@@ -38,8 +38,11 @@ public class PaintingActivity extends AppCompatActivity {
     private ListView drawerList;
 
     //XML Objects
-    ImageView addPaintButton;
-    ListView paintList;
+    ImageView addExteriorPaintButton;
+    ListView exteriorPaintList;
+
+    ImageView addInteriorPaintButton;
+    ListView interiorPaintList;
     private FrameLayout paintingContractor;
 
 
@@ -58,17 +61,28 @@ public class PaintingActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
-        //Initialize Add Button
-        addPaintButton = (ImageView)findViewById(R.id.painting_add_button);
-        addPaintButton.setOnClickListener(addPaintOnClickListener);
-
-        //Set Up PaintList
         //TODO change to http call for paint
         final TempPaintData paintData = TempPaintData.getInstance();
-        paintList = (ListView)findViewById(R.id.painting_paint_list);
+
+        //Initialize Exterior Add Button
+        addExteriorPaintButton = (ImageView)findViewById(R.id.painting_add_interior_button);
+        //addExteriorPaintButton.setOnClickListener(addPaintOnClickListener);
+
+        //Set Up Exterior PaintList
+        exteriorPaintList = (ListView)findViewById(R.id.painting_exterior_paint_list);
+        //ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints());
+        //exteriorPaintList.setAdapter(adapter);
+        //exteriorPaintList.setOnItemClickListener(roomClickListener);
+
+        //Initialize Interior Add Button
+        addInteriorPaintButton = (ImageView)findViewById(R.id.painting_add_interior_button);
+        addInteriorPaintButton.setOnClickListener(addPaintOnClickListener);
+
+        //Set Up Interior PaintList
+        interiorPaintList = (ListView)findViewById(R.id.painting_interior_paint_list);
         ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints());
-        paintList.setAdapter(adapter);
-        paintList.setOnItemClickListener(roomClickListener);
+        interiorPaintList.setAdapter(adapter);
+        interiorPaintList.setOnItemClickListener(roomClickListener);
 
         //Initialize Contractor Footer
         //TODO change to http call to get painting contractor

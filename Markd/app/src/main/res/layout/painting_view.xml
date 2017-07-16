@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <!-- Rooms Title -->
+            <!-- Exterior Title -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
@@ -28,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:text="Rooms"
+                    android:text="Exterior"
                     android:textSize="30sp" />
 
                 <View
@@ -38,7 +38,7 @@
                     android:background="@android:color/darker_gray" />
 
                 <ImageView
-                    android:id="@+id/painting_add_button"
+                    android:id="@+id/painting_exterior_add_button"
                     android:layout_width="@dimen/square_icon"
                     android:layout_height="@dimen/square_icon"
                     android:layout_marginRight="-16dp"
@@ -47,7 +47,7 @@
                     android:src="@drawable/add_button_round_black" />
             </RelativeLayout>
 
-            <!-- Room List -->
+            <!-- Exterior List -->
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +59,57 @@
                 android:orientation="vertical">
 
                 <ListView
-                    android:id="@+id/painting_paint_list"
+                    android:id="@+id/painting_exterior_paint_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- Interior Title -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:text="Interior"
+                    android:textSize="30sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1.5dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@android:color/darker_gray" />
+
+                <ImageView
+                    android:id="@+id/painting_add_interior_button"
+                    android:layout_width="@dimen/square_icon"
+                    android:layout_height="@dimen/square_icon"
+                    android:layout_marginRight="-16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/add_button_round_black" />
+            </RelativeLayout>
+
+            <!-- Interior List -->
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/painting_interior_paint_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
