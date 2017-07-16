@@ -23,12 +23,14 @@ import java.util.List;
 
 /**
  * Created by Josh on 3/24/2017.
+ * Last Updated 7/16/2017
  */
 
 public class PanelListAdapter extends ArrayAdapter<Panel> {
     private float dX, historicX, newX;
     private float originalX = Float.NaN;
     private final float DELTA = (float)-50.0;
+    private final float LAG = (float)15.0;
     private final int DURATION = 400;
 
     private ElectricalActivity activityContext = null;
@@ -86,8 +88,9 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
                             deleteButton.setClickable(true);
                             return true;
                         } else {
+                            Log.d(TAG, "Diff: " + Math.abs(rowToMove.getX()-originalX));
                             //Needs to be moved back to original Position
-                            if(rowToMove.getX() != originalX) {
+                            if(Math.abs(rowToMove.getX()-originalX) > LAG) {
                                 Log.i(TAG, "Shift back " + position);
                                 snapRowToOriginalPosition(rowToMove);
                                 deleteButton.setClickable(false);
