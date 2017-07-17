@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="40dp"
+    android:layout_height="wrap_content">
+
+    <ImageButton
+        android:id="@+id/panel_list_row_delete_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_gravity="end"
+        android:clickable="false"
+        android:src="@drawable/ic_action_delete_icon"
+        android:background="@color/delete"/>
+
+
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:paddingTop="4dp"
     android:paddingBottom="4dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorLabel">
 
     <TextView
         android:id="@+id/paint_location"
@@ -44,3 +61,5 @@
     </LinearLayout>
 
 </LinearLayout>
+
+</FrameLayout>
