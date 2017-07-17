@@ -106,7 +106,9 @@ public class PanelDetailActivity extends AppCompatActivity {
            }
 
            if(intentThatStartedThisActivity.hasExtra("panelDescription")) {
-               panelDescription.setText(intentThatStartedThisActivity.getStringExtra("panelDescription"));
+               String panelDescriptionString = intentThatStartedThisActivity.getStringExtra("panelDescription");
+               panelDescription.setText(panelDescriptionString);
+               panelDescription.setSelection(panelDescriptionString.length()); //Sets cursor to end of EditText
            }
 
            if(intentThatStartedThisActivity.hasExtra("numberOfBreakers")) {

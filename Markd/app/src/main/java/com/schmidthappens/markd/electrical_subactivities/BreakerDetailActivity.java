@@ -171,6 +171,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         amperageSpinner.setSelection(BreakerAmperage.fromString(breakerAmperage).ordinal());
         breakerTypeSpinner.setSelection(BreakerType.fromString(breakerType).ordinal());
         breakerDetailEdit.setText(breakerDescription);
+        breakerDetailEdit.setSelection(breakerDescription.length()); //Sets cursor to end of EditText
     }
 
     private void hideKeyboard() {
