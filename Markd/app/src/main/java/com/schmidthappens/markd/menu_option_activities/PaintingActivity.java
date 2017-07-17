@@ -65,23 +65,23 @@ public class PaintingActivity extends AppCompatActivity {
         final TempPaintData paintData = TempPaintData.getInstance();
 
         //Initialize Exterior Add Button
-        addExteriorPaintButton = (ImageView)findViewById(R.id.painting_add_interior_button);
+        addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
         //addExteriorPaintButton.setOnClickListener(addPaintOnClickListener);
 
         //Set Up Exterior PaintList
         exteriorPaintList = (ListView)findViewById(R.id.painting_exterior_paint_list);
-        //ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints());
-        //exteriorPaintList.setAdapter(adapter);
-        //exteriorPaintList.setOnItemClickListener(roomClickListener);
+        ArrayAdapter exteriorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getExteriorPaints());
+        exteriorPaintList.setAdapter(exteriorAdapter);
+        exteriorPaintList.setOnItemClickListener(roomClickListener);
 
         //Initialize Interior Add Button
-        addInteriorPaintButton = (ImageView)findViewById(R.id.painting_add_interior_button);
+        addInteriorPaintButton = (ImageView)findViewById(R.id.painting_interior_add_button);
         addInteriorPaintButton.setOnClickListener(addPaintOnClickListener);
 
         //Set Up Interior PaintList
         interiorPaintList = (ListView)findViewById(R.id.painting_interior_paint_list);
-        ArrayAdapter adapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getPaints());
-        interiorPaintList.setAdapter(adapter);
+        ArrayAdapter interiorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getInteriorPaints());
+        interiorPaintList.setAdapter(interiorAdapter);
         interiorPaintList.setOnItemClickListener(roomClickListener);
 
         //Initialize Contractor Footer

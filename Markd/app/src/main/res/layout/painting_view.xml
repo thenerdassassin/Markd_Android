@@ -10,7 +10,6 @@
         android:background="@drawable/background_texture">
 
         <!-- Main View -->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,9 +40,9 @@
                     android:id="@+id/painting_exterior_add_button"
                     android:layout_width="@dimen/square_icon"
                     android:layout_height="@dimen/square_icon"
-                    android:layout_marginRight="-16dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="-16dp"
                     android:src="@drawable/add_button_round_black" />
             </RelativeLayout>
 
@@ -61,7 +60,7 @@
                 <ListView
                     android:id="@+id/painting_exterior_paint_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="150dp" />
 
             </LinearLayout>
 
@@ -88,12 +87,12 @@
                     android:background="@android:color/darker_gray" />
 
                 <ImageView
-                    android:id="@+id/painting_add_interior_button"
+                    android:id="@+id/painting_interior_add_button"
                     android:layout_width="@dimen/square_icon"
                     android:layout_height="@dimen/square_icon"
-                    android:layout_marginRight="-16dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="-16dp"
                     android:src="@drawable/add_button_round_black" />
             </RelativeLayout>
 
@@ -111,7 +110,7 @@
                 <ListView
                     android:id="@+id/painting_interior_paint_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="150dp" />
 
             </LinearLayout>
         </LinearLayout>

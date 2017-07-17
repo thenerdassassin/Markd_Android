@@ -9,23 +9,30 @@ import java.util.List;
 
 public class TempPaintData {
     private static final TempPaintData myData = new TempPaintData();
-    private List<PaintObject> paintObjectList;
+    private List<PaintObject> interiorPaintObjectList;
+    private List<PaintObject> exteriorPaintObjectList;
 
     private TempPaintData() {
-        paintObjectList = new ArrayList<PaintObject>();
-        paintObjectList.add(new PaintObject("Living Room", "Sherwin Williams", "Light Blue"));
-        paintObjectList.add(new PaintObject("Master bedroom", "Sherwin Williams", "Yellow"));
-        paintObjectList.add(new PaintObject("Bathroom", "Sherwin Williams", "Loch Blue"));
-        paintObjectList.add(new PaintObject("Dining Room", "Sherwin Williams", "Grape Harvest"));
-        paintObjectList.add(new PaintObject("Kitchen", "Sherwin Williams", "Decor White"));
+        interiorPaintObjectList = new ArrayList<PaintObject>();
+        interiorPaintObjectList.add(new PaintObject("Living Room", "Sherwin Williams", "Light Blue"));
+        interiorPaintObjectList.add(new PaintObject("Master bedroom", "Sherwin Williams", "Yellow"));
+        interiorPaintObjectList.add(new PaintObject("Bathroom", "Sherwin Williams", "Loch Blue"));
+        interiorPaintObjectList.add(new PaintObject("Dining Room", "Sherwin Williams", "Grape Harvest"));
+        interiorPaintObjectList.add(new PaintObject("Kitchen", "Sherwin Williams", "Decor White"));
+
+        exteriorPaintObjectList = new ArrayList<PaintObject>();
+        exteriorPaintObjectList.add(new PaintObject("Siding", "Behr", "Cream"));
+        exteriorPaintObjectList.add(new PaintObject("Garage", "Behr", "Translucent Silk"));
     }
 
     public static TempPaintData getInstance() {
         return myData;
     }
 
-    public List<PaintObject> getPaints() {
-        return paintObjectList;
+    public List<PaintObject> getInteriorPaints() {
+        return interiorPaintObjectList;
     }
-
+    public List<PaintObject> getExteriorPaints(){
+        return exteriorPaintObjectList;
+    }
 }
