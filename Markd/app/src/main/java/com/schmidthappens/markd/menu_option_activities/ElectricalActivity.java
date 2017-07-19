@@ -147,7 +147,7 @@ public class ElectricalActivity extends AppCompatActivity {
         panelData.deletePanel(position);
         adapter.clear();
         adapter.addAll(panelData.getPanels());
-        adapter.notifyDataSetChanged();
+        panelList.setAdapter(adapter);
     }
 
     private void setUpDrawerToggle() {

@@ -22,10 +22,11 @@ import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 import java.util.List;
 
 /**
- * Created by Josh on 3/24/2017.
- * Last Updated 7/16/2017
+ * Created by Josh on 3/24/2017
  */
 
+//TODO abstract duplicate code in PaintListAdapter
+// (May need to make LinearLayout and TableRow the same)
 public class PanelListAdapter extends ArrayAdapter<Panel> {
     private float dX, historicX, newX;
     private float originalX = Float.NaN;
@@ -63,10 +64,10 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
             inflater = LayoutInflater.from(getContext());
             panelListView = inflater.inflate(R.layout.panel_list_row, null);
         }
-        Panel p = getItem(position);
+        Panel panel = getItem(position);
 
-        if (p != null) {
-            insertPanelInfo(panelListView, p);
+        if (panel != null) {
+            insertPanelInfo(panelListView, panel);
         }
 
         panelListView.setOnTouchListener(new View.OnTouchListener() {
