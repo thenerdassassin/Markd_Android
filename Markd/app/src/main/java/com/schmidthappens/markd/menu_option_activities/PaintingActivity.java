@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -45,6 +44,13 @@ public class PaintingActivity extends AppCompatActivity {
     ListView interiorPaintList;
     private FrameLayout paintingContractor;
 
+    //Adapters
+    PaintListAdapter exteriorAdapter;
+    PaintListAdapter interiorAdapter;
+    //TODO change to http call for paint
+    final TempPaintData paintData = TempPaintData.getInstance();
+    private final static String TAG = "PaintingActivity";
+
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -61,16 +67,14 @@ public class PaintingActivity extends AppCompatActivity {
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
         ndi.setUp();
 
-        //TODO change to http call for paint
-        final TempPaintData paintData = TempPaintData.getInstance();
-
         //Initialize Exterior Add Button
         addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
         //addExteriorPaintButton.setOnClickListener(addPaintOnClickListener);
 
         //Set Up Exterior PaintList
         exteriorPaintList = (ListView)findViewById(R.id.painting_exterior_paint_list);
-        ArrayAdapter exteriorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getExteriorPaints());
+        exteriorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getExteriorPaints());
+        exteriorAdapter.setIsExterior(true);
         exteriorPaintList.setAdapter(exteriorAdapter);
         exteriorPaintList.setOnItemClickListener(roomClickListener);
 
@@ -80,7 +84,8 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Interior PaintList
         interiorPaintList = (ListView)findViewById(R.id.painting_interior_paint_list);
-        ArrayAdapter interiorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getInteriorPaints());
+        interiorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getInteriorPaints());
+        interiorAdapter.setIsExterior(false);
         interiorPaintList.setAdapter(interiorAdapter);
         interiorPaintList.setOnItemClickListener(roomClickListener);
 
@@ -110,6 +115,18 @@ public class PaintingActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Room Clicked", Toast.LENGTH_SHORT).show();
         }
     };
+
+    public void deletePaintObject(int position, boolean isExterior) {
+        Log.i(TAG, "{Delete Paint Item:" + position + " isExterior:" + isExterior + "}");
+        //TODO change to http calls to delete panel
+        paintData.deletePaintObject(position, isExterior);
+        //TODO is there a better way to identify adapter to reset
+        if(isExterior) {
+            exteriorPaintList.setAdapter(exteriorAdapter);
+        } else {
+            interiorPaintList.setAdapter(interiorAdapter);
+        }
+    }
 
     // Mark: SetUp Function
     private void setUpActionBar() {

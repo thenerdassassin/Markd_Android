@@ -35,4 +35,12 @@ public class TempPaintData {
     public List<PaintObject> getExteriorPaints(){
         return exteriorPaintObjectList;
     }
+
+    public void deletePaintObject(int position, boolean isExterior) {
+        if(isExterior) {
+            this.exteriorPaintObjectList.remove(position);
+        } else {
+            this.interiorPaintObjectList.remove(position);
+        }
+    }
 }
