@@ -7,12 +7,12 @@ package com.schmidthappens.markd.data_objects;
 
 public class PaintObject {
     private String location;
-    private String manufacturer;
+    private String brand;
     private String color;
 
-    public PaintObject(String location, String manufacturer, String color) {
+    public PaintObject(String location, String brand, String color) {
         this.location = location;
-        this.manufacturer = manufacturer;
+        this.brand = brand;
         this.color = color;
     }
 
@@ -20,8 +20,8 @@ public class PaintObject {
         return location;
     }
 
-    public String getManufacturer() {
-        return manufacturer;
+    public String getBrand() {
+        return brand;
     }
 
     public String getColor() {

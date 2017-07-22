@@ -11,13 +11,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.PaintObject;
-import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.data_objects.TempPaintData;
 import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
-import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
+import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
 
 import java.util.List;
 
@@ -103,8 +102,7 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
                             //Clicked
                             else {
                                 Log.i(TAG, "Click Panel " + position);
-                                //viewClickedPanel(position);
-                                Toast.makeText(activityContext, "Edit " + getItem(position).getLocation(), Toast.LENGTH_SHORT).show();
+                                viewClickedPaint(position);
                             }
                         }
                         break;
@@ -145,15 +143,15 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
 
     private void insertPaintInfo(View view, PaintObject paintObject) {
         TextView paintLocationView = (TextView) view.findViewById(R.id.paint_location);
-        TextView paintManufacturerView = (TextView) view.findViewById(R.id.paint_manufacturer);
+        TextView paintBrandView = (TextView) view.findViewById(R.id.paint_brand);
         TextView paintColorView = (TextView) view.findViewById(R.id.paint_color);
 
         if (paintLocationView != null) {
             paintLocationView.setText(paintObject.getLocation());
         }
 
-        if (paintManufacturerView != null) {
-            paintManufacturerView.setText(paintObject.getManufacturer());
+        if (paintBrandView != null) {
+            paintBrandView.setText(paintObject.getBrand());
         }
 
         if (paintColorView != null) {
@@ -161,18 +159,35 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
         }
     }
 
-    //TODO change to open clicked paint object
-    private void viewClickedPanel(int panelClicked) {
-        Class destinationClass = ViewPanelActivity.class;
+    private void viewClickedPaint(int paintObjectClicked) {
+        Class destinationClass = PaintEditActivity.class;
         //TODO remove when http call comes pass data instead
-        TempPanelData.getInstance().currentPanel = panelClicked;
-        if(activityContext != null) {
-            Intent intentToStartViewPanelActivity = new Intent(activityContext, destinationClass);
-            activityContext.startActivity(intentToStartViewPanelActivity);
+        PaintObject isClicked;
+
+        if(isExterior) {
+            isClicked = TempPaintData.getInstance().getExteriorPaints().get(paintObjectClicked);
         } else {
-            Log.e(TAG, "Activity Context NULL");
+            isClicked = TempPaintData.getInstance().getInteriorPaints().get(paintObjectClicked);
+        }
+
+        if(activityContext != null) {
+            Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
+            putPaintObjectInIntent(isClicked, intentToStartPaintEditActivity, paintObjectClicked);
+            if(isExterior)
+                intentToStartPaintEditActivity.putExtra("isExterior", true);
+            activityContext.startActivity(intentToStartPaintEditActivity);
+        } else {
+            Log.e(TAG, "Activity Context is NULL");
         }
     }
+
+    private void putPaintObjectInIntent(PaintObject paintObject, Intent intent, int position) {
+        intent.putExtra("id", position);
+        intent.putExtra("location", paintObject.getLocation());
+        intent.putExtra("brand", paintObject.getBrand());
+        intent.putExtra("color", paintObject.getColor());
+    }
+
 
     private void initializeXValues(LinearLayout row, MotionEvent event){
         historicX = event.getRawX();

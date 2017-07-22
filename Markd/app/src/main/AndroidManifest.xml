@@ -59,8 +59,7 @@
             <!-- Electrical Sub-Activities -->
             <activity android:name=".menu_option_activities.ViewPanelActivity"
                 android:value=".MenuOptionActivities.ViewPanelActivity"/>
-            <activity
-                android:name=".electrical_subactivities.BreakerDetailActivity"
+            <activity android:name=".electrical_subactivities.BreakerDetailActivity"
                 android:parentActivityName=".menu_option_activities.ViewPanelActivity">
                 <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -83,6 +82,12 @@
         <activity android:name=".menu_option_activities.PaintingActivity"
             android:value=".MenuOptionActivities.PaintingActivity">
         </activity>
-
+            <!-- Paint Sub-Activities -->
+            <activity android:name=".painting_subactivities.PaintEditActivity"
+                android:parentActivityName=".menu_option_activities.PaintingActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".menu_option_activities.ViewPanelActivity" />
+            </activity>
     </application>
 </manifest>

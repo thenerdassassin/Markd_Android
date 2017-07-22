@@ -1,5 +1,7 @@
 package com.schmidthappens.markd.menu_option_activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -11,17 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.data_objects.TempPaintData;
+import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
 
 /**
  * Created by Josh on 5/29/2017.
@@ -69,25 +70,23 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Initialize Exterior Add Button
         addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
-        //addExteriorPaintButton.setOnClickListener(addPaintOnClickListener);
+        addExteriorPaintButton.setOnClickListener(addExteriorPaintOnClickListener);
 
         //Set Up Exterior PaintList
         exteriorPaintList = (ListView)findViewById(R.id.painting_exterior_paint_list);
         exteriorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getExteriorPaints());
         exteriorAdapter.setIsExterior(true);
         exteriorPaintList.setAdapter(exteriorAdapter);
-        exteriorPaintList.setOnItemClickListener(roomClickListener);
 
         //Initialize Interior Add Button
         addInteriorPaintButton = (ImageView)findViewById(R.id.painting_interior_add_button);
-        addInteriorPaintButton.setOnClickListener(addPaintOnClickListener);
+        addInteriorPaintButton.setOnClickListener(addInteriorPaintOnClickListener);
 
         //Set Up Interior PaintList
         interiorPaintList = (ListView)findViewById(R.id.painting_interior_paint_list);
         interiorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getInteriorPaints());
         interiorAdapter.setIsExterior(false);
         interiorPaintList.setAdapter(interiorAdapter);
-        interiorPaintList.setOnItemClickListener(roomClickListener);
 
         //Initialize Contractor Footer
         //TODO change to http call to get painting contractor
@@ -98,21 +97,29 @@ public class PaintingActivity extends AppCompatActivity {
     }
 
     // Mark: OnClickListeners
-    private View.OnClickListener addPaintOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener addExteriorPaintOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO set onItemClick to add room
-            Log.d("Click:", "Add Room");
-            Toast.makeText(getApplicationContext(), "Add Room to Paint Page!", Toast.LENGTH_SHORT).show();
+            Context activityContext = PaintingActivity.this;
+            Class destinationClass = PaintEditActivity.class;
+
+            Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
+            intentToStartPaintEditActivity.putExtra("isNew", true);
+            intentToStartPaintEditActivity.putExtra("isExterior", true);
+            activityContext.startActivity(intentToStartPaintEditActivity);
         }
     };
 
-    private AdapterView.OnItemClickListener roomClickListener = new AdapterView.OnItemClickListener() {
+    private View.OnClickListener addInteriorPaintOnClickListener = new View.OnClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //TODO set onItemClick to edit paint
-            Log.d("Click:", "View Room");
-            Toast.makeText(getApplicationContext(), "Room Clicked", Toast.LENGTH_SHORT).show();
+        public void onClick(View v) {
+            Context activityContext = PaintingActivity.this;
+            Class destinationClass = PaintEditActivity.class;
+
+            //TODO set onItemClick to add room
+            Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
+            intentToStartPaintEditActivity.putExtra("isNew", true);
+            activityContext.startActivity(intentToStartPaintEditActivity);
         }
     };
 
@@ -120,7 +127,8 @@ public class PaintingActivity extends AppCompatActivity {
         Log.i(TAG, "{Delete Paint Item:" + position + " isExterior:" + isExterior + "}");
         //TODO change to http calls to delete panel
         paintData.deletePaintObject(position, isExterior);
-        //TODO is there a better way to identify adapter to reset
+
+        //Used to reset the adapter
         if(isExterior) {
             exteriorPaintList.setAdapter(exteriorAdapter);
         } else {

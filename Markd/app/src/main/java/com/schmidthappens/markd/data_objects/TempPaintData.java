@@ -36,6 +36,23 @@ public class TempPaintData {
         return exteriorPaintObjectList;
     }
 
+    public void putExteriorPaint(PaintObject paintObject) {
+        exteriorPaintObjectList.add(paintObject);
+    }
+
+    public void putInteriorPaint(PaintObject paintObject) {
+        interiorPaintObjectList.add(paintObject);
+    }
+
+    public void updatePaint(int position, String location, String brand, String color, boolean isExterior) {
+        PaintObject paintObject = new PaintObject(location, brand, color);
+        if(isExterior)
+            exteriorPaintObjectList.set(position, paintObject);
+        else
+            interiorPaintObjectList.set(position, paintObject);
+    }
+
+
     public void deletePaintObject(int position, boolean isExterior) {
         if(isExterior) {
             this.exteriorPaintObjectList.remove(position);

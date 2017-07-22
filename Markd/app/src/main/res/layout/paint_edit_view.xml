@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="35dp"
+    android:layout_marginRight="35dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Edit Location -->
+        <EditText
+            android:id="@+id/paint_edit_location"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:maxLines="1"
+            android:hint="Location"/>
+
+        <!-- Edit Brand -->
+        <EditText
+            android:id="@+id/paint_edit_brand"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:maxLines="1"
+            android:hint="Brand"/>
+
+
+        <!-- Edit Color -->
+        <EditText
+            android:id="@+id/paint_edit_color"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:maxLines="1"
+            android:hint="Color"/>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/paint_edit_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:layout_gravity="center"
+            android:text="Save"/>
+    </LinearLayout>
+
+</FrameLayout>
