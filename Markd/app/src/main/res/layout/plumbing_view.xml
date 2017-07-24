@@ -165,17 +165,11 @@
                             android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
-                    <!-- Service History -->
-                    <FrameLayout
-                        android:id="@+id/plumbing_hot_water_service_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-
                 </LinearLayout>
 
                 <!-- Boiler -->
                 <LinearLayout
+                    android:id="@+id/plumbing_boiler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/plumbing_domestic_hot_water"
@@ -207,6 +201,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_alignParentRight="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_alignParentTop="true"
                             app:srcCompat="@drawable/edit_action_dark" />
                     </RelativeLayout>
@@ -318,13 +313,14 @@
                             android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
-
-                    <!-- Service History  -->
-                    <FrameLayout
-                        android:id="@+id/plumbing_boiler_service_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
+
+                <!-- Service History -->
+                <FrameLayout
+                    android:id="@+id/plumbing_service_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/plumbing_boiler" />
             </RelativeLayout>
         </ScrollView>
 

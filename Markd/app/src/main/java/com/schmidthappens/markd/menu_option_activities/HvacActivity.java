@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
-import com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempHvacData;
 import com.schmidthappens.markd.hvac_subactivities.HvacEditActivity;
@@ -48,15 +47,14 @@ public class HvacActivity extends AppCompatActivity {
     TextView airHandlerModelView;
     TextView airHandlerInstallDateView;
     TextView airHandlerLifeSpanView;
-    FrameLayout airHandlerServiceList;
 
     ImageView compressorEditButton;
     TextView compressorManufacturerView;
     TextView compressorModelView;
     TextView compressorInstallDateView;
     TextView compressorLifeSpanView;
-    FrameLayout compressorServiceList;
 
+    FrameLayout hvacServiceList;
     FrameLayout hvacContractor;
 
     private TempHvacData hvacData = TempHvacData.getInstance();
@@ -96,11 +94,9 @@ public class HvacActivity extends AppCompatActivity {
         final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
         //Set Up Service Lists
-        View airHandlerServiceListView = createServiceListView(this, serviceData.getAirHandlerServices(), airHandlerAddServiceClickListener);
-        airHandlerServiceList.addView(airHandlerServiceListView);
-
-        View compressorServiceListView = ServiceListViewInitializer.createServiceListView(this, serviceData.getCompressorServices(), compressorAddServiceClickListener);
-        compressorServiceList.addView(compressorServiceListView);
+        hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
+        View serviceListView = createServiceListView(this, serviceData.getHvacServices(), addServiceClickListener);
+        hvacServiceList.addView(serviceListView);
     }
 
     // Mark: SetUp Function
@@ -137,8 +133,6 @@ public class HvacActivity extends AppCompatActivity {
 
         airHandlerLifeSpanView = (TextView)findViewById(R.id.hvac_air_handler_life_span);
         airHandlerLifeSpanView.setText(hvacData.getAirHandlerLifeSpan());
-
-        airHandlerServiceList = (FrameLayout)findViewById(R.id.hvac_air_handler_service_list);
     }
 
     private void initializeCompressor() {
@@ -155,8 +149,6 @@ public class HvacActivity extends AppCompatActivity {
 
         compressorLifeSpanView = (TextView)findViewById(R.id.hvac_compressor_life_span);
         compressorLifeSpanView.setText(hvacData.getCompressorLifeSpan());
-
-        compressorServiceList = (FrameLayout)findViewById(R.id.hvac_compressor_service_list);
     }
 
     private View.OnClickListener airHandlerEditButtonClickListener = new View.OnClickListener() {
@@ -171,10 +163,10 @@ public class HvacActivity extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener airHandlerAddServiceClickListener = new View.OnClickListener() {
+    private View.OnClickListener addServiceClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New Air Handler Service", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Add New HVAC Service", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -187,13 +179,6 @@ public class HvacActivity extends AppCompatActivity {
             Intent intentToStartHvacEditActivity = new Intent(context, destinationClass);
             intentToStartHvacEditActivity = putCompressorExtras(intentToStartHvacEditActivity);
             startActivity(intentToStartHvacEditActivity);
-        }
-    };
-
-    private View.OnClickListener compressorAddServiceClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New Compressor Service", Toast.LENGTH_SHORT).show();
         }
     };
 

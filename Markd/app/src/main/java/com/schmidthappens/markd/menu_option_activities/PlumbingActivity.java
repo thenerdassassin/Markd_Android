@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
-import com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
@@ -48,15 +47,14 @@ public class PlumbingActivity extends AppCompatActivity {
     TextView hotWaterModelView;
     TextView hotWaterInstallDateView;
     TextView hotWaterLifeSpanView;
-    FrameLayout hotWaterServiceList;
 
     ImageView boilerEditButton;
     TextView boilerManufacturerView;
     TextView boilerModelView;
     TextView boilerInstallDateView;
     TextView boilerLifeSpanView;
-    FrameLayout boilerServiceList;
 
+    FrameLayout plumbingServiceList;
     FrameLayout plumbingContractor;
 
     //TODO change to http call to get plumbing hot water/boiler data
@@ -97,11 +95,12 @@ public class PlumbingActivity extends AppCompatActivity {
         final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
         //Set Up Service Lists
-        View hotWaterServiceListView = createServiceListView(this, serviceData.getHotWaterServices(), hotWaterAddServiceClickListener);
-        hotWaterServiceList.addView(hotWaterServiceListView);
+        plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
+        View serviceListView = createServiceListView(this, serviceData.getPlumbingServices(), addServiceClickListener);
+        plumbingServiceList.addView(serviceListView);
 
-        View boilerServiceListView = ServiceListViewInitializer.createServiceListView(this, serviceData.getBoilerServices(), boilerAddServiceClickListener);
-        boilerServiceList.addView(boilerServiceListView);
+        //View boilerServiceListView = ServiceListViewInitializer.createServiceListView(this, serviceData.getBoilerServices(), boilerAddServiceClickListener);
+        //boilerServiceList.addView(boilerServiceListView);
     }
 
     // Mark: SetUp Function
@@ -138,8 +137,6 @@ public class PlumbingActivity extends AppCompatActivity {
 
         hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
         hotWaterLifeSpanView.setText(plumbingData.getHotWaterLifeSpan());
-
-        hotWaterServiceList = (FrameLayout)findViewById(R.id.plumbing_hot_water_service_list);
     }
 
     private void initializeBoiler() {
@@ -156,8 +153,6 @@ public class PlumbingActivity extends AppCompatActivity {
 
         boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
         boilerLifeSpanView.setText(plumbingData.getBoilerLifeSpan());
-
-        boilerServiceList = (FrameLayout)findViewById(R.id.plumbing_boiler_service_list);
     }
 
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
@@ -172,10 +167,10 @@ public class PlumbingActivity extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener hotWaterAddServiceClickListener = new View.OnClickListener() {
+    private View.OnClickListener addServiceClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New Hot Water Service", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Add New Plumbing Service", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -188,13 +183,6 @@ public class PlumbingActivity extends AppCompatActivity {
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
             intentToStartPlumbingEditActivity = putBoilerExtras(intentToStartPlumbingEditActivity);
             startActivity(intentToStartPlumbingEditActivity);
-        }
-    };
-
-    private View.OnClickListener boilerAddServiceClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), TempContractorServiceData.getInstance().getBoilerServices().size() + "", Toast.LENGTH_SHORT).show();
         }
     };
 

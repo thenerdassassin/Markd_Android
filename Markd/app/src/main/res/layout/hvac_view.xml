@@ -167,17 +167,11 @@
                             android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
-                    <!-- Service History -->
-                    <FrameLayout
-                        android:id="@+id/hvac_air_handler_service_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-
                 </LinearLayout>
 
                 <!-- Compressor -->
                 <LinearLayout
+                    android:id="@+id/hvac_compressor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/hvac_air_handler"
@@ -321,13 +315,14 @@
                             android:layout_marginStart="5dp"
                             android:textSize="16sp" />
                     </RelativeLayout>
-
-                    <!-- Service History  -->
-                    <FrameLayout
-                        android:id="@+id/hvac_compressor_service_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
+
+                <!-- Service History  -->
+                <FrameLayout
+                    android:id="@+id/hvac_service_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/hvac_compressor" />
             </RelativeLayout>
         </ScrollView>
 
