@@ -23,6 +23,7 @@ import android.widget.ListView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -45,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_view);
+        setContentView(R.layout.menu_activity_home_view);
+
+        SessionManager sessionManager = new SessionManager(MainActivity.this);
+        sessionManager.checkLogin();
+
         drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         drawerList = (ListView)findViewById(R.id.left_drawer);
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         homeFrame.setOnClickListener(photoClick);
         homeFrame.setOnLongClickListener(photoLongClick);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

@@ -5,12 +5,18 @@
     <!-- Necessary to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Used to get from gallery or take picture -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <!--Necessary permission to use phone-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <!-- Necessary permission to use phone -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- Necessary permission to get list of accounts on the device -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -18,76 +24,86 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!-- Main -->
-        <activity
-            android:name=".menu_option_activities.MainActivity">
+
+        <!-- Splash Page -->
+        <activity android:name=".account_authentication.SplashPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Main Page -->
+        <activity android:name=".menu_option_activities.MainActivity"/>
+
         <!-- Plumbing -->
-        <activity android:name=".menu_option_activities.PlumbingActivity"
-            android:value=".MenuOptionActivities.PlumbingActivity">
+        <activity
+            android:name=".menu_option_activities.PlumbingActivity"
+            android:value=".MenuOptionActivities.PlumbingActivity"/>
+        <!-- Plumbing Sub-Activities -->
+        <activity
+            android:name=".plumbing_subactivities.PlumbingEditActivity"
+            android:parentActivityName=".menu_option_activities.PlumbingActivity"
+            android:value=".plumbing_subactivities.PlumbingEditActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".menu_option_activities.PlumbingActivity" />
         </activity>
-            <!-- Plumbing Sub-Activities -->
-            <activity android:name=".plumbing_subactivities.PlumbingEditActivity"
-                android:value=".plumbing_subactivities.PlumbingEditActivity"
-                android:parentActivityName=".menu_option_activities.PlumbingActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".menu_option_activities.PlumbingActivity" />
-            </activity>
         <!-- HVAC -->
-        <activity android:name=".menu_option_activities.HvacActivity"
-            android:value=".MenuOptionActivities.HvacActivity">
+        <activity
+            android:name=".menu_option_activities.HvacActivity"
+            android:value=".MenuOptionActivities.HvacActivity"/>
+        <!-- Hvac Sub-Activities -->
+        <activity
+            android:name=".hvac_subactivities.HvacEditActivity"
+            android:parentActivityName=".menu_option_activities.HvacActivity"
+            android:value=".hvac_subactivities.HvacEditActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".menu_option_activities.HvacActivity" />
         </activity>
-            <!-- Hvac Sub-Activities -->
-            <activity android:name=".hvac_subactivities.HvacEditActivity"
-                android:value=".hvac_subactivities.HvacEditActivity"
-                android:parentActivityName=".menu_option_activities.HvacActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".menu_option_activities.HvacActivity" />
-            </activity>
 
         <!-- Electrical -->
-        <activity android:name=".menu_option_activities.ElectricalActivity"
-            android:value=".MenuOptionActivities.ElectricalActivity">
+        <activity
+            android:name=".menu_option_activities.ElectricalActivity"
+            android:value=".MenuOptionActivities.ElectricalActivity"/>
+        <!-- Electrical Sub-Activities -->
+        <activity
+            android:name=".menu_option_activities.ViewPanelActivity"
+            android:value=".MenuOptionActivities.ViewPanelActivity" />
+        <activity
+            android:name=".electrical_subactivities.BreakerDetailActivity"
+            android:parentActivityName=".menu_option_activities.ViewPanelActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".electrical_subactivities.PanelDetailActivity" />
         </activity>
-            <!-- Electrical Sub-Activities -->
-            <activity android:name=".menu_option_activities.ViewPanelActivity"
-                android:value=".MenuOptionActivities.ViewPanelActivity"/>
-            <activity android:name=".electrical_subactivities.BreakerDetailActivity"
-                android:parentActivityName=".menu_option_activities.ViewPanelActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".electrical_subactivities.PanelDetailActivity" />
-            </activity>
-            <activity
-                android:name=".electrical_subactivities.PanelDetailActivity"
-                android:parentActivityName=".menu_option_activities.ViewPanelActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".menu_option_activities.ViewPanelActivity" />
-            </activity>
+        <activity
+            android:name=".electrical_subactivities.PanelDetailActivity"
+            android:parentActivityName=".menu_option_activities.ViewPanelActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".menu_option_activities.ViewPanelActivity" />
+        </activity>
 
         <!-- Landscaping -->
-        <activity android:name=".menu_option_activities.LandscapingActivity"
-            android:value=".MenuOptionActivities.LandscapingActivity">
-        </activity>
+        <activity
+            android:name=".menu_option_activities.LandscapingActivity"
+            android:value=".MenuOptionActivities.LandscapingActivity"/>
 
         <!-- Painting -->
-        <activity android:name=".menu_option_activities.PaintingActivity"
-            android:value=".MenuOptionActivities.PaintingActivity">
+        <activity
+            android:name=".menu_option_activities.PaintingActivity"
+            android:value=".MenuOptionActivities.PaintingActivity"/>
+        <!-- Paint Sub-Activities -->
+        <activity
+            android:name=".painting_subactivities.PaintEditActivity"
+            android:parentActivityName=".menu_option_activities.PaintingActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".menu_option_activities.ViewPanelActivity" />
         </activity>
-            <!-- Paint Sub-Activities -->
-            <activity android:name=".painting_subactivities.PaintEditActivity"
-                android:parentActivityName=".menu_option_activities.PaintingActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".menu_option_activities.ViewPanelActivity" />
-            </activity>
     </application>
+
 </manifest>

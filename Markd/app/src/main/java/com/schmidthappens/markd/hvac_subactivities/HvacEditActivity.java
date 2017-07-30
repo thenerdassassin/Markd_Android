@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempHvacData;
+import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.HvacActivity;
 
 import java.util.Calendar;
@@ -42,6 +44,10 @@ public class HvacEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hvac_edit_view);
+
+        SessionManager sessionManager = new SessionManager(HvacEditActivity.this);
+        sessionManager.checkLogin();
+
         Intent intent = getIntent();
 
         if(intent != null && intent.hasExtra("title"))

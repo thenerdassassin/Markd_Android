@@ -13,8 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.PaintObject;
 import com.schmidthappens.markd.data_objects.TempPaintData;
+import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
 
 /**
@@ -37,6 +39,10 @@ public class PaintEditActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.paint_edit_view);
+
+        SessionManager sessionManager = new SessionManager(PaintEditActivity.this);
+        sessionManager.checkLogin();
+
         Intent intent = getIntent();
 
         //TODO instantiate XML Objects

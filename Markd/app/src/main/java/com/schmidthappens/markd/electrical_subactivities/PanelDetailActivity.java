@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.MainPanelAmperage;
 import com.schmidthappens.markd.data_objects.Panel;
@@ -29,6 +30,7 @@ import com.schmidthappens.markd.data_objects.PanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelManufacturer;
 import com.schmidthappens.markd.data_objects.SubPanelAmperage;
 import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 import java.util.ArrayList;
@@ -58,6 +60,9 @@ public class PanelDetailActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.panel_detail_view);
+
+        SessionManager sessionManager = new SessionManager(PanelDetailActivity.this);
+        sessionManager.checkLogin();
 
         //Initialize XML Objects
         panelDescription = (EditText)findViewById(R.id.electrical_panel_description);

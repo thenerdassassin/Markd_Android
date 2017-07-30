@@ -21,6 +21,7 @@ import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempPaintData;
 import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
 
@@ -56,7 +57,10 @@ public class PaintingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.painting_view);
+        setContentView(R.layout.menu_activity_painting_view);
+
+        SessionManager sessionManager = new SessionManager(PaintingActivity.this);
+        sessionManager.checkLogin();
 
         //Initialize ActionBar
         setUpActionBar();

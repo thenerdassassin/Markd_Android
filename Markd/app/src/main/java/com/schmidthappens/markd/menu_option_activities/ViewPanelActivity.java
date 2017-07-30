@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.AdapterClasses.PanelAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempPanelData;
@@ -34,6 +35,10 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_panel);
+
+        SessionManager sessionManager = new SessionManager(ViewPanelActivity.this);
+        sessionManager.checkLogin();
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Set RecyclerView Layout

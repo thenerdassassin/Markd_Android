@@ -10,14 +10,15 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
+import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.MenuItem;
 import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.HvacActivity;
 import com.schmidthappens.markd.menu_option_activities.LandscapingActivity;
 import com.schmidthappens.markd.menu_option_activities.MainActivity;
 import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
 import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
-import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.data_objects.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +91,9 @@ public class NavigationDrawerInitializer {
             Class destinationClass = PaintingActivity.class;
             Intent intentToStartPaintingActivity = new Intent(context, destinationClass);
             context.startActivity(intentToStartPaintingActivity);
+        } else if(menuOptions[position].equals("Sign Out")) {
+            SessionManager sessionManager = new SessionManager(context);
+            sessionManager.logoutUser();
         }
         drawerLayout.closeDrawer(drawerList);
     }

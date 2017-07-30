@@ -22,6 +22,7 @@ import com.schmidthappens.markd.AdapterClasses.LandscapingHistoryAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.LandscapingSeason;
 import com.schmidthappens.markd.data_objects.TempLandscapingData;
 
@@ -45,7 +46,10 @@ public class LandscapingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.landscaping_view);
+        setContentView(R.layout.menu_activity_landscaping_view);
+
+        SessionManager sessionManager = new SessionManager(LandscapingActivity.this);
+        sessionManager.checkLogin();
 
         //Initialize ActionBar
         setUpActionBar();

@@ -24,6 +24,7 @@ import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
@@ -57,7 +58,11 @@ public class ElectricalActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.electrical_view);
+
+        SessionManager sessionManager = new SessionManager(ElectricalActivity.this);
+        sessionManager.checkLogin();
+
+        setContentView(R.layout.menu_activity_electrical_view);
 
         //Initialize XML Objects
         electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);

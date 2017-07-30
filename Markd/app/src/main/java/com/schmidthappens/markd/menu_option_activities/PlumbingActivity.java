@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
@@ -64,7 +65,10 @@ public class PlumbingActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.plumbing_view);
+        setContentView(R.layout.menu_activity_plumbing_view);
+
+        SessionManager sessionManager = new SessionManager(PlumbingActivity.this);
+        sessionManager.checkLogin();
 
         //Initialize ActionBar
         setUpActionBar();

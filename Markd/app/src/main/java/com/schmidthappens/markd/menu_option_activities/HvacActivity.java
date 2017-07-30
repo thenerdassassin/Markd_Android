@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempHvacData;
 import com.schmidthappens.markd.hvac_subactivities.HvacEditActivity;
@@ -63,7 +64,10 @@ public class HvacActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
-        setContentView(R.layout.hvac_view);
+        setContentView(R.layout.menu_activity_hvac_view);
+
+        SessionManager sessionManager = new SessionManager(HvacActivity.this);
+        sessionManager.checkLogin();
 
         //Initialize ActionBar
         setUpActionBar();

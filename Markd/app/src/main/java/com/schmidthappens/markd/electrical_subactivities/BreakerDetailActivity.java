@@ -15,10 +15,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.BreakerAmperage;
 import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 /**
@@ -46,6 +48,9 @@ public class BreakerDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.breaker_detail);
+
+        SessionManager sessionManager = new SessionManager(BreakerDetailActivity.this);
+        sessionManager.checkLogin();
 
         //Set XML Objects
         breakerDetailEdit = (EditText)findViewById(R.id.electrical_breaker_description);
