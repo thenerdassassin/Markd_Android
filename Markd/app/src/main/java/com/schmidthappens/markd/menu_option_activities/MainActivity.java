@@ -1,19 +1,18 @@
 package com.schmidthappens.markd.menu_option_activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 
@@ -39,9 +39,12 @@ public class MainActivity extends AppCompatActivity {
     private ListView drawerList;
 
     //XML Objects
-    FrameLayout homeFrame;
-    ImageView homeImage;
-    ImageView homeImagePlaceholder;
+    private FrameLayout homeFrame;
+    private ImageView homeImage;
+    private ImageView homeImagePlaceholder;
+
+    private String filename = "main_photo.jpg";
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,14 @@ public class MainActivity extends AppCompatActivity {
         ndi.setUp();
 
         //TODO change to only set as "0" if no image available from http call
-        homeImage.setTag("0");
+        if(setPhoto()) {
+            homeImage.setTag("1");
+        } else {
+            //TODO: try and get photo from http call
+
+            //if can't get then set to 0
+            homeImage.setTag("0");
+        }
         homeFrame.setOnClickListener(photoClick);
         homeFrame.setOnLongClickListener(photoLongClick);
     }
@@ -75,8 +85,30 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO Save Image in Database
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
+            FileOutputStream fileOutputStream = null;
+            InputStream fileInputStream = null;
+                try {
+                    deleteFile(filename);
+                    fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+                    fileInputStream = getContentResolver().openInputStream(data.getData());
+
+                    byte[] buffer = new byte[1024];
+                    int length = fileInputStream.read(buffer);
+                    while(length != -1) {
+                        fileOutputStream.write(buffer, 0 , length);
+                        length = fileInputStream.read(buffer);
+                    }
+
+                    fileInputStream.close();
+                    fileOutputStream.close();
+
+                    setPhoto();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("MainActivity", e.toString());
+                }
+        /*    if (data == null) {
                 return;
             } else {
                 File picture = new File(Environment.getExternalStorageDirectory() + "/temp.jpg");
@@ -84,29 +116,47 @@ public class MainActivity extends AppCompatActivity {
                 homeImage.setImageURI(imgUri);
 
                 try {
-                    //Used for Gallery
+                    //Used for Camera
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    homeImage.setImageBitmap(photo);
+                  *//*  //Used for Gallery
                     InputStream inputStream = getContentResolver().openInputStream(data.getData());
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     homeFrame.setBackgroundColor(Color.TRANSPARENT);
                     homeImage.setLayoutParams(
-                            new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+                        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
                     );
-                    homeImage.setImageBitmap(bitmap);
+                    homeImage.setImageBitmap(bitmap);*//*
                 } catch (Exception e) {
-                    //Used for Camera
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    homeImage.setImageBitmap(photo);
+
                 }
                 homeImage.setTag("1");
                 homeImagePlaceholder.setVisibility(View.GONE);
-            }
+            }*/
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private boolean setPhoto() {
+        homeFrame.setBackgroundColor(Color.TRANSPARENT);
+        homeImage.setLayoutParams(
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+        );
+
+        File picture = new File(getFilesDir() + "/" + filename);
+
+        if(picture.exists()) {
+            Uri imgUri = Uri.fromFile(picture);
+            homeImage.setImageURI(null); //work around to prevent caching
+            homeImage.setImageURI(imgUri);
+            homeImagePlaceholder.setVisibility(View.GONE);
+            return true;
+        } else {
+            Log.e(TAG, "Picture doesn't exist");
+        }
+
+        return false;
     }
+
 
     // Mark:- Action Listeners
     private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
@@ -115,11 +165,15 @@ public class MainActivity extends AppCompatActivity {
             Intent pickIntent = new Intent();
             pickIntent.setType("image/*");
             pickIntent.setAction(Intent.ACTION_GET_CONTENT);
+
             Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
             String pickTitle = "Take or select a photo";
+
             Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
             startActivityForResult(chooserIntent, 1); //PHOTO_CAPTURE_CODE
+
             return true;
         }
     };
