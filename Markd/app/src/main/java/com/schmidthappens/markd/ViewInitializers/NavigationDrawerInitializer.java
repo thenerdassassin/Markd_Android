@@ -53,7 +53,7 @@ public class NavigationDrawerInitializer {
             menuItemList.add(new MenuItem(menuIconStrings[i],menuOptions[i]));
         }
 
-        drawerList.setAdapter(new MenuDrawerListAdapter(context, R.layout.drawer_list_item, menuItemList));
+        drawerList.setAdapter(new MenuDrawerListAdapter(context, R.layout.list_item_drawer, menuItemList));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
         drawerLayout.addDrawerListener(drawerToggle);
     }
