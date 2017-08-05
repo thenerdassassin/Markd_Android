@@ -91,6 +91,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         Class destinationClass = ElectricalActivity.class;
         Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
         startActivity(intentToStartElectricalActivity);
+        finish();
         return true;
     }
 

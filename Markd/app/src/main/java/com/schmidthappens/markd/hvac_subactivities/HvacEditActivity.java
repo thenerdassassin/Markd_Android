@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempHvacData;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.HvacActivity;
 
 import java.util.Calendar;
@@ -124,6 +123,7 @@ public class HvacEditActivity extends AppCompatActivity {
     private void goBackToHvacActivity(){
         Intent hvacActivityIntent = new Intent(getApplicationContext(), HvacActivity.class);
         startActivity(hvacActivityIntent);
+        finish();
     }
 
     public void showDatePickerDialog(View v) {

@@ -16,7 +16,6 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.PaintObject;
 import com.schmidthappens.markd.data_objects.TempPaintData;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
 
 /**
@@ -117,6 +116,7 @@ public class PaintEditActivity extends AppCompatActivity {
     private void goBackToPaintingActivity(){
         Intent paintingActivityIntent = new Intent(getApplicationContext(), PaintingActivity.class);
         startActivity(paintingActivityIntent);
+        finish();
     }
 
     //Mark:- Helper functions

@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempPlumbingData;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
 
 import java.util.Calendar;
@@ -124,6 +123,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
     private void goBackToPlumbingActivity(){
         Intent plumbingActivityIntent = new Intent(getApplicationContext(), PlumbingActivity.class);
         startActivity(plumbingActivityIntent);
+        finish();
     }
 
     public void showDatePickerDialog(View v) {

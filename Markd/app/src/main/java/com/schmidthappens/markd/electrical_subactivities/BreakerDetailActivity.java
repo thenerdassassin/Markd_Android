@@ -20,7 +20,6 @@ import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.BreakerAmperage;
 import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.TempPanelData;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 /**
@@ -170,6 +169,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         intentToStartViewPanelActivity.putExtra("actionType", "Delete Breaker");
         intentToStartViewPanelActivity.putExtra("breakerNumber", breakerNumberString);
         startActivity(intentToStartViewPanelActivity);
+        finish();
     }
 
     private void updateView() {
@@ -192,6 +192,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         Class destinationClass = ViewPanelActivity.class;
         Intent intentToStartMainActivity = new Intent(context, destinationClass);
         startActivity(intentToStartMainActivity);
+        finish();
     }
 
     private View.OnTouchListener spinnerOnTouch = new View.OnTouchListener() {
