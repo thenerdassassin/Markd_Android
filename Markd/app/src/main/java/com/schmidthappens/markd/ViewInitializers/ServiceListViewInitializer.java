@@ -18,24 +18,26 @@ import java.util.List;
  */
 
 public class ServiceListViewInitializer {
+    String pathToSaveFiles = "";
+
     //TODO: may need to paginate at some point
-    public static View createServiceListView(final Context ctx, List<ContractorService> services, View.OnClickListener addListener) {
+    public static View createServiceListView(final Context ctx, List<ContractorService> services, View.OnClickListener addListener, final String pathToSaveFiles) {
         LayoutInflater viewInflater;
         viewInflater = LayoutInflater.from(ctx);
-        View view = viewInflater.inflate(R.layout.service_list_view, null);
+        View view = viewInflater.inflate(R.layout.view_service_list, null);
         LinearLayout listOfServices = (LinearLayout)view.findViewById(R.id.service_list);
         ImageView addButton = (ImageView)view.findViewById(R.id.add_service_button);
         addButton.setOnClickListener(addListener);
 
         if(services.size() == 0) {
-            View v = viewInflater.inflate(R.layout.service_list_row, null);
+            View v = viewInflater.inflate(R.layout.list_row_service, null);
             TextView contractorTextView = (TextView) v.findViewById(R.id.contractor_name);
             contractorTextView.setText("No services yet!");
             listOfServices.addView(v);
         }
         //Add all services to list
         for (final ContractorService service : services) {
-            View v = viewInflater.inflate(R.layout.service_list_row, null);
+            View v = viewInflater.inflate(R.layout.list_row_service, null);
 
             if (service != null) {
                 TextView contractorTextView = (TextView) v.findViewById(R.id.contractor_name);
@@ -53,7 +55,8 @@ public class ServiceListViewInitializer {
                 @Override
                 public void onClick(View v) {
                     //TODO move to detailed view
-                    Toast.makeText(ctx, service.getComments(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ctx, service.getComments()+":"+pathToSaveFiles, Toast.LENGTH_LONG).show();
+
                 }
             });
             listOfServices.addView(v);

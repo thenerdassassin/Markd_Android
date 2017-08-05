@@ -46,7 +46,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.breaker_detail);
+        setContentView(R.layout.edit_view_breaker);
 
         SessionManager sessionManager = new SessionManager(BreakerDetailActivity.this);
         sessionManager.checkLogin();

@@ -22,7 +22,7 @@ public class ContractorFooterViewInitializer {
     public static View createFooterView(final Context ctx, Drawable logo, String contractor, String phone, final String websiteUrl) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
-        View v = vi.inflate(R.layout.footer_view, null);
+        View v = vi.inflate(R.layout.view_footer, null);
 
         //Initialize XML Objects
         ImageView footerLogo = (ImageView)v.findViewById(R.id.footer_logo);

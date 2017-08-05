@@ -84,7 +84,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_splash_page_view);
+        setContentView(R.layout.splash_page_view);
 
         SessionManager sessionManager = new SessionManager(SplashPageActivity.this);
         if(sessionManager.getUserEmail() != null) {
@@ -326,7 +326,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.action_bar);
+        actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
         ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
         menuButton.setClickable(false);

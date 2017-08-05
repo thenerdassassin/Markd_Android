@@ -42,7 +42,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.plumbing_edit_view);
+        setContentView(R.layout.edit_view_plumbing);
 
         SessionManager sessionManager = new SessionManager(PlumbingEditActivity.this);
         sessionManager.checkLogin();

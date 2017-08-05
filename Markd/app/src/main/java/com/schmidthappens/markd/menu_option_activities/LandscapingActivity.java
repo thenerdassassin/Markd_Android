@@ -93,7 +93,7 @@ public class LandscapingActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.action_bar);
+        actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
         ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {

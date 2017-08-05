@@ -78,7 +78,7 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Exterior PaintList
         exteriorPaintList = (ListView)findViewById(R.id.painting_exterior_paint_list);
-        exteriorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getExteriorPaints());
+        exteriorAdapter = new PaintListAdapter(this, R.layout.list_row_paint, paintData.getExteriorPaints());
         exteriorAdapter.setIsExterior(true);
         exteriorPaintList.setAdapter(exteriorAdapter);
 
@@ -88,7 +88,7 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Interior PaintList
         interiorPaintList = (ListView)findViewById(R.id.painting_interior_paint_list);
-        interiorAdapter = new PaintListAdapter(this, R.layout.paint_list_row, paintData.getInteriorPaints());
+        interiorAdapter = new PaintListAdapter(this, R.layout.list_row_paint, paintData.getInteriorPaints());
         interiorAdapter.setIsExterior(false);
         interiorPaintList.setAdapter(interiorAdapter);
 
@@ -145,7 +145,7 @@ public class PaintingActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.action_bar);
+        actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
         ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {

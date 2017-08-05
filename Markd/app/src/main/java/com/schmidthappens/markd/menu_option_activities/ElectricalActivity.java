@@ -82,9 +82,9 @@ public class ElectricalActivity extends AppCompatActivity {
         //TODO change to http call for panels
         panelData = TempPanelData.getInstance();
         panelList = (ListView)findViewById(R.id.electrical_panel_list);
-        View headerView = getLayoutInflater().inflate(R.layout.panel_list_header, panelList, false);
+        View headerView = getLayoutInflater().inflate(R.layout.list_header_panel, panelList, false);
         panelList.addHeaderView(headerView);
-        adapter = new PanelListAdapter(this, R.layout.panel_list_row, panelData.getPanels());
+        adapter = new PanelListAdapter(this, R.layout.list_row_panel, panelData.getPanels());
         panelList.setAdapter(adapter);
 
         //Set Up Add Panel Hyperlink
@@ -95,7 +95,7 @@ public class ElectricalActivity extends AppCompatActivity {
         //TODO change to http call for electrical services
         TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
-        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), electricalOnClickListener);
+        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), electricalOnClickListener, "/services/electrical");
         electricalServiceList.addView(electricalServiceListView);
 
         //Set up ElectricalContractor
@@ -109,7 +109,7 @@ public class ElectricalActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.action_bar);
+        actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
         ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {

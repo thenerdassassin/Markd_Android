@@ -99,7 +99,7 @@ public class HvacActivity extends AppCompatActivity {
 
         //Set Up Service Lists
         hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
-        View serviceListView = createServiceListView(this, serviceData.getHvacServices(), addServiceClickListener);
+        View serviceListView = createServiceListView(this, serviceData.getHvacServices(), addServiceClickListener, "/services/hvac");
         hvacServiceList.addView(serviceListView);
     }
 
@@ -108,7 +108,7 @@ public class HvacActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.action_bar);
+        actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
         ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {

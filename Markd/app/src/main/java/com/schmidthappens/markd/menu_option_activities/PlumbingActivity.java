@@ -100,11 +100,8 @@ public class PlumbingActivity extends AppCompatActivity {
 
         //Set Up Service Lists
         plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
-        View serviceListView = createServiceListView(this, serviceData.getPlumbingServices(), addServiceClickListener);
+        View serviceListView = createServiceListView(this, serviceData.getPlumbingServices(), addServiceClickListener, "/services/plumbing");
         plumbingServiceList.addView(serviceListView);
-
-        //View boilerServiceListView = ServiceListViewInitializer.createServiceListView(this, serviceData.getBoilerServices(), boilerAddServiceClickListener);
-        //boilerServiceList.addView(boilerServiceListView);
     }
 
     // Mark: SetUp Function
@@ -112,7 +109,7 @@ public class PlumbingActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.action_bar);
+        actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
         ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
         menuButton.setOnClickListener(new View.OnClickListener() {

@@ -37,7 +37,7 @@ public class PaintEditActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.paint_edit_view);
+        setContentView(R.layout.edit_view_paint);
 
         SessionManager sessionManager = new SessionManager(PaintEditActivity.this);
         sessionManager.checkLogin();

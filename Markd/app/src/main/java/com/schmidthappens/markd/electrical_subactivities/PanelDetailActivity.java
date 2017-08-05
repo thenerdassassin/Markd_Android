@@ -30,7 +30,6 @@ import com.schmidthappens.markd.data_objects.PanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelManufacturer;
 import com.schmidthappens.markd.data_objects.SubPanelAmperage;
 import com.schmidthappens.markd.data_objects.TempPanelData;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class PanelDetailActivity extends AppCompatActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.panel_detail_view);
+        setContentView(R.layout.edit_view_panel);
 
         SessionManager sessionManager = new SessionManager(PanelDetailActivity.this);
         sessionManager.checkLogin();

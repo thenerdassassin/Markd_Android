@@ -42,7 +42,7 @@ public class HvacEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.hvac_edit_view);
+        setContentView(R.layout.edit_view_hvac);
 
         SessionManager sessionManager = new SessionManager(HvacEditActivity.this);
         sessionManager.checkLogin();
