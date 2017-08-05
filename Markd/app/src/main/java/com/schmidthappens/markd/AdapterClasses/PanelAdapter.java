@@ -69,7 +69,7 @@ public class PanelAdapter extends RecyclerView.Adapter<PanelAdapter.BreakerViewH
     public BreakerViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
-                inflate(R.layout.breaker_list_item, viewGroup, false);
+                inflate(R.layout.list_item_breaker, viewGroup, false);
         return new BreakerViewHolder(itemView);
     }
 

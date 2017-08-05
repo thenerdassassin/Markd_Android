@@ -62,7 +62,7 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         if (panelListView == null) {
             LayoutInflater inflater;
             inflater = LayoutInflater.from(getContext());
-            panelListView = inflater.inflate(R.layout.panel_list_row, null);
+            panelListView = inflater.inflate(R.layout.list_row_panel, null);
         }
         Panel panel = getItem(position);
 

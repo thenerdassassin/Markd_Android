@@ -64,7 +64,7 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
         if (paintListView == null) {
             LayoutInflater inflater;
             inflater = LayoutInflater.from(getContext());
-            paintListView = inflater.inflate(R.layout.paint_list_row, null);
+            paintListView = inflater.inflate(R.layout.list_row_paint, null);
         }
 
         PaintObject paintObject = getItem(position);

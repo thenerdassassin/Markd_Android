@@ -36,7 +36,7 @@ public class MenuDrawerListAdapter extends ArrayAdapter<MenuItem> {
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.drawer_list_item, null);
+            v = vi.inflate(R.layout.list_item_drawer, null);
         }
 
         MenuItem item = getItem(position);
