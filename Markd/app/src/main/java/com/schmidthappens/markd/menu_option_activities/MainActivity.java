@@ -106,33 +106,8 @@ public class MainActivity extends AppCompatActivity {
                     setPhoto();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.e("MainActivity", e.toString());
+                    Log.e(TAG, e.toString());
                 }
-        /*    if (data == null) {
-                return;
-            } else {
-                File picture = new File(Environment.getExternalStorageDirectory() + "/temp.jpg");
-                Uri imgUri = Uri.fromFile(picture);
-                homeImage.setImageURI(imgUri);
-
-                try {
-                    //Used for Camera
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    homeImage.setImageBitmap(photo);
-                  *//*  //Used for Gallery
-                    InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    homeFrame.setBackgroundColor(Color.TRANSPARENT);
-                    homeImage.setLayoutParams(
-                        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-                    );
-                    homeImage.setImageBitmap(bitmap);*//*
-                } catch (Exception e) {
-
-                }
-                homeImage.setTag("1");
-                homeImagePlaceholder.setVisibility(View.GONE);
-            }*/
         }
     }
 
