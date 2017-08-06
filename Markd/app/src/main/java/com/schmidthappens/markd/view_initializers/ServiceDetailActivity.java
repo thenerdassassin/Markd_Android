@@ -128,8 +128,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
         setEnterButtonToKeyboardDismissal(editContractor);
         editServiceDescription = (EditText)findViewById(R.id.service_edit_description);
         setEnterButtonToKeyboardDismissal(editServiceDescription);
+        
+        //Used to show done button but still allow multiple lines
         editServiceDescription.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editServiceDescription.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
         saveButton = (Button)findViewById(R.id.service_edit_save_button);
     }
 
