@@ -1,17 +1,20 @@
-package com.schmidthappens.markd.ViewInitializers;
+package com.schmidthappens.markd.view_initializers;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.ContractorService;
 
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by Josh on 4/28/2017.
@@ -55,8 +58,21 @@ public class ServiceListViewInitializer {
                 @Override
                 public void onClick(View v) {
                     //TODO move to detailed view
-                    Toast.makeText(ctx, service.getComments()+":"+pathToSaveFiles, Toast.LENGTH_LONG).show();
+                    Intent goToServiceDetailActivityIntent = new Intent(ctx, ServiceDetailActivity.class);
+                    goToServiceDetailActivityIntent.putExtra("originalActivity", ctx.getClass());
+                    //TODO add identifier for particular service
+                    goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles );
+                    if(service != null) {
+                        goToServiceDetailActivityIntent.putExtra("contractor", service.getContractor());
+                        goToServiceDetailActivityIntent.putExtra("description", service.getComments());
+                        goToServiceDetailActivityIntent.putExtra("month", service.getMonth());
+                        goToServiceDetailActivityIntent.putExtra("day", service.getDay());
+                        goToServiceDetailActivityIntent.putExtra("year", service.getYear());
 
+                        ctx.startActivity(goToServiceDetailActivityIntent);
+                    } else {
+                        Log.e(TAG, "On view click service was null");
+                    }
                 }
             });
             listOfServices.addView(v);

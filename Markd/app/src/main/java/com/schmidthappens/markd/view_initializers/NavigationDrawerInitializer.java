@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.ViewInitializers;
+package com.schmidthappens.markd.view_initializers;
 
 import android.content.Context;
 import android.content.Intent;
