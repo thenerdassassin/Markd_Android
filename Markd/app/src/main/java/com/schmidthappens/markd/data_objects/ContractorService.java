@@ -54,6 +54,11 @@ public class ContractorService implements Comparable<ContractorService>{
         this.comments = comments;
     }
 
+    public void update(String contractor, String comments) {
+        this.contractor = contractor;
+        this.comments = comments;
+    }
+
     // Mark:- Helper methods
     public String getDate() {
         return month + "/" + day + "/" + year;
