@@ -142,7 +142,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="left"
                             android:fontFamily="sans-serif-light"
-                            android:text="Sold by Tom Assheton"
+                            android:text="Sold by John Kleps"
                             android:textColor="@color/black"
                             android:textSize="15sp" />
                         <TextView

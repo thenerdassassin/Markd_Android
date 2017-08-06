@@ -104,6 +104,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".menu_option_activities.ViewPanelActivity" />
         </activity>
+        <activity android:name=".view_initializers.ServiceDetailActivity" />
     </application>
 
 </manifest>

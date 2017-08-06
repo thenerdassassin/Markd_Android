@@ -24,7 +24,7 @@ public class ServiceListViewInitializer {
     String pathToSaveFiles = "";
 
     //TODO: may need to paginate at some point
-    public static View createServiceListView(final Context ctx, List<ContractorService> services, View.OnClickListener addListener, final String pathToSaveFiles) {
+    public static View createServiceListView(final Context ctx, final List<ContractorService> services, View.OnClickListener addListener, final String pathToSaveFiles) {
         LayoutInflater viewInflater;
         viewInflater = LayoutInflater.from(ctx);
         View view = viewInflater.inflate(R.layout.view_service_list, null);
@@ -63,6 +63,8 @@ public class ServiceListViewInitializer {
                     //TODO add identifier for particular service
                     goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles );
                     if(service != null) {
+                        //TODO change ID to service id in database
+                        goToServiceDetailActivityIntent.putExtra("serviceId", ""+services.indexOf(service));
                         goToServiceDetailActivityIntent.putExtra("contractor", service.getContractor());
                         goToServiceDetailActivityIntent.putExtra("description", service.getComments());
                         goToServiceDetailActivityIntent.putExtra("month", service.getMonth());
