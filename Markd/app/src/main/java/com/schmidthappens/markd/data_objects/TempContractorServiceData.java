@@ -12,8 +12,6 @@ public class TempContractorServiceData {
     private List<ContractorService> plumbingServices = new ArrayList<>();
     private List<ContractorService> electricalServices = new ArrayList<>();
     private List<ContractorService> hvacServices = new ArrayList<>();
-    private List<ContractorService> compressorServices = new ArrayList<>();
-    private List<ContractorService> airHandlerServices = new ArrayList<>();
 
     private TempContractorServiceData() {
         plumbingServices.add(new ContractorService(8, 2, 16, "SDR Plumbing & Heating", "Routine Maintenance"));
