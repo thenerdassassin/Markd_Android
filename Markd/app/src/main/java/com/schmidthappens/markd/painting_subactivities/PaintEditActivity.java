@@ -74,7 +74,6 @@ public class PaintEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard(PaintEditActivity.this.getCurrentFocus());
-                //TODO save changes
                 savePaintObject();
                 goBackToPaintingActivity();
             }
