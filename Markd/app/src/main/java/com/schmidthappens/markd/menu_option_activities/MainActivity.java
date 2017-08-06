@@ -21,7 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 
 import java.io.File;

@@ -20,14 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.ViewInitializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.ViewInitializers.NavigationDrawerInitializer;
+import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
+import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
 
-import static com.schmidthappens.markd.ViewInitializers.ServiceListViewInitializer.createServiceListView;
+import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
 /**
  * Created by Josh on 4/18/2017.
