@@ -19,12 +19,12 @@ public class TempPlumbingData {
     private TempPlumbingData() {
         hotWaterManufacturer = "Bosch";
         hotWaterModel = "C950 ES NG";
-        hotWaterInstallDate = "1/17/14";
+        hotWaterInstallDate = "01.17.14";
         hotWaterLifeSpan = "12 years";
 
         boilerManufacturer = "Westinghouse";
         boilerModel = "WBRCLP140W";
-        boilerInstallDate = "11/7/12";
+        boilerInstallDate = "11.07.12";
         boilerLifeSpan = "9 years";
     }
 

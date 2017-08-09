@@ -19,12 +19,12 @@ public class TempHvacData {
     private TempHvacData() {
         airHandlerManufacturer = "Goodman";
         airHandlerModel = "ARUF24B14";
-        airHandlerInstallDate = "8/13/13";
+        airHandlerInstallDate = "08.13.13";
         airHandlerLifeSpan = "20 years";
 
         compressorManufacturer = "Goodman";
         compressorModel = "GSX130361";
-        compressorInstallDate = "1/27/14";
+        compressorInstallDate = "01.27.14";
         compressorLifeSpan = "6 years";
     }
 

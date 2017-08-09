@@ -21,6 +21,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempHvacData;
 import com.schmidthappens.markd.menu_option_activities.HvacActivity;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.Calendar;
 
@@ -154,7 +155,7 @@ public class HvacEditActivity extends AppCompatActivity {
                 return;
             }
 
-            String newDate = Integer.toString(month+1) + "/" + dayOfMonth + "/" + year;
+            String newDate = StringUtilities.getDateString(month+1, dayOfMonth, year);
             ((HvacEditActivity)getActivity()).changeInstallDate(newDate);
         }
     }
