@@ -2,6 +2,10 @@ package com.schmidthappens.markd.data_objects;
 
 import android.support.annotation.NonNull;
 
+import com.schmidthappens.markd.utilities.StringUtilities;
+
+import java.util.List;
+
 /**
  * Created by Josh on 4/19/2017.
  */
@@ -12,6 +16,7 @@ public class ContractorService implements Comparable<ContractorService>{
     private int year;
     private String contractor;
     private String comments;
+    private List<String> imageFiles;
     //TODO add image uploads
 
 
@@ -53,6 +58,12 @@ public class ContractorService implements Comparable<ContractorService>{
     public void setComments(String comments) {
         this.comments = comments;
     }
+    public List<String> getImageFiles() {
+        return imageFiles;
+    }
+    public void setImageFiles(List<String> imageFiles) {
+        this.imageFiles = imageFiles;
+    }
 
     public void update(String contractor, String comments) {
         this.contractor = contractor;
@@ -61,14 +72,11 @@ public class ContractorService implements Comparable<ContractorService>{
 
     // Mark:- Helper methods
     public String getDate() {
-        return month + "/" + day + "/" + year;
+        return StringUtilities.getDateString(month, day, year);
     }
 
     @Override
     public int compareTo(@NonNull ContractorService o) {
-        if(o == null) {
-          return -1;
-        }
         if(this == o) {
             return 0;
         }
