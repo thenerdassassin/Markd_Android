@@ -21,6 +21,8 @@ import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.menu_option_activities.MainActivity;
 
+import java.util.List;
+
 /**
  * Created by Josh on 8/5/2017.
  */
@@ -33,6 +35,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
     String pathOfFiles;
     int serviceId;
+    boolean isNew;
     String TAG = "ServiceDetailActivity";
 
     Class<?> originalActivity;
@@ -63,13 +66,19 @@ public class ServiceDetailActivity extends AppCompatActivity {
                 pathOfFiles = intent.getStringExtra("pathOfFiles");
             }
 
+            //defaults to false if "isNew" does not exist
+            isNew = intent.getBooleanExtra("isNew", false);
+
             if(intent.hasExtra("serviceId")) {
                 serviceId = Integer.parseInt(intent.getStringExtra("serviceId"));
-            } else {
+            } else if(!isNew) {
                 sendErrorMessage("Service Id doesn't exist");
             }
+
             if(intent.hasExtra("contractor")) {
                 editContractor.setText(intent.getStringExtra("contractor"));
+            } else if(isNew) {
+
             }
 
             if(intent.hasExtra("description")) {
@@ -91,20 +100,25 @@ public class ServiceDetailActivity extends AppCompatActivity {
     }
 
     private void saveServiceData() {
-        ContractorService serviceToUpdate;
+        List<ContractorService> services;
 
         if(pathOfFiles.contains("electrical")) {
-            serviceToUpdate = TempContractorServiceData.getInstance().getElectricalServices().get(serviceId);
+            services = TempContractorServiceData.getInstance().getElectricalServices();
         } else if(pathOfFiles.contains("plumbing")) {
-            serviceToUpdate = TempContractorServiceData.getInstance().getPlumbingServices().get(serviceId);
+            services = TempContractorServiceData.getInstance().getPlumbingServices();
         } else if(pathOfFiles.contains("hvac")) {
-            serviceToUpdate = TempContractorServiceData.getInstance().getHvacServices().get(serviceId);
+            services = TempContractorServiceData.getInstance().getHvacServices();
         } else {
             sendErrorMessage("Service pathOfFiles didn't match");
             return;
         }
 
-        serviceToUpdate.update(editContractor.getText().toString(), editServiceDescription.getText().toString());
+        if(isNew) {
+            //TODO change to get date
+            services.add(new ContractorService(8, 8, 17, editContractor.getText().toString(), editServiceDescription.getText().toString()));
+        } else {
+            services.get(serviceId).update(editContractor.getText().toString(), editServiceDescription.getText().toString());
+        }
     }
 
     @Override

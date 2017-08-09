@@ -17,15 +17,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempHvacData;
 import com.schmidthappens.markd.hvac_subactivities.HvacEditActivity;
+import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
+import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
@@ -99,7 +98,7 @@ public class HvacActivity extends AppCompatActivity {
 
         //Set Up Service Lists
         hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
-        View serviceListView = createServiceListView(this, serviceData.getHvacServices(), addServiceClickListener, "/services/hvac");
+        View serviceListView = createServiceListView(this, serviceData.getHvacServices(), "AireServ", "/services/hvac");
         hvacServiceList.addView(serviceListView);
     }
 
@@ -164,13 +163,6 @@ public class HvacActivity extends AppCompatActivity {
             Intent intentToStartHvacEditActivity = new Intent(context, destinationClass);
             intentToStartHvacEditActivity = putAirHandlerExtras(intentToStartHvacEditActivity);
             startActivity(intentToStartHvacEditActivity);
-        }
-    };
-
-    private View.OnClickListener addServiceClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New HVAC Service", Toast.LENGTH_SHORT).show();
         }
     };
 

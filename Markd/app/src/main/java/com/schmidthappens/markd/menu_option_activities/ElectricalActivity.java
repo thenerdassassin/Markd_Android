@@ -18,16 +18,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
+import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
+import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
@@ -92,10 +91,10 @@ public class ElectricalActivity extends AppCompatActivity {
         addPanelHyperlink.setOnClickListener(addPanelOnClickListener);
 
         //Set up ElectricalService List
-        //TODO change to http call for electrical services
+        //TODO change to http call for electrical services/contractor
         TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
-        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), electricalOnClickListener, "/services/electrical");
+        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), "Conn-West Electric", "/services/electrical");
         electricalServiceList.addView(electricalServiceListView);
 
         //Set up ElectricalContractor
@@ -125,14 +124,6 @@ public class ElectricalActivity extends AppCompatActivity {
     }
 
     //Mark:- OnClick Listeners
-    private View.OnClickListener electricalOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "Add Electrical Service Clicked");
-            Toast.makeText(getApplicationContext(), "Add Electrical Service", Toast.LENGTH_SHORT).show();
-        }
-    };
-
     private View.OnClickListener addPanelOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

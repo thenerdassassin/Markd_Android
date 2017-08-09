@@ -100,7 +100,7 @@ public class PlumbingActivity extends AppCompatActivity {
 
         //Set Up Service Lists
         plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
-        View serviceListView = createServiceListView(this, serviceData.getPlumbingServices(), addServiceClickListener, "/services/plumbing");
+        View serviceListView = createServiceListView(this, serviceData.getPlumbingServices(), "SDR Plumbing & Heating Inc", "/services/plumbing");
         plumbingServiceList.addView(serviceListView);
     }
 

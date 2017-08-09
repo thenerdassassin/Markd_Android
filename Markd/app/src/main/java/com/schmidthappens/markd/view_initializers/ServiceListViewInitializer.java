@@ -24,13 +24,25 @@ public class ServiceListViewInitializer {
     String pathToSaveFiles = "";
 
     //TODO: may need to paginate at some point
-    public static View createServiceListView(final Context ctx, final List<ContractorService> services, View.OnClickListener addListener, final String pathToSaveFiles) {
+    public static View createServiceListView(final Context ctx, final List<ContractorService> services,final String contractor, final String pathToSaveFiles) {
         LayoutInflater viewInflater;
         viewInflater = LayoutInflater.from(ctx);
         View view = viewInflater.inflate(R.layout.view_service_list, null);
         LinearLayout listOfServices = (LinearLayout)view.findViewById(R.id.service_list);
         ImageView addButton = (ImageView)view.findViewById(R.id.add_service_button);
-        addButton.setOnClickListener(addListener);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO move to detailed view
+                Intent goToServiceDetailActivityIntent = new Intent(ctx, ServiceDetailActivity.class);
+                goToServiceDetailActivityIntent.putExtra("originalActivity", ctx.getClass());
+                //TODO add identifier for particular service
+                goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles);
+                goToServiceDetailActivityIntent.putExtra("contractor", contractor);
+                goToServiceDetailActivityIntent.putExtra("isNew", true);
+                ctx.startActivity(goToServiceDetailActivityIntent);
+            }
+        });
 
         if(services.size() == 0) {
             View v = viewInflater.inflate(R.layout.list_row_service, null);
@@ -61,7 +73,7 @@ public class ServiceListViewInitializer {
                     Intent goToServiceDetailActivityIntent = new Intent(ctx, ServiceDetailActivity.class);
                     goToServiceDetailActivityIntent.putExtra("originalActivity", ctx.getClass());
                     //TODO add identifier for particular service
-                    goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles );
+                    goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles);
                     if(service != null) {
                         //TODO change ID to service id in database
                         goToServiceDetailActivityIntent.putExtra("serviceId", ""+services.indexOf(service));
@@ -70,11 +82,11 @@ public class ServiceListViewInitializer {
                         goToServiceDetailActivityIntent.putExtra("month", service.getMonth());
                         goToServiceDetailActivityIntent.putExtra("day", service.getDay());
                         goToServiceDetailActivityIntent.putExtra("year", service.getYear());
-
-                        ctx.startActivity(goToServiceDetailActivityIntent);
                     } else {
                         Log.e(TAG, "On view click service was null");
                     }
+
+                    ctx.startActivity(goToServiceDetailActivityIntent);
                 }
             });
             listOfServices.addView(v);
