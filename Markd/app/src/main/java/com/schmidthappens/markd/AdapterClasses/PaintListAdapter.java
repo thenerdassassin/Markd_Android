@@ -145,6 +145,7 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
         TextView paintLocationView = (TextView) view.findViewById(R.id.paint_location);
         TextView paintBrandView = (TextView) view.findViewById(R.id.paint_brand);
         TextView paintColorView = (TextView) view.findViewById(R.id.paint_color);
+        TextView paintDate = (TextView)view.findViewById(R.id.paint_date);
 
         if (paintLocationView != null) {
             paintLocationView.setText(paintObject.getLocation());
@@ -156,6 +157,15 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
 
         if (paintColorView != null) {
             paintColorView.setText(paintObject.getColor());
+        }
+
+        if(paintDate != null) {
+            String paintDateString = paintObject.getDateString();
+            if(paintDateString != null) {
+                paintDate.setText(paintDateString);
+            } else {
+                Log.e(TAG, "Paint Date String was null");
+            }
         }
     }
 
@@ -184,6 +194,7 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
     private void putPaintObjectInIntent(PaintObject paintObject, Intent intent, int position) {
         intent.putExtra("id", position);
         intent.putExtra("location", paintObject.getLocation());
+        intent.putExtra("paintDate", paintObject.getDateString());
         intent.putExtra("brand", paintObject.getBrand());
         intent.putExtra("color", paintObject.getColor());
     }
