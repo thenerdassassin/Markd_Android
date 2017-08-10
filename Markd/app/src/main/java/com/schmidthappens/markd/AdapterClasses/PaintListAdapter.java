@@ -2,12 +2,12 @@ package com.schmidthappens.markd.AdapterClasses;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,120 +26,118 @@ import java.util.List;
 
 //TODO abstract duplicate code in PanelListAdapter
 // (May need to make LinearLayout and TableRow the same)
-public class PaintListAdapter extends ArrayAdapter<PaintObject> {
+public class PaintListAdapter {
 
     private float dX, historicX, newX;
     private float originalX = Float.NaN;
     private final float DELTA = (float)-50.0;
     private final float LAG = (float)15.0;
     private final int DURATION = 400;
-    //TODO is there a better way to do this
-    private boolean isExterior = false;
 
     private PaintingActivity activityContext = null;
     private static final String TAG = "PaintListAdapter";
 
-    public PaintListAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
+    public View createPaintListView(final Context context, final List<PaintObject> paintObjects, boolean isExterior) {
+        final boolean isExteriorFinal = isExterior;
         if(context instanceof PaintingActivity) {
             activityContext = (PaintingActivity)context;
         } else {
-            Log.e(TAG, "Activity Context not PaintingActivity");
-        }
-    }
-
-    public PaintListAdapter(Context context, int resource, List<PaintObject> items) {
-        super(context, resource, items);
-        if(context instanceof PaintingActivity) {
-            activityContext = (PaintingActivity)context;
-        } else {
-            Log.e(TAG, "Activity Context not PaintingActivity");
-        }
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View paintListView = convertView;
-
-        if (paintListView == null) {
-            LayoutInflater inflater;
-            inflater = LayoutInflater.from(getContext());
-            paintListView = inflater.inflate(R.layout.list_row_paint, null);
+            Log.e(TAG, "Activity Context not Painting Activity");
         }
 
-        PaintObject paintObject = getItem(position);
+        LinearLayout listOfPaints = new LinearLayout(context);
+        listOfPaints.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 
-        if (paintObject != null) {
-            insertPaintInfo(paintListView, paintObject);
+        //From: https://stackoverflow.com/questions/38527508/androidattr-programmatically
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.dividerVertical, typedValue, true);
+        listOfPaints.setDividerDrawable(ContextCompat.getDrawable(context,typedValue.resourceId));
+        listOfPaints.setOrientation(LinearLayout.VERTICAL);
+
+        LayoutInflater viewInflater = LayoutInflater.from(activityContext);
+
+        if(paintObjects.size() == 0) {
+            View v = viewInflater.inflate(R.layout.list_row_paint, null);
+            TextView paintLocationTextView = (TextView) v.findViewById(R.id.paint_location);
+            paintLocationTextView.setText("Add some paint!");
+            listOfPaints.addView(v);
         }
 
-        paintListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                LinearLayout rowToMove = (LinearLayout)v.findViewById(R.id.paint_list_row_information);
-                ImageButton deleteButton = (ImageButton)v.findViewById(R.id.paint_list_row_delete_button);
+        for(final PaintObject paintObject: paintObjects) {
+            final int position = paintObjects.indexOf(paintObject);
+            View paintListItemView = viewInflater.inflate(R.layout.list_row_paint, null);
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        initializeXValues(rowToMove, event);
-                        return true;
+            if(paintObject != null) {
+                insertPaintInfo(paintListItemView, paintObject);
+            }
 
-                    case MotionEvent.ACTION_UP: case MotionEvent.ACTION_CANCEL:
-                        //Swiped far enough to left
-                        if(newX-historicX < DELTA) {
-                            Log.i(TAG, "Swipe Initiated " + position);
-                            snapRowToSlideOutPosition(rowToMove, v.getHeight()+30);
-                            deleteButton.setClickable(true);
+            paintListItemView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    LinearLayout rowToMove = (LinearLayout)v.findViewById(R.id.paint_list_row_information);
+                    ImageButton deleteButton = (ImageButton)v.findViewById(R.id.paint_list_row_delete_button);
+
+
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            initializeXValues(rowToMove, event);
                             return true;
-                        } else {
-                            Log.d(TAG, "Diff: " + Math.abs(rowToMove.getX()-originalX));
-                            //Needs to be moved back to original Position
-                            if(Math.abs(rowToMove.getX()-originalX) > LAG) {
-                                Log.i(TAG, "Shift back " + position);
-                                snapRowToOriginalPosition(rowToMove);
-                                deleteButton.setClickable(false);
+
+                        case MotionEvent.ACTION_UP: case MotionEvent.ACTION_CANCEL:
+                            //Swiped far enough to left
+                            if(newX-historicX < DELTA) {
+                                Log.i(TAG, "Swipe Initiated " + position);
+                                snapRowToSlideOutPosition(rowToMove, v.getHeight()+30);
+                                deleteButton.setClickable(true);
+                                return true;
+                            } else {
+                                Log.d(TAG, "Diff: " + Math.abs(rowToMove.getX()-originalX));
+                                //Needs to be moved back to original Position
+                                if(Math.abs(rowToMove.getX()-originalX) > LAG) {
+                                    Log.i(TAG, "Shift back " + position);
+                                    snapRowToOriginalPosition(rowToMove);
+                                    deleteButton.setClickable(false);
+                                }
+                                //Clicked
+                                else {
+                                    Log.i(TAG, "Click Panel " + position);
+                                    viewClickedPaint(position, isExteriorFinal);
+                                }
                             }
-                            //Clicked
-                            else {
-                                Log.i(TAG, "Click Panel " + position);
-                                viewClickedPaint(position);
-                            }
-                        }
-                        break;
+                            break;
 
-                    case MotionEvent.ACTION_MOVE:
-                        moveRowWithDrag(rowToMove, event);
-                        return true;
+                        case MotionEvent.ACTION_MOVE:
+                            moveRowWithDrag(rowToMove, event);
+                            return true;
 
-                    default:
-                        return false;
+                        default:
+                            return false;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        ImageButton paintObjectDeleteButton = (ImageButton)paintListView.findViewById(R.id.paint_list_row_delete_button);
-        paintObjectDeleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO change to http call to delete PaintObject
-                if(activityContext != null) {
-                    Log.i(TAG, "Delete Paint Item " + position);
-                    activityContext.deletePaintObject(position, isExterior);
-                } else {
-                    Log.e(TAG, "Activity Context NULL");
+            ImageButton paintObjectDeleteButton = (ImageButton)paintListItemView.findViewById(R.id.paint_list_row_delete_button);
+            paintObjectDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO change to http call to delete PaintObject
+                    if(activityContext != null) {
+                        Log.i(TAG, "Delete Paint Item " + position);
+                        activityContext.deletePaintObject(position, isExteriorFinal);
+                    } else {
+                        Log.e(TAG, "Activity Context NULL");
+                    }
                 }
-            }
-        });
-        paintObjectDeleteButton.setClickable(false);
+            });
+            paintObjectDeleteButton.setClickable(false);
 
-        return paintListView;
+            listOfPaints.addView(paintListItemView);
+        }
+
+        return listOfPaints;
     }
 
-    //Mark:- Helper Functions
-    public void setIsExterior(boolean isExterior) {
-        this.isExterior = isExterior;
-    }
 
     private void insertPaintInfo(View view, PaintObject paintObject) {
         TextView paintLocationView = (TextView) view.findViewById(R.id.paint_location);
@@ -169,7 +167,7 @@ public class PaintListAdapter extends ArrayAdapter<PaintObject> {
         }
     }
 
-    private void viewClickedPaint(int paintObjectClicked) {
+    private void viewClickedPaint(int paintObjectClicked, boolean isExterior) {
         Class destinationClass = PaintEditActivity.class;
         //TODO remove when http call comes pass data instead
         PaintObject isClicked;

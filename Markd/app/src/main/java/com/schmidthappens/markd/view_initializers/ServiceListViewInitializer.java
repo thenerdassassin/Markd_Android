@@ -25,8 +25,7 @@ public class ServiceListViewInitializer {
 
     //TODO: may need to paginate at some point
     public static View createServiceListView(final Context ctx, final List<ContractorService> services,final String contractor, final String pathToSaveFiles) {
-        LayoutInflater viewInflater;
-        viewInflater = LayoutInflater.from(ctx);
+        LayoutInflater viewInflater = LayoutInflater.from(ctx);
         View view = viewInflater.inflate(R.layout.view_service_list, null);
         LinearLayout listOfServices = (LinearLayout)view.findViewById(R.id.service_list);
         ImageView addButton = (ImageView)view.findViewById(R.id.add_service_button);

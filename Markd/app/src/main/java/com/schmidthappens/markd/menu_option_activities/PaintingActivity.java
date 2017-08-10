@@ -19,11 +19,11 @@ import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempPaintData;
 import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
+import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
+import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 /**
  * Created by Josh on 5/29/2017.
@@ -40,10 +40,10 @@ public class PaintingActivity extends AppCompatActivity {
 
     //XML Objects
     ImageView addExteriorPaintButton;
-    ListView exteriorPaintList;
+    FrameLayout exteriorPaintList;
 
     ImageView addInteriorPaintButton;
-    ListView interiorPaintList;
+    FrameLayout interiorPaintList;
     private FrameLayout paintingContractor;
 
     //Adapters
@@ -77,20 +77,18 @@ public class PaintingActivity extends AppCompatActivity {
         addExteriorPaintButton.setOnClickListener(addExteriorPaintOnClickListener);
 
         //Set Up Exterior PaintList
-        exteriorPaintList = (ListView)findViewById(R.id.painting_exterior_paint_list);
-        exteriorAdapter = new PaintListAdapter(this, R.layout.list_row_paint, paintData.getExteriorPaints());
-        exteriorAdapter.setIsExterior(true);
-        exteriorPaintList.setAdapter(exteriorAdapter);
+        exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
+        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, paintData.getExteriorPaints(), true);
+        exteriorPaintList.addView(listOfExteriorPaints);
 
         //Initialize Interior Add Button
         addInteriorPaintButton = (ImageView)findViewById(R.id.painting_interior_add_button);
         addInteriorPaintButton.setOnClickListener(addInteriorPaintOnClickListener);
 
         //Set Up Interior PaintList
-        interiorPaintList = (ListView)findViewById(R.id.painting_interior_paint_list);
-        interiorAdapter = new PaintListAdapter(this, R.layout.list_row_paint, paintData.getInteriorPaints());
-        interiorAdapter.setIsExterior(false);
-        interiorPaintList.setAdapter(interiorAdapter);
+        interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
+        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, paintData.getInteriorPaints(), false);
+        interiorPaintList.addView(listOfInteriorPaints);
 
         //Initialize Contractor Footer
         //TODO change to http call to get painting contractor
@@ -134,9 +132,11 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Used to reset the adapter
         if(isExterior) {
-            exteriorPaintList.setAdapter(exteriorAdapter);
+            exteriorPaintList.removeAllViews();
+            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, paintData.getExteriorPaints(), true));
         } else {
-            interiorPaintList.setAdapter(interiorAdapter);
+            interiorPaintList.removeAllViews();
+            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, paintData.getInteriorPaints(), false));
         }
     }
 
