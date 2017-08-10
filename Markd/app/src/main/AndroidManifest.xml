@@ -25,14 +25,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- Splash Page -->
-        <activity android:name=".account_authentication.SplashPageActivity">
+        <!-- Splash Image Page -->
+        <activity android:name=".account_authentication.SplashImageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Login Page -->
+        <activity android:name=".account_authentication.LoginActivity"/>
 
         <!-- Main Page -->
         <activity android:name=".menu_option_activities.MainActivity"/>

@@ -42,7 +42,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class SplashPageActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
@@ -55,7 +55,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
     private AccountManager mAccountManager;
     private String mAuthTokenType;
 
-    private final String TAG = "SplashPageActivity";
+    private final String TAG = "LoginActivity";
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -86,13 +86,13 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
 
         setContentView(R.layout.splash_page_view);
 
-        SessionManager sessionManager = new SessionManager(SplashPageActivity.this);
+        SessionManager sessionManager = new SessionManager(LoginActivity.this);
         if(sessionManager.getUserEmail() != null) {
             finish();
-            Intent intentToStartMainActivity = new Intent(SplashPageActivity.this, MainActivity.class);
+            Intent intentToStartMainActivity = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intentToStartMainActivity);
+            return;
         }
-
 
         setUpActionBar();
 
@@ -123,6 +123,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
+
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -304,7 +305,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(SplashPageActivity.this,
+                new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -362,7 +363,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
-                    SessionManager sessionManager = new SessionManager(SplashPageActivity.this);
+                    SessionManager sessionManager = new SessionManager(LoginActivity.this);
                     sessionManager.createLoginSession("Mr. Chiappetta", mEmail);
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
@@ -381,7 +382,7 @@ public class SplashPageActivity extends AppCompatActivity implements LoaderCallb
 
             if (success) {
                 finish();
-                Intent intentToStartMainActivity = new Intent(SplashPageActivity.this, MainActivity.class);
+                Intent intentToStartMainActivity = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intentToStartMainActivity);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
