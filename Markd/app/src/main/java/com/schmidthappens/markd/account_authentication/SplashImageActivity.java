@@ -22,6 +22,7 @@ public class SplashImageActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.view_splash_image);
+            getSupportActionBar().hide();
 
         /* New Handler to start the Activity
          * and close this Splash-Screen after some seconds.*/
