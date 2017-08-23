@@ -9,7 +9,7 @@ import com.schmidthappens.markd.utilities.StringUtilities;
  */
 
 
-public class PaintObject {
+public class PaintSurface {
     private String location;
     private String brand;
     private String color;
@@ -18,7 +18,7 @@ public class PaintObject {
     private int year;
 
 
-    public PaintObject(String location, String brand, String color, int month, int day, int year) {
+    public PaintSurface(String location, String brand, String color, int month, int day, int year) {
         this.location = location;
         this.brand = brand;
         this.color = color;

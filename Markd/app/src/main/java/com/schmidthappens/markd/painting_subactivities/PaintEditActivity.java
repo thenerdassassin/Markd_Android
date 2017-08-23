@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
-import com.schmidthappens.markd.data_objects.PaintObject;
+import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempPaintData;
 import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
 import com.schmidthappens.markd.utilities.StringUtilities;
@@ -111,7 +111,7 @@ public class PaintEditActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             hideKeyboard(PaintEditActivity.this.getCurrentFocus());
-            savePaintObject();
+            savePaintSurface();
             goBackToPaintingActivity();
         }
     };
@@ -124,7 +124,7 @@ public class PaintEditActivity extends AppCompatActivity {
         }
     };
 
-    private void savePaintObject() {
+    private void savePaintSurface() {
         String location = editLocation.getText().toString();
         String brand = editBrand.getText().toString();
         String color = editColor.getText().toString();
@@ -138,8 +138,8 @@ public class PaintEditActivity extends AppCompatActivity {
         //TODO get date and store in update
         if(paintId == -1) {
             //New Paint
-            PaintObject newPaint = new PaintObject(location, brand, color, month, day, year);
-            //TODO change to http call to add new PaintObject
+            PaintSurface newPaint = new PaintSurface(location, brand, color, month, day, year);
+            //TODO change to http call to add new PaintSurface
             if(isExterior) {
                 TempPaintData.getInstance().putExteriorPaint(newPaint);
             } else {
@@ -147,7 +147,7 @@ public class PaintEditActivity extends AppCompatActivity {
             }
 
         } else {
-            //TODO change to http call to update PaintObject
+            //TODO change to http call to update PaintSurface
             TempPaintData.getInstance().updatePaint(paintId, location, brand, color, isExterior, month, day, year);
         }
     }

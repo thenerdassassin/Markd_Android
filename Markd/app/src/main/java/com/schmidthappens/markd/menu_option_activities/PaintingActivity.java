@@ -125,10 +125,10 @@ public class PaintingActivity extends AppCompatActivity {
         }
     };
 
-    public void deletePaintObject(int position, boolean isExterior) {
+    public void deletePaintSurface(int position, boolean isExterior) {
         Log.i(TAG, "{Delete Paint Item:" + position + " isExterior:" + isExterior + "}");
         //TODO change to http calls to delete panel
-        paintData.deletePaintObject(position, isExterior);
+        paintData.deletePaintSurface(position, isExterior);
 
         //Used to reset the adapter
         if(isExterior) {

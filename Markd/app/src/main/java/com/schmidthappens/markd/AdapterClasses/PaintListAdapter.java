@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.data_objects.PaintObject;
+import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempPaintData;
 import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
 import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
@@ -37,7 +37,7 @@ public class PaintListAdapter {
     private PaintingActivity activityContext = null;
     private static final String TAG = "PaintListAdapter";
 
-    public View createPaintListView(final Context context, final List<PaintObject> paintObjects, boolean isExterior) {
+    public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, boolean isExterior) {
         final boolean isExteriorFinal = isExterior;
         if(context instanceof PaintingActivity) {
             activityContext = (PaintingActivity)context;
@@ -56,19 +56,19 @@ public class PaintListAdapter {
 
         LayoutInflater viewInflater = LayoutInflater.from(activityContext);
 
-        if(paintObjects.size() == 0) {
+        if(paintSurfaces.size() == 0) {
             View v = viewInflater.inflate(R.layout.list_row_paint, null);
             TextView paintLocationTextView = (TextView) v.findViewById(R.id.paint_location);
             paintLocationTextView.setText("Add some paint!");
             listOfPaints.addView(v);
         }
 
-        for(final PaintObject paintObject: paintObjects) {
-            final int position = paintObjects.indexOf(paintObject);
+        for(final PaintSurface paintSurface : paintSurfaces) {
+            final int position = paintSurfaces.indexOf(paintSurface);
             View paintListItemView = viewInflater.inflate(R.layout.list_row_paint, null);
 
-            if(paintObject != null) {
-                insertPaintInfo(paintListItemView, paintObject);
+            if(paintSurface != null) {
+                insertPaintInfo(paintListItemView, paintSurface);
             }
 
             paintListItemView.setOnTouchListener(new View.OnTouchListener() {
@@ -117,20 +117,20 @@ public class PaintListAdapter {
                 }
             });
 
-            ImageButton paintObjectDeleteButton = (ImageButton)paintListItemView.findViewById(R.id.paint_list_row_delete_button);
-            paintObjectDeleteButton.setOnClickListener(new View.OnClickListener() {
+            ImageButton paintSurfaceDeleteButton = (ImageButton)paintListItemView.findViewById(R.id.paint_list_row_delete_button);
+            paintSurfaceDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO change to http call to delete PaintObject
+                    //TODO change to http call to delete PaintSurface
                     if(activityContext != null) {
                         Log.i(TAG, "Delete Paint Item " + position);
-                        activityContext.deletePaintObject(position, isExteriorFinal);
+                        activityContext.deletePaintSurface(position, isExteriorFinal);
                     } else {
                         Log.e(TAG, "Activity Context NULL");
                     }
                 }
             });
-            paintObjectDeleteButton.setClickable(false);
+            paintSurfaceDeleteButton.setClickable(false);
 
             listOfPaints.addView(paintListItemView);
         }
@@ -139,26 +139,26 @@ public class PaintListAdapter {
     }
 
 
-    private void insertPaintInfo(View view, PaintObject paintObject) {
+    private void insertPaintInfo(View view, PaintSurface paintSurface) {
         TextView paintLocationView = (TextView) view.findViewById(R.id.paint_location);
         TextView paintBrandView = (TextView) view.findViewById(R.id.paint_brand);
         TextView paintColorView = (TextView) view.findViewById(R.id.paint_color);
         TextView paintDate = (TextView)view.findViewById(R.id.paint_date);
 
         if (paintLocationView != null) {
-            paintLocationView.setText(paintObject.getLocation());
+            paintLocationView.setText(paintSurface.getLocation());
         }
 
         if (paintBrandView != null) {
-            paintBrandView.setText(paintObject.getBrand());
+            paintBrandView.setText(paintSurface.getBrand());
         }
 
         if (paintColorView != null) {
-            paintColorView.setText(paintObject.getColor());
+            paintColorView.setText(paintSurface.getColor());
         }
 
         if(paintDate != null) {
-            String paintDateString = paintObject.getDateString();
+            String paintDateString = paintSurface.getDateString();
             if(paintDateString != null) {
                 paintDate.setText(paintDateString);
             } else {
@@ -170,7 +170,7 @@ public class PaintListAdapter {
     private void viewClickedPaint(int paintObjectClicked, boolean isExterior) {
         Class destinationClass = PaintEditActivity.class;
         //TODO remove when http call comes pass data instead
-        PaintObject isClicked;
+        PaintSurface isClicked;
 
         if(isExterior) {
             isClicked = TempPaintData.getInstance().getExteriorPaints().get(paintObjectClicked);
@@ -189,12 +189,12 @@ public class PaintListAdapter {
         }
     }
 
-    private void putPaintObjectInIntent(PaintObject paintObject, Intent intent, int position) {
+    private void putPaintObjectInIntent(PaintSurface paintSurface, Intent intent, int position) {
         intent.putExtra("id", position);
-        intent.putExtra("location", paintObject.getLocation());
-        intent.putExtra("paintDate", paintObject.getDateString());
-        intent.putExtra("brand", paintObject.getBrand());
-        intent.putExtra("color", paintObject.getColor());
+        intent.putExtra("location", paintSurface.getLocation());
+        intent.putExtra("paintDate", paintSurface.getDateString());
+        intent.putExtra("brand", paintSurface.getBrand());
+        intent.putExtra("color", paintSurface.getColor());
     }
 
 
