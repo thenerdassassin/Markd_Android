@@ -29,7 +29,6 @@
         <activity android:name=".account_authentication.SplashImageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,6 +36,7 @@
         <!-- Login Page -->
         <activity android:name=".account_authentication.LoginActivity"/>
 
+    <!-- Customer Pages -->
         <!-- Main Page -->
         <activity android:name=".menu_option_activities.MainActivity"/>
 
@@ -98,7 +98,7 @@
         <!-- Painting -->
         <activity
             android:name=".menu_option_activities.PaintingActivity"
-            android:value=".MenuOptionActivities.PaintingActivity"/>
+            android:value=".menu_option_activities.PaintingActivity"/>
         <!-- Paint Sub-Activities -->
         <activity
             android:name=".painting_subactivities.PaintEditActivity"
@@ -108,6 +108,11 @@
                 android:value=".menu_option_activities.ViewPanelActivity" />
         </activity>
         <activity android:name=".view_initializers.ServiceDetailActivity" />
+
+     <!-- Contractor Pages -->
+        <activity
+            android:name=".contractor_user_activities.ContractorMainActivity"
+            android:value=".contractor_user_activities.ContractorMainActivity"/>
     </application>
 
 </manifest>

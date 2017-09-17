@@ -75,7 +75,7 @@ public class HvacActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         drawerList = (ListView)findViewById(R.id.left_drawer);
         setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
+        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
         ndi.setUp();
 
         //Initialize XML Objects

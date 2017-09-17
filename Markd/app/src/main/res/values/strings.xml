@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Markd</string>
+    <!-- &#8211; is dash symbol -->
+    <string name="aws_ec2">ec2&#8211;34&#8211;232&#8211;139&#8211;229.compute-1.amazonaws.com:8000/markd</string>
     <string-array name="menu_options">
         <item>Home</item>
         <item>Plumbing</item>
@@ -13,6 +15,14 @@
         <item>Settings</item>
         <item>Sign Out</item>
     </string-array>
+
+    <string-array name="contractor_menu_options">
+        <item>Home</item>
+        <item>Customers</item>
+        <item>Settings</item>
+        <item>Sign Out</item>
+    </string-array>
+
     <string-array name="menu_icons">
         <item>ic_action_home</item>
         <item>ic_action_plumbing</item>
@@ -22,6 +32,13 @@
         <item>ic_action_painter</item>
         <!--<item>ic_action_faqs</item>
         <item>ic_action_notifications</item>-->
+        <item>ic_action_settings</item>
+        <item>ic_action_sign_out</item>
+    </string-array>
+
+    <string-array name="contractor_menu_icons">
+        <item>ic_action_home</item>
+        <item>ic_action_customers</item>
         <item>ic_action_settings</item>
         <item>ic_action_sign_out</item>
     </string-array>

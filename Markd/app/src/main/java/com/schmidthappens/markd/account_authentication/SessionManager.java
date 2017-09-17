@@ -38,6 +38,9 @@ public class SessionManager {
     // Email address (make variable public to access from outside)
     private static final String KEY_EMAIL = "email";
 
+    // Email address (make variable public to access from outside)
+    private static final String KEY_USER_TYPE = "user_type";
+
     // Constructor
     public SessionManager(Context context){
         this._context = context;
@@ -48,7 +51,7 @@ public class SessionManager {
      * Create login session
      * Made package private
      * */
-    void createLoginSession(String name, String email){
+    void createLoginSession(String name, String email, String userType){
         editor = pref.edit();
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
@@ -58,6 +61,9 @@ public class SessionManager {
 
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
+
+        //Storing user account type in pref
+        editor.putString(KEY_USER_TYPE, userType);
 
         // commit changes
         editor.commit();
@@ -109,6 +115,8 @@ public class SessionManager {
     public String getUserEmail() {
         return pref.getString(KEY_EMAIL, null);
     }
+
+    public String getUserType() { return pref.getString(KEY_USER_TYPE, null);}
 
 
     /**

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.menu_option_activities.MainActivity;
 
 /**
@@ -29,10 +30,17 @@ public class SplashImageActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run() {
-                    new SessionManager(getApplicationContext()).checkLogin();
-                    Intent mainIntent = new Intent(SplashImageActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
+                    SessionManager sessionManager = new SessionManager(getApplicationContext());
+                    sessionManager.checkLogin();
+                    if(sessionManager.getUserType() != null && sessionManager.getUserType().equals("customer")) {
+                        Intent mainIntent = new Intent(SplashImageActivity.this, MainActivity.class);
+                        startActivity(mainIntent);
+                        finish();
+                    } else {
+                        Intent contractorMainIntent = new Intent(SplashImageActivity.this, ContractorMainActivity.class);
+                        startActivity(contractorMainIntent);
+                        finish();
+                    }
                 }
             }, SPLASH_DISPLAY_LENGTH);
         }

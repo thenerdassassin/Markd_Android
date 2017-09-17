@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize DrawerList
         setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle);
+        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
         ndi.setUp();
 
         //TODO change to only set as "0" if no image available from http call

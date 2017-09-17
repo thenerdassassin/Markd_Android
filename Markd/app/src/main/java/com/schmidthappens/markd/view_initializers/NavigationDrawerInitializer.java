@@ -29,21 +29,21 @@ import java.util.List;
 
 public class NavigationDrawerInitializer {
 
-    Context context;
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle drawerToggle;
-    ListView drawerList;
-    String[] menuOptions;
-    String[] menuIconStrings;
+    private Context context;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private ListView drawerList;
+    private String[] menuOptions; //= context.getResources().getStringArray(R.array.menu_options);
+    private String[] menuIconStrings;// = context.getResources().getStringArray(R.array.menu_icons);
     private static final String TAG = "NavigationDrawer";
 
-    public NavigationDrawerInitializer(Context context, DrawerLayout drawerLayout, ListView drawerList, ActionBarDrawerToggle drawerToggle){
+    public NavigationDrawerInitializer(Context context, DrawerLayout drawerLayout, ListView drawerList, ActionBarDrawerToggle drawerToggle, String[] menuOptions, String[] menuIconStrings){
         this.context = context;
         this.drawerLayout = drawerLayout;
         this.drawerList = drawerList;
         this.drawerToggle = drawerToggle;
-        menuOptions = context.getResources().getStringArray(R.array.menu_options);
-        menuIconStrings = context.getResources().getStringArray(R.array.menu_icons);
+        this.menuOptions = menuOptions;
+        this.menuIconStrings = menuIconStrings;
     }
 
     public void setUp() {

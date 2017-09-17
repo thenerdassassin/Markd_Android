@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.menu_option_activities.MainActivity;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "schmidt.uconn@gmail.com:hello", "connwest.ac@gmail.com:password"
+            "schmidt.uconn@gmail.com:Spongebob28:electrician", "connwest.ac@gmail.com:password:customer", "sdrplumbing.com:Spongebob28:plumber"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -359,12 +360,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            //TODO: change to check for accurate credentials
+            //TODO: change to check for accurate credentials and get User Type
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     SessionManager sessionManager = new SessionManager(LoginActivity.this);
-                    sessionManager.createLoginSession("Mr. Chiappetta", mEmail);
+                    sessionManager.createLoginSession("Mr. Chiappetta", mEmail, pieces[2]);
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
@@ -381,9 +382,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                finish();
-                Intent intentToStartMainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intentToStartMainActivity);
+                SessionManager sessionManager = new SessionManager(LoginActivity.this);
+                if(sessionManager.getUserType().equals("customer")) {
+                    //Move to customer main activity
+                    finish();
+                    Intent intentToStartMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intentToStartMainActivity);
+                } else {
+                    //Move to contractor main activity
+                    finish();
+                    Intent intentToStartContractorMainActivity = new Intent(LoginActivity.this, ContractorMainActivity.class);
+                    startActivity(intentToStartContractorMainActivity);
+                }
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
