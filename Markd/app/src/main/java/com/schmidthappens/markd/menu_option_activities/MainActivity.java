@@ -26,7 +26,6 @@ import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -170,23 +169,33 @@ public class MainActivity extends AppCompatActivity {
         }
 
         File homeImageFile = getHomeImageFile();
+        InputStream in = null;
+        OutputStream out = null;
         try {
-            InputStream in = new FileInputStream(temp);
-            OutputStream out = new FileOutputStream(homeImageFile);
+            in = new FileInputStream(temp);
+            out = new FileOutputStream(homeImageFile);
             // Transfer bytes from in to out
             byte[] buf = new byte[1024];
             int len;
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
-        } catch (FileNotFoundException exception) {
+            in.close();
+            out.close();
+            temp.delete();
+            return true;
+        } catch (Exception exception) {
             Log.e(TAG, exception.toString());
-            return false;
-        } catch(IOException exception) {
-            Log.e(TAG, exception.toString());
-            return false;
+        }  finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+            } catch(IOException ioe) {
+                //ignore
+            }
         }
-        return true;
+        temp.delete();
+        return false;
     }
 
     private Uri getHomeImageUri() {
