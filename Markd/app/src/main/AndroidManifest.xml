@@ -113,6 +113,7 @@
         <activity
             android:name=".contractor_user_activities.ContractorMainActivity"
             android:value=".contractor_user_activities.ContractorMainActivity"/>
+
     </application>
 
 </manifest>

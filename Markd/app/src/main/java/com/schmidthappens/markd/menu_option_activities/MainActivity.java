@@ -1,11 +1,11 @@
 package com.schmidthappens.markd.menu_option_activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,12 +21,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,8 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView homeImage;
     private ImageView homeImagePlaceholder;
 
-    private String filename = "main_photo.jpg";
+    private static final int IMAGE_REQUEST_CODE = 1;
+    private static final String IMAGES_DIRECTORY = "images";
+    private static final String filename = "main_photo.jpg";
+
     private String TAG = "MainActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +77,11 @@ public class MainActivity extends AppCompatActivity {
         ndi.setUp();
 
         //TODO change to only set as "0" if no image available from http call
-        if(setPhoto()) {
+        if(getHomeImageFile().exists()) {
+            setPhoto();
             homeImage.setTag("1");
         } else {
             //TODO: try and get photo from http call
-
             //if can't get then set to 0
             homeImage.setTag("0");
         }
@@ -81,55 +89,35 @@ public class MainActivity extends AppCompatActivity {
         homeFrame.setOnLongClickListener(photoLongClick);
     }
 
+    //Mark:- Photo Functions
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         //TODO Save Image in Database
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
-            FileOutputStream fileOutputStream = null;
-            InputStream fileInputStream = null;
-                try {
-                    deleteFile(filename);
-                    fileOutputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                    fileInputStream = getContentResolver().openInputStream(data.getData());
 
-                    byte[] buffer = new byte[1024];
-                    int length = fileInputStream.read(buffer);
-                    while(length != -1) {
-                        fileOutputStream.write(buffer, 0 , length);
-                        length = fileInputStream.read(buffer);
-                    }
-
-                    fileInputStream.close();
-                    fileOutputStream.close();
-
-                    setPhoto();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e(TAG, e.toString());
-                }
+        if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if(!copyFileToPermanentStorage()) {
+                Log.e(TAG, "Copy did not work");
+                return;
+            }
+            setPhoto();
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private boolean setPhoto() {
+        if(!getHomeImageFile().exists()) {
+            Log.e(TAG, "Home Image file does not exist");
+            return false;
+        }
         homeFrame.setBackgroundColor(Color.TRANSPARENT);
         homeImage.setLayoutParams(
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+             new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
         );
 
-        File picture = new File(getFilesDir() + "/" + filename);
-
-        if(picture.exists()) {
-            Uri imgUri = Uri.fromFile(picture);
-            homeImage.setImageURI(null); //work around to prevent caching
-            homeImage.setImageURI(imgUri);
-            homeImagePlaceholder.setVisibility(View.GONE);
-            return true;
-        } else {
-            Log.e(TAG, "Picture doesn't exist");
-        }
-
-        return false;
+        homeImage.setImageURI(null); //work around to prevent caching
+        homeImage.setImageURI(getHomeImageUri());
+        homeImagePlaceholder.setVisibility(View.GONE);
+        return true;
     }
 
 
@@ -142,12 +130,13 @@ public class MainActivity extends AppCompatActivity {
             pickIntent.setAction(Intent.ACTION_GET_CONTENT);
 
             Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(getTempFile()));
 
             String pickTitle = "Take or select a photo";
 
             Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
-            startActivityForResult(chooserIntent, 1); //PHOTO_CAPTURE_CODE
+            startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
 
             return true;
         }
@@ -161,14 +150,55 @@ public class MainActivity extends AppCompatActivity {
                 Intent pickIntent = new Intent();
                 pickIntent.setType("image/*");
                 pickIntent.setAction(Intent.ACTION_GET_CONTENT);
+
                 Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                takePhotoIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile()));
+
                 String pickTitle = "Take or select a photo";
                 Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
-                startActivityForResult(chooserIntent, 1); //PHOTO_CAPTURE_CODE
+                startActivityForResult(takePhotoIntent, IMAGE_REQUEST_CODE);
             }
         }
     };
+
+    private boolean copyFileToPermanentStorage() {
+        File temp = getTempFile();
+        if(!temp.exists()) {
+            Log.e(TAG, "Temp file did not exist!");
+            return false;
+        }
+
+        File homeImageFile = getHomeImageFile();
+        try {
+            InputStream in = new FileInputStream(temp);
+            OutputStream out = new FileOutputStream(homeImageFile);
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } catch (FileNotFoundException exception) {
+            Log.e(TAG, exception.toString());
+            return false;
+        } catch(IOException exception) {
+            Log.e(TAG, exception.toString());
+            return false;
+        }
+        return true;
+    }
+
+    private Uri getHomeImageUri() {
+        return Uri.fromFile(getHomeImageFile());
+    }
+
+    private File getHomeImageFile() {
+        return new File(MainActivity.this.getFilesDir(), filename);
+    }
+    private File getTempFile() {
+        return new File(Environment.getExternalStorageDirectory(), "image.tmp");
+    }
     // Mark:- SetUp Functions
     private void setUpActionBar() {
         actionBar = getSupportActionBar();

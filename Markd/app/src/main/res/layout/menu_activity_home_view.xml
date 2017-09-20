@@ -29,7 +29,7 @@
                         android:layout_width="@dimen/square_icon"
                         android:layout_height="@dimen/square_icon"
                         android:layout_gravity="center"
-                        android:background="@drawable/ic_action_name" />
+                        android:background="@drawable/ic_action_camera" />
                     <ImageView
                         android:id="@+id/home_image"
                         android:layout_width="match_parent"

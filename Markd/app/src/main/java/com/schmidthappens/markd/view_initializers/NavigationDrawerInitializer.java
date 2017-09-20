@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
 import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
 import com.schmidthappens.markd.menu_option_activities.HvacActivity;
@@ -66,36 +67,69 @@ public class NavigationDrawerInitializer {
     }
 
     private void selectItem(int position) {
-        Log.i(TAG, "Selected Item-" + menuOptions[position]);
-        if(menuOptions[position].equals("Home")) {
-            Class destinationClass = MainActivity.class;
-            Intent intentToStartHomeActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartHomeActivity);
-        } else if(menuOptions[position].equals("Plumbing")) {
-            Class destinationClass = PlumbingActivity.class;
-            Intent intentToStartPlumbingActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartPlumbingActivity);
-        } else if(menuOptions[position].equals("HVAC")) {
-            Class destinationClass = HvacActivity.class;
-            Intent intentToStartHvacActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartHvacActivity);
-        } else if(menuOptions[position].equals("Electrical")) {
-            Class destinationClass = ElectricalActivity.class;
-            Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartElectricalActivity);
-        }  else if(menuOptions[position].equals("Landscaping")) {
-            Class destinationClass = LandscapingActivity.class;
-            Intent intentToStartLandscapingActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartLandscapingActivity);
-        } else if(menuOptions[position].equals("Painting")) {
-            Class destinationClass = PaintingActivity.class;
-            Intent intentToStartPaintingActivity = new Intent(context, destinationClass);
-            context.startActivity(intentToStartPaintingActivity);
-        } else if(menuOptions[position].equals("Sign Out")) {
-            SessionManager sessionManager = new SessionManager(context);
+        String selectedMenuItem = menuOptions[position];
+        Log.i(TAG, "Selected Item-" + selectedMenuItem);
+        SessionManager sessionManager = new SessionManager(context);
+        String userType = sessionManager.getUserType();
+
+        Intent customerIntent = null;
+        if(userType.equals("customer")) {
+            customerIntent = getCustomerIntent(selectedMenuItem);
+        } else {
+            customerIntent = getContractorIntent(selectedMenuItem);
+        }
+
+        if(customerIntent != null) {
+            context.startActivity(customerIntent);
+        } else {
             sessionManager.logoutUser();
         }
+
         drawerLayout.closeDrawer(drawerList);
     }
 
+    private Intent getCustomerIntent(String selectedMenuItem) {
+        Intent intentToReturn = null;
+        switch (selectedMenuItem) {
+            case "Home":
+                intentToReturn = new Intent(context, MainActivity.class);
+                break;
+            case "Plumbing":
+                intentToReturn = new Intent(context, PlumbingActivity.class);
+                break;
+            case"HVAC":
+                intentToReturn = new Intent(context, HvacActivity.class);
+                break;
+            case "Electrical":
+                intentToReturn = new Intent(context, ElectricalActivity.class);
+                break;
+            case"Landscaping":
+                intentToReturn = new Intent(context, LandscapingActivity.class);
+                break;
+            case "Painting":
+                intentToReturn = new Intent(context, PaintingActivity.class);
+                break;
+            default:
+                Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);
+        }
+        return intentToReturn;
+    }
+
+    private Intent getContractorIntent(String selectedMenuItem) {
+        Intent intentToReturn = null;
+        switch (selectedMenuItem) {
+            case "Home":
+                intentToReturn = new Intent(context, ContractorMainActivity.class);
+                break;
+            case "Customers":
+                intentToReturn = new Intent(context, ContractorMainActivity.class);
+                break;
+            case"Settings":
+                intentToReturn = new Intent(context, ContractorMainActivity.class);
+                break;
+            default:
+                Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);
+        }
+        return intentToReturn;
+    }
 }
