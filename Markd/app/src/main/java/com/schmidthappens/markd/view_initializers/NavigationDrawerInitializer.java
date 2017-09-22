@@ -73,6 +73,11 @@ public class NavigationDrawerInitializer {
         String userType = sessionManager.getUserType();
 
         Intent customerIntent = null;
+        if(userType == null) {
+            sessionManager.logoutUser();
+            return;
+        }
+
         if(userType.equals("customer")) {
             customerIntent = getCustomerIntent(selectedMenuItem);
         } else {

@@ -37,4 +37,23 @@ public class TempContractorServiceData {
     public List<ContractorService> getHvacServices() {
         return hvacServices;
     }
+
+    private Contractor tempContractor = new Contractor("Greenwich Landscaping Company",  "203.869.1022", "http://greenwichlandscape.net/", "53532");
+    public Contractor getContractor() {
+        return tempContractor;
+    }
+
+    public class Contractor {
+        Contractor(String companyName, String telephoneNumber, String websiteUrl, String zipCode) {
+            this.companyName = companyName;
+            this.telephoneNumber = telephoneNumber;
+            this.websiteUrl = websiteUrl;
+            this.zipCode = zipCode;
+        }
+
+        public String companyName;
+        public String telephoneNumber;
+        public String websiteUrl;
+        public String zipCode;
+    }
 }

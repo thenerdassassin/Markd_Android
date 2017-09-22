@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView homeImagePlaceholder;
 
     private static final int IMAGE_REQUEST_CODE = 1;
-    private static final String IMAGES_DIRECTORY = "images";
     private static final String filename = "main_photo.jpg";
 
     private String TAG = "MainActivity";
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO change to only set as "0" if no image available from http call
         if(getHomeImageFile().exists()) {
-            setPhoto();
+            setPhoto(getHomeImageUri());
             homeImage.setTag("1");
         } else {
             //TODO: try and get photo from http call
@@ -92,18 +91,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //TODO Save Image in Database
-
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if(!copyFileToPermanentStorage()) {
+            if(copyFileToPermanentStorage()) {
+                //Camera Results
+                setPhoto(getHomeImageUri());
+            } else {
+                //Gallery Results
                 Log.e(TAG, "Copy did not work");
+                if(data.getData() != null) {
+                    copyUriToPermanentStorage(data.getData());
+                    setPhoto(data.getData());
+                }
                 return;
             }
-            setPhoto();
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private boolean setPhoto() {
+    /*private boolean setPhoto() {
         if(!getHomeImageFile().exists()) {
             Log.e(TAG, "Home Image file does not exist");
             return false;
@@ -117,8 +123,97 @@ public class MainActivity extends AppCompatActivity {
         homeImage.setImageURI(getHomeImageUri());
         homeImagePlaceholder.setVisibility(View.GONE);
         return true;
+    }*/
+
+    private boolean setPhoto(Uri uri) {
+        homeFrame.setBackgroundColor(Color.TRANSPARENT);
+        homeImage.setLayoutParams(
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+        );
+
+        homeImage.setImageURI(null); //work around to prevent caching
+        homeImage.setImageURI(uri);
+        homeImagePlaceholder.setVisibility(View.GONE);
+        return true;
     }
 
+    private boolean copyFileToPermanentStorage() {
+        File temp = getTempFile();
+        if(!temp.exists()) {
+            Log.e(TAG, "Temp file did not exist!");
+            return false;
+        }
+
+        File homeImageFile = getHomeImageFile();
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = new FileInputStream(temp);
+            out = new FileOutputStream(homeImageFile);
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+            temp.delete();
+            return true;
+        } catch (Exception exception) {
+            Log.e(TAG, exception.toString());
+        }  finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+            } catch(IOException ioe) {
+                //ignore
+            }
+        }
+        temp.delete();
+        return false;
+    }
+
+    private boolean copyUriToPermanentStorage(Uri uri) {
+        File homeImageFile = getHomeImageFile();
+        InputStream in = null;
+        OutputStream out = null;
+
+        try {
+            in = getContentResolver().openInputStream(uri);
+            out = new FileOutputStream(homeImageFile);
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+            return true;
+        } catch (Exception exception) {
+            Log.e(TAG, exception.toString());
+        }  finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+            } catch(IOException ioe) {
+                //ignore
+            }
+        }
+        return false;
+    }
+
+    private Uri getHomeImageUri() {
+        return Uri.fromFile(getHomeImageFile());
+    }
+
+    private File getHomeImageFile() {
+        return new File(MainActivity.this.getFilesDir(), filename);
+    }
+    private File getTempFile() {
+        return new File(Environment.getExternalStorageDirectory(), "image.tmp");
+    }
 
     // Mark:- Action Listeners
     private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
@@ -161,53 +256,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private boolean copyFileToPermanentStorage() {
-        File temp = getTempFile();
-        if(!temp.exists()) {
-            Log.e(TAG, "Temp file did not exist!");
-            return false;
-        }
 
-        File homeImageFile = getHomeImageFile();
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(temp);
-            out = new FileOutputStream(homeImageFile);
-            // Transfer bytes from in to out
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            temp.delete();
-            return true;
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
-        }  finally {
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            } catch(IOException ioe) {
-                //ignore
-            }
-        }
-        temp.delete();
-        return false;
-    }
 
-    private Uri getHomeImageUri() {
-        return Uri.fromFile(getHomeImageFile());
-    }
-
-    private File getHomeImageFile() {
-        return new File(MainActivity.this.getFilesDir(), filename);
-    }
-    private File getTempFile() {
-        return new File(Environment.getExternalStorageDirectory(), "image.tmp");
-    }
     // Mark:- SetUp Functions
     private void setUpActionBar() {
         actionBar = getSupportActionBar();
