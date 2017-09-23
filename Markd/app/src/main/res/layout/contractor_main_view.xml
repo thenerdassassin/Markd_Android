@@ -38,16 +38,14 @@
                     android:maxHeight="120dp"
                     android:scaleType="fitCenter" />
             </FrameLayout>
-
             <!-- Company Name -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="55dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="25dp"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/contractor_company_title"
                     android:layout_width="wrap_content"
@@ -55,11 +53,9 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:text="Company"
-                    android:textSize="20sp"
+                    android:textSize="22sp"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-condensed"/>
-
-
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1.5dp"
@@ -70,18 +66,130 @@
                     android:layout_alignEnd="@+id/contractor_company_title"
                     android:layout_alignRight="@+id/contractor_company_title"
                     android:background="@color/black" />
-
                 <TextView
                     android:id="@+id/contractor_company_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_centerInParent="true"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-light"/>
             </RelativeLayout>
-
+            <!-- Contractor Telephone -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/contractor_telephone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="Telephone"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-condensed"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1.5dp"
+                    android:layout_marginTop="0.5dp"
+                    android:layout_below="@+id/contractor_telephone"
+                    android:layout_alignLeft="@+id/contractor_telephone"
+                    android:layout_alignStart="@+id/contractor_telephone"
+                    android:layout_alignEnd="@+id/contractor_telephone"
+                    android:layout_alignRight="@+id/contractor_telephone"
+                    android:background="@color/black" />
+                <TextView
+                    android:id="@+id/contractor_telephone_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+            </RelativeLayout>
+            <!-- Contractor Website -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/contractor_website"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="Website"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-condensed"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1.5dp"
+                    android:layout_marginTop="0.5dp"
+                    android:layout_below="@+id/contractor_website"
+                    android:layout_alignLeft="@+id/contractor_website"
+                    android:layout_alignStart="@+id/contractor_website"
+                    android:layout_alignEnd="@+id/contractor_website"
+                    android:layout_alignRight="@+id/contractor_website"
+                    android:background="@color/black" />
+                <TextView
+                    android:id="@+id/contractor_website_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+            </RelativeLayout>
+            <!-- Contractor ZipCode -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/contractor_zipcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="Zip Code"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-condensed"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1.5dp"
+                    android:layout_marginTop="0.5dp"
+                    android:layout_below="@+id/contractor_zipcode"
+                    android:layout_alignLeft="@+id/contractor_zipcode"
+                    android:layout_alignStart="@+id/contractor_zipcode"
+                    android:layout_alignEnd="@+id/contractor_zipcode"
+                    android:layout_alignRight="@+id/contractor_zipcode"
+                    android:background="@color/black" />
+                <TextView
+                    android:id="@+id/contractor_zipcode_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-light"/>
+            </RelativeLayout>
         </LinearLayout>
     </FrameLayout>
 

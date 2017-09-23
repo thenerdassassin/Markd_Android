@@ -53,6 +53,9 @@ public class ContractorMainActivity extends AppCompatActivity {
     private ImageView logoImagePlaceholder;
 
     private TextView companyNameTextView;
+    private TextView companyTelephone;
+    private TextView companyWebpage;
+    private TextView companyZipCode;
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "contractor_logo.jpg";
@@ -72,6 +75,9 @@ public class ContractorMainActivity extends AppCompatActivity {
         logoImagePlaceholder = (ImageView)findViewById(R.id.contractor_logo_placeholder);
 
         companyNameTextView = (TextView)findViewById(R.id.contractor_company_name);
+        companyTelephone = (TextView)findViewById(R.id.contractor_telephone_text);
+        companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
+        companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
 
         //TODO: change to http call to get contractor
         TempContractorServiceData.Contractor contractor = TempContractorServiceData.getInstance().getContractor();
@@ -250,6 +256,9 @@ public class ContractorMainActivity extends AppCompatActivity {
     // Mark:- SetUp Functions
     private void initializeTextViews(TempContractorServiceData.Contractor contractor) {
         companyNameTextView.setText(contractor.companyName);
+        companyTelephone.setText(contractor.telephoneNumber);
+        companyWebpage.setText(contractor.websiteUrl);
+        companyZipCode.setText(contractor.zipCode);
     }
 
     private void setUpActionBar() {
