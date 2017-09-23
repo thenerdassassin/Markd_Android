@@ -1,6 +1,7 @@
 package com.schmidthappens.markd.contractor_user_activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -126,7 +127,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
     private boolean setPhoto(Uri uri) {
         logoFrame.setBackgroundColor(Color.TRANSPARENT);
         logoImage.setLayoutParams(
@@ -138,27 +138,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         logoImagePlaceholder.setVisibility(View.GONE);
         return true;
     }
-
-
-    // Mark:- Action Listeners
-    private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
-            return true;
-        }
-    };
-
-    private View.OnClickListener photoClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //Only resets image if no image exists
-            if(logoImage.getTag().equals("0")) {
-                startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
-            }
-        }
-    };
-
     private Intent createPhotoOrGalleryChooserIntent() {
         Intent pickIntent = new Intent();
         pickIntent.setType("image/*");
@@ -173,7 +152,6 @@ public class ContractorMainActivity extends AppCompatActivity {
 
         return chooserIntent;
     }
-
     private boolean copyFileToPermanentStorage() {
         File temp = getTempFile();
         if(!temp.exists()) {
@@ -210,7 +188,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         temp.delete();
         return false;
     }
-
     private boolean copyUriToPermanentStorage(Uri uri) {
         File logoImageFile = getLogoImageFile();
         InputStream in = null;
@@ -240,11 +217,9 @@ public class ContractorMainActivity extends AppCompatActivity {
         }
         return false;
     }
-
     private Uri getLogoImageUri() {
         return Uri.fromFile(getLogoImageFile());
     }
-
     private File getLogoImageFile() {
         return new File(ContractorMainActivity.this.getFilesDir(), filename);
     }
@@ -252,13 +227,50 @@ public class ContractorMainActivity extends AppCompatActivity {
         return new File(Environment.getExternalStorageDirectory(), "image.tmp");
     }
 
+    // Mark:- Action Listeners
+    private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
+            return true;
+        }
+    };
+
+    private View.OnClickListener photoClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //Only resets image if no image exists
+            if(logoImage.getTag().equals("0")) {
+                startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
+            }
+        }
+    };
+
+    private View.OnClickListener editCompanyOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Context activityContext = ContractorMainActivity.this;
+            Class destinationClass = ContractorEditActivity.class;
+            Intent gotToContractorEditActivityIntent = new Intent(activityContext, destinationClass);
+            addContractorDataToIntent(gotToContractorEditActivityIntent);
+            startActivity(gotToContractorEditActivityIntent);
+        }
+    };
+    private void addContractorDataToIntent(Intent intent) {
+        //TODO: change to http call to get contractor
+        TempContractorServiceData.Contractor contractor = TempContractorServiceData.getInstance().getContractor();
+        intent.putExtra("companyName", contractor.getCompanyName());
+        intent.putExtra("telephoneNumber", contractor.getTelephoneNumber());
+        intent.putExtra("websiteUrl", contractor.getWebsiteUrl());
+        intent.putExtra("zipCode", contractor.getZipCode());
+    }
 
     // Mark:- SetUp Functions
     private void initializeTextViews(TempContractorServiceData.Contractor contractor) {
-        companyNameTextView.setText(contractor.companyName);
-        companyTelephone.setText(contractor.telephoneNumber);
-        companyWebpage.setText(contractor.websiteUrl);
-        companyZipCode.setText(contractor.zipCode);
+        companyNameTextView.setText(contractor.getCompanyName());
+        companyTelephone.setText(contractor.getTelephoneNumber());
+        companyWebpage.setText(contractor.getWebsiteUrl());
+        companyZipCode.setText(contractor.getZipCode());
     }
 
     private void setUpActionBar() {
@@ -278,6 +290,12 @@ public class ContractorMainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //Make edit mode accessible
+        ImageView editButton = (ImageView)findViewById(R.id.edit_mode);
+        editButton.setVisibility(View.VISIBLE);
+        editButton.setClickable(true);
+        editButton.setOnClickListener(editCompanyOnClickListener);
     }
 
     private void setUpDrawerToggle() {

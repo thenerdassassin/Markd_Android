@@ -113,7 +113,13 @@
         <activity
             android:name=".contractor_user_activities.ContractorMainActivity"
             android:value=".contractor_user_activities.ContractorMainActivity"/>
-
+        <activity android:name=".contractor_user_activities.ContractorEditActivity"
+            android:value=".contractor_user_activities.ContractorEditActivity"
+            android:parentActivityName=".contractor_user_activities.ContractorMainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".contractor_user_activities.ContractorMainActivity" />
+        </activity>
     </application>
 
 </manifest>

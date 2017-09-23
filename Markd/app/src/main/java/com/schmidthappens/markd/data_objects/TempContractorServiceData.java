@@ -1,7 +1,11 @@
 package com.schmidthappens.markd.data_objects;
 
+import android.os.Build;
+import android.telephony.PhoneNumberUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Josh on 4/19/2017.
@@ -38,7 +42,7 @@ public class TempContractorServiceData {
         return hvacServices;
     }
 
-    private Contractor tempContractor = new Contractor("Greenwich Landscaping Company",  "203.869.1022", "http://greenwichlandscape.net/", "53532");
+    private Contractor tempContractor = new Contractor("Greenwich Landscaping Company",  "2038691022", "http://greenwichlandscape.net/", "53532");
     public Contractor getContractor() {
         return tempContractor;
     }
@@ -51,9 +55,49 @@ public class TempContractorServiceData {
             this.zipCode = zipCode;
         }
 
-        public String companyName;
-        public String telephoneNumber;
-        public String websiteUrl;
-        public String zipCode;
+        private String companyName;
+        private String telephoneNumber;
+        private String websiteUrl;
+        private String zipCode;
+
+        public String getCompanyName() {
+            return companyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            this.companyName = companyName;
+        }
+
+        public String getTelephoneNumber() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return PhoneNumberUtils.formatNumber(telephoneNumber, Locale.getDefault().getCountry());
+            } else {
+                return PhoneNumberUtils.formatNumber(telephoneNumber); //Deprecated method
+            }
+        }
+
+        public void setTelephoneNumber(String telephoneNumber) {
+            telephoneNumber = telephoneNumber.replaceAll("[^0-9]", "");
+            if(telephoneNumber.length() != 10) {
+                return;
+            }
+            this.telephoneNumber = telephoneNumber;
+        }
+
+        public String getWebsiteUrl() {
+            return websiteUrl;
+        }
+
+        public void setWebsiteUrl(String websiteUrl) {
+            this.websiteUrl = websiteUrl;
+        }
+
+        public String getZipCode() {
+            return zipCode;
+        }
+
+        public void setZipCode(String zipCode) {
+            this.zipCode = zipCode;
+        }
     }
 }

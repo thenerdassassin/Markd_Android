@@ -26,4 +26,16 @@
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
         app:srcCompat="@drawable/white_transparent_logo"/>
+    <!-- Edit Button -->
+    <ImageView
+        android:id="@+id/edit_mode"
+        app:srcCompat="@drawable/edit_action_white"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:clickable="false" />
 </RelativeLayout>
