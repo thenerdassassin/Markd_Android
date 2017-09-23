@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.data_objects.Customer;
+import com.schmidthappens.markd.data_objects.HotWater;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
@@ -60,6 +63,7 @@ public class PlumbingActivity extends AppCompatActivity {
 
     //TODO change to http call to get plumbing hot water/boiler data
     TempPlumbingData plumbingData = TempPlumbingData.getInstance();
+    HotWater hotWater = TempCustomerData.getInstance().getHotWater();
     private static final String TAG = "PlumbingActivity";
 
     @Override
@@ -128,16 +132,16 @@ public class PlumbingActivity extends AppCompatActivity {
         hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
 
         hotWaterManufacturerView =(TextView)findViewById(R.id.plumbing_hot_water_manufacturer);
-        hotWaterManufacturerView.setText(plumbingData.getHotWaterManufacturer());
+        hotWaterManufacturerView.setText(hotWater.getManufacturer());
 
         hotWaterModelView = (TextView)findViewById(R.id.plumbing_hot_water_model);
-        hotWaterModelView.setText(plumbingData.getHotWaterModel());
+        hotWaterModelView.setText(hotWater.getModel());
 
         hotWaterInstallDateView = (TextView)findViewById(R.id.plumbing_hot_water_install_date);
-        hotWaterInstallDateView.setText(plumbingData.getHotWaterInstallDate());
+        hotWaterInstallDateView.setText(hotWater.getInstallDate());
 
         hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
-        hotWaterLifeSpanView.setText(plumbingData.getHotWaterLifeSpan());
+        hotWaterLifeSpanView.setText(hotWater.getLifeSpan());
     }
 
     private void initializeBoiler() {

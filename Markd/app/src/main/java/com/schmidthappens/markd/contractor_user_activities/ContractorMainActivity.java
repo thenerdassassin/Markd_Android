@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -81,7 +82,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
 
         //TODO: change to http call to get contractor
-        TempContractorServiceData.Contractor contractor = TempContractorServiceData.getInstance().getContractor();
+        Contractor contractor = TempContractorServiceData.getInstance().getContractor();
         initializeTextViews(contractor);
 
         //Set up ActionBar
@@ -258,7 +259,7 @@ public class ContractorMainActivity extends AppCompatActivity {
     };
     private void addContractorDataToIntent(Intent intent) {
         //TODO: change to http call to get contractor
-        TempContractorServiceData.Contractor contractor = TempContractorServiceData.getInstance().getContractor();
+        Contractor contractor = TempContractorServiceData.getInstance().getContractor();
         intent.putExtra("companyName", contractor.getCompanyName());
         intent.putExtra("telephoneNumber", contractor.getTelephoneNumber());
         intent.putExtra("websiteUrl", contractor.getWebsiteUrl());
@@ -266,7 +267,7 @@ public class ContractorMainActivity extends AppCompatActivity {
     }
 
     // Mark:- SetUp Functions
-    private void initializeTextViews(TempContractorServiceData.Contractor contractor) {
+    private void initializeTextViews(Contractor contractor) {
         companyNameTextView.setText(contractor.getCompanyName());
         companyTelephone.setText(contractor.getTelephoneNumber());
         companyWebpage.setText(contractor.getWebsiteUrl());

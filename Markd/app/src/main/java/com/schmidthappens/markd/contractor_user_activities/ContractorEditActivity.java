@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 
 /**
@@ -66,7 +67,7 @@ public class ContractorEditActivity extends AppCompatActivity {
 
     private void saveContractorChanges() {
         //TODO: change to http call to save Contractor
-        TempContractorServiceData.Contractor contractor = TempContractorServiceData.getInstance().getContractor();
+        Contractor contractor = TempContractorServiceData.getInstance().getContractor();
         contractor.setCompanyName(companyNameEditText.getText().toString());
         contractor.setTelephoneNumber(telephoneEditText.getText().toString());
         contractor.setWebsiteUrl(webisteEditText.getText().toString());
