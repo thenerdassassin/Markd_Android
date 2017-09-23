@@ -30,7 +30,11 @@ public class TempCustomerData {
     }
 
     private void updateCustomer(HotWater hotWater) {
-        this.customer.setHotWater(hotWater);
+        customer.setHotWater(hotWater);
+    }
+
+    private void updateCustomer(Boiler boiler) {
+        customer.setBoiler(boiler);
     }
 
     private TempCustomerData() {
@@ -46,8 +50,8 @@ public class TempCustomerData {
             customerJson.put("maritalStatus", "Married");
 
             //Plumbing
-            customerJson.put("hotWater", initialHotWater());
-            customerJson.put("boiler", initialBoiler());
+            //customerJson.put("hotWater", initialHotWater());
+            //customerJson.put("boiler", initialBoiler());
         } catch (JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
@@ -73,19 +77,19 @@ public class TempCustomerData {
     private JSONObject initialBoiler() {
         JSONObject boilerJSON = new JSONObject();
         try {
-            boilerJSON.put("manufacturer", "Bosch");
-            boilerJSON.put("model", "C950 ES NG");
-            boilerJSON.put("month", "01");
-            boilerJSON.put("day", "17");
-            boilerJSON.put("year", "14");
-            boilerJSON.put("lifespan", "12");
+            boilerJSON.put("manufacturer", "Westinghouse");
+            boilerJSON.put("model", "WBRCLP140W");
+            boilerJSON.put("month", "11");
+            boilerJSON.put("day", "07");
+            boilerJSON.put("year", "12");
+            boilerJSON.put("lifespan", "9");
             boilerJSON.put("units", "years");
         } catch (JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
         return boilerJSON;
     }
-
+    //Mark:- Plumbing Updates
     public HotWater getHotWater() {
         return getCustomer().getHotWater();
     }
@@ -97,6 +101,22 @@ public class TempCustomerData {
         customerToUpdate.setHotWater(hotWater);                                         //change component to a copy
         if(putCustomer(customerToUpdate)) {                                            //send to database
             this.updateCustomer(hotWater);                                            //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
+
+    public Boiler getBoiler() {
+        return getCustomer().getBoiler();
+    }
+
+    public boolean updateBoiler(Boiler boiler) {
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                        //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
+        customerToUpdate.setBoiler(boiler);                                             //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                            //send to database
+            this.updateCustomer(boiler);                                             //update TempCustomerData
             return true;
         }
         return false;

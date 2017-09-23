@@ -58,16 +58,18 @@ public class Customer {
             this.namePrefix = customer.getString("namePrefix");
             this.firstName = customer.getString("firstName");
             this.lastName = customer.getString("lastName");
-            if(customer.has("nameSuffix")) {
-                this.nameSuffix = customer.getString("nameSuffix");
-            }
-            this.maritalStatus = customer.getString("maritalStatus");
+            this.nameSuffix = customer.optString("nameSuffix");
+            this.maritalStatus = customer.optString("maritalStatus");
             //this.address = new Address(customer.getJSONObject("address"));
             //this.home = new Home(customer.getJSONObject("home"));
 
             //Plumbing Page
-            this.hotWater = new HotWater(customer.getJSONObject("hotWater"));
-            //this.boiler = new Boiler(customer.getJSONObject("boiler"));
+            if(customer.optJSONObject("hotWater") != null) {
+                this.hotWater = new HotWater(customer.optJSONObject("hotWater"));
+            }
+            if(customer.optJSONObject("boiler") != null) {
+                this.boiler = new Boiler(customer.optJSONObject("boiler"));
+            }
             //this.plumbingServices = buildServicesListFromJSONArray(customer.getJSONArray("plubming_services"));
 
             //Contractors
@@ -102,10 +104,24 @@ public class Customer {
     }
 
     HotWater getHotWater() {
+        if(hotWater == null) {
+            return null;
+        }
         return new HotWater(hotWater);
     }
-    boolean setHotWater(HotWater hotWater) {
+
+    Boiler getBoiler() {
+        if(boiler == null) {
+            return null;
+        }
+        return new Boiler(boiler);
+    }
+
+    void setHotWater(HotWater hotWater) {
         this.hotWater = hotWater;
-        return true;
+    }
+
+    void setBoiler(Boiler boiler) {
+        this.boiler = boiler;
     }
 }

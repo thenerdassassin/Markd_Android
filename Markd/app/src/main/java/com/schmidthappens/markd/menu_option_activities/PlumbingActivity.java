@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
@@ -62,8 +63,9 @@ public class PlumbingActivity extends AppCompatActivity {
     FrameLayout plumbingContractor;
 
     //TODO change to http call to get plumbing hot water/boiler data
-    TempPlumbingData plumbingData = TempPlumbingData.getInstance();
+    //TempPlumbingData plumbingData = TempPlumbingData.getInstance();
     HotWater hotWater = TempCustomerData.getInstance().getHotWater();
+    Boiler boiler = TempCustomerData.getInstance().getBoiler();
     private static final String TAG = "PlumbingActivity";
 
     @Override
@@ -131,6 +133,10 @@ public class PlumbingActivity extends AppCompatActivity {
     private void initializeHotWater() {
         hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
 
+        if(hotWater == null) {
+            return;
+        }
+
         hotWaterManufacturerView =(TextView)findViewById(R.id.plumbing_hot_water_manufacturer);
         hotWaterManufacturerView.setText(hotWater.getManufacturer());
 
@@ -147,17 +153,21 @@ public class PlumbingActivity extends AppCompatActivity {
     private void initializeBoiler() {
         boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
 
+        if(boiler == null) {
+            return;
+        }
+
         boilerManufacturerView =(TextView)findViewById(R.id.plumbing_boiler_manufacturer);
-        boilerManufacturerView.setText(plumbingData.getBoilerManufacturer());
+        boilerManufacturerView.setText(boiler.getManufacturer());
 
         boilerModelView = (TextView)findViewById(R.id.plumbing_boiler_model);
-        boilerModelView.setText(plumbingData.getBoilerModel());
+        boilerModelView.setText(boiler.getModel());
 
         boilerInstallDateView = (TextView)findViewById(R.id.plumbing_boiler_install_date);
-        boilerInstallDateView.setText(plumbingData.getBoilerInstallDate());
+        boilerInstallDateView.setText(boiler.getInstallDate());
 
         boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
-        boilerLifeSpanView.setText(plumbingData.getBoilerLifeSpan());
+        boilerLifeSpanView.setText(boiler.getLifeSpan());
     }
 
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
@@ -167,7 +177,10 @@ public class PlumbingActivity extends AppCompatActivity {
             Class destinationClass = PlumbingEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
-            intentToStartPlumbingEditActivity = putHotWaterExtras(intentToStartPlumbingEditActivity);
+            if(hotWater != null) {
+                intentToStartPlumbingEditActivity = putHotWaterExtras(intentToStartPlumbingEditActivity);
+            }
+            intentToStartPlumbingEditActivity.putExtra("title", "Domestic Hot Water");
             startActivity(intentToStartPlumbingEditActivity);
         }
     };
@@ -186,7 +199,10 @@ public class PlumbingActivity extends AppCompatActivity {
             Class destinationClass = PlumbingEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
-            intentToStartPlumbingEditActivity = putBoilerExtras(intentToStartPlumbingEditActivity);
+            if(boiler != null) {
+                intentToStartPlumbingEditActivity = putBoilerExtras(intentToStartPlumbingEditActivity);
+            }
+            intentToStartPlumbingEditActivity.putExtra("title", "Boiler");
             startActivity(intentToStartPlumbingEditActivity);
         }
     };
@@ -209,7 +225,6 @@ public class PlumbingActivity extends AppCompatActivity {
     }
 
     private Intent putHotWaterExtras(Intent intent) {
-        intent.putExtra("title", "Domestic Hot Water");
         intent.putExtra("manufacturer", hotWaterManufacturerView.getText());
         intent.putExtra("model", hotWaterModelView.getText());
         intent.putExtra("installDate", hotWaterInstallDateView.getText());
@@ -218,7 +233,6 @@ public class PlumbingActivity extends AppCompatActivity {
     }
 
     private Intent putBoilerExtras(Intent intent) {
-        intent.putExtra("title", "Boiler");
         intent.putExtra("manufacturer", boilerManufacturerView.getText());
         intent.putExtra("model", boilerModelView.getText());
         intent.putExtra("installDate", boilerInstallDateView.getText());

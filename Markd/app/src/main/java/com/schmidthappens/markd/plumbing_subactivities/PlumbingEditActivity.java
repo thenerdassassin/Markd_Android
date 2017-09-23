@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.data_objects.TempPlumbingData;
@@ -67,8 +68,11 @@ public class PlumbingEditActivity extends AppCompatActivity {
         setEnterButtonToKeyboardDismissal(editModel);
 
         editInstallDate = (TextView)findViewById(R.id.plumbing_edit_install_date);
-        if(intent != null && intent.hasExtra("installDate"))
+        if(intent != null && intent.hasExtra("installDate")) {
             editInstallDate.setText(intent.getStringExtra("installDate"));
+        } else {
+            editInstallDate.setText(StringUtilities.getCurrentDateString());
+        }
 
         setInstallDateButton = (Button)findViewById(R.id.plumbing_set_install_date);
         setInstallDateButton.setOnClickListener(setInstallDateButtonClickListener);
@@ -106,31 +110,24 @@ public class PlumbingEditActivity extends AppCompatActivity {
     }
 
     private void savePlumbingChanges(){
-        TempPlumbingData plumbingData = TempPlumbingData.getInstance();
+        //TempPlumbingData plumbingData = TempPlumbingData.getInstance();
+        String lifeSpanString = editLifeSpan.getText().toString();
+        String manufacturer = editManufacturer.getText().toString();
+        String model        = editModel.getText().toString();
+        String installDate  = editInstallDate.getText().toString();
+        Integer lifeSpanInteger = Integer.parseInt(lifeSpanString.substring(0, lifeSpanString.indexOf(' ')));
+        String units = lifeSpanString.substring(lifeSpanString.indexOf(' ')+1);
+
         if(getTitle().equals("Domestic Hot Water")) {
             Log.i(TAG, "Save Hot Water Changes");
-            //plumbingData.setHotWaterManufacturer(editManufacturer.getText().toString());
-            //plumbingData.setHotWaterModel(editModel.getText().toString());
-            //plumbingData.setHotWaterInstallDate(editInstallDate.getText().toString());
-            //plumbingData.setHotWaterLifeSpan(editLifeSpan.getText().toString());
             //TODO: change to two EditText boxes: 1. Integer 2.Units
-            String lifeSpanString = editLifeSpan.getText().toString();
-            Integer lifeSpanInteger = Integer.parseInt(lifeSpanString.substring(0, lifeSpanString.indexOf(' ')));
-            String units = lifeSpanString.substring(lifeSpanString.indexOf(' ')+1);
-            HotWater hotWater = new HotWater(
-                    editManufacturer.getText().toString(),
-                    editModel.getText().toString(),
-                    editInstallDate.getText().toString(),
-                    lifeSpanInteger,
-                    units
-            );
+
+            HotWater hotWater = new HotWater(manufacturer, model, installDate, lifeSpanInteger, units);
             TempCustomerData.getInstance().updateHotWater(hotWater);
         } else if(getTitle().equals("Boiler")) {
             Log.i(TAG, "Save Boiler Changes");
-            plumbingData.setBoilerManufacturer(editManufacturer.getText().toString());
-            plumbingData.setBoilerModel(editModel.getText().toString());
-            plumbingData.setBoilerInstallDate(editInstallDate.getText().toString());
-            plumbingData.setBoilerLifeSpan(editLifeSpan.getText().toString());
+            Boiler boiler = new Boiler(manufacturer, model, installDate, lifeSpanInteger, units);
+            TempCustomerData.getInstance().updateBoiler(boiler);
         }
     }
 
