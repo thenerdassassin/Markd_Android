@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,6 @@ import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
@@ -38,10 +38,16 @@ public class PlumbingEditActivity extends AppCompatActivity {
     EditText editModel;
     TextView editInstallDate;
     Button setInstallDateButton;
-    EditText editLifeSpan;
+    NumberPicker lifeSpanIntegerPicker;
+    NumberPicker lifeSpanUnits;
     Button saveButton;
 
     private static final String TAG = "PlumbingEditActivity";
+    private static final String[] unitsArray = {
+            "days",
+            "months",
+            "years"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +83,28 @@ public class PlumbingEditActivity extends AppCompatActivity {
         setInstallDateButton = (Button)findViewById(R.id.plumbing_set_install_date);
         setInstallDateButton.setOnClickListener(setInstallDateButtonClickListener);
 
-        editLifeSpan = (EditText)findViewById(R.id.plumbing_edit_life_span);
-        if(intent != null && intent.hasExtra("lifespan"))
-            editLifeSpan.setText(intent.getStringExtra("lifespan"));
-        setEnterButtonToKeyboardDismissal(editLifeSpan);
+        lifeSpanIntegerPicker = (NumberPicker)findViewById(R.id.plumbing_edit_lifespan_number_picker);
+        lifeSpanIntegerPicker.setMinValue(0);
+        lifeSpanIntegerPicker.setMaxValue(365);
+        lifeSpanIntegerPicker.setWrapSelectorWheel(false);
+        if(intent != null) {
+            lifeSpanIntegerPicker.setValue(intent.getIntExtra("lifespanInteger", 0));
+        }
+
+        lifeSpanUnits = (NumberPicker)findViewById(R.id.plumbing_edit_life_span_units);
+        lifeSpanUnits.setMinValue(0);
+        lifeSpanUnits.setMaxValue(2);
+        lifeSpanUnits.setDisplayedValues(unitsArray);
+
+        if(intent != null && intent.hasExtra("units")) {
+            String units = intent.getStringExtra("units");
+            for(int i = 0; i < unitsArray.length; i++) {
+                if(unitsArray[i].equals(units)) {
+                    lifeSpanUnits.setValue(i);
+                    break;
+                }
+            }
+        }
 
         saveButton = (Button)findViewById(R.id.plumbing_edit_save_button);
         saveButton.setOnClickListener(saveButtonClickListener);
@@ -110,18 +134,14 @@ public class PlumbingEditActivity extends AppCompatActivity {
     }
 
     private void savePlumbingChanges(){
-        //TempPlumbingData plumbingData = TempPlumbingData.getInstance();
-        String lifeSpanString = editLifeSpan.getText().toString();
         String manufacturer = editManufacturer.getText().toString();
         String model        = editModel.getText().toString();
         String installDate  = editInstallDate.getText().toString();
-        Integer lifeSpanInteger = Integer.parseInt(lifeSpanString.substring(0, lifeSpanString.indexOf(' ')));
-        String units = lifeSpanString.substring(lifeSpanString.indexOf(' ')+1);
+        Integer lifeSpanInteger = lifeSpanIntegerPicker.getValue();
+        String units = unitsArray[lifeSpanUnits.getValue()];
 
         if(getTitle().equals("Domestic Hot Water")) {
             Log.i(TAG, "Save Hot Water Changes");
-            //TODO: change to two EditText boxes: 1. Integer 2.Units
-
             HotWater hotWater = new HotWater(manufacturer, model, installDate, lifeSpanInteger, units);
             TempCustomerData.getInstance().updateHotWater(hotWater);
         } else if(getTitle().equals("Boiler")) {

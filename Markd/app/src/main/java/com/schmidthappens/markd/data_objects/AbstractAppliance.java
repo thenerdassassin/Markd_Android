@@ -15,8 +15,8 @@ abstract class AbstractAppliance {
     protected Integer month;
     protected Integer day;
     protected Integer year;
-    Integer lifeSpan;
-    String units;
+    protected Integer lifeSpan;
+    protected String units;
 
     AbstractAppliance(String manufacturer, String model, Integer month, Integer day, Integer year, Integer lifeSpan, String units) {
         this.manufacturer = manufacturer;
@@ -48,16 +48,17 @@ abstract class AbstractAppliance {
         );
 
     }
-    AbstractAppliance(JSONObject appliance) throws JSONException {
+    AbstractAppliance(JSONObject appliance) {
         this(
-                appliance.getString("manufacturer"),
-                appliance.getString("model"),
-                appliance.getInt("month"),
-                appliance.getInt("day"),
-                appliance.getInt("year"),
-                appliance.getInt("lifeSpan"),
-                appliance.getString("units")
+                appliance.optString("manufacturer"),
+                appliance.optString("model"),
+                appliance.optInt("month"),
+                appliance.optInt("day"),
+                appliance.optInt("year"),
+                appliance.optInt("lifeSpan"),
+                appliance.optString("units")
         );
+
     }
     public String getManufacturer() {
         return manufacturer;
@@ -79,17 +80,17 @@ abstract class AbstractAppliance {
         this.month = StringUtilities.getMonthFromDotFormattedString(installDate);
         this.year = StringUtilities.getYearFromDotFormmattedString(installDate);
     }
-    public String getLifeSpan() {
+    public String getLifeSpanString() {
         return lifeSpan.toString() + " " + units;
     }
     public void setLifeSpan(Integer lifeSpanInteger, String lifeSpanUnits) {
         this.lifeSpan = lifeSpanInteger;
         this.units = lifeSpanUnits;
     }
-    private Integer getLifeSpanInteger() {
+    public Integer getLifeSpanInteger() {
         return lifeSpan;
     }
-    private String getUnits() {
+    public String getUnits() {
         return units;
     }
 }

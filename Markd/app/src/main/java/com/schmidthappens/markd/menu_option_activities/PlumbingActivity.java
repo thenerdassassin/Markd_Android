@@ -21,14 +21,13 @@ import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Boiler;
-import com.schmidthappens.markd.data_objects.Customer;
+import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
-import com.schmidthappens.markd.data_objects.TempPlumbingData;
 import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
@@ -62,10 +61,9 @@ public class PlumbingActivity extends AppCompatActivity {
     FrameLayout plumbingServiceList;
     FrameLayout plumbingContractor;
 
-    //TODO change to http call to get plumbing hot water/boiler data
-    //TempPlumbingData plumbingData = TempPlumbingData.getInstance();
     HotWater hotWater = TempCustomerData.getInstance().getHotWater();
     Boiler boiler = TempCustomerData.getInstance().getBoiler();
+    Contractor plumber = TempCustomerData.getInstance().getPlumber();
     private static final String TAG = "PlumbingActivity";
 
     @Override
@@ -94,7 +92,7 @@ public class PlumbingActivity extends AppCompatActivity {
         //TODO change to http call to get plumbing contractor
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.sdr_logo);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com");
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
         plumbingContractor.addView(v);
 
         //Set Up Buttons
@@ -147,7 +145,7 @@ public class PlumbingActivity extends AppCompatActivity {
         hotWaterInstallDateView.setText(hotWater.getInstallDate());
 
         hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
-        hotWaterLifeSpanView.setText(hotWater.getLifeSpan());
+        hotWaterLifeSpanView.setText(hotWater.getLifeSpanString());
     }
 
     private void initializeBoiler() {
@@ -167,7 +165,7 @@ public class PlumbingActivity extends AppCompatActivity {
         boilerInstallDateView.setText(boiler.getInstallDate());
 
         boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
-        boilerLifeSpanView.setText(boiler.getLifeSpan());
+        boilerLifeSpanView.setText(boiler.getLifeSpanString());
     }
 
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
@@ -228,7 +226,8 @@ public class PlumbingActivity extends AppCompatActivity {
         intent.putExtra("manufacturer", hotWaterManufacturerView.getText());
         intent.putExtra("model", hotWaterModelView.getText());
         intent.putExtra("installDate", hotWaterInstallDateView.getText());
-        intent.putExtra("lifespan", hotWaterLifeSpanView.getText());
+        intent.putExtra("lifespanInteger", hotWater.getLifeSpanInteger());
+        intent.putExtra("units", hotWater.getUnits());
         return intent;
     }
 
@@ -236,7 +235,8 @@ public class PlumbingActivity extends AppCompatActivity {
         intent.putExtra("manufacturer", boilerManufacturerView.getText());
         intent.putExtra("model", boilerModelView.getText());
         intent.putExtra("installDate", boilerInstallDateView.getText());
-        intent.putExtra("lifespan", boilerLifeSpanView.getText());
+        intent.putExtra("lifespanInteger", boiler.getLifeSpanInteger());
+        intent.putExtra("units", boiler.getUnits());
         return intent;
     }
 }

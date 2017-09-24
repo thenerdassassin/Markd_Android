@@ -20,7 +20,10 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.AirHandler;
+import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.data_objects.TempHvacData;
 import com.schmidthappens.markd.hvac_subactivities.HvacEditActivity;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
@@ -57,7 +60,9 @@ public class HvacActivity extends AppCompatActivity {
     FrameLayout hvacServiceList;
     FrameLayout hvacContractor;
 
-    private TempHvacData hvacData = TempHvacData.getInstance();
+    //private TempHvacData hvacData = TempHvacData.getInstance();
+    private AirHandler airHandler = TempCustomerData.getInstance().getAirHandler();
+    private Compressor compressor = TempCustomerData.getInstance().getCompressor();
     private static String TAG = "HvacActivity";
 
     @Override
@@ -125,33 +130,39 @@ public class HvacActivity extends AppCompatActivity {
     private void initializeAirHandler() {
         airHandlerEditButton = (ImageView)findViewById(R.id.hvac_air_handler_edit);
 
+        if(airHandler == null) {
+            return;
+        }
         airHandlerManufacturerView = (TextView)findViewById(R.id.hvac_air_handler_manufacturer);
-        airHandlerManufacturerView.setText(hvacData.getAirHandlerManufacturer());
+        airHandlerManufacturerView.setText(airHandler.getManufacturer());
 
         airHandlerModelView = (TextView)findViewById(R.id.hvac_air_handler_model);
-        airHandlerModelView.setText(hvacData.getAirHandlerModel());
+        airHandlerModelView.setText(airHandler.getModel());
 
         airHandlerInstallDateView = (TextView)findViewById(R.id.hvac_air_handler_install_date);
-        airHandlerInstallDateView.setText(hvacData.getAirHandlerInstallDate());
+        airHandlerInstallDateView.setText(airHandler.getInstallDate());
 
         airHandlerLifeSpanView = (TextView)findViewById(R.id.hvac_air_handler_life_span);
-        airHandlerLifeSpanView.setText(hvacData.getAirHandlerLifeSpan());
+        airHandlerLifeSpanView.setText(airHandler.getLifeSpanString());
     }
 
     private void initializeCompressor() {
         compressorEditButton = (ImageView)findViewById(R.id.hvac_compressor_edit);
 
+        if(compressor == null) {
+            return;
+        }
         compressorManufacturerView = (TextView)findViewById(R.id.hvac_compressor_manufacturer);
-        compressorManufacturerView.setText(hvacData.getCompressorManufacturer());
+        compressorManufacturerView.setText(compressor.getManufacturer());
 
         compressorModelView = (TextView)findViewById(R.id.hvac_compressor_model);
-        compressorModelView.setText(hvacData.getCompressorModel());
+        compressorModelView.setText(compressor.getModel());
 
         compressorInstallDateView = (TextView)findViewById(R.id.hvac_compressor_install_date);
-        compressorInstallDateView.setText(hvacData.getCompressorInstallDate());
+        compressorInstallDateView.setText(compressor.getInstallDate());
 
         compressorLifeSpanView = (TextView)findViewById(R.id.hvac_compressor_life_span);
-        compressorLifeSpanView.setText(hvacData.getCompressorLifeSpan());
+        compressorLifeSpanView.setText(compressor.getLifeSpanString());
     }
 
     private View.OnClickListener airHandlerEditButtonClickListener = new View.OnClickListener() {

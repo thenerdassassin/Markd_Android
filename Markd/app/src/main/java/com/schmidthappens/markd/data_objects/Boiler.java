@@ -8,7 +8,6 @@ import org.json.JSONObject;
  */
 
 public class Boiler extends AbstractAppliance {
-    //TODO: Implement Boiler
     public Boiler(String manufacturer, String model, String installDate, Integer lifeSpan, String units) {
         super(manufacturer, model, installDate, lifeSpan, units);
     }
@@ -16,7 +15,7 @@ public class Boiler extends AbstractAppliance {
         super(oldBoiler);
 
     }
-    Boiler(JSONObject boiler) throws JSONException {
+    Boiler(JSONObject boiler){
         super(boiler);
     }
 }

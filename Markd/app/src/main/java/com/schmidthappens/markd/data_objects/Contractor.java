@@ -21,12 +21,33 @@ public class Contractor {
     private String zipCode;
     private String type; //TODO: make enum
 
-    public Contractor(String companyName, String telephoneNumber, String websiteUrl, String zipCode) {
+    public Contractor(String companyName, String telephoneNumber, String websiteUrl, String zipCode, String type) {
         this.companyName = companyName;
         this.telephoneNumber = telephoneNumber;
         this.websiteUrl = websiteUrl;
         this.zipCode = zipCode;
+        this.type = type;
     }
+    public Contractor(Contractor oldContractor) throws NullPointerException {
+        this(
+                oldContractor.getCompanyName(),
+                oldContractor.getTelephoneNumber(),
+                oldContractor.getWebsiteUrl(),
+                oldContractor.getZipCode(),
+                oldContractor.getType()
+        );
+    }
+    public Contractor(JSONObject contractor) {
+        this(
+                contractor.optString("companyName"),
+                contractor.optString("telephoneNumber"),
+                contractor.optString("websiteUrl"),
+                contractor.optString("zipCode"),
+                contractor.optString("type")
+        );
+    }
+
+
 
     public String getCompanyName() {
         return companyName;
@@ -60,15 +81,10 @@ public class Contractor {
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
-
-    public Contractor(JSONObject contractor) {
-        try {
-            this.companyName = contractor.getString("companyName");
-            this.telephoneNumber = contractor.getString("telephoneNumber");
-            this.websiteUrl = contractor.getString("websiteUrl");
-            this.zipCode = contractor.getString("zipCode");
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
     }
 }

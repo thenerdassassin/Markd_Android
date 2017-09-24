@@ -17,9 +17,8 @@ public class HotWater extends AbstractAppliance{
     }
     HotWater(HotWater oldHotWater) {
         super(oldHotWater);
-
     }
-    HotWater(JSONObject hotWater) throws JSONException{
+    HotWater(JSONObject hotWater){
         super(hotWater);
     }
 }

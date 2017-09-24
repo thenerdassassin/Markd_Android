@@ -38,7 +38,7 @@ public class TempContractorServiceData {
         return hvacServices;
     }
 
-    private Contractor tempContractor = new Contractor("Greenwich Landscaping Company",  "2038691022", "http://greenwichlandscape.net/", "53532");
+    private Contractor tempContractor = new Contractor("Greenwich Landscaping Company",  "2038691022", "http://greenwichlandscape.net/", "53532", "landscaper");
     public Contractor getContractor() {
         return tempContractor;
     }

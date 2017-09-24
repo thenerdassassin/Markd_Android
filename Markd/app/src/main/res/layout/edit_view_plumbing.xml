@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <!-- Edit Manufacturer -->
         <EditText
             android:id="@+id/plumbing_edit_manufacturer"
@@ -20,7 +19,6 @@
             android:inputType="text"
             android:imeOptions="actionDone"
             android:hint="Manufacturer"/>
-
         <!-- Edit Model -->
         <EditText
             android:id="@+id/plumbing_edit_model"
@@ -31,7 +29,6 @@
             android:inputType="text"
             android:imeOptions="actionDone"
             android:hint="Model"/>
-
         <!-- Edit Install Date -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,18 +68,34 @@
 
             </Button>
         </LinearLayout>
-
-        <!-- Edit Life Span -->
-        <EditText
-            android:id="@+id/plumbing_edit_life_span"
+        <!-- LifeSpan Title -->
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="-10dp"
-            android:maxLines="1"
-            android:inputType="text"
-            android:imeOptions="actionDone"
-            android:hint="Life Span"/>
-
+            android:layout_weight="3"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="Projected Life Span"/>
+        <!-- Edit Life Span -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp">
+            <NumberPicker
+                android:id="@+id/plumbing_edit_lifespan_number_picker"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+            <NumberPicker
+                android:id="@+id/plumbing_edit_life_span_units"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+        </LinearLayout>
         <!-- Save Button -->
         <Button
             android:id="@+id/plumbing_edit_save_button"
