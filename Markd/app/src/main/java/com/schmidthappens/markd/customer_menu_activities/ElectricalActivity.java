@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.menu_option_activities;
+package com.schmidthappens.markd.customer_menu_activities;
 
 import android.content.Context;
 import android.content.Intent;

@@ -20,7 +20,6 @@ import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.BreakerAmperage;
 import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.TempPanelData;
-import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 /**
  * Created by Josh on 3/8/2017.

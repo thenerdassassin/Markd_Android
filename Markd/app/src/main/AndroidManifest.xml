@@ -38,74 +38,66 @@
 
     <!-- Customer Pages -->
         <!-- Main Page -->
-        <activity android:name=".menu_option_activities.MainActivity"/>
+        <activity android:name=".customer_menu_activities.MainActivity"/>
 
         <!-- Plumbing -->
         <activity
-            android:name=".menu_option_activities.PlumbingActivity"
+            android:name=".customer_menu_activities.PlumbingActivity"
             android:value=".MenuOptionActivities.PlumbingActivity"/>
         <!-- Plumbing Sub-Activities -->
         <activity
-            android:name=".plumbing_subactivities.PlumbingEditActivity"
-            android:parentActivityName=".menu_option_activities.PlumbingActivity"
+            android:name=".customer_subactivities.ApplianceEditActivity"
+            android:parentActivityName=".customer_menu_activities.PlumbingActivity"
             android:value=".plumbing_subactivities.PlumbingEditActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".menu_option_activities.PlumbingActivity" />
+                android:value=".customer_menu_activities.PlumbingActivity" />
         </activity>
         <!-- HVAC -->
         <activity
-            android:name=".menu_option_activities.HvacActivity"
+            android:name=".customer_menu_activities.HvacActivity"
             android:value=".MenuOptionActivities.HvacActivity"/>
         <!-- Hvac Sub-Activities -->
-        <activity
-            android:name=".hvac_subactivities.HvacEditActivity"
-            android:parentActivityName=".menu_option_activities.HvacActivity"
-            android:value=".hvac_subactivities.HvacEditActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".menu_option_activities.HvacActivity" />
-        </activity>
 
         <!-- Electrical -->
         <activity
-            android:name=".menu_option_activities.ElectricalActivity"
+            android:name=".customer_menu_activities.ElectricalActivity"
             android:value=".MenuOptionActivities.ElectricalActivity"/>
         <!-- Electrical Sub-Activities -->
         <activity
-            android:name=".menu_option_activities.ViewPanelActivity"
+            android:name=".electrical_subactivities.ViewPanelActivity"
             android:value=".MenuOptionActivities.ViewPanelActivity" />
         <activity
             android:name=".electrical_subactivities.BreakerDetailActivity"
-            android:parentActivityName=".menu_option_activities.ViewPanelActivity">
+            android:parentActivityName=".electrical_subactivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".electrical_subactivities.PanelDetailActivity" />
         </activity>
         <activity
             android:name=".electrical_subactivities.PanelDetailActivity"
-            android:parentActivityName=".menu_option_activities.ViewPanelActivity">
+            android:parentActivityName=".electrical_subactivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".menu_option_activities.ViewPanelActivity" />
+                android:value=".electrical_subactivities.ViewPanelActivity" />
         </activity>
 
         <!-- Landscaping -->
         <activity
-            android:name=".menu_option_activities.LandscapingActivity"
+            android:name=".customer_menu_activities.LandscapingActivity"
             android:value=".MenuOptionActivities.LandscapingActivity"/>
 
         <!-- Painting -->
         <activity
-            android:name=".menu_option_activities.PaintingActivity"
+            android:name=".customer_menu_activities.PaintingActivity"
             android:value=".menu_option_activities.PaintingActivity"/>
         <!-- Paint Sub-Activities -->
         <activity
             android:name=".painting_subactivities.PaintEditActivity"
-            android:parentActivityName=".menu_option_activities.PaintingActivity">
+            android:parentActivityName=".customer_menu_activities.PaintingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".menu_option_activities.ViewPanelActivity" />
+                android:value=".electrical_subactivities.ViewPanelActivity" />
         </activity>
         <activity android:name=".view_initializers.ServiceDetailActivity" />
 

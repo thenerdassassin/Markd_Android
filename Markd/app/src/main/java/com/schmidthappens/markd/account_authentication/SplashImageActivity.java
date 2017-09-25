@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
-import com.schmidthappens.markd.menu_option_activities.MainActivity;
+import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 
 /**
  * Created by Josh on 8/9/2017.

@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.menu_option_activities;
+package com.schmidthappens.markd.electrical_subactivities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,11 +13,10 @@ import android.widget.TextView;
 import com.schmidthappens.markd.AdapterClasses.PanelAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempPanelData;
-import com.schmidthappens.markd.electrical_subactivities.BreakerDetailActivity;
-import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
 
 //TODO remove extra stuff from home page
 public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter.PanelAdapterOnClickHandler {

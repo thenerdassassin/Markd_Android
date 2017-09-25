@@ -30,7 +30,6 @@ import com.schmidthappens.markd.data_objects.PanelAmperage;
 import com.schmidthappens.markd.data_objects.PanelManufacturer;
 import com.schmidthappens.markd.data_objects.SubPanelAmperage;
 import com.schmidthappens.markd.data_objects.TempPanelData;
-import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;

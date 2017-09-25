@@ -16,8 +16,8 @@ import android.widget.TextView;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempPanelData;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
-import com.schmidthappens.markd.menu_option_activities.ViewPanelActivity;
+import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
+import com.schmidthappens.markd.electrical_subactivities.ViewPanelActivity;
 
 import java.util.List;
 

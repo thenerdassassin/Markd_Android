@@ -19,7 +19,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
-import com.schmidthappens.markd.menu_option_activities.MainActivity;
+import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 
 import java.util.List;
 

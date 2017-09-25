@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.plumbing_subactivities;
+package com.schmidthappens.markd.customer_subactivities;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -25,8 +25,8 @@ import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.menu_option_activities.HvacActivity;
-import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
+import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
+import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import java.util.Calendar;
  * Created by Josh on 6/6/2017.
  */
 
-public class PlumbingEditActivity extends AppCompatActivity {
+public class ApplianceEditActivity extends AppCompatActivity {
     //XML Objects
     EditText editManufacturer;
     EditText editModel;
@@ -45,7 +45,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
     NumberPicker lifeSpanUnits;
     Button saveButton;
 
-    private static final String TAG = "PlumbingEditActivity";
+    private static final String TAG = "ApplianceEditActivity";
     private static final String[] unitsArray = {
             "days",
             "months",
@@ -57,7 +57,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_plumbing);
 
-        SessionManager sessionManager = new SessionManager(PlumbingEditActivity.this);
+        SessionManager sessionManager = new SessionManager(ApplianceEditActivity.this);
         sessionManager.checkLogin();
 
         Intent intent = getIntent();
@@ -117,7 +117,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
     private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            hideKeyboard(PlumbingEditActivity.this.getCurrentFocus());
+            hideKeyboard(ApplianceEditActivity.this.getCurrentFocus());
             savePlumbingChanges();
         }
     };
@@ -125,7 +125,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
     private View.OnClickListener setInstallDateButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            hideKeyboard(PlumbingEditActivity.this.getCurrentFocus());
+            hideKeyboard(ApplianceEditActivity.this.getCurrentFocus());
             showDatePickerDialog(v);
         }
     };
@@ -173,12 +173,6 @@ public class PlumbingEditActivity extends AppCompatActivity {
         finish();
     }
 
-    /*private void goBackToPlumbingActivity(){
-        Intent plumbingActivityIntent = new Intent(getApplicationContext(), PlumbingActivity.class);
-        startActivity(plumbingActivityIntent);
-        finish();
-    }*/
-
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
@@ -208,7 +202,7 @@ public class PlumbingEditActivity extends AppCompatActivity {
             }
 
             String newDate = StringUtilities.getDateString(month+1, dayOfMonth, year);
-            ((PlumbingEditActivity)getActivity()).changeInstallDate(newDate);
+            ((ApplianceEditActivity)getActivity()).changeInstallDate(newDate);
         }
     }
 

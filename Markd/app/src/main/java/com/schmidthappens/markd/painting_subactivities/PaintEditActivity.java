@@ -21,7 +21,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempPaintData;
-import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
+import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.Calendar;

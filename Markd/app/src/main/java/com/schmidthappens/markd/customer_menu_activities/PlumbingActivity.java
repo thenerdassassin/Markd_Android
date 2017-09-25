@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.menu_option_activities;
+package com.schmidthappens.markd.customer_menu_activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +28,7 @@ import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitialize
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
-import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
+import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
@@ -172,7 +172,7 @@ public class PlumbingActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Log.i(TAG, "Edit Hot Water");
-            Class destinationClass = PlumbingEditActivity.class;
+            Class destinationClass = ApplianceEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
             if(hotWater != null) {
@@ -194,7 +194,7 @@ public class PlumbingActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Log.i(TAG, "Edit Boiler");
-            Class destinationClass = PlumbingEditActivity.class;
+            Class destinationClass = ApplianceEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
             if(boiler != null) {

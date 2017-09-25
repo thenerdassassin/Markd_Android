@@ -14,12 +14,12 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
-import com.schmidthappens.markd.menu_option_activities.ElectricalActivity;
-import com.schmidthappens.markd.menu_option_activities.HvacActivity;
-import com.schmidthappens.markd.menu_option_activities.LandscapingActivity;
-import com.schmidthappens.markd.menu_option_activities.MainActivity;
-import com.schmidthappens.markd.menu_option_activities.PaintingActivity;
-import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
+import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
+import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
+import com.schmidthappens.markd.customer_menu_activities.LandscapingActivity;
+import com.schmidthappens.markd.customer_menu_activities.MainActivity;
+import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
+import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 
 import java.util.ArrayList;
 import java.util.List;

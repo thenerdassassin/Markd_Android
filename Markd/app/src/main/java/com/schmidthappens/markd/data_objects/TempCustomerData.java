@@ -20,6 +20,11 @@ public class TempCustomerData {
     private Customer getCustomer() {
         //TODO: Add get http call to ensure customer is up to date
         //Get user id and sessionToken from SessionManager
+        //HTTP call receive back body data
+        //Check for success in body data
+        //Get message as string
+        //new JSONObject(message)
+        //return Customer(new JSONObject(message))
         return customer;
     }
     private boolean putCustomer(Customer customer) {
