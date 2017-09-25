@@ -142,11 +142,17 @@ public class Customer {
         }
         return new AirHandler(airHandler);
     }
+    void setAirHandler(AirHandler airHandler) {
+        this.airHandler = airHandler;
+    }
     Compressor getCompressor() {
         if(compressor == null) {
             return null;
         }
         return new Compressor(compressor);
+    }
+    void setCompressor(Compressor compressor) {
+        this.compressor = compressor;
     }
     Contractor getHvacTechnician() {
         if(hvactechnician == null) {

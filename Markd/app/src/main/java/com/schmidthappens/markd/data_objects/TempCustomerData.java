@@ -38,6 +38,12 @@ public class TempCustomerData {
     private void updateCustomer(Boiler boiler) {
         customer.setBoiler(boiler);
     }
+    private void updateCustomer(AirHandler airHandler) {
+        customer.setAirHandler(airHandler);
+    }
+    private void updateCustomer(Compressor compressor) {
+        customer.setCompressor(compressor);
+    }
 
     private TempCustomerData() {
         //customer = getCustomer();
@@ -101,9 +107,32 @@ public class TempCustomerData {
     public AirHandler getAirHandler() {
         return getCustomer().getAirHandler();
     }
+    public boolean updateAirHandler(AirHandler airHandler) {
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                        //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
+        customerToUpdate.setAirHandler(airHandler);                                     //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                            //send to database
+            this.updateCustomer(airHandler);                                          //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
     public Compressor getCompressor() {
         return getCustomer().getCompressor();
     }
+    public boolean updateCompressor(Compressor compressor) {
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                        //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
+        customerToUpdate.setCompressor(compressor);                                     //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                            //send to database
+            this.updateCustomer(compressor);                                          //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
+
     public Contractor getHvacTechnician() {
         return getCustomer().getHvacTechnician();
     }

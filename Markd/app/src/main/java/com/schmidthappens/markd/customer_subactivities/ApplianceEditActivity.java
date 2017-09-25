@@ -6,9 +6,11 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -90,6 +92,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
         lifeSpanIntegerPicker.setMinValue(0);
         lifeSpanIntegerPicker.setMaxValue(365);
         lifeSpanIntegerPicker.setWrapSelectorWheel(false);
+        setKeyboardDismissal(lifeSpanIntegerPicker);
         if(intent != null) {
             lifeSpanIntegerPicker.setValue(intent.getIntExtra("lifespanInteger", 0));
         }
@@ -97,6 +100,8 @@ public class ApplianceEditActivity extends AppCompatActivity {
         lifeSpanUnits = (NumberPicker)findViewById(R.id.plumbing_edit_life_span_units);
         lifeSpanUnits.setMinValue(0);
         lifeSpanUnits.setMaxValue(2);
+        setKeyboardDismissal(lifeSpanUnits);
+
         lifeSpanUnits.setDisplayedValues(unitsArray);
 
         if(intent != null && intent.hasExtra("units")) {
@@ -117,7 +122,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
     private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            hideKeyboard(ApplianceEditActivity.this.getCurrentFocus());
+            hideKeyboard();
             savePlumbingChanges();
         }
     };
@@ -125,7 +130,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
     private View.OnClickListener setInstallDateButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            hideKeyboard(ApplianceEditActivity.this.getCurrentFocus());
+            hideKeyboard();
             showDatePickerDialog(v);
         }
     };
@@ -156,12 +161,12 @@ public class ApplianceEditActivity extends AppCompatActivity {
         } else if(getTitle().equals("Compressor")) {
             Log.i(TAG, "Save Compressor Changes");
             Compressor compressor = new Compressor(manufacturer, model, installDate, lifeSpanInteger, units);
-            //TempCustomerData.getInstance().updateCompressor(compressor);
+            TempCustomerData.getInstance().updateCompressor(compressor);
             activityToGoTo = HvacActivity.class;
         } else if(getTitle().equals("Air Handler")) {
             Log.i(TAG, "Save Air Handler Changes");
             AirHandler airHandler = new AirHandler(manufacturer, model, installDate, lifeSpanInteger, units);
-            //TempCustomerData.getInstance().updateAirHandler(airHandler);
+            TempCustomerData.getInstance().updateAirHandler(airHandler);
             activityToGoTo = HvacActivity.class;
         }
         goBackToActivity(activityToGoTo);
@@ -173,6 +178,22 @@ public class ApplianceEditActivity extends AppCompatActivity {
         finish();
     }
 
+    private void setKeyboardDismissal(NumberPicker picker) {
+        picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i2) {
+                hideKeyboard();
+            }
+        });
+        picker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard();
+            }
+        });
+    }
+
+    //Mark:- DatePickerFragment
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
@@ -211,7 +232,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
         view.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    hideKeyboard(v);
+                    hideKeyboard();
                     return true;
                 }
                 return false;
@@ -220,7 +241,8 @@ public class ApplianceEditActivity extends AppCompatActivity {
     }
 
     //Hides Keyboard
-    private void hideKeyboard(View v) {
+    private void hideKeyboard() {
+        View v = ApplianceEditActivity.this.getCurrentFocus();
         if (v != null) {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
