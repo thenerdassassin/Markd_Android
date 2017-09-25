@@ -85,6 +85,9 @@ public class Customer {
         if(customer.optJSONObject("plumber_id") != null) {
             this.plumber = new Contractor(customer.optJSONObject("plumber_id"));
         }
+        if(customer.optJSONObject("hvactechnician_id") != null) {
+            this.hvactechnician = new Contractor(customer.optJSONObject("hvactechnician_id"));
+        }
     }
     private List<ContractorService> buildServicesListFromJSONArray(JSONArray plumbingServiceList) {
         List<ContractorService> servicesToReturn = new ArrayList<ContractorService>();
@@ -144,5 +147,11 @@ public class Customer {
             return null;
         }
         return new Compressor(compressor);
+    }
+    Contractor getHvacTechnician() {
+        if(hvactechnician == null) {
+            return null;
+        }
+        return new Contractor(hvactechnician);
     }
 }

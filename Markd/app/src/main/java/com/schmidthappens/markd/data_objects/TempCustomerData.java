@@ -17,13 +17,11 @@ public class TempCustomerData {
     }
 
     private Customer customer;
-
     private Customer getCustomer() {
         //TODO: Add get http call to ensure customer is up to date
         //Get user id and sessionToken from SessionManager
         return customer;
     }
-
     private boolean putCustomer(Customer customer) {
         //TODO: Add http put call to set in database
         return true;
@@ -56,6 +54,7 @@ public class TempCustomerData {
             //HVAC
             customerJson.put("airHandler", initialAirHandler());
             customerJson.put("compressor", initialCompressor());
+            customerJson.put("hvactechnician_id", initialHvacTechnician());
         } catch (JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
@@ -99,6 +98,9 @@ public class TempCustomerData {
     }
     public Compressor getCompressor() {
         return getCustomer().getCompressor();
+    }
+    public Contractor getHvacTechnician() {
+        return getCustomer().getHvacTechnician();
     }
 
     //TODO: Delete when http calls are here
@@ -175,6 +177,19 @@ public class TempCustomerData {
             Log.e(TAG, exception.getMessage());
         }
         return compressorJSON;
+    }
+    private JSONObject initialHvacTechnician() {
+        JSONObject hvactechnician = new JSONObject();
+        try {
+            hvactechnician.put("companyName", "AireServ");
+            hvactechnician.put("telephoneNumber", "203.348.2295");
+            hvactechnician.put("websiteUrl", "aireserv.com");
+            hvactechnician.put("profession", "hvactechnician");
+            hvactechnician.put("zipCode", "06903");
+        } catch(JSONException exception) {
+            Log.e(TAG, exception.getMessage());
+        }
+        return hvactechnician;
     }
 
 }

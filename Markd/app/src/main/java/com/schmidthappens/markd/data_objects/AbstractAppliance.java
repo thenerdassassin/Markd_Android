@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Created by joshua.schmidtibm.com on 9/23/17.
  */
 
-abstract class AbstractAppliance {
+public abstract class AbstractAppliance {
     protected String manufacturer;
     protected String model;
     protected Integer month;

@@ -20,12 +20,15 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.AirHandler;
 import com.schmidthappens.markd.data_objects.Compressor;
+import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.data_objects.TempHvacData;
 import com.schmidthappens.markd.hvac_subactivities.HvacEditActivity;
+import com.schmidthappens.markd.plumbing_subactivities.PlumbingEditActivity;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -60,9 +63,9 @@ public class HvacActivity extends AppCompatActivity {
     FrameLayout hvacServiceList;
     FrameLayout hvacContractor;
 
-    //private TempHvacData hvacData = TempHvacData.getInstance();
     private AirHandler airHandler = TempCustomerData.getInstance().getAirHandler();
     private Compressor compressor = TempCustomerData.getInstance().getCompressor();
+    private Contractor hvacTechnician = TempCustomerData.getInstance().getHvacTechnician();
     private static String TAG = "HvacActivity";
 
     @Override
@@ -91,7 +94,7 @@ public class HvacActivity extends AppCompatActivity {
         //TODO change to http call to get hvac contractor
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "AireServ", "203.348.2295", "aireserv.com");
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
         hvacContractor.addView(v);
 
         //Set Up Buttons
@@ -169,10 +172,14 @@ public class HvacActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Log.i(TAG, "Edit Hot Water");
-            Class destinationClass = HvacEditActivity.class;
+            Class destinationClass = PlumbingEditActivity.class;
             Context context = HvacActivity.this;
             Intent intentToStartHvacEditActivity = new Intent(context, destinationClass);
-            intentToStartHvacEditActivity = putAirHandlerExtras(intentToStartHvacEditActivity);
+            /*if(airHandler != null) {
+                intentToStartHvacEditActivity = putAirHandlerExtras(intentToStartHvacEditActivity);
+            }
+            intentToStartHvacEditActivity.putExtra("title", "Air Handler");*/
+            intentToStartHvacEditActivity = putExtras(intentToStartHvacEditActivity, airHandler, "Air Handler");
             startActivity(intentToStartHvacEditActivity);
         }
     };
@@ -181,10 +188,10 @@ public class HvacActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Log.i(TAG, "Edit Boiler");
-            Class destinationClass = HvacEditActivity.class;
+            Class destinationClass = PlumbingEditActivity.class;
             Context context = HvacActivity.this;
             Intent intentToStartHvacEditActivity = new Intent(context, destinationClass);
-            intentToStartHvacEditActivity = putCompressorExtras(intentToStartHvacEditActivity);
+            intentToStartHvacEditActivity = putExtras(intentToStartHvacEditActivity, compressor, "Compressor");
             startActivity(intentToStartHvacEditActivity);
         }
     };
@@ -206,8 +213,19 @@ public class HvacActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(drawerToggle);
     }
 
-    private Intent putAirHandlerExtras(Intent intent) {
-        intent.putExtra("title", "Air Handler");
+    private Intent putExtras(Intent intent, AbstractAppliance appliance, String title) {
+        intent.putExtra("title", title);
+        if(appliance != null) {
+            intent.putExtra("manufacturer", appliance.getManufacturer());
+            intent.putExtra("model", appliance.getModel());
+            intent.putExtra("installDate", appliance.getInstallDate());
+            intent.putExtra("lifespanInteger", appliance.getLifeSpanInteger());
+            intent.putExtra("units", appliance.getUnits());
+        }
+        return intent;
+    }
+
+    /*private Intent putAirHandlerExtras(Intent intent) {
         intent.putExtra("manufacturer", airHandlerManufacturerView.getText());
         intent.putExtra("model", airHandlerModelView.getText());
         intent.putExtra("installDate", airHandlerInstallDateView.getText());
@@ -216,11 +234,10 @@ public class HvacActivity extends AppCompatActivity {
     }
 
     private Intent putCompressorExtras(Intent intent) {
-        intent.putExtra("title", "Compressor");
         intent.putExtra("manufacturer", compressorManufacturerView.getText());
         intent.putExtra("model", compressorModelView.getText());
         intent.putExtra("installDate", compressorInstallDateView.getText());
         intent.putExtra("lifespan", compressorLifeSpanView.getText());
         return intent;
-    }
+    }*/
 }

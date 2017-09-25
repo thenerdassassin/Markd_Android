@@ -20,9 +20,12 @@ import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.AirHandler;
 import com.schmidthappens.markd.data_objects.Boiler;
+import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.menu_option_activities.HvacActivity;
 import com.schmidthappens.markd.menu_option_activities.PlumbingActivity;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
@@ -116,7 +119,6 @@ public class PlumbingEditActivity extends AppCompatActivity {
         public void onClick(View v) {
             hideKeyboard(PlumbingEditActivity.this.getCurrentFocus());
             savePlumbingChanges();
-            goBackToPlumbingActivity();
         }
     };
 
@@ -133,29 +135,49 @@ public class PlumbingEditActivity extends AppCompatActivity {
         editInstallDate.setText(newDate);
     }
 
-    private void savePlumbingChanges(){
+    private void savePlumbingChanges() {
         String manufacturer = editManufacturer.getText().toString();
         String model        = editModel.getText().toString();
         String installDate  = editInstallDate.getText().toString();
         Integer lifeSpanInteger = lifeSpanIntegerPicker.getValue();
         String units = unitsArray[lifeSpanUnits.getValue()];
 
+        Class activityToGoTo = null;
         if(getTitle().equals("Domestic Hot Water")) {
             Log.i(TAG, "Save Hot Water Changes");
             HotWater hotWater = new HotWater(manufacturer, model, installDate, lifeSpanInteger, units);
             TempCustomerData.getInstance().updateHotWater(hotWater);
+            activityToGoTo = PlumbingActivity.class;
         } else if(getTitle().equals("Boiler")) {
             Log.i(TAG, "Save Boiler Changes");
             Boiler boiler = new Boiler(manufacturer, model, installDate, lifeSpanInteger, units);
             TempCustomerData.getInstance().updateBoiler(boiler);
+            activityToGoTo = PlumbingActivity.class;
+        } else if(getTitle().equals("Compressor")) {
+            Log.i(TAG, "Save Compressor Changes");
+            Compressor compressor = new Compressor(manufacturer, model, installDate, lifeSpanInteger, units);
+            //TempCustomerData.getInstance().updateCompressor(compressor);
+            activityToGoTo = HvacActivity.class;
+        } else if(getTitle().equals("Air Handler")) {
+            Log.i(TAG, "Save Air Handler Changes");
+            AirHandler airHandler = new AirHandler(manufacturer, model, installDate, lifeSpanInteger, units);
+            //TempCustomerData.getInstance().updateAirHandler(airHandler);
+            activityToGoTo = HvacActivity.class;
         }
+        goBackToActivity(activityToGoTo);
     }
 
-    private void goBackToPlumbingActivity(){
+    private void goBackToActivity(Class destinationClass){
+        Intent activityIntent = new Intent(getApplicationContext(), destinationClass);
+        startActivity(activityIntent);
+        finish();
+    }
+
+    /*private void goBackToPlumbingActivity(){
         Intent plumbingActivityIntent = new Intent(getApplicationContext(), PlumbingActivity.class);
         startActivity(plumbingActivityIntent);
         finish();
-    }
+    }*/
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();

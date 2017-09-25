@@ -47,8 +47,6 @@ public class Contractor {
         );
     }
 
-
-
     public String getCompanyName() {
         return companyName;
     }
