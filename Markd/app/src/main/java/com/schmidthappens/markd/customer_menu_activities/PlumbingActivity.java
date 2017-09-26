@@ -89,7 +89,6 @@ public class PlumbingActivity extends AppCompatActivity {
         initializeBoiler();
 
         //Initialize Contractor Footer
-        //TODO change to http call to get plumbing contractor
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.sdr_logo);
         View v = ContractorFooterViewInitializer.createFooterView(this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());

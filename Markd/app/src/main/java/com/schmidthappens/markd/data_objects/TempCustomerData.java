@@ -2,8 +2,12 @@ package com.schmidthappens.markd.data_objects;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
+
 /**
  * Created by joshua.schmidtibm.com on 9/23/17.
  */
@@ -44,28 +48,53 @@ public class TempCustomerData {
     private void updateCustomer(Compressor compressor) {
         customer.setCompressor(compressor);
     }
+    private void updateCustomer(List<PaintSurface> surfaces, boolean isExterior) {
+        if(isExterior) {
+            customer.setExteriorPaintSurfaces(surfaces);
+        } else {
+            customer.setInteriorPaintSurfaces(surfaces);
+        }
+    }
 
     private TempCustomerData() {
-        //customer = getCustomer();
+        customer = getCustomer();
         //Remove when database is implemented
         JSONObject customerJson = new JSONObject();
         try {
             customerJson.put("email", "schmidt.uconn@gmail.com");
             customerJson.put("password", "Spongebob28");
+
             customerJson.put("namePrefix", "Mr.");
             customerJson.put("firstName", "Joshua");
             customerJson.put("lastName", "Schmidt");
             customerJson.put("maritalStatus", "Married");
+            customerJson.put("address", null);
+            customerJson.put("home", null);
+            customerJson.put("architect_id", null);
+            customerJson.put("builder_id", null);
 
             //Plumbing
             customerJson.put("hotWater", initialHotWater());
             customerJson.put("boiler", initialBoiler());
             customerJson.put("plumber_id", initialPlumber());
+            customerJson.put("plumbing_services", null);
 
             //HVAC
             customerJson.put("airHandler", initialAirHandler());
             customerJson.put("compressor", initialCompressor());
             customerJson.put("hvactechnician_id", initialHvacTechnician());
+            customerJson.put("hvac_services", null);
+
+            //Electrical
+            customerJson.put("panels", null);
+            customerJson.put("electrician_id", null);
+            customerJson.put("electrical_services", null);
+
+            //Painting
+            customerJson.put("interiorPaintSurfaces", initialInteriorSurfaces());
+            customerJson.put("exteriorPaintSurfaces", initialExteriorSurfaces());
+            customerJson.put("painter_id", initialPainter());
+
         } catch (JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
@@ -132,9 +161,41 @@ public class TempCustomerData {
         }
         return false;
     }
-
     public Contractor getHvacTechnician() {
         return getCustomer().getHvacTechnician();
+    }
+
+    //Mark:- Painting
+    public List<PaintSurface> getExteriorSurfaces() {
+        return getCustomer().getExteriorPaintSurfaces();
+    }
+    public boolean updateExteriorPaintSurface(int paintId, PaintSurface paintSurface) {
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                         //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
+        customerToUpdate.setExteriorPaintSurface(paintId, paintSurface);                 //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                             //send to database
+            this.updateCustomer(customerToUpdate.getExteriorPaintSurfaces(), true);    //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
+    public List<PaintSurface> getInteriorSurfaces() {
+        return getCustomer().getInteriorPaintSurfaces();
+    }
+    public boolean updateInteriorPaintSurface(int paintId, PaintSurface paintSurface) {
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                         //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
+        customerToUpdate.setInteriorPaintSurface(paintId, paintSurface);                 //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                             //send to database
+            this.updateCustomer(customerToUpdate.getInteriorPaintSurfaces(), false);   //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
+    public Contractor getPainter() {
+        return getCustomer().getPainter();
     }
 
     //TODO: Delete when http calls are here
@@ -218,12 +279,103 @@ public class TempCustomerData {
             hvactechnician.put("companyName", "AireServ");
             hvactechnician.put("telephoneNumber", "203.348.2295");
             hvactechnician.put("websiteUrl", "aireserv.com");
-            hvactechnician.put("profession", "hvactechnician");
+            hvactechnician.put("profession", "hvac");
             hvactechnician.put("zipCode", "06903");
         } catch(JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
         return hvactechnician;
+    }
+    private JSONArray initialExteriorSurfaces() {
+        JSONArray exteriorSurfaces = new JSONArray();
+        try {
+            JSONObject surface1 = new JSONObject();
+            surface1.put("month", "2");
+            surface1.put("day", "4");
+            surface1.put("year", "2017");
+            surface1.put("surface", "Siding");
+            surface1.put("brand", "Behr");
+            surface1.put("color", "Cream");
+            exteriorSurfaces.put(surface1);
+
+            JSONObject surface2 = new JSONObject();
+            surface2.put("month", "6");
+            surface2.put("day", "24");
+            surface2.put("year", "2006");
+            surface2.put("surface", "Garage");
+            surface2.put("brand", "Behr");
+            surface2.put("color", "Translucent Silk");
+            exteriorSurfaces.put(surface2);
+
+        } catch(JSONException exception) {
+            Log.e(TAG, exception.getMessage());
+        }
+        return exteriorSurfaces;
+    }
+    private JSONArray initialInteriorSurfaces() {
+        JSONArray interiorSurfaces = new JSONArray();
+        try {
+            JSONObject surface1 = new JSONObject();
+            surface1.put("month", "8");
+            surface1.put("day", "8");
+            surface1.put("year", "17");
+            surface1.put("surface", "Living Room");
+            surface1.put("brand", "Sherwin Williams");
+            surface1.put("color", "Light Blue");
+            interiorSurfaces.put(surface1);
+
+            JSONObject surface2 = new JSONObject();
+            surface2.put("month", "8");
+            surface2.put("day", "1");
+            surface2.put("year", "17");
+            surface2.put("surface", "Master bedroom");
+            surface2.put("brand", "Sherwin Williams");
+            surface2.put("color", "Yellow");
+            interiorSurfaces.put(surface2);
+
+            JSONObject surface3 = new JSONObject();
+            surface3.put("month", "1");
+            surface3.put("day", "5");
+            surface3.put("year", "14");
+            surface3.put("surface", "Bathroom");
+            surface3.put("brand", "Sherwin Williams");
+            surface3.put("color", "Loch Blue");
+            interiorSurfaces.put(surface3);
+
+            JSONObject surface4 = new JSONObject();
+            surface4.put("month", "12");
+            surface4.put("day", "6");
+            surface4.put("year", "13");
+            surface4.put("surface", "Dining Room");
+            surface4.put("brand", "Sherwin Williams");
+            surface4.put("color", "Grape Harvest");
+            interiorSurfaces.put(surface4);
+
+            JSONObject surface5 = new JSONObject();
+            surface5.put("month", "12");
+            surface5.put("day", "6");
+            surface5.put("year", "13");
+            surface5.put("surface", "Kitchen");
+            surface5.put("brand", "Sherwin Williams");
+            surface5.put("color", "Decor White");
+            interiorSurfaces.put(surface5);
+        } catch(JSONException exception) {
+            Log.e(TAG, exception.getMessage());
+        }
+        return interiorSurfaces;
+    }
+    private JSONObject initialPainter() {
+        JSONObject painter = new JSONObject();
+        try {
+            painter.put("companyName", "MDF Painting & Power Washing");
+            painter.put("telephoneNumber", "203.348.2295");
+            painter.put("websiteUrl", "mdfpainting.com");
+            painter.put("profession", "painter");
+            painter.put("zipCode", "06903");
+        } catch(JSONException exception) {
+            Log.e(TAG, exception.getMessage());
+        }
+        return painter;
     }
 
 }

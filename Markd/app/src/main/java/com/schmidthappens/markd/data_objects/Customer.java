@@ -69,7 +69,7 @@ public class Customer {
         if(customer.optJSONObject("boiler") != null) {
             this.boiler = new Boiler(customer.optJSONObject("boiler"));
         }
-        //this.plumbingServices = buildServicesListFromJSONArray(customer.getJSONArray("plubming_services"));
+        this.plumbingServices = buildServicesListFromJSONArray(customer.optJSONArray("plubming_services"));
 
         //HVAC Page
         if(customer.optJSONObject("airHandler") != null) {
@@ -78,35 +78,76 @@ public class Customer {
         if(customer.optJSONObject("compressor") != null) {
             this.compressor = new Compressor(customer.optJSONObject("compressor"));
         }
+        this.hvacServices = buildServicesListFromJSONArray(customer.optJSONArray("plubming_services"));
+
+        //Electrical Page
+
+        //Painting Page
+        this.exteriorPaintSurfaces = buildPaintServicesListFromJSONArray(customer.optJSONArray("exteriorPaintSurfaces"));
+        this.interiorPaintSurfaces = buildPaintServicesListFromJSONArray(customer.optJSONArray("interiorPaintSurfaces"));
 
         //Contractors
-        //this.architect = new Contractor(customer.getJSONObject("architect_id"));
-        //this.builder = new Contractor(customer.getJSONObject("builder_id"));
+        if(customer.optJSONObject("architect_id") != null) {
+            this.architect = new Contractor(customer.optJSONObject("architect_id"));
+        }
+        if(customer.optJSONObject("builder_id") != null) {
+            this.builder = new Contractor(customer.optJSONObject("builder_id"));
+        }
         if(customer.optJSONObject("plumber_id") != null) {
             this.plumber = new Contractor(customer.optJSONObject("plumber_id"));
         }
         if(customer.optJSONObject("hvactechnician_id") != null) {
             this.hvactechnician = new Contractor(customer.optJSONObject("hvactechnician_id"));
         }
+        if(customer.optJSONObject("electrician_id") != null) {
+            this.electrician = new Contractor(customer.optJSONObject("electrician_id"));
+        }
+        if(customer.optJSONObject("painter_id") != null) {
+            this.painter = new Contractor(customer.optJSONObject("painter_id"));
+        }
     }
     private List<ContractorService> buildServicesListFromJSONArray(JSONArray plumbingServiceList) {
-        List<ContractorService> servicesToReturn = new ArrayList<ContractorService>();
+        List<ContractorService> servicesToReturn = new ArrayList<>();
+        if(plumbingServiceList == null) {
+            return servicesToReturn;
+        }
         for (int i = 0 ; i < plumbingServiceList.length(); i++) {
-            try {
-                JSONObject jsonService = plumbingServiceList.getJSONObject(i);
-                ContractorService service = new ContractorService(
-                        jsonService.getInt("month"),
-                        jsonService.getInt("day"),
-                        jsonService.getInt("year"),
-                        jsonService.getString("contractor"),
-                        jsonService.getString("comments")
-                );
-                servicesToReturn.add(service);
-            } catch(JSONException exception) {
-                Log.e(TAG, exception.getMessage());
+            JSONObject jsonService = plumbingServiceList.optJSONObject(i);
+            if(jsonService == null) {
+                continue;
             }
+            ContractorService service = new ContractorService(
+                    jsonService.optInt("month"),
+                    jsonService.optInt("day"),
+                    jsonService.optInt("year"),
+                    jsonService.optString("contractor"),
+                    jsonService.optString("comments")
+            );
+            servicesToReturn.add(service);
         }
         return servicesToReturn;
+    }
+    private List<PaintSurface> buildPaintServicesListFromJSONArray(JSONArray paintSurfacesList) {
+        List<PaintSurface> surfacesToReturn = new ArrayList<>();
+        if(paintSurfacesList == null) {
+            return surfacesToReturn;
+        }
+        for (int i = 0 ; i < paintSurfacesList.length(); i++) {
+            JSONObject jsonPaintSurface = paintSurfacesList.optJSONObject(i);
+            if(jsonPaintSurface == null) {
+                continue;
+            }
+            PaintSurface surface = new PaintSurface(
+                    jsonPaintSurface.optString("surface"),
+                    jsonPaintSurface.optString("brand"),
+                    jsonPaintSurface.optString("color"),
+                    jsonPaintSurface.optInt("month"),
+                    jsonPaintSurface.optInt("day"),
+                    jsonPaintSurface.optInt("year")
+            );
+            surfacesToReturn.add(surface);
+        }
+        return surfacesToReturn;
     }
 
     //Mark:- Plumbing Page
@@ -159,5 +200,53 @@ public class Customer {
             return null;
         }
         return new Contractor(hvactechnician);
+    }
+
+    //Mark:- Painting Page
+    List<PaintSurface> getExteriorPaintSurfaces() {
+        if(exteriorPaintSurfaces == null) {
+            return null;
+        }
+        List<PaintSurface> copiedList = new ArrayList<>();
+        for(PaintSurface surface: exteriorPaintSurfaces) {
+            copiedList.add(new PaintSurface(surface));
+        }
+        return copiedList;
+    }
+    void setExteriorPaintSurface(int paintId, PaintSurface surface) {
+        if(paintId == -1) {
+            exteriorPaintSurfaces.add(surface);
+        } else {
+            exteriorPaintSurfaces.set(paintId, surface);
+        }
+    }
+    void setExteriorPaintSurfaces(List<PaintSurface> surfaces) {
+        this.exteriorPaintSurfaces = surfaces;
+    }
+    List<PaintSurface> getInteriorPaintSurfaces() {
+        if(interiorPaintSurfaces == null) {
+            return null;
+        }
+        List<PaintSurface> copiedList = new ArrayList<>();
+        for(PaintSurface surface: interiorPaintSurfaces) {
+            copiedList.add(new PaintSurface(surface));
+        }
+        return copiedList;
+    }
+    void setInteriorPaintSurface(int paintId, PaintSurface surface) {
+        if(paintId == -1) {
+            interiorPaintSurfaces.add(surface);
+        } else {
+            interiorPaintSurfaces.set(paintId, surface);
+        }
+    }
+    void setInteriorPaintSurfaces(List<PaintSurface> surfaces) {
+        this.interiorPaintSurfaces = surfaces;
+    }
+    Contractor getPainter() {
+        if(painter == null) {
+            return null;
+        }
+        return new Contractor(painter);
     }
 }

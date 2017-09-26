@@ -20,10 +20,14 @@ import android.widget.ListView;
 import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
-import com.schmidthappens.markd.data_objects.TempPaintData;
-import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
+import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.PaintSurface;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
+
+import java.util.List;
 
 /**
  * Created by Josh on 5/29/2017.
@@ -46,13 +50,10 @@ public class PaintingActivity extends AppCompatActivity {
     FrameLayout interiorPaintList;
     private FrameLayout paintingContractor;
 
-    //Adapters
-    PaintListAdapter exteriorAdapter;
-    PaintListAdapter interiorAdapter;
-    //TODO change to http call for paint
-    final TempPaintData paintData = TempPaintData.getInstance();
+    private List<PaintSurface> exteriorPaintSurfaces = TempCustomerData.getInstance().getExteriorSurfaces();
+    private List<PaintSurface> interiorPaintSurfaces = TempCustomerData.getInstance().getInteriorSurfaces();
+    private Contractor painter = TempCustomerData.getInstance().getPainter();
     private final static String TAG = "PaintingActivity";
-
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -78,7 +79,7 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Exterior PaintList
         exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
-        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, paintData.getExteriorPaints(), true);
+        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, exteriorPaintSurfaces, true);
         exteriorPaintList.addView(listOfExteriorPaints);
 
         //Initialize Interior Add Button
@@ -87,14 +88,13 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Interior PaintList
         interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
-        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, paintData.getInteriorPaints(), false);
+        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, interiorPaintSurfaces, false);
         interiorPaintList.addView(listOfInteriorPaints);
 
         //Initialize Contractor Footer
-        //TODO change to http call to get painting contractor
         paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com");
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, painter.getCompanyName(), painter.getTelephoneNumber(), painter.getWebsiteUrl());
         paintingContractor.addView(v);
     }
 
@@ -118,15 +118,17 @@ public class PaintingActivity extends AppCompatActivity {
             Context activityContext = PaintingActivity.this;
             Class destinationClass = PaintEditActivity.class;
 
-            //TODO set onItemClick to add room
             Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
             intentToStartPaintEditActivity.putExtra("isNew", true);
             activityContext.startActivity(intentToStartPaintEditActivity);
         }
     };
 
+    //TODO: fix this method
+    /*
     public void deletePaintSurface(int position, boolean isExterior) {
         Log.i(TAG, "{Delete Paint Item:" + position + " isExterior:" + isExterior + "}");
+        return;
         //TODO change to http calls to delete panel
         paintData.deletePaintSurface(position, isExterior);
 
@@ -138,7 +140,7 @@ public class PaintingActivity extends AppCompatActivity {
             interiorPaintList.removeAllViews();
             interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, paintData.getInteriorPaints(), false));
         }
-    }
+    }*/
 
     // Mark: SetUp Function
     private void setUpActionBar() {

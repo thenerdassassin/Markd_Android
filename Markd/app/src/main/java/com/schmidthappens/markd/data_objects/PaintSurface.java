@@ -17,7 +17,6 @@ public class PaintSurface {
     private int day;
     private int year;
 
-
     public PaintSurface(String location, String brand, String color, int month, int day, int year) {
         this.location = location;
         this.brand = brand;
@@ -25,6 +24,16 @@ public class PaintSurface {
         this.month = month;
         this.day = day;
         this.year = year;
+    }
+    PaintSurface(PaintSurface oldSurface) {
+        this(
+            oldSurface.getLocation(),
+            oldSurface.getBrand(),
+            oldSurface.getColor(),
+            oldSurface.getMonth(),
+            oldSurface.getDay(),
+            oldSurface.getYear()
+        );
     }
 
     public String getLocation() {

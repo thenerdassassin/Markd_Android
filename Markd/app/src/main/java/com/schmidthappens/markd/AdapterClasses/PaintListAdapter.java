@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.PaintSurface;
-import com.schmidthappens.markd.data_objects.TempPaintData;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
-import com.schmidthappens.markd.painting_subactivities.PaintEditActivity;
+import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
 
 import java.util.List;
 
@@ -122,12 +122,13 @@ public class PaintListAdapter {
                 @Override
                 public void onClick(View v) {
                     //TODO change to http call to delete PaintSurface
+                    return; /*
                     if(activityContext != null) {
                         Log.i(TAG, "Delete Paint Item " + position);
                         activityContext.deletePaintSurface(position, isExteriorFinal);
                     } else {
                         Log.e(TAG, "Activity Context NULL");
-                    }
+                    }*/
                 }
             });
             paintSurfaceDeleteButton.setClickable(false);
@@ -169,13 +170,12 @@ public class PaintListAdapter {
 
     private void viewClickedPaint(int paintObjectClicked, boolean isExterior) {
         Class destinationClass = PaintEditActivity.class;
-        //TODO remove when http call comes pass data instead
         PaintSurface isClicked;
 
         if(isExterior) {
-            isClicked = TempPaintData.getInstance().getExteriorPaints().get(paintObjectClicked);
+            isClicked = TempCustomerData.getInstance().getExteriorSurfaces().get(paintObjectClicked);
         } else {
-            isClicked = TempPaintData.getInstance().getInteriorPaints().get(paintObjectClicked);
+            isClicked = TempCustomerData.getInstance().getInteriorSurfaces().get(paintObjectClicked);
         }
 
         if(activityContext != null) {

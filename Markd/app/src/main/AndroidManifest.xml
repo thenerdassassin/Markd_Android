@@ -93,7 +93,7 @@
             android:value=".menu_option_activities.PaintingActivity"/>
         <!-- Paint Sub-Activities -->
         <activity
-            android:name=".painting_subactivities.PaintEditActivity"
+            android:name=".customer_subactivities.PaintEditActivity"
             android:parentActivityName=".customer_menu_activities.PaintingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

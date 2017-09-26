@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.painting_subactivities;
+package com.schmidthappens.markd.customer_subactivities;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.PaintSurface;
-import com.schmidthappens.markd.data_objects.TempPaintData;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.Calendar;
@@ -84,7 +84,7 @@ public class PaintEditActivity extends AppCompatActivity {
 
     private void processIntentExtras(Intent intent){
         paintId = intent.getIntExtra("id", -1);
-        Log.d("TAG", ""+paintId);
+        Log.d("TAG", "paintId:"+paintId);
         isExterior = intent.hasExtra("isExterior");
 
         if(intent.hasExtra("location")) {
@@ -133,22 +133,13 @@ public class PaintEditActivity extends AppCompatActivity {
         int month = StringUtilities.getMonthFromDotFormattedString(date);
         int day = StringUtilities.getDayFromDotFormmattedString(date);
         int year = StringUtilities.getYearFromDotFormmattedString(date);
-        Toast.makeText(this, "" + month, Toast.LENGTH_SHORT).show();
 
-        //TODO get date and store in update
-        if(paintId == -1) {
-            //New Paint
-            PaintSurface newPaint = new PaintSurface(location, brand, color, month, day, year);
-            //TODO change to http call to add new PaintSurface
-            if(isExterior) {
-                TempPaintData.getInstance().putExteriorPaint(newPaint);
-            } else {
-                TempPaintData.getInstance().putInteriorPaint(newPaint);
-            }
+        PaintSurface paintSurface = new PaintSurface(location, brand, color, month, day, year);
 
+        if(isExterior) {
+            TempCustomerData.getInstance().updateExteriorPaintSurface(paintId, paintSurface);
         } else {
-            //TODO change to http call to update PaintSurface
-            TempPaintData.getInstance().updatePaint(paintId, location, brand, color, isExterior, month, day, year);
+            TempCustomerData.getInstance().updateInteriorPaintSurface(paintId, paintSurface);
         }
     }
 
