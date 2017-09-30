@@ -223,6 +223,9 @@ public class Customer {
     void setExteriorPaintSurfaces(List<PaintSurface> surfaces) {
         this.exteriorPaintSurfaces = surfaces;
     }
+    void deleteExteriorPaintSurface(int paintId){
+        exteriorPaintSurfaces.remove(paintId);
+    }
     List<PaintSurface> getInteriorPaintSurfaces() {
         if(interiorPaintSurfaces == null) {
             return null;
@@ -243,6 +246,10 @@ public class Customer {
     void setInteriorPaintSurfaces(List<PaintSurface> surfaces) {
         this.interiorPaintSurfaces = surfaces;
     }
+    void deleteInteriorPaintSurface(int paintId) {
+        interiorPaintSurfaces.remove(paintId);
+    }
+
     Contractor getPainter() {
         if(painter == null) {
             return null;

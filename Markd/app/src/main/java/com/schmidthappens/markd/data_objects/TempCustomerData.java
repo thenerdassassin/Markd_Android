@@ -180,6 +180,17 @@ public class TempCustomerData {
         }
         return false;
     }
+    public boolean removeExteriorPaintSurface(int paintId){
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                         //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
+        customerToUpdate.deleteExteriorPaintSurface(paintId);                            //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                             //send to database
+            this.updateCustomer(customerToUpdate.getExteriorPaintSurfaces(), true);    //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
     public List<PaintSurface> getInteriorSurfaces() {
         return getCustomer().getInteriorPaintSurfaces();
     }
@@ -190,6 +201,17 @@ public class TempCustomerData {
         customerToUpdate.setInteriorPaintSurface(paintId, paintSurface);                 //change component to a copy
         if(putCustomer(customerToUpdate)) {                                             //send to database
             this.updateCustomer(customerToUpdate.getInteriorPaintSurfaces(), false);   //update TempCustomerData
+            return true;
+        }
+        return false;
+    }
+    public boolean removeInteriorPaintSurface(int paintId) {
+        //TODO: change to use db calls
+        Customer originalCustomer = getCustomer();                                         //causes update from db
+        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
+        customerToUpdate.deleteInteriorPaintSurface(paintId);                            //change component to a copy
+        if(putCustomer(customerToUpdate)) {                                             //send to database
+            this.updateCustomer(customerToUpdate.getExteriorPaintSurfaces(), true);    //update TempCustomerData
             return true;
         }
         return false;

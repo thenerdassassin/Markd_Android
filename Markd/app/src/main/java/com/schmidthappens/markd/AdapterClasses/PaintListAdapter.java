@@ -37,7 +37,7 @@ public class PaintListAdapter {
     private PaintingActivity activityContext = null;
     private static final String TAG = "PaintListAdapter";
 
-    public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, boolean isExterior) {
+    public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, final boolean isExterior) {
         final boolean isExteriorFinal = isExterior;
         if(context instanceof PaintingActivity) {
             activityContext = (PaintingActivity)context;
@@ -121,14 +121,17 @@ public class PaintListAdapter {
             paintSurfaceDeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO change to http call to delete PaintSurface
-                    return; /*
+                    if(isExterior) {
+                        TempCustomerData.getInstance().removeExteriorPaintSurface(position);
+                    } else {
+                        TempCustomerData.getInstance().removeInteriorPaintSurface(position);
+                    }
                     if(activityContext != null) {
                         Log.i(TAG, "Delete Paint Item " + position);
-                        activityContext.deletePaintSurface(position, isExteriorFinal);
+                        activityContext.deletePaintSurface(position, isExterior);
                     } else {
                         Log.e(TAG, "Activity Context NULL");
-                    }*/
+                    }
                 }
             });
             paintSurfaceDeleteButton.setClickable(false);

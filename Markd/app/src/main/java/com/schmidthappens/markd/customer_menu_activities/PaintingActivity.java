@@ -124,23 +124,17 @@ public class PaintingActivity extends AppCompatActivity {
         }
     };
 
-    //TODO: fix this method
-    /*
     public void deletePaintSurface(int position, boolean isExterior) {
         Log.i(TAG, "{Delete Paint Item:" + position + " isExterior:" + isExterior + "}");
-        return;
-        //TODO change to http calls to delete panel
-        paintData.deletePaintSurface(position, isExterior);
-
         //Used to reset the adapter
         if(isExterior) {
             exteriorPaintList.removeAllViews();
-            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, paintData.getExteriorPaints(), true));
+            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, TempCustomerData.getInstance().getExteriorSurfaces(), true));
         } else {
             interiorPaintList.removeAllViews();
-            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, paintData.getInteriorPaints(), false));
+            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, TempCustomerData.getInstance().getInteriorSurfaces(), false));
         }
-    }*/
+    }
 
     // Mark: SetUp Function
     private void setUpActionBar() {
