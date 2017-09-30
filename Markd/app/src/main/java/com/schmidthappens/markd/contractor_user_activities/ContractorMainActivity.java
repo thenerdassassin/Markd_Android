@@ -27,7 +27,9 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempContractorData;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
@@ -36,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Created by Josh on 9/16/2017.
@@ -88,7 +91,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
         companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
         initializeTextViews(contractor);
-
 
         //Initialize DrawerList
         setUpDrawerToggle();

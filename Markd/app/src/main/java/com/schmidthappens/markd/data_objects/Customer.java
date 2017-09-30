@@ -2,8 +2,9 @@ package com.schmidthappens.markd.data_objects;
 
 import android.util.Log;
 
+import com.schmidthappens.markd.utilities.StringUtilities;
+
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -14,6 +15,24 @@ import java.util.List;
  */
 
 public class Customer {
+    public enum MaritalStatus {
+        MARRIED("MARRIED"),
+        SINGLE("SINGLE");
+
+        private String value;
+        MaritalStatus(String value) {
+            this.value = value;
+        }
+
+        public static MaritalStatus fromString(String value) {
+            for(MaritalStatus status: values()) {
+                if(value.toUpperCase().equals(status.value)) {
+                    return status;
+                }
+            }
+            return SINGLE;
+        }
+    }
     private static final String TAG = "Customer_Bean";
     private String email;
     private String password;
@@ -23,7 +42,7 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String nameSuffix;
-    private String maritalStatus; //TODO: make enum["Married", "Single"]
+    private MaritalStatus maritalStatus;
     private Address address;
     private Home home;
     private ContractorDetails architect;
@@ -51,7 +70,7 @@ public class Customer {
     private List<PaintSurface> exteriorPaintSurfaces;
     private ContractorDetails painter;
 
-    private Customer(String email, String password, String namePrefix, String firstName, String lastName, String nameSuffix, String maritalStatus, Address address, Home home, ContractorDetails architect, ContractorDetails builder, HotWater hotWater, Boiler boiler, ContractorDetails plumber, List<ContractorService> plumbingServices, AirHandler airHandler, Compressor compressor, ContractorDetails hvactechnician, List<ContractorService> hvacServices, List<Panel> panels, ContractorDetails electrician, List<ContractorService> electricalServices, List<PaintSurface> interiorPaintSurfaces, List<PaintSurface> exteriorPaintSurfaces, ContractorDetails painter) {
+    private Customer(String email, String password, String namePrefix, String firstName, String lastName, String nameSuffix, MaritalStatus maritalStatus, Address address, Home home, ContractorDetails architect, ContractorDetails builder, HotWater hotWater, Boiler boiler, ContractorDetails plumber, List<ContractorService> plumbingServices, AirHandler airHandler, Compressor compressor, ContractorDetails hvactechnician, List<ContractorService> hvacServices, List<Panel> panels, ContractorDetails electrician, List<ContractorService> electricalServices, List<PaintSurface> interiorPaintSurfaces, List<PaintSurface> exteriorPaintSurfaces, ContractorDetails painter) {
         this.email = email;
         this.password = password;
         this.namePrefix = namePrefix;
@@ -89,7 +108,7 @@ public class Customer {
         this.firstName = customer.optString("firstName");
         this.lastName = customer.optString("lastName");
         this.nameSuffix = customer.optString("nameSuffix");
-        this.maritalStatus = customer.optString("maritalStatus");
+        this.maritalStatus = MaritalStatus.fromString(customer.optString("maritalStatus"));
         //this.address = new Address(customer.getJSONObject("address"));
         //this.home = new Home(customer.getJSONObject("home"));
 
@@ -177,6 +196,11 @@ public class Customer {
             }
         }
         return surfacesToReturn;
+    }
+
+    //Mark:- Home Page
+    String getName() {
+        return StringUtilities.getFormattedName(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
     }
 
     //Mark:- Plumbing Page
@@ -283,5 +307,10 @@ public class Customer {
             return null;
         }
         return new ContractorDetails(painter);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

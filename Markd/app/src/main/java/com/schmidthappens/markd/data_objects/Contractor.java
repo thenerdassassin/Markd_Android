@@ -1,5 +1,8 @@
 package com.schmidthappens.markd.data_objects;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,7 +17,6 @@ public class Contractor {
     private static final String TAG = "ContractorBean";
 
     private ContractorDetails contractorDetails;
-    //TODO: customers
     private List<Customer> customers;
 
     private Contractor(ContractorDetails details, List<Customer> customers) {
@@ -22,8 +24,12 @@ public class Contractor {
         this.customers = customers;
     }
     public Contractor(JSONObject contractorJSON) {
+        super();
         if(contractorJSON.optJSONObject("contractorDetails") != null) {
-            this.contractorDetails = new ContractorDetails((contractorJSON.optJSONObject("contractorDetails")));
+            this.contractorDetails = new ContractorDetails(contractorJSON.optJSONObject("contractorDetails"));
+        } else {
+            Log.e(TAG, "No contractor details in JSONObject");
+            this.contractorDetails = null;
         }
         this.customers = buildCustomerListFromJSONArray(contractorJSON.optJSONArray("customers"));
     }

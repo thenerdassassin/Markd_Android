@@ -19,9 +19,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
@@ -45,12 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout homeFrame;
     private ImageView homeImage;
     private ImageView homeImagePlaceholder;
+    private TextView preparedFor;
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "main_photo.jpg";
 
     private String TAG = "MainActivity";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
         drawerList = (ListView)findViewById(R.id.left_drawer);
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
         homeImage = (ImageView)findViewById(R.id.home_image);
-        homeImagePlaceholder = (ImageView) findViewById(R.id.home_image_placeholder);
+        homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
+        preparedFor = (TextView)findViewById(R.id.prepared_for);
+        initializeViews();
 
         //Set up ActionBar
         setUpActionBar();
@@ -255,9 +259,12 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
     // Mark:- SetUp Functions
+    private void initializeViews() {
+        String preparedForString = "Prepared for " + TempCustomerData.getInstance().getName();
+        preparedFor.setText(preparedForString);
+    }
+
     private void setUpActionBar() {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);

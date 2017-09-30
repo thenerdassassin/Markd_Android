@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
@@ -127,7 +128,7 @@ public class NavigationDrawerInitializer {
                 intentToReturn = new Intent(context, ContractorMainActivity.class);
                 break;
             case "Customers":
-                intentToReturn = new Intent(context, ContractorMainActivity.class);
+                intentToReturn = new Intent(context, ContractorCustomersActivity.class);
                 break;
             case"Settings":
                 intentToReturn = new Intent(context, ContractorMainActivity.class);

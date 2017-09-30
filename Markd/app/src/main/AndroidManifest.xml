@@ -112,6 +112,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".contractor_user_activities.ContractorMainActivity" />
         </activity>
+        <activity android:name=".contractor_user_activities.ContractorCustomersActivity"
+            android:value=".contractor_user_activities.ContractorCustomersActivity" />
     </application>
 
 </manifest>

@@ -3,6 +3,8 @@ package com.schmidthappens.markd.utilities;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.schmidthappens.markd.data_objects.Customer;
+
 import java.util.Calendar;
 
 /**
@@ -47,7 +49,6 @@ public class StringUtilities {
 
         return dateString;
     }
-
     public static String getCurrentDateString() {
         Calendar calendar = Calendar.getInstance();
 
@@ -62,12 +63,46 @@ public class StringUtilities {
     public static int getMonthFromDotFormattedString(String dotFormmatedString) {
         return Integer.parseInt(dotFormmatedString.substring(0, dotFormmatedString.indexOf(".")));
     }
-
     public static int getDayFromDotFormmattedString(String dotFormmatedString) {
         return Integer.parseInt(dotFormmatedString.substring(dotFormmatedString.indexOf(".")+1, dotFormmatedString.lastIndexOf(".")));
     }
-
     public static int getYearFromDotFormmattedString(String dotFormmatedString) {
         return Integer.parseInt(dotFormmatedString.substring(dotFormmatedString.lastIndexOf(".")+1));
+    }
+
+    public static String getFormattedName(String prefix, String first, String last, String suffix, Customer.MaritalStatus maritalStatus) {
+        StringBuilder builder = new StringBuilder();
+        if(isNotNullOrEmpty(prefix)) {
+            builder.append(prefix).append(" ");
+        }
+
+        if(maritalStatus != null && maritalStatus.equals(Customer.MaritalStatus.MARRIED) && isNotNullOrEmpty(prefix)) {
+            builder.append("and Mrs. ");
+        } else {
+            if(isNotNullOrEmpty(first)) {
+                builder.append(first).append(" ");
+            }
+        }
+
+        if(last != null) {
+            builder.append(last);
+            if(isNotNullOrEmpty(suffix)) {
+                builder.append(" ");
+            }
+        }
+
+        if(suffix != null) {
+            builder.append(suffix);
+        }
+
+        return builder.toString();
+    }
+
+    private static boolean isNullOrEmpty(String string) {
+        return (string == null || string.isEmpty());
+    }
+
+    private static boolean isNotNullOrEmpty(String string) {
+        return !isNullOrEmpty(string);
     }
 }

@@ -2,6 +2,7 @@ package com.schmidthappens.markd.data_objects;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,12 +47,7 @@ public class TempContractorData {
         //Remove when database is implemented
         JSONObject contractorJson = new JSONObject();
         try {
-            contractorJson.put("companyName", "Greenwich Landscaping Company");
-            contractorJson.put("telephoneNumber", "2038691022");
-            contractorJson.put("websiteUrl", "http://greenwichlandscape.net/");
-            contractorJson.put("zipCode", "53532");
-            contractorJson.put("type", "landscaper");
-
+            contractorJson.put("contractorDetails", initialContractorDetails());
             contractorJson.put("customers", initialCustomerList());
         } catch (JSONException exception) {
             Log.e(TAG, exception.getMessage());
@@ -60,8 +56,53 @@ public class TempContractorData {
     }
 
     //Mark:- inital methods to remove when http calls are implemented
-    private List<Customer> initialCustomerList() {
-        return null;
+    private JSONObject initialContractorDetails() {
+        JSONObject contractorJson = new JSONObject();
+        try {
+            contractorJson.put("companyName", "Greenwich Landscaping Company");
+            contractorJson.put("telephoneNumber", "2038691022");
+            contractorJson.put("websiteUrl", "http://greenwichlandscape.net/");
+            contractorJson.put("zipCode", "53532");
+            contractorJson.put("type", "landscaper");
+        } catch (JSONException exception) {
+            Log.e(TAG, exception.getMessage());
+        }
+        return contractorJson;
+    }
+    private JSONArray initialCustomerList() {
+        JSONArray customerArray = new JSONArray();
+        try {
+            JSONObject customer1 = new JSONObject();
+            customer1.put("namePrefix", "Mr.");
+            customer1.put("firstName", "Joshua");
+            customer1.put("lastName", "Schmidt");
+            customer1.put("nameSuffix", "");
+            customer1.put("maritalStatus", "MARRIED");
+            customerArray.put(customer1);
+
+            JSONObject customer2 = new JSONObject();
+            customer2.put("firstName", "Tiger");
+            customer2.put("lastName", "Woods");
+            customer2.put("maritalStatus", "single");
+            customerArray.put(customer2);
+
+            JSONObject customer3 = new JSONObject();
+            customer3.put("firstName", "Bobby");
+            customer3.put("lastName", "Burt");
+            customer3.put("maritalStatus", "single");
+            customerArray.put(customer3);
+
+            JSONObject customer4 = new JSONObject();
+            customer4.put("firstName", "Dirk");
+            customer4.put("lastName", "BoatStuff");
+            customer4.put("maritalStatus", "MARRIED");
+            customerArray.put(customer4);
+
+        } catch(JSONException exception) {
+            Log.e(TAG, exception.getMessage());
+            return customerArray;
+        }
+        return customerArray;
     }
 
     //Mark:- Home Page

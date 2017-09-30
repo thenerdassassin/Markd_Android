@@ -43,14 +43,14 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/prepared_for"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
                         android:textSize="20sp"
                         android:textColor="@color/black"
                         android:textAlignment="center"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="Prepared for Mr &amp; Mrs Chiappetta " />
+                        android:fontFamily="sans-serif-condensed" />
 
                     <TextView
                         android:layout_width="match_parent"

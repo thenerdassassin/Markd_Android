@@ -100,6 +100,11 @@ public class TempCustomerData {
         customer = new Customer(customerJson);
     }
 
+    //Mark:- Home Page
+    public String getName() {
+        return getCustomer().getName();
+    }
+
     //Mark:- Plumbing
     public HotWater getHotWater() {
         return getCustomer().getHotWater();
