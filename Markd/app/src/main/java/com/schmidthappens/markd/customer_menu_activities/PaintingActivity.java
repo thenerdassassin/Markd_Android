@@ -21,6 +21,7 @@ import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
@@ -52,7 +53,7 @@ public class PaintingActivity extends AppCompatActivity {
 
     private List<PaintSurface> exteriorPaintSurfaces = TempCustomerData.getInstance().getExteriorSurfaces();
     private List<PaintSurface> interiorPaintSurfaces = TempCustomerData.getInstance().getInteriorSurfaces();
-    private Contractor painter = TempCustomerData.getInstance().getPainter();
+    private ContractorDetails painter = TempCustomerData.getInstance().getPainter();
     private final static String TAG = "PaintingActivity";
 
     @Override

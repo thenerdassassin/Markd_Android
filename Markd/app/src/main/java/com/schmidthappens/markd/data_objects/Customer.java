@@ -26,31 +26,62 @@ public class Customer {
     private String maritalStatus; //TODO: make enum["Married", "Single"]
     private Address address;
     private Home home;
-    private Contractor architect;
-    private Contractor builder;
+    private ContractorDetails architect;
+    private ContractorDetails builder;
 
     //For Plumbing Page
     private HotWater hotWater;
     private Boiler boiler;
-    private Contractor plumber;
+    private ContractorDetails plumber;
     private List<ContractorService> plumbingServices;
 
     //For HVAC Page
     private AirHandler airHandler;
     private Compressor compressor;
-    private Contractor hvactechnician;
+    private ContractorDetails hvactechnician;
     private List<ContractorService> hvacServices;
 
     //For Electrical Page
     private List<Panel> panels;
-    private Contractor electrician;
+    private ContractorDetails electrician;
     private List<ContractorService> electricalServices;
 
     //For Painting Page
     private List<PaintSurface> interiorPaintSurfaces;
     private List<PaintSurface> exteriorPaintSurfaces;
-    private Contractor painter;
+    private ContractorDetails painter;
 
+    private Customer(String email, String password, String namePrefix, String firstName, String lastName, String nameSuffix, String maritalStatus, Address address, Home home, ContractorDetails architect, ContractorDetails builder, HotWater hotWater, Boiler boiler, ContractorDetails plumber, List<ContractorService> plumbingServices, AirHandler airHandler, Compressor compressor, ContractorDetails hvactechnician, List<ContractorService> hvacServices, List<Panel> panels, ContractorDetails electrician, List<ContractorService> electricalServices, List<PaintSurface> interiorPaintSurfaces, List<PaintSurface> exteriorPaintSurfaces, ContractorDetails painter) {
+        this.email = email;
+        this.password = password;
+        this.namePrefix = namePrefix;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nameSuffix = nameSuffix;
+        this.maritalStatus = maritalStatus;
+        this.address = address;
+        this.home = home;
+        this.architect = architect;
+        this.builder = builder;
+        this.hotWater = hotWater;
+        this.boiler = boiler;
+        this.plumber = plumber;
+        this.plumbingServices = plumbingServices;
+        this.airHandler = airHandler;
+        this.compressor = compressor;
+        this.hvactechnician = hvactechnician;
+        this.hvacServices = hvacServices;
+        this.panels = panels;
+        this.electrician = electrician;
+        this.electricalServices = electricalServices;
+        this.interiorPaintSurfaces = interiorPaintSurfaces;
+        this.exteriorPaintSurfaces = exteriorPaintSurfaces;
+        this.painter = painter;
+    }
+    /* TODO: implement clone functions
+    Customer(Customer oldCustomer) {
+        return oldCustomer;
+    }*/
     public Customer(JSONObject customer) {
         //TODO: finish Customer JSON
         //Home Page
@@ -88,22 +119,22 @@ public class Customer {
 
         //Contractors
         if(customer.optJSONObject("architect_id") != null) {
-            this.architect = new Contractor(customer.optJSONObject("architect_id"));
+            this.architect = new ContractorDetails(customer.optJSONObject("architect_id"));
         }
         if(customer.optJSONObject("builder_id") != null) {
-            this.builder = new Contractor(customer.optJSONObject("builder_id"));
+            this.builder = new ContractorDetails(customer.optJSONObject("builder_id"));
         }
         if(customer.optJSONObject("plumber_id") != null) {
-            this.plumber = new Contractor(customer.optJSONObject("plumber_id"));
+            this.plumber = new ContractorDetails(customer.optJSONObject("plumber_id"));
         }
         if(customer.optJSONObject("hvactechnician_id") != null) {
-            this.hvactechnician = new Contractor(customer.optJSONObject("hvactechnician_id"));
+            this.hvactechnician = new ContractorDetails(customer.optJSONObject("hvactechnician_id"));
         }
         if(customer.optJSONObject("electrician_id") != null) {
-            this.electrician = new Contractor(customer.optJSONObject("electrician_id"));
+            this.electrician = new ContractorDetails(customer.optJSONObject("electrician_id"));
         }
         if(customer.optJSONObject("painter_id") != null) {
-            this.painter = new Contractor(customer.optJSONObject("painter_id"));
+            this.painter = new ContractorDetails(customer.optJSONObject("painter_id"));
         }
     }
     private List<ContractorService> buildServicesListFromJSONArray(JSONArray plumbingServiceList) {
@@ -113,17 +144,16 @@ public class Customer {
         }
         for (int i = 0 ; i < plumbingServiceList.length(); i++) {
             JSONObject jsonService = plumbingServiceList.optJSONObject(i);
-            if(jsonService == null) {
-                continue;
+            if(jsonService != null) {
+                ContractorService service = new ContractorService(
+                        jsonService.optInt("month"),
+                        jsonService.optInt("day"),
+                        jsonService.optInt("year"),
+                        jsonService.optString("contractor"),
+                        jsonService.optString("comments")
+                );
+                servicesToReturn.add(service);
             }
-            ContractorService service = new ContractorService(
-                    jsonService.optInt("month"),
-                    jsonService.optInt("day"),
-                    jsonService.optInt("year"),
-                    jsonService.optString("contractor"),
-                    jsonService.optString("comments")
-            );
-            servicesToReturn.add(service);
         }
         return servicesToReturn;
     }
@@ -134,18 +164,17 @@ public class Customer {
         }
         for (int i = 0 ; i < paintSurfacesList.length(); i++) {
             JSONObject jsonPaintSurface = paintSurfacesList.optJSONObject(i);
-            if(jsonPaintSurface == null) {
-                continue;
+            if(jsonPaintSurface != null) {
+                PaintSurface surface = new PaintSurface(
+                        jsonPaintSurface.optString("surface"),
+                        jsonPaintSurface.optString("brand"),
+                        jsonPaintSurface.optString("color"),
+                        jsonPaintSurface.optInt("month"),
+                        jsonPaintSurface.optInt("day"),
+                        jsonPaintSurface.optInt("year")
+                );
+                surfacesToReturn.add(surface);
             }
-            PaintSurface surface = new PaintSurface(
-                    jsonPaintSurface.optString("surface"),
-                    jsonPaintSurface.optString("brand"),
-                    jsonPaintSurface.optString("color"),
-                    jsonPaintSurface.optInt("month"),
-                    jsonPaintSurface.optInt("day"),
-                    jsonPaintSurface.optInt("year")
-            );
-            surfacesToReturn.add(surface);
         }
         return surfacesToReturn;
     }
@@ -169,11 +198,11 @@ public class Customer {
     void setBoiler(Boiler boiler) {
         this.boiler = boiler;
     }
-    Contractor getPlumber() {
+    ContractorDetails getPlumber() {
         if(plumber == null) {
             return null;
         }
-        return new Contractor(plumber);
+        return new ContractorDetails(plumber);
     }
 
     //Mark:- HVAC Page
@@ -195,11 +224,11 @@ public class Customer {
     void setCompressor(Compressor compressor) {
         this.compressor = compressor;
     }
-    Contractor getHvacTechnician() {
+    ContractorDetails getHvacTechnician() {
         if(hvactechnician == null) {
             return null;
         }
-        return new Contractor(hvactechnician);
+        return new ContractorDetails(hvactechnician);
     }
 
     //Mark:- Painting Page
@@ -249,11 +278,10 @@ public class Customer {
     void deleteInteriorPaintSurface(int paintId) {
         interiorPaintSurfaces.remove(paintId);
     }
-
-    Contractor getPainter() {
+    ContractorDetails getPainter() {
         if(painter == null) {
             return null;
         }
-        return new Contractor(painter);
+        return new ContractorDetails(painter);
     }
 }

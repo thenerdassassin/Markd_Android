@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
     private Uri getHomeImageUri() {
         return Uri.fromFile(getHomeImageFile());
     }
-
     private File getHomeImageFile() {
         return new File(MainActivity.this.getFilesDir(), filename);
     }

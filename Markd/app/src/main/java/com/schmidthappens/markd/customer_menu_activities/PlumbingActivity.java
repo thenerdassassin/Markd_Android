@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
@@ -63,7 +64,7 @@ public class PlumbingActivity extends AppCompatActivity {
 
     HotWater hotWater = TempCustomerData.getInstance().getHotWater();
     Boiler boiler = TempCustomerData.getInstance().getBoiler();
-    Contractor plumber = TempCustomerData.getInstance().getPlumber();
+    ContractorDetails plumber = TempCustomerData.getInstance().getPlumber();
     private static final String TAG = "PlumbingActivity";
 
     @Override

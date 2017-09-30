@@ -21,11 +21,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
@@ -45,6 +47,7 @@ public class ContractorMainActivity extends AppCompatActivity {
     //ActionBar
     private ActionBar actionBar;
     private ActionBarDrawerToggle drawerToggle;
+    private ImageView editButton;
 
     //NavigationDrawer
     private DrawerLayout drawerLayout;
@@ -61,6 +64,7 @@ public class ContractorMainActivity extends AppCompatActivity {
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "contractor_logo.jpg";
+    ContractorDetails contractor = TempContractorData.getInstance().getContractorDetails();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,9 @@ public class ContractorMainActivity extends AppCompatActivity {
 
         SessionManager sessionManager = new SessionManager(ContractorMainActivity.this);
         sessionManager.checkLogin();
+
+        //Set up ActionBar
+        setUpActionBar();
 
         drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         drawerList = (ListView)findViewById(R.id.left_drawer);
@@ -80,13 +87,8 @@ public class ContractorMainActivity extends AppCompatActivity {
         companyTelephone = (TextView)findViewById(R.id.contractor_telephone_text);
         companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
         companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
-
-        //TODO: change to http call to get contractor
-        Contractor contractor = TempContractorServiceData.getInstance().getContractor();
         initializeTextViews(contractor);
 
-        //Set up ActionBar
-        setUpActionBar();
 
         //Initialize DrawerList
         setUpDrawerToggle();
@@ -174,7 +176,9 @@ public class ContractorMainActivity extends AppCompatActivity {
             }
             in.close();
             out.close();
-            temp.delete();
+            if(!temp.delete()) {
+                Log.e(TAG, "Temp file was not deleted");
+            }
             return true;
         } catch (Exception exception) {
             Log.e(TAG, exception.toString());
@@ -186,7 +190,9 @@ public class ContractorMainActivity extends AppCompatActivity {
                 //ignore
             }
         }
-        temp.delete();
+        if(!temp.delete()) {
+            Log.e(TAG, "Temp file was not deleted");
+        }
         return false;
     }
     private boolean copyUriToPermanentStorage(Uri uri) {
@@ -258,20 +264,26 @@ public class ContractorMainActivity extends AppCompatActivity {
         }
     };
     private void addContractorDataToIntent(Intent intent) {
-        //TODO: change to http call to get contractor
-        Contractor contractor = TempContractorServiceData.getInstance().getContractor();
-        intent.putExtra("companyName", contractor.getCompanyName());
-        intent.putExtra("telephoneNumber", contractor.getTelephoneNumber());
-        intent.putExtra("websiteUrl", contractor.getWebsiteUrl());
-        intent.putExtra("zipCode", contractor.getZipCode());
+        if(contractor != null) {
+            intent.putExtra("companyName", contractor.getCompanyName());
+            intent.putExtra("telephoneNumber", contractor.getTelephoneNumber());
+            intent.putExtra("websiteUrl", contractor.getWebsiteUrl());
+            intent.putExtra("zipCode", contractor.getZipCode());
+            intent.putExtra("type", contractor.getType());
+        }
     }
 
     // Mark:- SetUp Functions
-    private void initializeTextViews(Contractor contractor) {
-        companyNameTextView.setText(contractor.getCompanyName());
-        companyTelephone.setText(contractor.getTelephoneNumber());
-        companyWebpage.setText(contractor.getWebsiteUrl());
-        companyZipCode.setText(contractor.getZipCode());
+    private void initializeTextViews(ContractorDetails contractor) {
+        if(contractor == null) {
+            Log.i(TAG, "ContractorDetails are null");
+            editButton.performClick();
+        } else {
+            companyNameTextView.setText(contractor.getCompanyName());
+            companyTelephone.setText(contractor.getTelephoneNumber());
+            companyWebpage.setText(contractor.getWebsiteUrl());
+            companyZipCode.setText(contractor.getZipCode());
+        }
     }
 
     private void setUpActionBar() {
@@ -293,7 +305,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         });
 
         //Make edit mode accessible
-        ImageView editButton = (ImageView)findViewById(R.id.edit_mode);
+        editButton = (ImageView)findViewById(R.id.edit_mode);
         editButton.setVisibility(View.VISIBLE);
         editButton.setClickable(true);
         editButton.setOnClickListener(editCompanyOnClickListener);

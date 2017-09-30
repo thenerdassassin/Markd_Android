@@ -24,6 +24,7 @@ import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.AirHandler;
 import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
@@ -63,7 +64,7 @@ public class HvacActivity extends AppCompatActivity {
 
     private AirHandler airHandler = TempCustomerData.getInstance().getAirHandler();
     private Compressor compressor = TempCustomerData.getInstance().getCompressor();
-    private Contractor hvacTechnician = TempCustomerData.getInstance().getHvacTechnician();
+    private ContractorDetails hvacTechnician = TempCustomerData.getInstance().getHvacTechnician();
     private static String TAG = "HvacActivity";
 
     @Override
@@ -93,10 +94,6 @@ public class HvacActivity extends AppCompatActivity {
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
         View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
         hvacContractor.addView(v);
-
-        //Set Up Buttons
-        airHandlerEditButton.setOnClickListener(airHandlerEditButtonClickListener);
-        compressorEditButton.setOnClickListener(compressorEditButtonClickListener);
 
         //TODO change to http call to get service lists
         final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
@@ -129,7 +126,7 @@ public class HvacActivity extends AppCompatActivity {
 
     private void initializeAirHandler() {
         airHandlerEditButton = (ImageView)findViewById(R.id.hvac_air_handler_edit);
-
+        airHandlerEditButton.setOnClickListener(airHandlerEditButtonClickListener);
         if(airHandler == null) {
             return;
         }
@@ -148,6 +145,7 @@ public class HvacActivity extends AppCompatActivity {
 
     private void initializeCompressor() {
         compressorEditButton = (ImageView)findViewById(R.id.hvac_compressor_edit);
+        compressorEditButton.setOnClickListener(compressorEditButtonClickListener);
 
         if(compressor == null) {
             return;

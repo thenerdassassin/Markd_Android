@@ -1,88 +1,57 @@
 package com.schmidthappens.markd.data_objects;
 
-import android.os.Build;
-import android.telephony.PhoneNumberUtils;
-import android.util.Log;
-
-import org.json.JSONException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by joshua.schmidtibm.com on 9/23/17.
+ * Created by joshua.schmidtibm.com on 9/30/17.
  */
 
 public class Contractor {
-    private static final String TAG = "Contractor_Bean";
-    private String companyName;
-    private String telephoneNumber;
-    private String websiteUrl;
-    private String zipCode;
-    private String type; //TODO: make enum
+    private static final String TAG = "ContractorBean";
 
-    public Contractor(String companyName, String telephoneNumber, String websiteUrl, String zipCode, String type) {
-        this.companyName = companyName;
-        this.telephoneNumber = telephoneNumber;
-        this.websiteUrl = websiteUrl;
-        this.zipCode = zipCode;
-        this.type = type;
+    private ContractorDetails contractorDetails;
+    //TODO: customers
+    private List<Customer> customers;
+
+    private Contractor(ContractorDetails details, List<Customer> customers) {
+        this.contractorDetails = details;
+        this.customers = customers;
     }
-    public Contractor(Contractor oldContractor) throws NullPointerException {
-        this(
-                oldContractor.getCompanyName(),
-                oldContractor.getTelephoneNumber(),
-                oldContractor.getWebsiteUrl(),
-                oldContractor.getZipCode(),
-                oldContractor.getType()
-        );
+    public Contractor(JSONObject contractorJSON) {
+        if(contractorJSON.optJSONObject("contractorDetails") != null) {
+            this.contractorDetails = new ContractorDetails((contractorJSON.optJSONObject("contractorDetails")));
+        }
+        this.customers = buildCustomerListFromJSONArray(contractorJSON.optJSONArray("customers"));
     }
-    public Contractor(JSONObject contractor) {
-        this(
-                contractor.optString("companyName"),
-                contractor.optString("telephoneNumber"),
-                contractor.optString("websiteUrl"),
-                contractor.optString("zipCode"),
-                contractor.optString("type")
-        );
+    private List<Customer> buildCustomerListFromJSONArray(JSONArray customers) {
+        List<Customer> customerList = new ArrayList<>();
+        if(customers == null) {
+            return customerList;
+        }
+        for(int i = 0; i < customers.length(); i++) {
+            JSONObject customer = customers.optJSONObject(i);
+            if(customer != null) {
+                customerList.add(new Customer(customer));
+            }
+        }
+        return customerList;
+    }
+    Contractor(Contractor contractor) {
+        this(contractor.getContractorDetails(), contractor.getCustomers());
     }
 
-    public String getCompanyName() {
-        return companyName;
+    //Mark:- Getters/Setters
+    ContractorDetails getContractorDetails() {
+        return contractorDetails;
     }
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    void setContractorDetails(ContractorDetails contractorDetails) {
+        this.contractorDetails = contractorDetails;
     }
-    public String getTelephoneNumber() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return PhoneNumberUtils.formatNumber(telephoneNumber, Locale.getDefault().getCountry());
-        } else {
-            return PhoneNumberUtils.formatNumber(telephoneNumber); //Deprecated method
-        }
-    }
-    public void setTelephoneNumber(String telephoneNumber) {
-        telephoneNumber = telephoneNumber.replaceAll("[^0-9]", "");
-        if(telephoneNumber.length() != 10) {
-            return;
-        }
-        this.telephoneNumber = telephoneNumber;
-    }
-    public String getWebsiteUrl() {
-        return websiteUrl;
-    }
-    public void setWebsiteUrl(String websiteUrl) {
-        this.websiteUrl = websiteUrl;
-    }
-    public String getZipCode() {
-        return zipCode;
-    }
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-    public String getType() {
-        return type;
-    }
-    public void setType(String type) {
-        this.type = type;
+    List<Customer> getCustomers() {
+        return customers;
     }
 }

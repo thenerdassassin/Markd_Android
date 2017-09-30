@@ -13,7 +13,6 @@ import java.util.List;
  */
 
 public class TempCustomerData {
-    //TODO: Finish TempCustomerData
     private static final String TAG = "CustomerDataSingleton";
     private static final TempCustomerData customerData = new TempCustomerData();
     public static TempCustomerData getInstance() {
@@ -28,7 +27,7 @@ public class TempCustomerData {
         //Check for success in body data
         //Get message as string
         //new JSONObject(message)
-        //return Customer(new JSONObject(message))
+        //customer = Customer(new JSONObject(message))
         return customer;
     }
     private boolean putCustomer(Customer customer) {
@@ -130,7 +129,7 @@ public class TempCustomerData {
         }
         return false;
     }
-    public Contractor getPlumber() {return getCustomer().getPlumber();}
+    public ContractorDetails getPlumber() {return getCustomer().getPlumber();}
 
     //Mark:- HVAC
     public AirHandler getAirHandler() {
@@ -161,7 +160,7 @@ public class TempCustomerData {
         }
         return false;
     }
-    public Contractor getHvacTechnician() {
+    public ContractorDetails getHvacTechnician() {
         return getCustomer().getHvacTechnician();
     }
 
@@ -216,7 +215,7 @@ public class TempCustomerData {
         }
         return false;
     }
-    public Contractor getPainter() {
+    public ContractorDetails getPainter() {
         return getCustomer().getPainter();
     }
 

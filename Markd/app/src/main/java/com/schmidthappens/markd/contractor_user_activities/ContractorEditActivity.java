@@ -5,16 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 
 /**
@@ -29,6 +33,8 @@ public class ContractorEditActivity extends AppCompatActivity {
     EditText webisteEditText;
     EditText zipcodeEditText;
     Button saveContractorButton;
+
+    private String contractorType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,28 +72,37 @@ public class ContractorEditActivity extends AppCompatActivity {
     };
 
     private void saveContractorChanges() {
-        //TODO: change to http call to save Contractor
-        Contractor contractor = TempContractorServiceData.getInstance().getContractor();
-        contractor.setCompanyName(companyNameEditText.getText().toString());
-        contractor.setTelephoneNumber(telephoneEditText.getText().toString());
-        contractor.setWebsiteUrl(webisteEditText.getText().toString());
-        contractor.setZipCode(zipcodeEditText.getText().toString());
+        Log.i(TAG, "Contractor updated");
+        ContractorDetails newContractor = new ContractorDetails(
+                companyNameEditText.getText().toString(),
+                telephoneEditText.getText().toString(),
+                webisteEditText.getText().toString(),
+                zipcodeEditText.getText().toString(),
+                "landscaper"
+        );
+        TempContractorData.getInstance().updateContractorDetails(newContractor);
     }
     private void initializeEditTextViews(Intent intent) {
         if(intent == null) {
-            return;
-        }
-        if(intent.hasExtra("companyName")) {
-            companyNameEditText.setText(intent.getStringExtra("companyName"));
-        }
-        if(intent.hasExtra("telephoneNumber")) {
-            telephoneEditText.setText(intent.getStringExtra("telephoneNumber"));
-        }
-        if(intent.hasExtra("websiteUrl")) {
-            webisteEditText.setText(intent.getStringExtra("websiteUrl"));
-        }
-        if(intent.hasExtra("zipCode")) {
-            zipcodeEditText.setText(intent.getStringExtra("zipCode"));
+            Log.e(TAG, "Intent was null");
+            Toast.makeText(getApplicationContext(), "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+            goBackToContractorMainActivity();
+        } else {
+            if (intent.hasExtra("companyName")) {
+                companyNameEditText.setText(intent.getStringExtra("companyName"));
+            }
+            if (intent.hasExtra("telephoneNumber")) {
+                telephoneEditText.setText(intent.getStringExtra("telephoneNumber"));
+            }
+            if (intent.hasExtra("websiteUrl")) {
+                webisteEditText.setText(intent.getStringExtra("websiteUrl"));
+            }
+            if (intent.hasExtra("zipCode")) {
+                zipcodeEditText.setText(intent.getStringExtra("zipCode"));
+            }
+            if (intent.hasExtra("type")) {
+                contractorType = intent.getStringExtra("type");
+            }
         }
     }
 
