@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -48,20 +49,23 @@ public class ContractorCustomersActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
         drawerList = (ListView)findViewById(R.id.left_drawer);
         customerRecyclerView = (RecyclerView)findViewById(R.id.contractor_customers_recycler_view);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        customerRecyclerView.setLayoutManager(layoutManager);
-        customerRecyclerView.setHasFixedSize(true);
-        customerRecyclerView.setAdapter(new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, TempContractorData.getInstance().getCustomers()));
-        //Set up ActionBar
-        setUpActionBar();
 
+        setUpRecyclerView();
+        setUpActionBar();
         //Initialize DrawerList
         setUpDrawerToggle();
         NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.contractor_menu_options), getResources().getStringArray(R.array.contractor_menu_icons));
         ndi.setUp();
     }
 
+    private void setUpRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        customerRecyclerView.setLayoutManager(layoutManager);
+        customerRecyclerView.setHasFixedSize(true);
+        customerRecyclerView.setAdapter(new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, TempContractorData.getInstance().getCustomers()));
+        customerRecyclerView.addItemDecoration(new DividerItemDecoration(ContractorCustomersActivity.this, DividerItemDecoration.VERTICAL));
+    }
     private void setUpActionBar() {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
@@ -81,7 +85,6 @@ public class ContractorCustomersActivity extends AppCompatActivity {
             }
         });
     }
-
     private void setUpDrawerToggle() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             /** Called when a drawer has settled in a completely closed state. */

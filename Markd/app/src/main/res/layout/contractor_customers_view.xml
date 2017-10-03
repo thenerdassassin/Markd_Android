@@ -40,7 +40,9 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="30dp"
+                android:verticalScrollbarPosition="right"
+                android:clickable="true"/>
         </LinearLayout>
     </FrameLayout>
 

@@ -55,19 +55,19 @@ public class TempContractorData {
         contractor = new Contractor(contractorJson);
     }
 
-    //Mark:- inital methods to remove when http calls are implemented
+    //Mark:- initial methods to remove when http calls are implemented
     private JSONObject initialContractorDetails() {
-        JSONObject contractorJson = new JSONObject();
+        JSONObject contractor = new JSONObject();
         try {
-            contractorJson.put("companyName", "Greenwich Landscaping Company");
-            contractorJson.put("telephoneNumber", "2038691022");
-            contractorJson.put("websiteUrl", "http://greenwichlandscape.net/");
-            contractorJson.put("zipCode", "53532");
-            contractorJson.put("type", "landscaper");
-        } catch (JSONException exception) {
+            contractor.put("companyName", "SDR Plumbing & Heating Inc");
+            contractor.put("telephoneNumber", "203.348.2295");
+            contractor.put("websiteUrl", "sdrplumbing.com");
+            contractor.put("profession", "plumber");
+            contractor.put("zipCode", "06903");
+        } catch(JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
-        return contractorJson;
+        return contractor;
     }
     private JSONArray initialCustomerList() {
         JSONArray customerArray = new JSONArray();
@@ -78,24 +78,61 @@ public class TempContractorData {
             customer1.put("lastName", "Schmidt");
             customer1.put("nameSuffix", "");
             customer1.put("maritalStatus", "MARRIED");
+            customer1.put("address", (new JSONObject()
+                    .put("street", "1571 Day Street")
+                    .put("state", "WI")
+                    .put("zipCode", "54126")
+                    .put("city", "Greenleaf")));
+            customer1.put("hotWater", new JSONObject()
+                    .put("manufacturer", "Bosch")
+                    .put("model", "C950 ES NG")
+                    .put("month", "01")
+                    .put("day", "17")
+                    .put("year", "14")
+                    .put("lifeSpan", "12")
+                    .put("units", "years"));
+            customer1.put("boiler", new JSONObject()
+                    .put("manufacturer", "Westinghouse")
+                    .put("model", "WBRCLP140W")
+                    .put("month", "11")
+                    .put("day", "07")
+                    .put("year", "12")
+                    .put("lifeSpan", "9")
+                    .put("units", "years"));
+            customer1.put("plumber_id", new JSONObject().put("contractorDetails", initialContractorDetails()));
             customerArray.put(customer1);
 
             JSONObject customer2 = new JSONObject();
             customer2.put("firstName", "Tiger");
             customer2.put("lastName", "Woods");
             customer2.put("maritalStatus", "single");
+            customer2.put("address", (new JSONObject()
+                    .put("street", "135 Maple Tree Hill Rd")
+                    .put("state", "CT")
+                    .put("zipCode", "06214")
+                    .put("city", "Oxford")));
             customerArray.put(customer2);
 
             JSONObject customer3 = new JSONObject();
             customer3.put("firstName", "Bobby");
             customer3.put("lastName", "Burt");
             customer3.put("maritalStatus", "single");
+            customer3.put("address", (new JSONObject()
+                    .put("street", "800 Discovery Way Apt 824")
+                    .put("state", "NC")
+                    .put("zipCode", "27703")
+                    .put("city", "Durham")));
             customerArray.put(customer3);
 
             JSONObject customer4 = new JSONObject();
             customer4.put("firstName", "Dirk");
-            customer4.put("lastName", "BoatStuff");
+            customer4.put("lastName", "Smithsonian");
             customer4.put("maritalStatus", "MARRIED");
+            customer4.put("address", (new JSONObject()
+                    .put("street", "1234 Mainish Street")
+                    .put("state", "NY")
+                    .put("zipCode", "34567")
+                    .put("city", "Buffalo")));
             customerArray.put(customer4);
 
         } catch(JSONException exception) {

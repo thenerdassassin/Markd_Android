@@ -109,7 +109,7 @@ public class Customer {
         this.lastName = customer.optString("lastName");
         this.nameSuffix = customer.optString("nameSuffix");
         this.maritalStatus = MaritalStatus.fromString(customer.optString("maritalStatus"));
-        //this.address = new Address(customer.getJSONObject("address"));
+        this.address = new Address(customer.optJSONObject("address"));
         //this.home = new Home(customer.getJSONObject("home"));
 
         //Plumbing Page
@@ -119,7 +119,7 @@ public class Customer {
         if(customer.optJSONObject("boiler") != null) {
             this.boiler = new Boiler(customer.optJSONObject("boiler"));
         }
-        this.plumbingServices = buildServicesListFromJSONArray(customer.optJSONArray("plubming_services"));
+        this.plumbingServices = buildServicesListFromJSONArray(customer.optJSONArray("plumbing_services"));
 
         //HVAC Page
         if(customer.optJSONObject("airHandler") != null) {
@@ -199,8 +199,11 @@ public class Customer {
     }
 
     //Mark:- Home Page
-    String getName() {
+    public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
+    }
+    public String getAddress() {
+        return this.address.toString();
     }
 
     //Mark:- Plumbing Page
@@ -307,10 +310,5 @@ public class Customer {
             return null;
         }
         return new ContractorDetails(painter);
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

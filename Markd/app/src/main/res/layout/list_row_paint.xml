@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
-    <!-- Delet Button -->
+    <!-- Delete Button -->
     <ImageButton
         android:id="@+id/paint_list_row_delete_button"
         android:layout_width="40dp"

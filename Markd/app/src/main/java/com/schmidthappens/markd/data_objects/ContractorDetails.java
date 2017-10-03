@@ -54,6 +54,9 @@ public class ContractorDetails {
         this.companyName = companyName;
     }
     public String getTelephoneNumber() {
+        if(telephoneNumber == null) {
+            return "";
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return PhoneNumberUtils.formatNumber(telephoneNumber, Locale.getDefault().getCountry());
         } else {

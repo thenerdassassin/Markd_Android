@@ -65,6 +65,7 @@ public class PlumbingActivity extends AppCompatActivity {
     HotWater hotWater = TempCustomerData.getInstance().getHotWater();
     Boiler boiler = TempCustomerData.getInstance().getBoiler();
     ContractorDetails plumber = TempCustomerData.getInstance().getPlumber();
+    SessionManager sessionManager;
     private static final String TAG = "PlumbingActivity";
 
     @Override
@@ -72,18 +73,9 @@ public class PlumbingActivity extends AppCompatActivity {
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_plumbing_view);
 
-        SessionManager sessionManager = new SessionManager(PlumbingActivity.this);
+        sessionManager = new SessionManager(PlumbingActivity.this);
         sessionManager.checkLogin();
-
-        //Initialize ActionBar
-        setUpActionBar();
-
-        //Initialize DrawerList
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-        ndi.setUp();
+        setTopBar();
 
         //Initialize XML Objects
         initializeHotWater();
@@ -92,8 +84,10 @@ public class PlumbingActivity extends AppCompatActivity {
         //Initialize Contractor Footer
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.sdr_logo);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
-        plumbingContractor.addView(v);
+        if(plumber != null) {
+            View v = ContractorFooterViewInitializer.createFooterView(this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
+            plumbingContractor.addView(v);
+        }
 
         //Set Up Buttons
         hotWaterEditButton.setOnClickListener(hotWaterEditButtonClickListener);
@@ -109,6 +103,22 @@ public class PlumbingActivity extends AppCompatActivity {
     }
 
     // Mark: SetUp Function
+    private void setTopBar() {
+        if(sessionManager.getUserType().equals("customer")) {
+            //Initialize ActionBar
+            setUpActionBar();
+
+            //Initialize DrawerList
+            drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
+            drawerList = (ListView)findViewById(R.id.left_drawer);
+            setUpDrawerToggle();
+            NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
+            ndi.setUp();
+        } else {
+            setUpBackButton();
+
+        }
+    }
     private void setUpActionBar() {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
@@ -124,6 +134,22 @@ public class PlumbingActivity extends AppCompatActivity {
                 } else {
                     drawerLayout.openDrawer(Gravity.START);
                 }
+            }
+        });
+    }
+
+    private void setUpBackButton() {
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.view_action_bar);
+
+        ImageView upButton = (ImageView)findViewById(R.id.burger_menu);
+        upButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_action_back));
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
