@@ -83,23 +83,6 @@ public class TempContractorData {
                     .put("state", "WI")
                     .put("zipCode", "54126")
                     .put("city", "Greenleaf")));
-            customer1.put("hotWater", new JSONObject()
-                    .put("manufacturer", "Bosch")
-                    .put("model", "C950 ES NG")
-                    .put("month", "01")
-                    .put("day", "17")
-                    .put("year", "14")
-                    .put("lifeSpan", "12")
-                    .put("units", "years"));
-            customer1.put("boiler", new JSONObject()
-                    .put("manufacturer", "Westinghouse")
-                    .put("model", "WBRCLP140W")
-                    .put("month", "11")
-                    .put("day", "07")
-                    .put("year", "12")
-                    .put("lifeSpan", "9")
-                    .put("units", "years"));
-            customer1.put("plumber_id", new JSONObject().put("contractorDetails", initialContractorDetails()));
             customerArray.put(customer1);
 
             JSONObject customer2 = new JSONObject();

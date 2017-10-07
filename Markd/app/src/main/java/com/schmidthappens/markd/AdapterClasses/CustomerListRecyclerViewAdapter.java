@@ -79,7 +79,6 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(ctx, customer.getName(), Toast.LENGTH_SHORT).show();
-                    TempCustomerData.getInstance().switchCustomerData(customer);
                     goToCustomerPage();
                 }
             });

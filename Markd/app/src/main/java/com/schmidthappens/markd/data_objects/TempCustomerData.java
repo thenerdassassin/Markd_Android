@@ -403,11 +403,4 @@ public class TempCustomerData {
         }
         return painter;
     }
-
-    //Used to Test Contractor page
-    //TODO: Change to use http calls
-    public void switchCustomerData(Customer customer) {
-        this.customer = customer;
-    }
-
 }

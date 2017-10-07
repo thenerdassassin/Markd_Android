@@ -57,6 +57,7 @@ public class NavigationDrawerInitializer {
         Resources resources = context.getResources();
         if(userType == null) {
             sessionManager.logoutUser();
+            return;
         } else if(userType.equals("customer")) {
             menuOptions = resources.getStringArray(R.array.menu_options);
             menuIconStrings = resources.getStringArray(R.array.menu_icons);
