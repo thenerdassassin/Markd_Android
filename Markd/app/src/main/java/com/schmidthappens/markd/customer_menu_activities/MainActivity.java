@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
@@ -35,14 +36,6 @@ import java.io.OutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
-    //ActionBar
-    private ActionBar actionBar;
-    private ActionBarDrawerToggle drawerToggle;
-
-    //NavigationDrawer
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-
     //XML Objects
     private FrameLayout homeFrame;
     private ImageView homeImage;
@@ -62,21 +55,13 @@ public class MainActivity extends AppCompatActivity {
         SessionManager sessionManager = new SessionManager(MainActivity.this);
         sessionManager.checkLogin();
 
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
+        new ActionBarInitializer(this, true);
+
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
         homeImage = (ImageView)findViewById(R.id.home_image);
         homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
         preparedFor = (TextView)findViewById(R.id.prepared_for);
         initializeViews();
-
-        //Set up ActionBar
-        setUpActionBar();
-
-        //Initialize DrawerList
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-        ndi.setUp();
 
         //TODO change to only set as "0" if no image available from http call
         if(getHomeImageFile().exists()) {
@@ -112,22 +97,6 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    /*private boolean setPhoto() {
-        if(!getHomeImageFile().exists()) {
-            Log.e(TAG, "Home Image file does not exist");
-            return false;
-        }
-        homeFrame.setBackgroundColor(Color.TRANSPARENT);
-        homeImage.setLayoutParams(
-             new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-        );
-
-        homeImage.setImageURI(null); //work around to prevent caching
-        homeImage.setImageURI(getHomeImageUri());
-        homeImagePlaceholder.setVisibility(View.GONE);
-        return true;
-    }*/
 
     private boolean setPhoto(Uri uri) {
         homeFrame.setBackgroundColor(Color.TRANSPARENT);
@@ -263,41 +232,5 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         String preparedForString = "Prepared for " + TempCustomerData.getInstance().getName();
         preparedFor.setText(preparedForString);
-    }
-
-    private void setUpActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-    }
-
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
     }
 }

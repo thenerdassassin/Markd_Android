@@ -25,6 +25,7 @@ import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -35,14 +36,6 @@ import java.util.List;
  */
 
 public class PaintingActivity extends AppCompatActivity {
-    //ActionBar
-    private ActionBar actionBar;
-    private ActionBarDrawerToggle drawerToggle;
-
-    //NavigationDrawer
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-
     //XML Objects
     ImageView addExteriorPaintButton;
     FrameLayout exteriorPaintList;
@@ -63,16 +56,7 @@ public class PaintingActivity extends AppCompatActivity {
 
         SessionManager sessionManager = new SessionManager(PaintingActivity.this);
         sessionManager.checkLogin();
-
-        //Initialize ActionBar
-        setUpActionBar();
-
-        //Initialize DrawerList
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-        ndi.setUp();
+        new ActionBarInitializer(this, true);
 
         //Initialize Exterior Add Button
         addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
@@ -135,42 +119,5 @@ public class PaintingActivity extends AppCompatActivity {
             interiorPaintList.removeAllViews();
             interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, TempCustomerData.getInstance().getInteriorSurfaces(), false));
         }
-    }
-
-    // Mark: SetUp Function
-    private void setUpActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-    }
-
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
     }
 }

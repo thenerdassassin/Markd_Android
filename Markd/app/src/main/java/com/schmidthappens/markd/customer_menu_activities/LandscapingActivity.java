@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.schmidthappens.markd.AdapterClasses.LandscapingHistoryAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
@@ -51,15 +52,7 @@ public class LandscapingActivity extends AppCompatActivity {
         SessionManager sessionManager = new SessionManager(LandscapingActivity.this);
         sessionManager.checkLogin();
 
-        //Initialize ActionBar
-        setUpActionBar();
-
-        //Initialize DrawerList
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-        ndi.setUp();
+        new ActionBarInitializer(this, true);
 
         //Set Up PaintList
         //TODO change to http call for landscaping history
@@ -87,43 +80,4 @@ public class LandscapingActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), s.getComments(), Toast.LENGTH_LONG).show();
         }
     };
-
-    // Mark: SetUp Function
-    private void setUpActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-    }
-
-
-
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
-    }
 }

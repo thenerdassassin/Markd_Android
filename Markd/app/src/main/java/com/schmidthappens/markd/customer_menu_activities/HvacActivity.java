@@ -28,6 +28,7 @@ import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -38,14 +39,6 @@ import static com.schmidthappens.markd.view_initializers.ServiceListViewInitiali
  */
 
 public class HvacActivity extends AppCompatActivity {
-
-    //ActionBar
-    private ActionBarDrawerToggle drawerToggle;
-
-    //NavigationDrawer
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-
     //XML Objects
     ImageView airHandlerEditButton;
     TextView airHandlerManufacturerView;
@@ -75,15 +68,7 @@ public class HvacActivity extends AppCompatActivity {
         SessionManager sessionManager = new SessionManager(HvacActivity.this);
         sessionManager.checkLogin();
 
-        //Initialize ActionBar
-        setUpActionBar();
-
-        //Initialize DrawerList
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-        ndi.setUp();
+        new ActionBarInitializer(this, true);
 
         //Initialize XML Objects
         initializeAirHandler();
@@ -105,25 +90,6 @@ public class HvacActivity extends AppCompatActivity {
     }
 
     // Mark: SetUp Function
-    private void setUpActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-    }
-
     private void initializeAirHandler() {
         airHandlerEditButton = (ImageView)findViewById(R.id.hvac_air_handler_edit);
         airHandlerEditButton.setOnClickListener(airHandlerEditButtonClickListener);
@@ -142,7 +108,6 @@ public class HvacActivity extends AppCompatActivity {
         airHandlerLifeSpanView = (TextView)findViewById(R.id.hvac_air_handler_life_span);
         airHandlerLifeSpanView.setText(airHandler.getLifeSpanString());
     }
-
     private void initializeCompressor() {
         compressorEditButton = (ImageView)findViewById(R.id.hvac_compressor_edit);
         compressorEditButton.setOnClickListener(compressorEditButtonClickListener);
@@ -163,6 +128,7 @@ public class HvacActivity extends AppCompatActivity {
         compressorLifeSpanView.setText(compressor.getLifeSpanString());
     }
 
+    // Mark: OnClickListener
     private View.OnClickListener airHandlerEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -186,23 +152,6 @@ public class HvacActivity extends AppCompatActivity {
             startActivity(intentToStartApplianceEditActivity);
         }
     };
-
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
-    }
 
     private Intent putExtras(Intent intent, AbstractAppliance appliance, String title) {
         intent.putExtra("title", title);

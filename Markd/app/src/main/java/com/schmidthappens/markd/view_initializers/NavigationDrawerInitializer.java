@@ -1,7 +1,9 @@
 package com.schmidthappens.markd.view_initializers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
@@ -31,25 +33,37 @@ import java.util.List;
 
 public class NavigationDrawerInitializer {
 
-    private Context context;
+    private Activity context;
+    private SessionManager sessionManager;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
     private ListView drawerList;
-    private String[] menuOptions; //= context.getResources().getStringArray(R.array.menu_options);
-    private String[] menuIconStrings;// = context.getResources().getStringArray(R.array.menu_icons);
+    private ActionBarDrawerToggle drawerToggle;
+    private String[] menuOptions;
+    private String[] menuIconStrings;
     private static final String TAG = "NavigationDrawer";
 
-    public NavigationDrawerInitializer(Context context, DrawerLayout drawerLayout, ListView drawerList, ActionBarDrawerToggle drawerToggle, String[] menuOptions, String[] menuIconStrings){
+    public NavigationDrawerInitializer(Activity context) {
         this.context = context;
-        this.drawerLayout = drawerLayout;
-        this.drawerList = drawerList;
-        this.drawerToggle = drawerToggle;
-        this.menuOptions = menuOptions;
-        this.menuIconStrings = menuIconStrings;
+        this.sessionManager = new SessionManager(context);
+        this.drawerLayout = (DrawerLayout)context.findViewById(R.id.main_drawer_layout);
+        this.drawerList = (ListView)context.findViewById(R.id.left_drawer);
+        setUp();
     }
 
-    public void setUp() {
+    private void setUp() {
+        setUpDrawerToggle();
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
+        String userType = sessionManager.getUserType();
+        Resources resources = context.getResources();
+        if(userType == null) {
+            sessionManager.logoutUser();
+        } else if(userType.equals("customer")) {
+            menuOptions = resources.getStringArray(R.array.menu_options);
+            menuIconStrings = resources.getStringArray(R.array.menu_icons);
+        } else {
+            menuOptions = resources.getStringArray(R.array.contractor_menu_options);
+            menuIconStrings = resources.getStringArray(R.array.contractor_menu_icons);
+        }
 
         for(int i = 0; i < menuOptions.length; i++) {
             menuItemList.add(new MenuItem(menuIconStrings[i],menuOptions[i]));
@@ -67,10 +81,26 @@ public class NavigationDrawerInitializer {
         }
     }
 
+    private void setUpDrawerToggle() {
+        drawerToggle = new ActionBarDrawerToggle((Activity)context, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                ((Activity)context).invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                ((Activity)context).invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        drawerLayout.addDrawerListener(drawerToggle);
+    }
+
     private void selectItem(int position) {
         String selectedMenuItem = menuOptions[position];
         Log.i(TAG, "Selected Item-" + selectedMenuItem);
-        SessionManager sessionManager = new SessionManager(context);
         String userType = sessionManager.getUserType();
 
         Intent customerIntent = null;
@@ -120,7 +150,6 @@ public class NavigationDrawerInitializer {
         }
         return intentToReturn;
     }
-
     private Intent getContractorIntent(String selectedMenuItem) {
         Intent intentToReturn = null;
         switch (selectedMenuItem) {

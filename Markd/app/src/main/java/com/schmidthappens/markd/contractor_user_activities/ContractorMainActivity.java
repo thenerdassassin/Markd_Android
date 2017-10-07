@@ -30,6 +30,7 @@ import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
@@ -46,15 +47,6 @@ import java.util.List;
 
 public class ContractorMainActivity extends AppCompatActivity {
     private final static String TAG = "ContractorMainActivity";
-
-    //ActionBar
-    private ActionBar actionBar;
-    private ActionBarDrawerToggle drawerToggle;
-    private ImageView editButton;
-
-    //NavigationDrawer
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
 
     private FrameLayout logoFrame;
     private ImageView logoImage;
@@ -78,10 +70,8 @@ public class ContractorMainActivity extends AppCompatActivity {
         sessionManager.checkLogin();
 
         //Set up ActionBar
-        setUpActionBar();
+        new ActionBarInitializer(this, false, editCompanyOnClickListener);
 
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
         logoFrame = (FrameLayout)findViewById(R.id.contractor_logo_frame);
         logoImage = (ImageView)findViewById(R.id.contractor_logo);
         logoImagePlaceholder = (ImageView)findViewById(R.id.contractor_logo_placeholder);
@@ -91,11 +81,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
         companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
         initializeTextViews(contractor);
-
-        //Initialize DrawerList
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.contractor_menu_options), getResources().getStringArray(R.array.contractor_menu_icons));
-        ndi.setUp();
 
         //TODO change to only set as "0" if no image available from http call
         if(getLogoImageFile().exists()) {
@@ -258,13 +243,18 @@ public class ContractorMainActivity extends AppCompatActivity {
     private View.OnClickListener editCompanyOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Context activityContext = ContractorMainActivity.this;
-            Class destinationClass = ContractorEditActivity.class;
-            Intent gotToContractorEditActivityIntent = new Intent(activityContext, destinationClass);
-            addContractorDataToIntent(gotToContractorEditActivityIntent);
-            startActivity(gotToContractorEditActivityIntent);
+            startContractorEditActivity();
         }
     };
+
+    private void startContractorEditActivity() {
+        Context activityContext = ContractorMainActivity.this;
+        Class destinationClass = ContractorEditActivity.class;
+        Intent gotToContractorEditActivityIntent = new Intent(activityContext, destinationClass);
+        addContractorDataToIntent(gotToContractorEditActivityIntent);
+        startActivity(gotToContractorEditActivityIntent);
+    }
+
     private void addContractorDataToIntent(Intent intent) {
         if(contractor != null) {
             intent.putExtra("companyName", contractor.getCompanyName());
@@ -279,54 +269,12 @@ public class ContractorMainActivity extends AppCompatActivity {
     private void initializeTextViews(ContractorDetails contractor) {
         if(contractor == null) {
             Log.i(TAG, "ContractorDetails are null");
-            editButton.performClick();
+            startContractorEditActivity();
         } else {
             companyNameTextView.setText(contractor.getCompanyName());
             companyTelephone.setText(contractor.getTelephoneNumber());
             companyWebpage.setText(contractor.getWebsiteUrl());
             companyZipCode.setText(contractor.getZipCode());
         }
-    }
-
-    private void setUpActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-
-        //Make edit mode accessible
-        editButton = (ImageView)findViewById(R.id.edit_mode);
-        editButton.setVisibility(View.VISIBLE);
-        editButton.setClickable(true);
-        editButton.setOnClickListener(editCompanyOnClickListener);
-    }
-
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
     }
 }

@@ -25,6 +25,7 @@ import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 import com.schmidthappens.markd.account_authentication.SessionManager;
@@ -38,14 +39,6 @@ import static com.schmidthappens.markd.view_initializers.ServiceListViewInitiali
  */
 
 public class PlumbingActivity extends AppCompatActivity {
-    //ActionBar
-    private ActionBar actionBar;
-    private ActionBarDrawerToggle drawerToggle;
-
-    //NavigationDrawer
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-
     //XML Objects
     ImageView hotWaterEditButton;
     TextView hotWaterManufacturerView;
@@ -75,7 +68,7 @@ public class PlumbingActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(PlumbingActivity.this);
         sessionManager.checkLogin();
-        setTopBar();
+        new ActionBarInitializer(this, true);
 
         //Initialize XML Objects
         initializeHotWater();
@@ -102,58 +95,7 @@ public class PlumbingActivity extends AppCompatActivity {
         plumbingServiceList.addView(serviceListView);
     }
 
-    // Mark: SetUp Function
-    private void setTopBar() {
-        if(sessionManager.getUserType().equals("customer")) {
-            //Initialize ActionBar
-            setUpActionBar();
-
-            //Initialize DrawerList
-            drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-            drawerList = (ListView)findViewById(R.id.left_drawer);
-            setUpDrawerToggle();
-            NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-            ndi.setUp();
-        } else {
-            setUpBackButton();
-
-        }
-    }
-    private void setUpActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-    }
-
-    private void setUpBackButton() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-
-        ImageView upButton = (ImageView)findViewById(R.id.burger_menu);
-        upButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_action_back));
-        upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-
+    //MARK:- XML Initializer
     private void initializeHotWater() {
         hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
 
@@ -173,7 +115,6 @@ public class PlumbingActivity extends AppCompatActivity {
         hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
         hotWaterLifeSpanView.setText(hotWater.getLifeSpanString());
     }
-
     private void initializeBoiler() {
         boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
 
@@ -194,6 +135,7 @@ public class PlumbingActivity extends AppCompatActivity {
         boilerLifeSpanView.setText(boiler.getLifeSpanString());
     }
 
+    //MARK:- OnClickListeners
     private View.OnClickListener hotWaterEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -231,23 +173,7 @@ public class PlumbingActivity extends AppCompatActivity {
         }
     };
 
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
-    }
-
+    //MARK:- Intent Builders
     private Intent putHotWaterExtras(Intent intent) {
         intent.putExtra("manufacturer", hotWaterManufacturerView.getText());
         intent.putExtra("model", hotWaterModelView.getText());
@@ -256,7 +182,6 @@ public class PlumbingActivity extends AppCompatActivity {
         intent.putExtra("units", hotWater.getUnits());
         return intent;
     }
-
     private Intent putBoilerExtras(Intent intent) {
         intent.putExtra("manufacturer", boilerManufacturerView.getText());
         intent.putExtra("model", boilerModelView.getText());

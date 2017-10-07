@@ -25,6 +25,7 @@ import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
+import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -57,25 +58,15 @@ public class ElectricalActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
+        setContentView(R.layout.menu_activity_electrical_view);
 
         SessionManager sessionManager = new SessionManager(ElectricalActivity.this);
         sessionManager.checkLogin();
-
-        setContentView(R.layout.menu_activity_electrical_view);
+        new ActionBarInitializer(this, true);
 
         //Initialize XML Objects
         electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
         electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
-
-        //Initialize ActionBar
-        setUpActionBar();
-
-        //Initialize DrawerList
-        drawerLayout = (DrawerLayout)findViewById(R.id.main_drawer_layout);
-        drawerList = (ListView)findViewById(R.id.left_drawer);
-        setUpDrawerToggle();
-        NavigationDrawerInitializer ndi = new NavigationDrawerInitializer(this, drawerLayout, drawerList, drawerToggle, getResources().getStringArray(R.array.menu_options), getResources().getStringArray(R.array.menu_icons));
-        ndi.setUp();
 
         //Initialize Panel List
         //TODO change to http call for panels
@@ -103,26 +94,6 @@ public class ElectricalActivity extends AppCompatActivity {
         electricalContractor.addView(v);
     }
 
-    // Mark:- SetUp Functions
-    private void setUpActionBar() {
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setCustomView(R.layout.view_action_bar);
-        //Set up actionBarButtons
-        ImageView menuButton = (ImageView) findViewById(R.id.burger_menu);
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
-                } else {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
-    }
-
     //Mark:- OnClick Listeners
     private View.OnClickListener addPanelOnClickListener = new View.OnClickListener() {
         @Override
@@ -144,22 +115,5 @@ public class ElectricalActivity extends AppCompatActivity {
         adapter.clear();
         adapter.addAll(panelData.getPanels());
         panelList.setAdapter(adapter);
-    }
-
-    private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
     }
 }
