@@ -149,6 +149,7 @@ public class SessionManager {
      * **/
     // Get Login State
     private boolean isLoggedIn(){
-        return pref.getBoolean(IS_LOGIN, false);
+        //return pref.getBoolean(IS_LOGIN, false);
+        return true;
     }
 }

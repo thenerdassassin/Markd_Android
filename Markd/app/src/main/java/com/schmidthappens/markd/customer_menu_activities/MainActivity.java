@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -21,7 +22,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
@@ -46,15 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String filename = "main_photo.jpg";
 
     private String TAG = "MainActivity";
+    private FirebaseAuthentication authentication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_activity_home_view);
 
-        SessionManager sessionManager = new SessionManager(MainActivity.this);
-        sessionManager.checkLogin();
-
+        authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true);
 
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
@@ -76,6 +80,21 @@ public class MainActivity extends AppCompatActivity {
         homeFrame.setOnLongClickListener(photoLongClick);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+    }
     //Mark:- Photo Functions
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

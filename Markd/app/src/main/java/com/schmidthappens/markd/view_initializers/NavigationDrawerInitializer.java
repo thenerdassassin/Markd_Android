@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
@@ -34,7 +35,7 @@ import java.util.List;
 public class NavigationDrawerInitializer {
 
     private Activity context;
-    private SessionManager sessionManager;
+    //private SessionManager sessionManager;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
@@ -44,7 +45,7 @@ public class NavigationDrawerInitializer {
 
     public NavigationDrawerInitializer(Activity context) {
         this.context = context;
-        this.sessionManager = new SessionManager(context);
+        //this.sessionManager = new SessionManager(context);
         this.drawerLayout = (DrawerLayout)context.findViewById(R.id.main_drawer_layout);
         this.drawerList = (ListView)context.findViewById(R.id.left_drawer);
         setUp();
@@ -53,10 +54,10 @@ public class NavigationDrawerInitializer {
     private void setUp() {
         setUpDrawerToggle();
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
-        String userType = sessionManager.getUserType();
+        String userType = "customer"; //TODO: change to get from Firebase
         Resources resources = context.getResources();
         if(userType == null) {
-            sessionManager.logoutUser();
+            new FirebaseAuthentication(context).signOut(context);
             return;
         } else if(userType.equals("customer")) {
             menuOptions = resources.getStringArray(R.array.menu_options);
@@ -102,11 +103,11 @@ public class NavigationDrawerInitializer {
     private void selectItem(int position) {
         String selectedMenuItem = menuOptions[position];
         Log.i(TAG, "Selected Item-" + selectedMenuItem);
-        String userType = sessionManager.getUserType();
+        String userType = "customer"; //TODO: change to get from Firebase
 
         Intent customerIntent = null;
         if(userType == null) {
-            sessionManager.logoutUser();
+            new FirebaseAuthentication(context).signOut(context);
             return;
         }
 
@@ -119,7 +120,7 @@ public class NavigationDrawerInitializer {
         if(customerIntent != null) {
             context.startActivity(customerIntent);
         } else {
-            sessionManager.logoutUser();
+            new FirebaseAuthentication(context).signOut(context);
         }
 
         drawerLayout.closeDrawer(drawerList);

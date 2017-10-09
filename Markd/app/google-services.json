@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "302940232325",
+    "firebase_url": "https://markd-schmidt-happens.firebaseio.com",
+    "project_id": "markd-schmidt-happens",
+    "storage_bucket": "markd-schmidt-happens.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302940232325:android:9cdf23137b54e7dd",
+        "android_client_info": {
+          "package_name": "com.schmidthappens.markd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302940232325-9lrjjisj4bh5513ve4ni1ragvpgihce0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.schmidthappens.markd",
+            "certificate_hash": "8892e6c5babb1f1936d995a6ecde732d8e727a24"
+          }
+        },
+        {
+          "client_id": "302940232325-em6n7rmmj8q6p5o0idbgpa917q39jg4e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7iX2JOzOkzXH7f-D9F7R6rMpw9zAMZVQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302940232325-em6n7rmmj8q6p5o0idbgpa917q39jg4e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

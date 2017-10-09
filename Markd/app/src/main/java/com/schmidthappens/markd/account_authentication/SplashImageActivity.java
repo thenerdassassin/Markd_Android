@@ -30,9 +30,8 @@ public class SplashImageActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run() {
-                    SessionManager sessionManager = new SessionManager(getApplicationContext());
-                    sessionManager.checkLogin();
-                    if(sessionManager.getUserType() != null && sessionManager.getUserType().equals("customer")) {
+                    boolean isLoggedIn = new FirebaseAuthentication(SplashImageActivity.this).checkLogin();
+                    if(isLoggedIn) {
                         Intent mainIntent = new Intent(SplashImageActivity.this, MainActivity.class);
                         startActivity(mainIntent);
                         finish();
