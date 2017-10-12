@@ -19,6 +19,8 @@ import android.widget.ListView;
 
 import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
@@ -44,18 +46,17 @@ public class PaintingActivity extends AppCompatActivity {
     FrameLayout interiorPaintList;
     private FrameLayout paintingContractor;
 
-    private List<PaintSurface> exteriorPaintSurfaces = TempCustomerData.getInstance().getExteriorSurfaces();
-    private List<PaintSurface> interiorPaintSurfaces = TempCustomerData.getInstance().getInteriorSurfaces();
-    private ContractorDetails painter = TempCustomerData.getInstance().getPainter();
     private final static String TAG = "PaintingActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_painting_view);
 
-        SessionManager sessionManager = new SessionManager(PaintingActivity.this);
-        sessionManager.checkLogin();
+        authentication = new FirebaseAuthentication(this);
+        customerData = new TempCustomerData(authentication);
         new ActionBarInitializer(this, true);
 
         //Initialize Exterior Add Button
@@ -64,7 +65,7 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Exterior PaintList
         exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
-        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, exteriorPaintSurfaces, true);
+        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true);
         exteriorPaintList.addView(listOfExteriorPaints);
 
         //Initialize Interior Add Button
@@ -73,14 +74,32 @@ public class PaintingActivity extends AppCompatActivity {
 
         //Set Up Interior PaintList
         interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
-        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, interiorPaintSurfaces, false);
+        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false);
         interiorPaintList.addView(listOfInteriorPaints);
 
         //Initialize Contractor Footer
         paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
+        ContractorDetails painter = customerData.getPainter();
         View v = ContractorFooterViewInitializer.createFooterView(this, logo, painter.getCompanyName(), painter.getTelephoneNumber(), painter.getWebsiteUrl());
         paintingContractor.addView(v);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
     }
 
     // Mark: OnClickListeners
@@ -114,10 +133,10 @@ public class PaintingActivity extends AppCompatActivity {
         //Used to reset the adapter
         if(isExterior) {
             exteriorPaintList.removeAllViews();
-            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, TempCustomerData.getInstance().getExteriorSurfaces(), true));
+            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true));
         } else {
             interiorPaintList.removeAllViews();
-            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, TempCustomerData.getInstance().getInteriorSurfaces(), false));
+            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false));
         }
     }
 }

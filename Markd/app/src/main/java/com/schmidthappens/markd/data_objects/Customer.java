@@ -2,6 +2,8 @@ package com.schmidthappens.markd.data_objects;
 
 import android.util.Log;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import org.json.JSONArray;
@@ -14,28 +16,9 @@ import java.util.List;
  * Created by joshua.schmidtibm.com on 9/23/17.
  */
 
+@IgnoreExtraProperties
 public class Customer {
-    public enum MaritalStatus {
-        MARRIED("MARRIED"),
-        SINGLE("SINGLE");
-
-        private String value;
-        MaritalStatus(String value) {
-            this.value = value;
-        }
-
-        public static MaritalStatus fromString(String value) {
-            for(MaritalStatus status: values()) {
-                if(value.toUpperCase().equals(status.value)) {
-                    return status;
-                }
-            }
-            return SINGLE;
-        }
-    }
-    private static final String TAG = "Customer_Bean";
-    private String email;
-    private String password;
+    public final String userType = "customer";
 
     //For Home Page
     private String namePrefix;
@@ -47,6 +30,7 @@ public class Customer {
     private Home home;
     private ContractorDetails architect;
     private ContractorDetails builder;
+    private ContractorDetails realtor;
 
     //For Plumbing Page
     private HotWater hotWater;
@@ -70,9 +54,10 @@ public class Customer {
     private List<PaintSurface> exteriorPaintSurfaces;
     private ContractorDetails painter;
 
-    private Customer(String email, String password, String namePrefix, String firstName, String lastName, String nameSuffix, MaritalStatus maritalStatus, Address address, Home home, ContractorDetails architect, ContractorDetails builder, HotWater hotWater, Boiler boiler, ContractorDetails plumber, List<ContractorService> plumbingServices, AirHandler airHandler, Compressor compressor, ContractorDetails hvactechnician, List<ContractorService> hvacServices, List<Panel> panels, ContractorDetails electrician, List<ContractorService> electricalServices, List<PaintSurface> interiorPaintSurfaces, List<PaintSurface> exteriorPaintSurfaces, ContractorDetails painter) {
-        this.email = email;
-        this.password = password;
+    public Customer() {
+        // Default constructor required for calls to DataSnapshot.getValue(Customer.class)
+    }
+    private Customer(String namePrefix, String firstName, String lastName, String nameSuffix, MaritalStatus maritalStatus, Address address, Home home, ContractorDetails architect, ContractorDetails builder, HotWater hotWater, Boiler boiler, ContractorDetails plumber, List<ContractorService> plumbingServices, AirHandler airHandler, Compressor compressor, ContractorDetails hvactechnician, List<ContractorService> hvacServices, List<Panel> panels, ContractorDetails electrician, List<ContractorService> electricalServices, List<PaintSurface> interiorPaintSurfaces, List<PaintSurface> exteriorPaintSurfaces, ContractorDetails painter) {
         this.namePrefix = namePrefix;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -97,218 +82,208 @@ public class Customer {
         this.exteriorPaintSurfaces = exteriorPaintSurfaces;
         this.painter = painter;
     }
-    /* TODO: implement clone functions
-    Customer(Customer oldCustomer) {
-        return oldCustomer;
-    }*/
-    public Customer(JSONObject customer) {
-        //TODO: finish Customer JSON
-        //Home Page
-        this.namePrefix = customer.optString("namePrefix");
-        this.firstName = customer.optString("firstName");
-        this.lastName = customer.optString("lastName");
-        this.nameSuffix = customer.optString("nameSuffix");
-        this.maritalStatus = MaritalStatus.fromString(customer.optString("maritalStatus"));
-        this.address = new Address(customer.optJSONObject("address"));
-        //this.home = new Home(customer.getJSONObject("home"));
 
-        //Plumbing Page
-        if(customer.optJSONObject("hotWater") != null) {
-            this.hotWater = new HotWater(customer.optJSONObject("hotWater"));
+    //Mark:- Getters/Setters
+        //:- Home Page
+        public String getNamePrefix() {
+            return namePrefix;
         }
-        if(customer.optJSONObject("boiler") != null) {
-            this.boiler = new Boiler(customer.optJSONObject("boiler"));
+        public void setNamePrefix(String namePrefix) {
+            this.namePrefix = namePrefix;
         }
-        this.plumbingServices = buildServicesListFromJSONArray(customer.optJSONArray("plumbing_services"));
+        public String getFirstName() {
+            return firstName;
+        }
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+        public String getLastName() {
+            return lastName;
+        }
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+        public String getNameSuffix() {
+            return nameSuffix;
+        }
+        public void setNameSuffix(String nameSuffix) {
+            this.nameSuffix = nameSuffix;
+        }
 
-        //HVAC Page
-        if(customer.optJSONObject("airHandler") != null) {
-            this.airHandler = new AirHandler(customer.optJSONObject("airHandler"));
+        public MaritalStatus getMaritalStatus() {
+            return maritalStatus;
         }
-        if(customer.optJSONObject("compressor") != null) {
-            this.compressor = new Compressor(customer.optJSONObject("compressor"));
+        public void setMaritalStatus(MaritalStatus maritalStatus) {
+            this.maritalStatus = maritalStatus;
         }
-        this.hvacServices = buildServicesListFromJSONArray(customer.optJSONArray("plubming_services"));
+        public Home getHome() {
+            return home;
+        }
+        public void setHome(Home home) {
+            this.home = home;
+        }
+        public Address getAddress() {
+            return address;
+        }
+        public void setAddress(Address address) {
+            this.address = address;
+        }
 
-        //Electrical Page
+        public ContractorDetails getArchitect() {
+            return architect;
+        }
+        public void setArchitect(ContractorDetails architect) {
+            this.architect = architect;
+        }
+        public ContractorDetails getBuilder() {
+            return builder;
+        }
+        public void setBuilder(ContractorDetails builder) {
+            this.builder = builder;
+        }
+        public ContractorDetails getRealtor() {
+            return realtor;
+        }
+        public void setRealtor(ContractorDetails realtor) {
+            this.realtor = realtor;
+        }
 
-        //Painting Page
-        this.exteriorPaintSurfaces = buildPaintServicesListFromJSONArray(customer.optJSONArray("exteriorPaintSurfaces"));
-        this.interiorPaintSurfaces = buildPaintServicesListFromJSONArray(customer.optJSONArray("interiorPaintSurfaces"));
+        //:- Plumbing Page
+        public HotWater getHotWater() {
+            return hotWater;
+        }
+        public void setHotWater(HotWater hotWater) {
+            this.hotWater = hotWater;
+        }
+        public Boiler getBoiler() {
+            return boiler;
+        }
+        public void setBoiler(Boiler boiler) {
+            this.boiler = boiler;
+        }
+        public ContractorDetails getPlumber() {
+            return plumber;
+        }
+        public void setPlumber(ContractorDetails plumber) {
+            this.plumber = plumber;
+        }
+        public List<ContractorService> getPlumbingServices() {
+            return plumbingServices;
+        }
+        public void setPlumbingServices(List<ContractorService> plumbingServices) {
+            this.plumbingServices = plumbingServices;
+        }
 
-        //Contractors
-        if(customer.optJSONObject("architect_id") != null) {
-            this.architect = new ContractorDetails(customer.optJSONObject("architect_id"));
+        //:- HVAC Page
+        public AirHandler getAirHandler() {
+            return airHandler;
         }
-        if(customer.optJSONObject("builder_id") != null) {
-            this.builder = new ContractorDetails(customer.optJSONObject("builder_id"));
+        public void setAirHandler(AirHandler airHandler) {
+            this.airHandler = airHandler;
         }
-        if(customer.optJSONObject("plumber_id") != null) {
-            this.plumber = new ContractorDetails(customer.optJSONObject("plumber_id"));
+        public Compressor getCompressor() {
+            return compressor;
         }
-        if(customer.optJSONObject("hvactechnician_id") != null) {
-            this.hvactechnician = new ContractorDetails(customer.optJSONObject("hvactechnician_id"));
+        public void setCompressor(Compressor compressor) {
+            this.compressor = compressor;
         }
-        if(customer.optJSONObject("electrician_id") != null) {
-            this.electrician = new ContractorDetails(customer.optJSONObject("electrician_id"));
+        public ContractorDetails getHvactechnician() {
+            return hvactechnician;
         }
-        if(customer.optJSONObject("painter_id") != null) {
-            this.painter = new ContractorDetails(customer.optJSONObject("painter_id"));
+        public void setHvactechnician(ContractorDetails hvactechnician) {
+            this.hvactechnician = hvactechnician;
         }
+        public List<ContractorService> getHvacServices() {
+            return hvacServices;
+        }
+        public void setHvacServices(List<ContractorService> hvacServices) {
+            this.hvacServices = hvacServices;
+        }
+
+        //:- Painting Page
+        public List<PaintSurface> getExteriorPaintSurfaces() {
+        return exteriorPaintSurfaces;
     }
-    private List<ContractorService> buildServicesListFromJSONArray(JSONArray plumbingServiceList) {
-        List<ContractorService> servicesToReturn = new ArrayList<>();
-        if(plumbingServiceList == null) {
-            return servicesToReturn;
+        public void setExteriorPaintSurfaces(List<PaintSurface> surfaces) {
+            this.exteriorPaintSurfaces = surfaces;
         }
-        for (int i = 0 ; i < plumbingServiceList.length(); i++) {
-            JSONObject jsonService = plumbingServiceList.optJSONObject(i);
-            if(jsonService != null) {
-                ContractorService service = new ContractorService(
-                        jsonService.optInt("month"),
-                        jsonService.optInt("day"),
-                        jsonService.optInt("year"),
-                        jsonService.optString("contractor"),
-                        jsonService.optString("comments")
-                );
-                servicesToReturn.add(service);
-            }
+        public List<PaintSurface> getInteriorPaintSurfaces() {
+            return interiorPaintSurfaces;
         }
-        return servicesToReturn;
-    }
-    private List<PaintSurface> buildPaintServicesListFromJSONArray(JSONArray paintSurfacesList) {
-        List<PaintSurface> surfacesToReturn = new ArrayList<>();
-        if(paintSurfacesList == null) {
-            return surfacesToReturn;
+        public void setInteriorPaintSurfaces(List<PaintSurface> surfaces) {
+            this.interiorPaintSurfaces = surfaces;
         }
-        for (int i = 0 ; i < paintSurfacesList.length(); i++) {
-            JSONObject jsonPaintSurface = paintSurfacesList.optJSONObject(i);
-            if(jsonPaintSurface != null) {
-                PaintSurface surface = new PaintSurface(
-                        jsonPaintSurface.optString("surface"),
-                        jsonPaintSurface.optString("brand"),
-                        jsonPaintSurface.optString("color"),
-                        jsonPaintSurface.optInt("month"),
-                        jsonPaintSurface.optInt("day"),
-                        jsonPaintSurface.optInt("year")
-                );
-                surfacesToReturn.add(surface);
-            }
+        public ContractorDetails getPainter() {
+            return painter;
         }
-        return surfacesToReturn;
-    }
+        public void setPainter(ContractorDetails painter) {
+            this.painter = painter;
+        }
 
-    //Mark:- Home Page
+        //:- Electrical Page
+        public List<Panel> getPanels() {
+            return panels;
+        }
+        public void setPanels(List<Panel> panels) {
+            this.panels = panels;
+        }
+        public ContractorDetails getElectrician() {
+            return electrician;
+        }
+        public void setElectrician(ContractorDetails electrician) {
+            this.electrician = electrician;
+        }
+        public List<ContractorService> getElectricalServices() {
+            return electricalServices;
+        }
+        public void setElectricalServices(List<ContractorService> electricalServices) {
+            this.electricalServices = electricalServices;
+        }
+
+    //Mark:- Helper functions
+    @Exclude
     public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
     }
-    public String getAddress() {
-        return this.address.toString();
-    }
-
-    //Mark:- Plumbing Page
-    HotWater getHotWater() {
-        if(hotWater == null) {
-            return null;
-        }
-        return new HotWater(hotWater);
-    }
-    Boiler getBoiler() {
-        if(boiler == null) {
-            return null;
-        }
-        return new Boiler(boiler);
-    }
-    void setHotWater(HotWater hotWater) {
-        this.hotWater = hotWater;
-    }
-    void setBoiler(Boiler boiler) {
-        this.boiler = boiler;
-    }
-    ContractorDetails getPlumber() {
-        if(plumber == null) {
-            return null;
-        }
-        return new ContractorDetails(plumber);
-    }
-
-    //Mark:- HVAC Page
-    AirHandler getAirHandler() {
-        if(airHandler == null) {
-            return null;
-        }
-        return new AirHandler(airHandler);
-    }
-    void setAirHandler(AirHandler airHandler) {
-        this.airHandler = airHandler;
-    }
-    Compressor getCompressor() {
-        if(compressor == null) {
-            return null;
-        }
-        return new Compressor(compressor);
-    }
-    void setCompressor(Compressor compressor) {
-        this.compressor = compressor;
-    }
-    ContractorDetails getHvacTechnician() {
-        if(hvactechnician == null) {
-            return null;
-        }
-        return new ContractorDetails(hvactechnician);
-    }
-
-    //Mark:- Painting Page
-    List<PaintSurface> getExteriorPaintSurfaces() {
-        if(exteriorPaintSurfaces == null) {
-            return null;
-        }
-        List<PaintSurface> copiedList = new ArrayList<>();
-        for(PaintSurface surface: exteriorPaintSurfaces) {
-            copiedList.add(new PaintSurface(surface));
-        }
-        return copiedList;
-    }
-    void setExteriorPaintSurface(int paintId, PaintSurface surface) {
+    @Exclude
+    public void setExteriorPaintSurface(int paintId, PaintSurface surface) {
         if(paintId == -1) {
             exteriorPaintSurfaces.add(surface);
         } else {
             exteriorPaintSurfaces.set(paintId, surface);
         }
     }
-    void setExteriorPaintSurfaces(List<PaintSurface> surfaces) {
-        this.exteriorPaintSurfaces = surfaces;
-    }
-    void deleteExteriorPaintSurface(int paintId){
-        exteriorPaintSurfaces.remove(paintId);
-    }
-    List<PaintSurface> getInteriorPaintSurfaces() {
-        if(interiorPaintSurfaces == null) {
-            return null;
-        }
-        List<PaintSurface> copiedList = new ArrayList<>();
-        for(PaintSurface surface: interiorPaintSurfaces) {
-            copiedList.add(new PaintSurface(surface));
-        }
-        return copiedList;
-    }
-    void setInteriorPaintSurface(int paintId, PaintSurface surface) {
+    @Exclude
+    public void setInteriorPaintSurface(int paintId, PaintSurface surface) {
         if(paintId == -1) {
             interiorPaintSurfaces.add(surface);
         } else {
             interiorPaintSurfaces.set(paintId, surface);
         }
     }
-    void setInteriorPaintSurfaces(List<PaintSurface> surfaces) {
-        this.interiorPaintSurfaces = surfaces;
+    public void deleteExteriorPaintSurface(int paintId){
+        exteriorPaintSurfaces.remove(paintId);
     }
-    void deleteInteriorPaintSurface(int paintId) {
+    public void deleteInteriorPaintSurface(int paintId) {
         interiorPaintSurfaces.remove(paintId);
     }
-    ContractorDetails getPainter() {
-        if(painter == null) {
-            return null;
+    //Mark:- enums
+    public enum MaritalStatus {
+        MARRIED("MARRIED"),
+        SINGLE("SINGLE");
+
+        private String value;
+        MaritalStatus(String value) {
+            this.value = value;
         }
-        return new ContractorDetails(painter);
+
+        public static MaritalStatus fromString(String value) {
+            for(MaritalStatus status: values()) {
+                if(value.toUpperCase().equals(status.value)) {
+                    return status;
+                }
+            }
+            return SINGLE;
+        }
     }
 }

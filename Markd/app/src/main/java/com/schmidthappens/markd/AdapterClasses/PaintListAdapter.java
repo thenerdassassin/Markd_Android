@@ -36,11 +36,13 @@ public class PaintListAdapter {
 
     private PaintingActivity activityContext = null;
     private static final String TAG = "PaintListAdapter";
+    private TempCustomerData customerData;
 
     public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, final boolean isExterior) {
         final boolean isExteriorFinal = isExterior;
         if(context instanceof PaintingActivity) {
             activityContext = (PaintingActivity)context;
+            customerData = new TempCustomerData(activityContext);
         } else {
             Log.e(TAG, "Activity Context not Painting Activity");
         }
@@ -122,9 +124,9 @@ public class PaintListAdapter {
                 @Override
                 public void onClick(View v) {
                     if(isExterior) {
-                        TempCustomerData.getInstance().removeExteriorPaintSurface(position);
+                        customerData.removeExteriorPaintSurface(position);
                     } else {
-                        TempCustomerData.getInstance().removeInteriorPaintSurface(position);
+                        customerData.removeInteriorPaintSurface(position);
                     }
                     if(activityContext != null) {
                         Log.i(TAG, "Delete Paint Item " + position);
@@ -176,9 +178,9 @@ public class PaintListAdapter {
         PaintSurface isClicked;
 
         if(isExterior) {
-            isClicked = TempCustomerData.getInstance().getExteriorSurfaces().get(paintObjectClicked);
+            isClicked = customerData.getExteriorSurfaces().get(paintObjectClicked);
         } else {
-            isClicked = TempCustomerData.getInstance().getInteriorSurfaces().get(paintObjectClicked);
+            isClicked = customerData.getInteriorSurfaces().get(paintObjectClicked);
         }
 
         if(activityContext != null) {

@@ -50,18 +50,6 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
-    public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
-    public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
-    public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
-    public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
-    public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
-    public final static String PARAM_USER_PASS = "USER_PASS";
-    private final int REQ_SIGNUP = 1;
-
-    private AccountManager mAccountManager;
-    private String mAuthTokenType;
-
     private final String TAG = "LoginActivity";
     FirebaseAuthentication authentication;
 
@@ -214,21 +202,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
+            showProgress(false);
+            Log.d(TAG, "about to attempt sign in");
             attemptSignIn(LoginActivity.this, email, password);
-
         }
     }
 
     //Mark:- Firebase Authentication methods
     private void attemptSignIn(final Activity activity, final String email, final String password) {
+        Log.d(TAG, "signing in...");
         authentication.signIn(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 showProgress(false);
                 if(task.isSuccessful()) {
                     Log.d(TAG, "Account signed in");
-                    Intent goToMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent goToMainActivity = new Intent(activity, MainActivity.class);
                     startActivity(goToMainActivity);
                     finish();
                 } else {
@@ -237,21 +226,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             }
         });
+        Log.d(TAG, "waiting on On complete");
     }
 
-    private void attemptCreateAccount(Activity activity, String email, String password) {
+    private void attemptCreateAccount(final Activity activity, String email, String password) {
         authentication.createAccount(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 showProgress(false);
                 if(task.isSuccessful()) {
                     //TODO: New Account Set Up Activity
-                    Intent goToMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                    Log.d(TAG, "Create account success");
+                    Intent goToMainActivity = new Intent(activity, MainActivity.class);
                     startActivity(goToMainActivity);
                     finish();
                 } else {
                     Log.d(TAG, "Could not create account");
-                    Toast.makeText(LoginActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Unable to log in.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.data_objects;
 
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import org.json.JSONException;
@@ -8,7 +9,7 @@ import org.json.JSONObject;
 /**
  * Created by joshua.schmidtibm.com on 9/23/17.
  */
-
+@IgnoreExtraProperties
 public abstract class AbstractAppliance {
     protected String manufacturer;
     protected String model;
@@ -17,6 +18,10 @@ public abstract class AbstractAppliance {
     protected Integer year;
     protected Integer lifeSpan;
     protected String units;
+
+    public AbstractAppliance() {
+        // Default constructor required for calls to DataSnapshot.getValue(AbstractAppliance.class)
+    }
 
     AbstractAppliance(String manufacturer, String model, Integer month, Integer day, Integer year, Integer lifeSpan, String units) {
         this.manufacturer = manufacturer;
@@ -38,28 +43,8 @@ public abstract class AbstractAppliance {
                 units
         );
     }
-    AbstractAppliance(AbstractAppliance appliance) throws NullPointerException {
-        this(
-                appliance.getManufacturer(),
-                appliance.getModel(),
-                appliance.getInstallDate(),
-                appliance.getLifeSpanInteger(),
-                appliance.getUnits()
-        );
 
-    }
-    AbstractAppliance(JSONObject appliance) {
-        this(
-                appliance.optString("manufacturer"),
-                appliance.optString("model"),
-                appliance.optInt("month"),
-                appliance.optInt("day"),
-                appliance.optInt("year"),
-                appliance.optInt("lifeSpan"),
-                appliance.optString("units")
-        );
-
-    }
+    //Mark:- Getters/Setters
     public String getManufacturer() {
         return manufacturer;
     }
@@ -72,25 +57,51 @@ public abstract class AbstractAppliance {
     public void setModel(String model) {
         this.model = model;
     }
-    public String getInstallDate() {
+    public Integer getMonth() {
+        return month;
+    }
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+    public Integer getDay() {
+        return day;
+    }
+    public void setDay(Integer day) {
+        this.day = day;
+    }
+    public Integer getYear() {
+        return year;
+    }
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+    public Integer getLifeSpan() {
+        return lifeSpan;
+    }
+    public void setLifeSpan(Integer lifeSpan) {
+        this.lifeSpan = lifeSpan;
+    }
+    public String getUnits() {
+        return units;
+    }
+    public void setUnits(String units) {
+        this.units = units;
+    }
+
+    //Mark:- Helper Methods
+    public String installDateAsString() {
         return StringUtilities.getDateString(month, day, year);
     }
-    public void setInstallDate(String installDate) {
+    public void updateInstallDate(String installDate) {
         this.day = StringUtilities.getDayFromDotFormmattedString(installDate);
         this.month = StringUtilities.getMonthFromDotFormattedString(installDate);
         this.year = StringUtilities.getYearFromDotFormmattedString(installDate);
     }
-    public String getLifeSpanString() {
+    public String lifeSpanAsString() {
         return lifeSpan.toString() + " " + units;
     }
-    public void setLifeSpan(Integer lifeSpanInteger, String lifeSpanUnits) {
+    public void updateLifeSpan(Integer lifeSpanInteger, String lifeSpanUnits) {
         this.lifeSpan = lifeSpanInteger;
         this.units = lifeSpanUnits;
-    }
-    public Integer getLifeSpanInteger() {
-        return lifeSpan;
-    }
-    public String getUnits() {
-        return units;
     }
 }

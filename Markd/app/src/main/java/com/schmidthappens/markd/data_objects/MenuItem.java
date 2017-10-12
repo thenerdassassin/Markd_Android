@@ -16,7 +16,6 @@ public class MenuItem {
     public String getMenuIcon() {
         return menuIcon;
     }
-
     public void setMenuIcon(String menuIcon) {
         this.menuIcon = menuIcon;
     }
@@ -24,7 +23,6 @@ public class MenuItem {
     public String getMenuTitle() {
         return menuTitle;
     }
-
     public void setMenuTitle(String menuTitle) {
         this.menuTitle = menuTitle;
     }

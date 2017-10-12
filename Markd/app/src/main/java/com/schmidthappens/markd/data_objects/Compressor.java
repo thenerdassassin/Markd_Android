@@ -10,11 +10,8 @@ public class Compressor extends AbstractAppliance {
     public Compressor(String manufacturer, String model, String installDate, Integer lifeSpan, String units) {
         super(manufacturer, model, installDate, lifeSpan, units);
     }
-    Compressor(Compressor oldCompressor) {
-        super(oldCompressor);
 
-    }
-    Compressor(JSONObject compressor){
-        super(compressor);
+    public Compressor() {
+        // Default constructor required for calls to DataSnapshot.getValue(Compressor.class)
     }
 }

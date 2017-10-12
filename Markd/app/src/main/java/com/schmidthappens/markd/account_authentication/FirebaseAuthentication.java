@@ -76,6 +76,7 @@ public class FirebaseAuthentication {
         return (currentUser != null);
     }
 
+    @NonNull
     public Task<AuthResult> createAccount(final Activity ctx, String email, String password) {
         return firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(ctx, new OnCompleteListener<AuthResult>() {

@@ -1,13 +1,16 @@
 package com.schmidthappens.markd.data_objects;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.List;
 
 /**
  * Created by Josh on 3/6/2017.
  */
 
+@IgnoreExtraProperties
 public class Panel {
-    private int panelId;
     private boolean isMainPanel;
     private PanelAmperage amperage;
     private String panelDescription;
@@ -17,22 +20,24 @@ public class Panel {
     private PanelManufacturer manufacturer;
 
     // Mark:- Constructors
-    public Panel(int panelId, boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList, PanelManufacturer manufacturer) {
-        this.panelId = panelId;
+    public Panel(boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList, PanelManufacturer manufacturer) {
         this.isMainPanel = isMainPanel;
         this.amperage = amperage;
         this.breakerList = breakerList;
         this.manufacturer = manufacturer;
         this.numberOfBreakers = breakerList.size();
     }
-    public Panel(int panelId, boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList) {
-        this(panelId, isMainPanel, amperage, breakerList, PanelManufacturer.UNKNOWN);
+    public Panel(boolean isMainPanel, PanelAmperage amperage, List<Breaker> breakerList) {
+        this(isMainPanel, amperage, breakerList, PanelManufacturer.UNKNOWN);
     }
-    public Panel(int panelId, PanelAmperage amperage, List<Breaker> breakerList) {
-        this(panelId, true, amperage, breakerList, PanelManufacturer.UNKNOWN);
+    public Panel(PanelAmperage amperage, List<Breaker> breakerList) {
+        this(true, amperage, breakerList, PanelManufacturer.UNKNOWN);
     }
     public Panel(int panelId, List<Breaker> breakerList) {
-        this(panelId, true, MainPanelAmperage.OneThousand, breakerList, PanelManufacturer.UNKNOWN);
+        this(true, MainPanelAmperage.OneThousand, breakerList, PanelManufacturer.UNKNOWN);
+    }
+    public Panel() {
+        // Default constructor required for calls to DataSnapshot.getValue(Panel.class)
     }
 
     // Mark:- Getters/Setters
@@ -42,21 +47,28 @@ public class Panel {
     public void setIsMainPanel(boolean isMainPanel) {
         this.isMainPanel = isMainPanel;
     }
+
     public PanelAmperage getAmperage() {
         return amperage;
     }
     public void setAmperage(PanelAmperage amperage) {
         this.amperage = amperage;
     }
+
     public String getPanelDescription() {
         return this.panelDescription;
     }
     public void setPanelDescription(String panelDescription) {
         this.panelDescription = panelDescription;
     }
+
     public String getInstallDate() {
         return this.installDate;
     }
+    public void setInstallDate(String installDate) {
+        this.installDate = installDate;
+    }
+    @Exclude
     public boolean setInstallDate(String month, String day, String year) {
         String newInstallDate = "";
         if(month.length() == 2 && day.length() == 2 && year.length() == 2) {
@@ -77,11 +89,16 @@ public class Panel {
         }
         return true;
     }
+
     public List<Breaker> getBreakerList() {
         return breakerList;
     }
     public void setBreakerList(List<Breaker> breakerList) {
         this.breakerList = breakerList;
+    }
+
+    public int getNumberOfBreakers() {
+        return numberOfBreakers;
     }
     public void setNumberOfBreakers(int numberOfBreakers) {
         this.numberOfBreakers = numberOfBreakers;
@@ -94,6 +111,7 @@ public class Panel {
             deleteBreaker(breakerList.size());
         }
     }
+
     public PanelManufacturer getManufacturer() {
         return manufacturer;
     }
@@ -102,6 +120,7 @@ public class Panel {
     }
 
     //Generates PanelTitle String
+    @Exclude
     public String getPanelTitle() {
         String panelTitleString = "";
 
@@ -120,7 +139,6 @@ public class Panel {
     public int breakerCount(){
         return numberOfBreakers;
     }
-
     public Panel deleteBreaker(int breakerNumber) {
         int breakerIndex = breakerNumber-1;
 
@@ -207,7 +225,6 @@ public class Panel {
         }
         return this;
     }
-
     public Panel updatePanel(String panelDescription, int numberOfBreakers, boolean isMainPanel, String panelInstallDate, PanelAmperage amperage, PanelManufacturer manufacturer) {
         this.panelDescription = panelDescription;
         this.setNumberOfBreakers(numberOfBreakers);

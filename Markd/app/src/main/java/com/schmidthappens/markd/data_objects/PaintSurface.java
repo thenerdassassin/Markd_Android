@@ -2,13 +2,15 @@ package com.schmidthappens.markd.data_objects;
 
 import android.support.annotation.Nullable;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 /**
  * Created by Josh on 5/29/2017.
  */
 
-
+@IgnoreExtraProperties
 public class PaintSurface {
     private String location;
     private String brand;
@@ -25,31 +27,26 @@ public class PaintSurface {
         this.day = day;
         this.year = year;
     }
-    PaintSurface(PaintSurface oldSurface) {
-        this(
-            oldSurface.getLocation(),
-            oldSurface.getBrand(),
-            oldSurface.getColor(),
-            oldSurface.getMonth(),
-            oldSurface.getDay(),
-            oldSurface.getYear()
-        );
+    public PaintSurface() {
+        // Default constructor required for calls to DataSnapshot.getValue(PaintSurface.class)
     }
 
     public String getLocation() {
         return location;
     }
-    public String getBrand() {
-        return brand;
-    }
-    public String getColor() {
-        return color;
-    }
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public String getBrand() {
+        return brand;
+    }
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public String getColor() {
+        return color;
     }
     public void setColor(String color) {
         this.color = color;
@@ -61,12 +58,14 @@ public class PaintSurface {
     public void setMonth(int month) {
         this.month = month;
     }
+
     public int getDay() {
         return day;
     }
     public void setDay(int day) {
         this.day = day;
     }
+
     public int getYear() {
         return year;
     }
@@ -78,7 +77,7 @@ public class PaintSurface {
         Returns string in format mm.dd.yy
         If something is wrong returns null
      */
-    @Nullable
+    @Nullable @Exclude
     public String getDateString() {
         return StringUtilities.getDateString(month, day, year);
     }

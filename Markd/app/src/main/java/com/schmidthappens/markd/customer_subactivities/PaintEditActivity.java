@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
@@ -43,14 +45,16 @@ public class PaintEditActivity extends AppCompatActivity {
     boolean isExterior;
 
     private static final String TAG = "PaintEditActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_paint);
 
-        SessionManager sessionManager = new SessionManager(PaintEditActivity.this);
-        sessionManager.checkLogin();
+        authentication = new FirebaseAuthentication(this);
+        customerData = new TempCustomerData(authentication);
 
         Intent intent = getIntent();
 
@@ -64,6 +68,23 @@ public class PaintEditActivity extends AppCompatActivity {
 
         setInstallDateButton.setOnClickListener(setPaintDateButtonClickListener);
         saveButton.setOnClickListener(onSaveClickListener);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
     }
 
     private void instantiateEditTextObjects(){
@@ -137,9 +158,9 @@ public class PaintEditActivity extends AppCompatActivity {
         PaintSurface paintSurface = new PaintSurface(location, brand, color, month, day, year);
 
         if(isExterior) {
-            TempCustomerData.getInstance().updateExteriorPaintSurface(paintId, paintSurface);
+            customerData.updateExteriorPaintSurface(paintId, paintSurface);
         } else {
-            TempCustomerData.getInstance().updateInteriorPaintSurface(paintId, paintSurface);
+            customerData.updateInteriorPaintSurface(paintId, paintSurface);
         }
     }
 

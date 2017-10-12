@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         authentication.detachListener();
     }
+
     //Mark:- Photo Functions
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Mark:- SetUp Functions
     private void initializeViews() {
-        String preparedForString = "Prepared for " + TempCustomerData.getInstance().getName();
+        String preparedForString = "Prepared for " + new TempCustomerData(authentication.getCurrentUser().getUid()).getName();
         preparedFor.setText(preparedForString);
     }
 }

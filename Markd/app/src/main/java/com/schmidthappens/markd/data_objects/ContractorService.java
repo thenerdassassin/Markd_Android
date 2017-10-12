@@ -11,6 +11,7 @@ import java.util.List;
  */
 
 public class ContractorService implements Comparable<ContractorService>{
+    //TODO: set up for Firebase
     private int month;
     private int day;
     private int year;

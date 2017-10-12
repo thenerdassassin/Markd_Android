@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
@@ -55,19 +57,20 @@ public class PlumbingActivity extends AppCompatActivity {
     FrameLayout plumbingServiceList;
     FrameLayout plumbingContractor;
 
-    HotWater hotWater = TempCustomerData.getInstance().getHotWater();
-    Boiler boiler = TempCustomerData.getInstance().getBoiler();
-    ContractorDetails plumber = TempCustomerData.getInstance().getPlumber();
-    SessionManager sessionManager;
     private static final String TAG = "PlumbingActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+
+    private HotWater hotWater;
+    private Boiler boiler;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_plumbing_view);
 
-        sessionManager = new SessionManager(PlumbingActivity.this);
-        sessionManager.checkLogin();
+        authentication = new FirebaseAuthentication(this);
+        customerData = new TempCustomerData(authentication);
         new ActionBarInitializer(this, true);
 
         //Initialize XML Objects
@@ -77,6 +80,7 @@ public class PlumbingActivity extends AppCompatActivity {
         //Initialize Contractor Footer
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.sdr_logo);
+        ContractorDetails plumber = customerData.getPlumber();
         if(plumber != null) {
             View v = ContractorFooterViewInitializer.createFooterView(this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
             plumbingContractor.addView(v);
@@ -95,8 +99,25 @@ public class PlumbingActivity extends AppCompatActivity {
         plumbingServiceList.addView(serviceListView);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+    }
+
     //MARK:- XML Initializer
     private void initializeHotWater() {
+        hotWater = customerData.getHotWater();
         hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
 
         if(hotWater == null) {
@@ -110,12 +131,13 @@ public class PlumbingActivity extends AppCompatActivity {
         hotWaterModelView.setText(hotWater.getModel());
 
         hotWaterInstallDateView = (TextView)findViewById(R.id.plumbing_hot_water_install_date);
-        hotWaterInstallDateView.setText(hotWater.getInstallDate());
+        hotWaterInstallDateView.setText(hotWater.installDateAsString());
 
         hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
-        hotWaterLifeSpanView.setText(hotWater.getLifeSpanString());
+        hotWaterLifeSpanView.setText(hotWater.lifeSpanAsString());
     }
     private void initializeBoiler() {
+        boiler = customerData.getBoiler();
         boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
 
         if(boiler == null) {
@@ -129,10 +151,10 @@ public class PlumbingActivity extends AppCompatActivity {
         boilerModelView.setText(boiler.getModel());
 
         boilerInstallDateView = (TextView)findViewById(R.id.plumbing_boiler_install_date);
-        boilerInstallDateView.setText(boiler.getInstallDate());
+        boilerInstallDateView.setText(boiler.installDateAsString());
 
         boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
-        boilerLifeSpanView.setText(boiler.getLifeSpanString());
+        boilerLifeSpanView.setText(boiler.lifeSpanAsString());
     }
 
     //MARK:- OnClickListeners
@@ -178,7 +200,7 @@ public class PlumbingActivity extends AppCompatActivity {
         intent.putExtra("manufacturer", hotWaterManufacturerView.getText());
         intent.putExtra("model", hotWaterModelView.getText());
         intent.putExtra("installDate", hotWaterInstallDateView.getText());
-        intent.putExtra("lifespanInteger", hotWater.getLifeSpanInteger());
+        intent.putExtra("lifespanInteger", hotWater.getLifeSpan());
         intent.putExtra("units", hotWater.getUnits());
         return intent;
     }
@@ -186,7 +208,7 @@ public class PlumbingActivity extends AppCompatActivity {
         intent.putExtra("manufacturer", boilerManufacturerView.getText());
         intent.putExtra("model", boilerModelView.getText());
         intent.putExtra("installDate", boilerInstallDateView.getText());
-        intent.putExtra("lifespanInteger", boiler.getLifeSpanInteger());
+        intent.putExtra("lifespanInteger", boiler.getLifeSpan());
         intent.putExtra("units", boiler.getUnits());
         return intent;
     }

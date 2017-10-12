@@ -5,6 +5,7 @@ package com.schmidthappens.markd.data_objects;
  */
 
 public class LandscapingSeason {
+    //TODO: prep for firebase or delete
     private String season;
     private int year;
     private double poundsPerAcre;

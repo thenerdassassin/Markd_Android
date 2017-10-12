@@ -52,7 +52,7 @@ public class TempContractorData {
         } catch (JSONException exception) {
             Log.e(TAG, exception.getMessage());
         }
-        contractor = new Contractor(contractorJson);
+        //contractor = new Contractor(contractorJson);
     }
 
     //Mark:- initial methods to remove when http calls are implemented
@@ -130,13 +130,13 @@ public class TempContractorData {
         return getContractor().getContractorDetails();
     }
     public boolean updateContractorDetails(ContractorDetails contractorDetails) {
-        Contractor oldContractor = getContractor();                       //update contractor
-        Contractor contractorToUpdate = new Contractor(oldContractor);   //make copy
-        contractorToUpdate.setContractorDetails(contractorDetails);     //change component on copy
-        if(putContractor(contractorToUpdate)) {                        //send to database
-            this.updatedContractor(contractorDetails);                //update TempContractorData
-            return true;
-        }
+//        Contractor oldContractor = getContractor();                       //update contractor
+//        Contractor contractorToUpdate = new Contractor(oldContractor);   //make copy
+//        contractorToUpdate.setContractorDetails(contractorDetails);     //change component on copy
+//        if(putContractor(contractorToUpdate)) {                        //send to database
+//            this.updatedContractor(contractorDetails);                //update TempContractorData
+//            return true;
+//        }
         return false;
     }
 

@@ -1,11 +1,20 @@
 package com.schmidthappens.markd.data_objects;
 
+import android.app.Activity;
 import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,91 +22,88 @@ import java.util.List;
  */
 
 public class TempCustomerData {
-    private static final String TAG = "CustomerDataSingleton";
-    private static final TempCustomerData customerData = new TempCustomerData();
-    public static TempCustomerData getInstance() {
-        return customerData;
+    private static final String TAG = "FirebaseCustomerData";
+    private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
+    private String uid;
+
+
+    public TempCustomerData(FirebaseAuthentication authentication) {
+        this(authentication.getCurrentUser().getUid());
     }
+
+    public TempCustomerData(Activity activity) {
+        this(new FirebaseAuthentication(activity).getCurrentUser().getUid());
+    }
+
+    public TempCustomerData(String uid) {
+        this.uid = uid;
+        DatabaseReference userReference = database.child(uid);
+        userReference.addValueEventListener(valueEventListener);
+        if(customer == null) {
+            makeCustomer();
+        }
+    }
+
+    private ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            customer = dataSnapshot.getValue(Customer.class);
+            Log.d(TAG, "valueEventListener:dataChanged");
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.w(TAG, "valueEventListener:onCancelled", databaseError.toException());
+        }
+    };
+
 
     private Customer customer;
     private Customer getCustomer() {
-        //TODO: Add get http call to ensure customer is up to date
-        //Get user id and sessionToken from SessionManager
-        //HTTP call receive back body data
-        //Check for success in body data
-        //Get message as string
-        //new JSONObject(message)
-        //customer = Customer(new JSONObject(message))
         return customer;
     }
-    private boolean putCustomer(Customer customer) {
-        //TODO: Add http put call to set in database
-        return true;
+    private void putCustomer(Customer customer) {
+        Log.d(TAG, "putting customer");
+        database.child(uid).setValue(customer);
     }
 
-    private void updateCustomer(HotWater hotWater) {
-        customer.setHotWater(hotWater);
-    }
-    private void updateCustomer(Boiler boiler) {
-        customer.setBoiler(boiler);
-    }
-    private void updateCustomer(AirHandler airHandler) {
-        customer.setAirHandler(airHandler);
-    }
-    private void updateCustomer(Compressor compressor) {
-        customer.setCompressor(compressor);
-    }
-    private void updateCustomer(List<PaintSurface> surfaces, boolean isExterior) {
-        if(isExterior) {
-            customer.setExteriorPaintSurfaces(surfaces);
-        } else {
-            customer.setInteriorPaintSurfaces(surfaces);
-        }
-    }
+    private void makeCustomer() {
+        //TODO: finish dummy customer
+        customer = new Customer();
 
-    private TempCustomerData() {
-        customer = getCustomer();
-        //Remove when database is implemented
-        JSONObject customerJson = new JSONObject();
-        try {
-            customerJson.put("email", "schmidt.uconn@gmail.com");
-            customerJson.put("password", "Spongebob28");
+        //Home Page
+        customer.setNamePrefix("Mr.");
+        customer.setFirstName("Joshua");
+        customer.setLastName("Schmidt");
+        customer.setMaritalStatus(Customer.MaritalStatus.MARRIED);
+        customer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
+        customer.setHome(new Home(5.0, 1350.0, 2.5));
+        customer.setArchitect(new ContractorDetails("", "", "", "", "architect"));
+        customer.setArchitect(new ContractorDetails("", "", "", "", "builder"));
 
-            customerJson.put("namePrefix", "Mr.");
-            customerJson.put("firstName", "Joshua");
-            customerJson.put("lastName", "Schmidt");
-            customerJson.put("maritalStatus", "Married");
-            customerJson.put("address", null);
-            customerJson.put("home", null);
-            customerJson.put("architect_id", null);
-            customerJson.put("builder_id", null);
+        //Plumbing
+        customer.setHotWater(new HotWater());
+        customer.setBoiler(new Boiler());
+        customer.setPlumber(new ContractorDetails("", "", "", "", "plumber"));
+        customer.setPlumbingServices(new ArrayList<ContractorService>());
 
-            //Plumbing
-            customerJson.put("hotWater", initialHotWater());
-            customerJson.put("boiler", initialBoiler());
-            customerJson.put("plumber_id", initialPlumber());
-            customerJson.put("plumbing_services", null);
+        //HVAC
+        customer.setAirHandler(new AirHandler());
+        customer.setCompressor(new Compressor());
+        customer.setHvactechnician(new ContractorDetails("", "", "", "", "hvac"));
+        customer.setHvacServices(new ArrayList<ContractorService>());
 
-            //HVAC
-            customerJson.put("airHandler", initialAirHandler());
-            customerJson.put("compressor", initialCompressor());
-            customerJson.put("hvactechnician_id", initialHvacTechnician());
-            customerJson.put("hvac_services", null);
+        //Electrical
+        customer.setPanels(new ArrayList<Panel>());
+        customer.setElectrician(new ContractorDetails("", "", "", "", "electrician"));
+        customer.setElectricalServices(new ArrayList<ContractorService>());
 
-            //Electrical
-            customerJson.put("panels", null);
-            customerJson.put("electrician_id", null);
-            customerJson.put("electrical_services", null);
+        //Painting
+        customer.setInteriorPaintSurfaces(new ArrayList<PaintSurface>());
+        customer.setExteriorPaintSurfaces(new ArrayList<PaintSurface>());
+        customer.setPainter(new ContractorDetails("", "", "", "", "painter"));
 
-            //Painting
-            customerJson.put("interiorPaintSurfaces", initialInteriorSurfaces());
-            customerJson.put("exteriorPaintSurfaces", initialExteriorSurfaces());
-            customerJson.put("painter_id", initialPainter());
-
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        customer = new Customer(customerJson);
+        putCustomer(customer);
     }
 
     //Mark:- Home Page
@@ -109,30 +115,16 @@ public class TempCustomerData {
     public HotWater getHotWater() {
         return getCustomer().getHotWater();
     }
-    public boolean updateHotWater(HotWater hotWater) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                        //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
-        customerToUpdate.setHotWater(hotWater);                                         //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                            //send to database
-            this.updateCustomer(hotWater);                                            //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void updateHotWater(HotWater hotWater) {
+        customer.setHotWater(hotWater);
+        putCustomer(customer);
     }
     public Boiler getBoiler() {
         return getCustomer().getBoiler();
     }
-    public boolean updateBoiler(Boiler boiler) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                        //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
-        customerToUpdate.setBoiler(boiler);                                             //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                            //send to database
-            this.updateCustomer(boiler);                                             //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void updateBoiler(Boiler boiler) {
+        customer.setBoiler(boiler);
+        putCustomer(customer);
     }
     public ContractorDetails getPlumber() {return getCustomer().getPlumber();}
 
@@ -140,85 +132,43 @@ public class TempCustomerData {
     public AirHandler getAirHandler() {
         return getCustomer().getAirHandler();
     }
-    public boolean updateAirHandler(AirHandler airHandler) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                        //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
-        customerToUpdate.setAirHandler(airHandler);                                     //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                            //send to database
-            this.updateCustomer(airHandler);                                          //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void updateAirHandler(AirHandler airHandler) {
+        customer.setAirHandler(airHandler);
+        putCustomer(customer);
     }
     public Compressor getCompressor() {
         return getCustomer().getCompressor();
     }
-    public boolean updateCompressor(Compressor compressor) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                        //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);  //make copy
-        customerToUpdate.setCompressor(compressor);                                     //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                            //send to database
-            this.updateCustomer(compressor);                                          //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void updateCompressor(Compressor compressor) {
+        customer.setCompressor(compressor);
+        putCustomer(customer);
     }
     public ContractorDetails getHvacTechnician() {
-        return getCustomer().getHvacTechnician();
+        return getCustomer().getHvactechnician();
     }
 
     //Mark:- Painting
     public List<PaintSurface> getExteriorSurfaces() {
         return getCustomer().getExteriorPaintSurfaces();
     }
-    public boolean updateExteriorPaintSurface(int paintId, PaintSurface paintSurface) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                         //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
-        customerToUpdate.setExteriorPaintSurface(paintId, paintSurface);                 //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                             //send to database
-            this.updateCustomer(customerToUpdate.getExteriorPaintSurfaces(), true);    //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void updateExteriorPaintSurface(int paintId, PaintSurface paintSurface) {
+        customer.setExteriorPaintSurface(paintId, paintSurface);
+        putCustomer(customer);
     }
-    public boolean removeExteriorPaintSurface(int paintId){
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                         //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
-        customerToUpdate.deleteExteriorPaintSurface(paintId);                            //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                             //send to database
-            this.updateCustomer(customerToUpdate.getExteriorPaintSurfaces(), true);    //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void removeExteriorPaintSurface(int paintId){
+        customer.deleteExteriorPaintSurface(paintId);
+        putCustomer(customer);
     }
     public List<PaintSurface> getInteriorSurfaces() {
         return getCustomer().getInteriorPaintSurfaces();
     }
-    public boolean updateInteriorPaintSurface(int paintId, PaintSurface paintSurface) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                         //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
-        customerToUpdate.setInteriorPaintSurface(paintId, paintSurface);                 //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                             //send to database
-            this.updateCustomer(customerToUpdate.getInteriorPaintSurfaces(), false);   //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void updateInteriorPaintSurface(int paintId, PaintSurface paintSurface) {
+        customer.setInteriorPaintSurface(paintId, paintSurface);
+        putCustomer(customer);
     }
-    public boolean removeInteriorPaintSurface(int paintId) {
-        //TODO: change to use db calls
-        Customer originalCustomer = getCustomer();                                         //causes update from db
-        Customer customerToUpdate = originalCustomer; //new Customer(originalCustomer);   //make copy
-        customerToUpdate.deleteInteriorPaintSurface(paintId);                            //change component to a copy
-        if(putCustomer(customerToUpdate)) {                                             //send to database
-            this.updateCustomer(customerToUpdate.getExteriorPaintSurfaces(), true);    //update TempCustomerData
-            return true;
-        }
-        return false;
+    public void removeInteriorPaintSurface(int paintId) {
+        customer.deleteExteriorPaintSurface(paintId);
+        putCustomer(customer);
     }
     public ContractorDetails getPainter() {
         return getCustomer().getPainter();
@@ -226,6 +176,14 @@ public class TempCustomerData {
 
     //TODO: Delete when http calls are here
     //Remove when database is implemented
+    private JSONObject initialAddress() throws JSONException{
+        return new JSONObject()
+                .put("state", "CT")
+                .put("street", "1234 Travelers Blvd")
+                .put("city", "Darien")
+                .put("zipCode", "06820");
+
+    }
     private JSONObject initialHotWater() {
         JSONObject hotWaterJSON = new JSONObject();
         try {

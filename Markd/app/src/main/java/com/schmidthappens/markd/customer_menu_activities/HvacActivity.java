@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.AirHandler;
@@ -55,19 +57,17 @@ public class HvacActivity extends AppCompatActivity {
     FrameLayout hvacServiceList;
     FrameLayout hvacContractor;
 
-    private AirHandler airHandler = TempCustomerData.getInstance().getAirHandler();
-    private Compressor compressor = TempCustomerData.getInstance().getCompressor();
-    private ContractorDetails hvacTechnician = TempCustomerData.getInstance().getHvacTechnician();
     private static String TAG = "HvacActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_hvac_view);
 
-        SessionManager sessionManager = new SessionManager(HvacActivity.this);
-        sessionManager.checkLogin();
-
+        authentication = new FirebaseAuthentication(this);
+        customerData = new TempCustomerData(authentication);
         new ActionBarInitializer(this, true);
 
         //Initialize XML Objects
@@ -77,6 +77,7 @@ public class HvacActivity extends AppCompatActivity {
         //Initialize Contractor Footer
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
+        ContractorDetails hvacTechnician = customerData.getHvacTechnician();
         View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
         hvacContractor.addView(v);
 
@@ -88,9 +89,25 @@ public class HvacActivity extends AppCompatActivity {
         View serviceListView = createServiceListView(this, serviceData.getHvacServices(), "AireServ", "/services/hvac");
         hvacServiceList.addView(serviceListView);
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+    }
 
     // Mark: SetUp Function
     private void initializeAirHandler() {
+        AirHandler airHandler = customerData.getAirHandler();
+
         airHandlerEditButton = (ImageView)findViewById(R.id.hvac_air_handler_edit);
         airHandlerEditButton.setOnClickListener(airHandlerEditButtonClickListener);
         if(airHandler == null) {
@@ -103,12 +120,14 @@ public class HvacActivity extends AppCompatActivity {
         airHandlerModelView.setText(airHandler.getModel());
 
         airHandlerInstallDateView = (TextView)findViewById(R.id.hvac_air_handler_install_date);
-        airHandlerInstallDateView.setText(airHandler.getInstallDate());
+        airHandlerInstallDateView.setText(airHandler.installDateAsString());
 
         airHandlerLifeSpanView = (TextView)findViewById(R.id.hvac_air_handler_life_span);
-        airHandlerLifeSpanView.setText(airHandler.getLifeSpanString());
+        airHandlerLifeSpanView.setText(airHandler.lifeSpanAsString());
     }
     private void initializeCompressor() {
+        Compressor compressor = customerData.getCompressor();
+
         compressorEditButton = (ImageView)findViewById(R.id.hvac_compressor_edit);
         compressorEditButton.setOnClickListener(compressorEditButtonClickListener);
 
@@ -122,10 +141,10 @@ public class HvacActivity extends AppCompatActivity {
         compressorModelView.setText(compressor.getModel());
 
         compressorInstallDateView = (TextView)findViewById(R.id.hvac_compressor_install_date);
-        compressorInstallDateView.setText(compressor.getInstallDate());
+        compressorInstallDateView.setText(compressor.installDateAsString());
 
         compressorLifeSpanView = (TextView)findViewById(R.id.hvac_compressor_life_span);
-        compressorLifeSpanView.setText(compressor.getLifeSpanString());
+        compressorLifeSpanView.setText(compressor.lifeSpanAsString());
     }
 
     // Mark: OnClickListener
@@ -136,7 +155,7 @@ public class HvacActivity extends AppCompatActivity {
             Class destinationClass = ApplianceEditActivity.class;
             Context context = HvacActivity.this;
             Intent intentToStartApplianceEditActivity = new Intent(context, destinationClass);
-            intentToStartApplianceEditActivity = putExtras(intentToStartApplianceEditActivity, airHandler, "Air Handler");
+            intentToStartApplianceEditActivity = putExtras(intentToStartApplianceEditActivity, customerData.getAirHandler(), "Air Handler");
             startActivity(intentToStartApplianceEditActivity);
         }
     };
@@ -148,7 +167,7 @@ public class HvacActivity extends AppCompatActivity {
             Class destinationClass = ApplianceEditActivity.class;
             Context context = HvacActivity.this;
             Intent intentToStartApplianceEditActivity = new Intent(context, destinationClass);
-            intentToStartApplianceEditActivity = putExtras(intentToStartApplianceEditActivity, compressor, "Compressor");
+            intentToStartApplianceEditActivity = putExtras(intentToStartApplianceEditActivity, customerData.getCompressor(), "Compressor");
             startActivity(intentToStartApplianceEditActivity);
         }
     };
@@ -158,8 +177,8 @@ public class HvacActivity extends AppCompatActivity {
         if(appliance != null) {
             intent.putExtra("manufacturer", appliance.getManufacturer());
             intent.putExtra("model", appliance.getModel());
-            intent.putExtra("installDate", appliance.getInstallDate());
-            intent.putExtra("lifespanInteger", appliance.getLifeSpanInteger());
+            intent.putExtra("installDate", appliance.installDateAsString());
+            intent.putExtra("lifespanInteger", appliance.getLifeSpan());
             intent.putExtra("units", appliance.getUnits());
         }
         return intent;

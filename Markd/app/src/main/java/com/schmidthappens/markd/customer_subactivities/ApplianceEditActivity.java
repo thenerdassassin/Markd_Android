@@ -6,11 +6,9 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.IntDef;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -21,7 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.AirHandler;
 import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Compressor;
@@ -53,14 +52,16 @@ public class ApplianceEditActivity extends AppCompatActivity {
             "months",
             "years"
     };
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData = new TempCustomerData(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_plumbing);
 
-        SessionManager sessionManager = new SessionManager(ApplianceEditActivity.this);
-        sessionManager.checkLogin();
+        authentication = new FirebaseAuthentication(this);
+        customerData = new TempCustomerData(authentication);
 
         Intent intent = getIntent();
 
@@ -118,6 +119,22 @@ public class ApplianceEditActivity extends AppCompatActivity {
         saveButton.setOnClickListener(saveButtonClickListener);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+    }
+
     //Mark:- Click Listener
     private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
         @Override
@@ -151,22 +168,22 @@ public class ApplianceEditActivity extends AppCompatActivity {
         if(getTitle().equals("Domestic Hot Water")) {
             Log.i(TAG, "Save Hot Water Changes");
             HotWater hotWater = new HotWater(manufacturer, model, installDate, lifeSpanInteger, units);
-            TempCustomerData.getInstance().updateHotWater(hotWater);
+            customerData.updateHotWater(hotWater);
             activityToGoTo = PlumbingActivity.class;
         } else if(getTitle().equals("Boiler")) {
             Log.i(TAG, "Save Boiler Changes");
             Boiler boiler = new Boiler(manufacturer, model, installDate, lifeSpanInteger, units);
-            TempCustomerData.getInstance().updateBoiler(boiler);
+            customerData.updateBoiler(boiler);
             activityToGoTo = PlumbingActivity.class;
         } else if(getTitle().equals("Compressor")) {
             Log.i(TAG, "Save Compressor Changes");
             Compressor compressor = new Compressor(manufacturer, model, installDate, lifeSpanInteger, units);
-            TempCustomerData.getInstance().updateCompressor(compressor);
+            customerData.updateCompressor(compressor);
             activityToGoTo = HvacActivity.class;
         } else if(getTitle().equals("Air Handler")) {
             Log.i(TAG, "Save Air Handler Changes");
             AirHandler airHandler = new AirHandler(manufacturer, model, installDate, lifeSpanInteger, units);
-            TempCustomerData.getInstance().updateAirHandler(airHandler);
+            customerData.updateAirHandler(airHandler);
             activityToGoTo = HvacActivity.class;
         }
         goBackToActivity(activityToGoTo);

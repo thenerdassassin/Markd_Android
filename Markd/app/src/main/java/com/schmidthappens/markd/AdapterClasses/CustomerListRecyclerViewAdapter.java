@@ -74,7 +74,7 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
 
         void bindData(final Customer customer) {
             customerNameTextView.setText(customer.getName());
-            customerAddressTextView.setText(customer.getAddress());
+            customerAddressTextView.setText(customer.getAddress().toString());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -66,11 +66,11 @@ public class TempPanelData {
         breakerList2.add(new Breaker(12, "Microwave"));
 
         this.panels = new ArrayList<Panel>();
-        this.panels.add(0, new Panel(0, true, MainPanelAmperage.TwoHundred, breakerList));
+        this.panels.add(0, new Panel(true, MainPanelAmperage.TwoHundred, breakerList));
         this.panels.get(0).setPanelDescription("Attic Panel");
         this.panels.get(0).setInstallDate("11", "07", "16");
 
-        this.panels.add(1, new Panel(1, false, SubPanelAmperage.OneHundredTwentyFive, breakerList2));
+        this.panels.add(1, new Panel(false, SubPanelAmperage.OneHundredTwentyFive, breakerList2));
         this.panels.get(1).setPanelDescription("Basement Panel");
         this.panels.get(1).setInstallDate("01", "11", "17");
     }
