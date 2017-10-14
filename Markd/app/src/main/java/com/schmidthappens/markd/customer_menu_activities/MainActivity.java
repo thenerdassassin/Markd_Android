@@ -24,11 +24,14 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String TAG = "MainActivity";
     private FirebaseAuthentication authentication;
+    TempCustomerData customerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,23 +65,10 @@ public class MainActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true);
 
-        homeFrame = (FrameLayout)findViewById(R.id.home_frame);
-        homeImage = (ImageView)findViewById(R.id.home_image);
-        homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
-        preparedFor = (TextView)findViewById(R.id.prepared_for);
-        initializeViews();
-
-        //TODO change to only set as "0" if no image available from http call
-        if(getHomeImageFile().exists()) {
-            setPhoto(getHomeImageUri());
-            homeImage.setTag("1");
-        } else {
-            //TODO: try and get photo from http call
-            //if can't get then set to 0
-            homeImage.setTag("0");
-        }
-        homeFrame.setOnClickListener(photoClick);
-        homeFrame.setOnLongClickListener(photoLongClick);
+        homeFrame = findViewById(R.id.home_frame);
+        homeImage = findViewById(R.id.home_image);
+        homeImagePlaceholder = findViewById(R.id.home_image_placeholder);
+        preparedFor = findViewById(R.id.prepared_for);
     }
 
     @Override
@@ -88,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new MainGetDataListener());
+        homeFrame.setOnClickListener(photoClick);
+        homeFrame.setOnLongClickListener(photoLongClick);
     }
 
     @Override
@@ -166,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
         temp.delete();
         return false;
     }
-
     private boolean copyUriToPermanentStorage(Uri uri) {
         File homeImageFile = getHomeImageFile();
         InputStream in = null;
@@ -249,8 +243,38 @@ public class MainActivity extends AppCompatActivity {
     };
 
     // Mark:- SetUp Functions
+    private void initalizeUI() {
+        initializeViews();
+
+        //TODO change to only set as "0" if no image available from http call
+        if(getHomeImageFile().exists()) {
+            setPhoto(getHomeImageUri());
+            homeImage.setTag("1");
+        } else {
+            //TODO: try and get photo from http call
+            //if can't get then set to 0
+            homeImage.setTag("0");
+        }
+    }
     private void initializeViews() {
-        String preparedForString = "Prepared for " + new TempCustomerData(authentication.getCurrentUser().getUid()).getName();
+        String preparedForString = "Prepared for " + customerData.getName();
         preparedFor.setText(preparedForString);
+    }
+
+    private class MainGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            initalizeUI();
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+
+        }
     }
 }

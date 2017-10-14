@@ -54,7 +54,7 @@ public class PaintEditActivity extends AppCompatActivity {
         setContentView(R.layout.edit_view_paint);
 
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication);
+        customerData = new TempCustomerData(authentication, null); //TODO: add listener
 
         Intent intent = getIntent();
 

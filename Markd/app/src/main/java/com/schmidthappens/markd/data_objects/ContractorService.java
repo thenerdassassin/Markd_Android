@@ -2,6 +2,8 @@ package com.schmidthappens.markd.data_objects;
 
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.List;
@@ -10,8 +12,8 @@ import java.util.List;
  * Created by Josh on 4/19/2017.
  */
 
+@IgnoreExtraProperties
 public class ContractorService implements Comparable<ContractorService>{
-    //TODO: set up for Firebase
     private int month;
     private int day;
     private int year;
@@ -20,7 +22,9 @@ public class ContractorService implements Comparable<ContractorService>{
     private List<String> imageFiles;
     //TODO add image uploads
 
-
+    public ContractorService() {
+        // Default constructor required for calls to DataSnapshot.getValue(ContractorService.class)
+    }
     public ContractorService(int month, int day, int year, String contractor, String comments) {
         this.month = month;
         this.day = day;
@@ -28,6 +32,7 @@ public class ContractorService implements Comparable<ContractorService>{
         this.contractor = contractor;
         this.comments = comments;
     }
+
     // Mark:- Getters/Setters
     public int getMonth() {
         return month;
@@ -59,9 +64,11 @@ public class ContractorService implements Comparable<ContractorService>{
     public void setComments(String comments) {
         this.comments = comments;
     }
+    @Exclude
     public List<String> getImageFiles() {
         return imageFiles;
     }
+    @Exclude
     public void setImageFiles(List<String> imageFiles) {
         this.imageFiles = imageFiles;
     }
@@ -72,6 +79,7 @@ public class ContractorService implements Comparable<ContractorService>{
     }
 
     // Mark:- Helper methods
+    @Exclude
     public String getDate() {
         return StringUtilities.getDateString(month, day, year);
     }

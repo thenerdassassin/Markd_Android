@@ -30,7 +30,7 @@ public enum SubPanelAmperage implements PanelAmperage {
         }
     };
 
-    // Returns the number of possible MainPanelAmperages
+    // Returns the number of possible SubPanelAmperages
     public int count() {
             return SubPanelAmperage.values().length;
         }

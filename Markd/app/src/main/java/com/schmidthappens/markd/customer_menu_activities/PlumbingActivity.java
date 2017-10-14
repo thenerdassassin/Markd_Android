@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -27,6 +29,7 @@ import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
@@ -70,33 +73,10 @@ public class PlumbingActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_plumbing_view);
 
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication);
         new ActionBarInitializer(this, true);
 
-        //Initialize XML Objects
-        initializeHotWater();
-        initializeBoiler();
-
-        //Initialize Contractor Footer
-        plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.sdr_logo);
-        ContractorDetails plumber = customerData.getPlumber();
-        if(plumber != null) {
-            View v = ContractorFooterViewInitializer.createFooterView(this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
-            plumbingContractor.addView(v);
-        }
-
-        //Set Up Buttons
-        hotWaterEditButton.setOnClickListener(hotWaterEditButtonClickListener);
-        boilerEditButton.setOnClickListener(boilerEditButtonClickListener);
-
-        //TODO change to http call to get service lists
-        final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
-
-        //Set Up Service Lists
-        plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
-        View serviceListView = createServiceListView(this, serviceData.getPlumbingServices(), "SDR Plumbing & Heating Inc", "/services/plumbing");
-        plumbingServiceList.addView(serviceListView);
+        plumbingContractor = findViewById(R.id.plumbing_footer);
+        plumbingServiceList = findViewById(R.id.plumbing_service_list);
     }
 
     @Override
@@ -107,6 +87,8 @@ public class PlumbingActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+        customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new PlumbingGetDataListener());
     }
 
     @Override
@@ -115,46 +97,66 @@ public class PlumbingActivity extends AppCompatActivity {
         authentication.detachListener();
     }
 
-    //MARK:- XML Initializer
+    //MARK:- UI Initializers
+    private void initializeUI() {
+        initializeHotWater();
+        initializeBoiler();
+        initializeContractorServices();
+        initializeFooter();
+    }
     private void initializeHotWater() {
         hotWater = customerData.getHotWater();
-        hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
+        hotWaterEditButton = findViewById(R.id.plumbing_hot_water_edit);
+        hotWaterEditButton.setOnClickListener(hotWaterEditButtonClickListener);
 
         if(hotWater == null) {
             return;
         }
 
-        hotWaterManufacturerView =(TextView)findViewById(R.id.plumbing_hot_water_manufacturer);
+        hotWaterManufacturerView = findViewById(R.id.plumbing_hot_water_manufacturer);
         hotWaterManufacturerView.setText(hotWater.getManufacturer());
 
-        hotWaterModelView = (TextView)findViewById(R.id.plumbing_hot_water_model);
+        hotWaterModelView = findViewById(R.id.plumbing_hot_water_model);
         hotWaterModelView.setText(hotWater.getModel());
 
-        hotWaterInstallDateView = (TextView)findViewById(R.id.plumbing_hot_water_install_date);
+        hotWaterInstallDateView = findViewById(R.id.plumbing_hot_water_install_date);
         hotWaterInstallDateView.setText(hotWater.installDateAsString());
 
-        hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
+        hotWaterLifeSpanView = findViewById(R.id.plumbing_hot_water_life_span);
         hotWaterLifeSpanView.setText(hotWater.lifeSpanAsString());
     }
     private void initializeBoiler() {
         boiler = customerData.getBoiler();
-        boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
+        boilerEditButton = findViewById(R.id.plumbing_boiler_edit);
+        boilerEditButton.setOnClickListener(boilerEditButtonClickListener);
 
         if(boiler == null) {
             return;
         }
 
-        boilerManufacturerView =(TextView)findViewById(R.id.plumbing_boiler_manufacturer);
+        boilerManufacturerView = findViewById(R.id.plumbing_boiler_manufacturer);
         boilerManufacturerView.setText(boiler.getManufacturer());
 
-        boilerModelView = (TextView)findViewById(R.id.plumbing_boiler_model);
+        boilerModelView = findViewById(R.id.plumbing_boiler_model);
         boilerModelView.setText(boiler.getModel());
 
-        boilerInstallDateView = (TextView)findViewById(R.id.plumbing_boiler_install_date);
+        boilerInstallDateView = findViewById(R.id.plumbing_boiler_install_date);
         boilerInstallDateView.setText(boiler.installDateAsString());
 
-        boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
+        boilerLifeSpanView = findViewById(R.id.plumbing_boiler_life_span);
         boilerLifeSpanView.setText(boiler.lifeSpanAsString());
+    }
+    private void initializeContractorServices() {
+        View serviceListView = createServiceListView(PlumbingActivity.this, customerData.getPlumbingServices(), "SDR Plumbing & Heating Inc", "/services/plumbing");
+        plumbingServiceList.addView(serviceListView);
+    }
+    private void initializeFooter() {
+        ContractorDetails plumber = customerData.getPlumber();
+        if(plumber != null) {
+            Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo);
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
+            plumbingContractor.addView(v);
+        }
     }
 
     //MARK:- OnClickListeners
@@ -211,5 +213,22 @@ public class PlumbingActivity extends AppCompatActivity {
         intent.putExtra("lifespanInteger", boiler.getLifeSpan());
         intent.putExtra("units", boiler.getUnits());
         return intent;
+    }
+
+    private class PlumbingGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            initializeUI();
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+
+        }
     }
 }

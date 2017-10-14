@@ -89,6 +89,12 @@ public abstract class AbstractAppliance {
     }
 
     //Mark:- Helper Methods
+    /*public boolean isUninitialized() {
+        if(manufacturer == null && model == null && month == null && day == null && year == null && lifeSpan == null && units == null) {
+            return true;
+        }
+        return false;
+    }*/
     public String installDateAsString() {
         return StringUtilities.getDateString(month, day, year);
     }

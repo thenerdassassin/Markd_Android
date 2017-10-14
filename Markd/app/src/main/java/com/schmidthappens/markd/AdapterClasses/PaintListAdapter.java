@@ -18,6 +18,7 @@ import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
 import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,10 +40,9 @@ public class PaintListAdapter {
     private TempCustomerData customerData;
 
     public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, final boolean isExterior) {
-        final boolean isExteriorFinal = isExterior;
         if(context instanceof PaintingActivity) {
             activityContext = (PaintingActivity)context;
-            customerData = new TempCustomerData(activityContext);
+            customerData = new TempCustomerData(activityContext, null); //TODO: add listener
         } else {
             Log.e(TAG, "Activity Context not Painting Activity");
         }
@@ -58,89 +58,88 @@ public class PaintListAdapter {
 
         LayoutInflater viewInflater = LayoutInflater.from(activityContext);
 
-        if(paintSurfaces.size() == 0) {
+        if(paintSurfaces == null || paintSurfaces.size() == 0) {
             View v = viewInflater.inflate(R.layout.list_row_paint, null);
-            TextView paintLocationTextView = (TextView) v.findViewById(R.id.paint_location);
+            TextView paintLocationTextView = v.findViewById(R.id.paint_location);
             paintLocationTextView.setText("Add some paint!");
             listOfPaints.addView(v);
-        }
+        } else {
+            for (final PaintSurface paintSurface : paintSurfaces) {
+                final int position = paintSurfaces.indexOf(paintSurface);
+                View paintListItemView = viewInflater.inflate(R.layout.list_row_paint, null);
 
-        for(final PaintSurface paintSurface : paintSurfaces) {
-            final int position = paintSurfaces.indexOf(paintSurface);
-            View paintListItemView = viewInflater.inflate(R.layout.list_row_paint, null);
+                if (paintSurface != null) {
+                    insertPaintInfo(paintListItemView, paintSurface);
+                }
 
-            if(paintSurface != null) {
-                insertPaintInfo(paintListItemView, paintSurface);
-            }
+                paintListItemView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        LinearLayout rowToMove = v.findViewById(R.id.paint_list_row_information);
+                        ImageButton deleteButton = v.findViewById(R.id.paint_list_row_delete_button);
 
-            paintListItemView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    LinearLayout rowToMove = (LinearLayout)v.findViewById(R.id.paint_list_row_information);
-                    ImageButton deleteButton = (ImageButton)v.findViewById(R.id.paint_list_row_delete_button);
-
-
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            initializeXValues(rowToMove, event);
-                            return true;
-
-                        case MotionEvent.ACTION_UP: case MotionEvent.ACTION_CANCEL:
-                            //Swiped far enough to left
-                            if(newX-historicX < DELTA) {
-                                Log.i(TAG, "Swipe Initiated " + position);
-                                snapRowToSlideOutPosition(rowToMove, v.getHeight()+30);
-                                deleteButton.setClickable(true);
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                initializeXValues(rowToMove, event);
                                 return true;
-                            } else {
-                                Log.d(TAG, "Diff: " + Math.abs(rowToMove.getX()-originalX));
-                                //Needs to be moved back to original Position
-                                if(Math.abs(rowToMove.getX()-originalX) > LAG) {
-                                    Log.i(TAG, "Shift back " + position);
-                                    snapRowToOriginalPosition(rowToMove);
-                                    deleteButton.setClickable(false);
+
+                            case MotionEvent.ACTION_UP:
+                            case MotionEvent.ACTION_CANCEL:
+                                //Swiped far enough to left
+                                if (newX - historicX < DELTA) {
+                                    Log.i(TAG, "Swipe Initiated " + position);
+                                    snapRowToSlideOutPosition(rowToMove, v.getHeight() + 30);
+                                    deleteButton.setClickable(true);
+                                    return true;
+                                } else {
+                                    Log.d(TAG, "Diff: " + Math.abs(rowToMove.getX() - originalX));
+                                    //Needs to be moved back to original Position
+                                    if (Math.abs(rowToMove.getX() - originalX) > LAG) {
+                                        Log.i(TAG, "Shift back " + position);
+                                        snapRowToOriginalPosition(rowToMove);
+                                        deleteButton.setClickable(false);
+                                    }
+                                    //Clicked
+                                    else {
+                                        Log.i(TAG, "Click Panel " + position);
+                                        viewClickedPaint(position, isExterior);
+                                    }
                                 }
-                                //Clicked
-                                else {
-                                    Log.i(TAG, "Click Panel " + position);
-                                    viewClickedPaint(position, isExteriorFinal);
-                                }
-                            }
-                            break;
+                                break;
 
-                        case MotionEvent.ACTION_MOVE:
-                            moveRowWithDrag(rowToMove, event);
-                            return true;
+                            case MotionEvent.ACTION_MOVE:
+                                moveRowWithDrag(rowToMove, event);
+                                return true;
 
-                        default:
-                            return false;
+                            default:
+                                return false;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
 
-            ImageButton paintSurfaceDeleteButton = (ImageButton)paintListItemView.findViewById(R.id.paint_list_row_delete_button);
-            paintSurfaceDeleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(isExterior) {
-                        customerData.removeExteriorPaintSurface(position);
-                    } else {
-                        customerData.removeInteriorPaintSurface(position);
+                ImageButton paintSurfaceDeleteButton = paintListItemView.findViewById(R.id.paint_list_row_delete_button);
+                paintSurfaceDeleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isExterior) {
+                            customerData.removeExteriorPaintSurface(position);
+                        } else {
+                            customerData.removeInteriorPaintSurface(position);
+                        }
+                        if (activityContext != null) {
+                            Log.i(TAG, "Delete Paint Item " + position);
+                            activityContext.deletePaintSurface(position, isExterior);
+                        } else {
+                            Log.e(TAG, "Activity Context NULL");
+                        }
                     }
-                    if(activityContext != null) {
-                        Log.i(TAG, "Delete Paint Item " + position);
-                        activityContext.deletePaintSurface(position, isExterior);
-                    } else {
-                        Log.e(TAG, "Activity Context NULL");
-                    }
-                }
-            });
-            paintSurfaceDeleteButton.setClickable(false);
+                });
+                paintSurfaceDeleteButton.setClickable(false);
 
-            listOfPaints.addView(paintListItemView);
+                listOfPaints.addView(paintListItemView);
+            }
         }
-
         return listOfPaints;
     }
 

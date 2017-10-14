@@ -6,5 +6,5 @@ package com.schmidthappens.markd.data_objects;
  */
 
 public interface PanelAmperage {
-    public int count();
+    int count();
 }

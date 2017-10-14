@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -30,6 +32,7 @@ import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
@@ -67,27 +70,7 @@ public class HvacActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_hvac_view);
 
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication);
         new ActionBarInitializer(this, true);
-
-        //Initialize XML Objects
-        initializeAirHandler();
-        initializeCompressor();
-
-        //Initialize Contractor Footer
-        hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
-        ContractorDetails hvacTechnician = customerData.getHvacTechnician();
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
-        hvacContractor.addView(v);
-
-        //TODO change to http call to get service lists
-        final TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
-
-        //Set Up Service Lists
-        hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
-        View serviceListView = createServiceListView(this, serviceData.getHvacServices(), "AireServ", "/services/hvac");
-        hvacServiceList.addView(serviceListView);
     }
     @Override
     public void onStart() {
@@ -97,6 +80,7 @@ public class HvacActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        customerData = new TempCustomerData(authentication, new HVACGetDataListener());
     }
     @Override
     public void onStop() {
@@ -105,6 +89,12 @@ public class HvacActivity extends AppCompatActivity {
     }
 
     // Mark: SetUp Function
+    private void initializeUI() {
+        initializeAirHandler();
+        initializeCompressor();
+        initializeServices();
+        initializeFooter();
+    }
     private void initializeAirHandler() {
         AirHandler airHandler = customerData.getAirHandler();
 
@@ -146,6 +136,18 @@ public class HvacActivity extends AppCompatActivity {
         compressorLifeSpanView = (TextView)findViewById(R.id.hvac_compressor_life_span);
         compressorLifeSpanView.setText(compressor.lifeSpanAsString());
     }
+    private void initializeServices() {
+        hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
+        View serviceListView = createServiceListView(this, customerData.getHvacServices(), "AireServ", "/services/hvac");
+        hvacServiceList.addView(serviceListView);
+    }
+    private void initializeFooter() {
+        hvacContractor = findViewById(R.id.hvac_footer);
+        Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
+        ContractorDetails hvacTechnician = customerData.getHvacTechnician();
+        View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
+        hvacContractor.addView(v);
+    }
 
     // Mark: OnClickListener
     private View.OnClickListener airHandlerEditButtonClickListener = new View.OnClickListener() {
@@ -182,5 +184,22 @@ public class HvacActivity extends AppCompatActivity {
             intent.putExtra("units", appliance.getUnits());
         }
         return intent;
+    }
+
+    private class HVACGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            initializeUI();
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+
+        }
     }
 }

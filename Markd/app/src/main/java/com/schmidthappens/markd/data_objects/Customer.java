@@ -57,31 +57,6 @@ public class Customer {
     public Customer() {
         // Default constructor required for calls to DataSnapshot.getValue(Customer.class)
     }
-    private Customer(String namePrefix, String firstName, String lastName, String nameSuffix, MaritalStatus maritalStatus, Address address, Home home, ContractorDetails architect, ContractorDetails builder, HotWater hotWater, Boiler boiler, ContractorDetails plumber, List<ContractorService> plumbingServices, AirHandler airHandler, Compressor compressor, ContractorDetails hvactechnician, List<ContractorService> hvacServices, List<Panel> panels, ContractorDetails electrician, List<ContractorService> electricalServices, List<PaintSurface> interiorPaintSurfaces, List<PaintSurface> exteriorPaintSurfaces, ContractorDetails painter) {
-        this.namePrefix = namePrefix;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.nameSuffix = nameSuffix;
-        this.maritalStatus = maritalStatus;
-        this.address = address;
-        this.home = home;
-        this.architect = architect;
-        this.builder = builder;
-        this.hotWater = hotWater;
-        this.boiler = boiler;
-        this.plumber = plumber;
-        this.plumbingServices = plumbingServices;
-        this.airHandler = airHandler;
-        this.compressor = compressor;
-        this.hvactechnician = hvactechnician;
-        this.hvacServices = hvacServices;
-        this.panels = panels;
-        this.electrician = electrician;
-        this.electricalServices = electricalServices;
-        this.interiorPaintSurfaces = interiorPaintSurfaces;
-        this.exteriorPaintSurfaces = exteriorPaintSurfaces;
-        this.painter = painter;
-    }
 
     //Mark:- Getters/Setters
         //:- Home Page
@@ -248,6 +223,9 @@ public class Customer {
     @Exclude
     public void setExteriorPaintSurface(int paintId, PaintSurface surface) {
         if(paintId == -1) {
+            if(exteriorPaintSurfaces == null) {
+                exteriorPaintSurfaces = new ArrayList<>();
+            }
             exteriorPaintSurfaces.add(surface);
         } else {
             exteriorPaintSurfaces.set(paintId, surface);
@@ -256,6 +234,9 @@ public class Customer {
     @Exclude
     public void setInteriorPaintSurface(int paintId, PaintSurface surface) {
         if(paintId == -1) {
+            if(interiorPaintSurfaces == null) {
+                interiorPaintSurfaces = new ArrayList<>();
+            }
             interiorPaintSurfaces.add(surface);
         } else {
             interiorPaintSurfaces.set(paintId, surface);

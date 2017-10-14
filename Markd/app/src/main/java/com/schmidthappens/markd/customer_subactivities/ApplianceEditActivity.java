@@ -53,7 +53,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
             "years"
     };
     private FirebaseAuthentication authentication;
-    private TempCustomerData customerData = new TempCustomerData(this);
+    private TempCustomerData customerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
         setContentView(R.layout.edit_view_plumbing);
 
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication);
+        customerData = new TempCustomerData(authentication, null); //TODO: add listener
 
         Intent intent = getIntent();
 

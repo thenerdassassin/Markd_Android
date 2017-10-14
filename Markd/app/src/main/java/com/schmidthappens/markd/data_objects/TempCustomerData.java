@@ -3,12 +3,14 @@ package com.schmidthappens.markd.data_objects;
 import android.app.Activity;
 import android.util.Log;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,35 +27,40 @@ public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
     private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
     private String uid;
+    private OnGetDataListener listener;
 
-
-    public TempCustomerData(FirebaseAuthentication authentication) {
-        this(authentication.getCurrentUser().getUid());
+    public TempCustomerData(FirebaseAuthentication authentication, OnGetDataListener listener) {
+        this(authentication.getCurrentUser().getUid(), listener);
     }
 
-    public TempCustomerData(Activity activity) {
-        this(new FirebaseAuthentication(activity).getCurrentUser().getUid());
+    public TempCustomerData(Activity activity, OnGetDataListener listener) {
+        this(new FirebaseAuthentication(activity).getCurrentUser().getUid(), listener);
     }
 
-    public TempCustomerData(String uid) {
+    public TempCustomerData(String uid, OnGetDataListener listener) {
         this.uid = uid;
+        this.listener = listener;
         DatabaseReference userReference = database.child(uid);
         userReference.addValueEventListener(valueEventListener);
-        if(customer == null) {
-            makeCustomer();
-        }
     }
 
     private ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             customer = dataSnapshot.getValue(Customer.class);
+            if(customer == null) {
+                makeCustomer();
+            }
+            if(listener != null) {
+                listener.onSuccess(dataSnapshot);
+            }
             Log.d(TAG, "valueEventListener:dataChanged");
         }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
             Log.w(TAG, "valueEventListener:onCancelled", databaseError.toException());
+            listener.onFailed(databaseError);
         }
     };
 
@@ -66,7 +73,6 @@ public class TempCustomerData {
         Log.d(TAG, "putting customer");
         database.child(uid).setValue(customer);
     }
-
     private void makeCustomer() {
         //TODO: finish dummy customer
         customer = new Customer();
@@ -82,33 +88,37 @@ public class TempCustomerData {
         customer.setArchitect(new ContractorDetails("", "", "", "", "builder"));
 
         //Plumbing
-        customer.setHotWater(new HotWater());
-        customer.setBoiler(new Boiler());
-        customer.setPlumber(new ContractorDetails("", "", "", "", "plumber"));
-        customer.setPlumbingServices(new ArrayList<ContractorService>());
+        customer.setHotWater(initialHotWater());
+        customer.setBoiler(initialBoiler());
+        customer.setPlumber(new ContractorDetails("SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com", "06903", "plumber"));
+        customer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
 
         //HVAC
-        customer.setAirHandler(new AirHandler());
-        customer.setCompressor(new Compressor());
-        customer.setHvactechnician(new ContractorDetails("", "", "", "", "hvac"));
-        customer.setHvacServices(new ArrayList<ContractorService>());
+        customer.setAirHandler(initialAirHandler());
+        customer.setCompressor(initialCompressor());
+        customer.setHvactechnician(new ContractorDetails("AireServ", "203.348.2295", "aireserv.com", "06903", "hvac"));
+        customer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
 
         //Electrical
-        customer.setPanels(new ArrayList<Panel>());
-        customer.setElectrician(new ContractorDetails("", "", "", "", "electrician"));
-        customer.setElectricalServices(new ArrayList<ContractorService>());
+        //customer.setPanels(TempPanelData.getInstance().getPanels());
+        //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
+        customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478", "electrician"));
+        customer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting
         customer.setInteriorPaintSurfaces(new ArrayList<PaintSurface>());
         customer.setExteriorPaintSurfaces(new ArrayList<PaintSurface>());
-        customer.setPainter(new ContractorDetails("", "", "", "", "painter"));
+        customer.setPainter(new ContractorDetails("MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com", "06903", "painter"));
 
         putCustomer(customer);
     }
 
     //Mark:- Home Page
     public String getName() {
-        return getCustomer().getName();
+        if(customer == null) {
+            return "";
+        }
+        return customer.getName();
     }
 
     //Mark:- Plumbing
@@ -127,6 +137,9 @@ public class TempCustomerData {
         putCustomer(customer);
     }
     public ContractorDetails getPlumber() {return getCustomer().getPlumber();}
+    public List<ContractorService> getPlumbingServices() {
+        return getCustomer().getPlumbingServices();
+    }
 
     //Mark:- HVAC
     public AirHandler getAirHandler() {
@@ -145,6 +158,9 @@ public class TempCustomerData {
     }
     public ContractorDetails getHvacTechnician() {
         return getCustomer().getHvactechnician();
+    }
+    public List<ContractorService>  getHvacServices() {
+        return getCustomer().getHvacServices();
     }
 
     //Mark:- Painting
@@ -167,7 +183,7 @@ public class TempCustomerData {
         putCustomer(customer);
     }
     public void removeInteriorPaintSurface(int paintId) {
-        customer.deleteExteriorPaintSurface(paintId);
+        customer.deleteInteriorPaintSurface(paintId);
         putCustomer(customer);
     }
     public ContractorDetails getPainter() {
@@ -176,99 +192,49 @@ public class TempCustomerData {
 
     //TODO: Delete when http calls are here
     //Remove when database is implemented
-    private JSONObject initialAddress() throws JSONException{
-        return new JSONObject()
-                .put("state", "CT")
-                .put("street", "1234 Travelers Blvd")
-                .put("city", "Darien")
-                .put("zipCode", "06820");
-
+    private HotWater initialHotWater() {
+        HotWater hotWater = new HotWater();
+        hotWater.setManufacturer("Bosch");
+        hotWater.setModel("C950 ES NG");
+        hotWater.setMonth(1);
+        hotWater.setDay(17);
+        hotWater.setYear(2012);
+        hotWater.setLifeSpan(12);
+        hotWater.setUnits("years");
+        return hotWater;
     }
-    private JSONObject initialHotWater() {
-        JSONObject hotWaterJSON = new JSONObject();
-        try {
-            hotWaterJSON.put("manufacturer", "Bosch");
-            hotWaterJSON.put("model", "C950 ES NG");
-            hotWaterJSON.put("month", "01");
-            hotWaterJSON.put("day", "17");
-            hotWaterJSON.put("year", "14");
-            hotWaterJSON.put("lifeSpan", "12");
-            hotWaterJSON.put("units", "years");
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return hotWaterJSON;
+    private Boiler initialBoiler() {
+        Boiler boiler = new Boiler();
+        boiler.setManufacturer("Westinghouse");
+        boiler.setModel("WBRCLP140W");
+        boiler.setMonth(11);
+        boiler.setDay(7);
+        boiler.setYear(2012);
+        boiler.setLifeSpan(9);
+        boiler.setUnits("years");
+        return boiler;
     }
-    private JSONObject initialBoiler() {
-        JSONObject boilerJSON = new JSONObject();
-        try {
-            boilerJSON.put("manufacturer", "Westinghouse");
-            boilerJSON.put("model", "WBRCLP140W");
-            boilerJSON.put("month", "11");
-            boilerJSON.put("day", "07");
-            boilerJSON.put("year", "12");
-            boilerJSON.put("lifeSpan", "9");
-            boilerJSON.put("units", "years");
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return boilerJSON;
+    private AirHandler initialAirHandler() {
+        AirHandler airHandler = new AirHandler();
+        airHandler.setManufacturer("Goodman");
+        airHandler.setModel("ARUF24B14");
+        airHandler.setMonth(8);
+        airHandler.setDay(13);
+        airHandler.setYear(2013);
+        airHandler.setLifeSpan(20);
+        airHandler.setUnits("years");
+        return airHandler;
     }
-    private JSONObject initialPlumber() {
-        JSONObject plumber = new JSONObject();
-        try {
-            plumber.put("companyName", "SDR Plumbing & Heating Inc");
-            plumber.put("telephoneNumber", "203.348.2295");
-            plumber.put("websiteUrl", "sdrplumbing.com");
-            plumber.put("profession", "plumber");
-            plumber.put("zipCode", "06903");
-        } catch(JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return plumber;
-    }
-    private JSONObject initialAirHandler() {
-        JSONObject airHandlerJSON = new JSONObject();
-        try {
-            airHandlerJSON.put("manufacturer", "Goodman");
-            airHandlerJSON.put("model", "ARUF24B14");
-            airHandlerJSON.put("month", "08");
-            airHandlerJSON.put("day", "13");
-            airHandlerJSON.put("year", "13");
-            airHandlerJSON.put("lifeSpan", "20");
-            airHandlerJSON.put("units", "years");
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return airHandlerJSON;
-    }
-    private JSONObject initialCompressor() {
-        JSONObject compressorJSON = new JSONObject();
-        try {
-            compressorJSON.put("manufacturer", "Goodman");
-            compressorJSON.put("model", "GSX130361");
-            compressorJSON.put("month", "01");
-            compressorJSON.put("day", "27");
-            compressorJSON.put("year", "14");
-            compressorJSON.put("lifeSpan", "6");
-            compressorJSON.put("units", "years");
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return compressorJSON;
-    }
-    private JSONObject initialHvacTechnician() {
-        JSONObject hvactechnician = new JSONObject();
-        try {
-            hvactechnician.put("companyName", "AireServ");
-            hvactechnician.put("telephoneNumber", "203.348.2295");
-            hvactechnician.put("websiteUrl", "aireserv.com");
-            hvactechnician.put("profession", "hvac");
-            hvactechnician.put("zipCode", "06903");
-        } catch(JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return hvactechnician;
+    private Compressor initialCompressor() {
+        Compressor compressor = new Compressor();
+        compressor.setManufacturer("Goodman");
+        compressor.setModel("GSX130361");
+        compressor.setMonth(1);
+        compressor.setDay(27);
+        compressor.setYear(2014);
+        compressor.setLifeSpan(6);
+        compressor.setUnits("years");
+        return compressor;
     }
     private JSONArray initialExteriorSurfaces() {
         JSONArray exteriorSurfaces = new JSONArray();
@@ -347,18 +313,5 @@ public class TempCustomerData {
             Log.e(TAG, exception.getMessage());
         }
         return interiorSurfaces;
-    }
-    private JSONObject initialPainter() {
-        JSONObject painter = new JSONObject();
-        try {
-            painter.put("companyName", "MDF Painting & Power Washing");
-            painter.put("telephoneNumber", "203.348.2295");
-            painter.put("websiteUrl", "mdfpainting.com");
-            painter.put("profession", "painter");
-            painter.put("zipCode", "06903");
-        } catch(JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return painter;
     }
 }
