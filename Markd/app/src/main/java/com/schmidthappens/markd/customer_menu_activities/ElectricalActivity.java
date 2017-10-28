@@ -60,16 +60,17 @@ public class ElectricalActivity extends AppCompatActivity {
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_electrical_view);
 
+        //TODO: remove session manager
         SessionManager sessionManager = new SessionManager(ElectricalActivity.this);
         sessionManager.checkLogin();
-        new ActionBarInitializer(this, true);
+        new ActionBarInitializer(this, true, "customer"); //TODO: change to get customer from Firebase
 
         //Initialize XML Objects
         electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
         electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
 
         //Initialize Panel List
-        //TODO change to http call for panels
+        //TODO change to get panels from TempCustomerData
         panelData = TempPanelData.getInstance();
         panelList = (ListView)findViewById(R.id.electrical_panel_list);
         View headerView = getLayoutInflater().inflate(R.layout.list_header_panel, panelList, false);
@@ -82,7 +83,7 @@ public class ElectricalActivity extends AppCompatActivity {
         addPanelHyperlink.setOnClickListener(addPanelOnClickListener);
 
         //Set up ElectricalService List
-        //TODO change to http call for electrical services/contractor
+        //TODO change to get electrical services/contractor from TempCustomerData
         TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
         View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), "Conn-West Electric", "/services/electrical");
@@ -109,7 +110,7 @@ public class ElectricalActivity extends AppCompatActivity {
     };
 
     public void deletePanel(int position) {
-        //TODO change to http calls to delete panel
+        //TODO change to delete panel from TempCustomerData
         Log.i(TAG, "Delete Panel " + panelData.getPanel(position).getPanelDescription());
         panelData.deletePanel(position);
         adapter.clear();

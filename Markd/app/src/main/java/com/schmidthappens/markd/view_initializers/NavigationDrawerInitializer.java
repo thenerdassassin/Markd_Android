@@ -17,6 +17,7 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
+import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
 import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
@@ -24,6 +25,7 @@ import com.schmidthappens.markd.customer_menu_activities.LandscapingActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,28 +35,26 @@ import java.util.List;
  */
 
 public class NavigationDrawerInitializer {
-
+    private static final String TAG = "NavigationDrawer";
     private Activity context;
-    //private SessionManager sessionManager;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
     private String[] menuOptions;
     private String[] menuIconStrings;
-    private static final String TAG = "NavigationDrawer";
+    private String userType;
 
-    public NavigationDrawerInitializer(Activity context) {
+    public NavigationDrawerInitializer(Activity context, String userType) {
         this.context = context;
-        //this.sessionManager = new SessionManager(context);
-        this.drawerLayout = (DrawerLayout)context.findViewById(R.id.main_drawer_layout);
-        this.drawerList = (ListView)context.findViewById(R.id.left_drawer);
+        this.drawerLayout = context.findViewById(R.id.main_drawer_layout);
+        this.drawerList = context.findViewById(R.id.left_drawer);
+        this.userType = userType;
         setUp();
     }
 
     private void setUp() {
         setUpDrawerToggle();
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
-        String userType = "customer"; //TODO: change to get from Firebase
         Resources resources = context.getResources();
         if(userType == null) {
             new FirebaseAuthentication(context).signOut(context);
@@ -84,17 +84,17 @@ public class NavigationDrawerInitializer {
     }
 
     private void setUpDrawerToggle() {
-        drawerToggle = new ActionBarDrawerToggle((Activity)context, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+        drawerToggle = new ActionBarDrawerToggle(context, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                ((Activity)context).invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                (context).invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                ((Activity)context).invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                (context).invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         drawerLayout.addDrawerListener(drawerToggle);
@@ -146,6 +146,9 @@ public class NavigationDrawerInitializer {
                 break;
             case "Painting":
                 intentToReturn = new Intent(context, PaintingActivity.class);
+                break;
+            case "Settings":
+                intentToReturn = new Intent(context, SettingsActivity.class);
                 break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);

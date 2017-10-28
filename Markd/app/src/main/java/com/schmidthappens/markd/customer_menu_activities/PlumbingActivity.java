@@ -73,10 +73,14 @@ public class PlumbingActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_plumbing_view);
 
         authentication = new FirebaseAuthentication(this);
-        new ActionBarInitializer(this, true);
+        if(getIntent().hasExtra("isContractor")) {
+            new ActionBarInitializer(this, true, "contractor");
+        } else {
+            new ActionBarInitializer(this, true, "customer");
+        }
 
-        plumbingContractor = findViewById(R.id.plumbing_footer);
-        plumbingServiceList = findViewById(R.id.plumbing_service_list);
+        plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
+        plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
     }
 
     @Override
@@ -106,44 +110,44 @@ public class PlumbingActivity extends AppCompatActivity {
     }
     private void initializeHotWater() {
         hotWater = customerData.getHotWater();
-        hotWaterEditButton = findViewById(R.id.plumbing_hot_water_edit);
+        hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
         hotWaterEditButton.setOnClickListener(hotWaterEditButtonClickListener);
 
         if(hotWater == null) {
             return;
         }
 
-        hotWaterManufacturerView = findViewById(R.id.plumbing_hot_water_manufacturer);
+        hotWaterManufacturerView = (TextView)findViewById(R.id.plumbing_hot_water_manufacturer);
         hotWaterManufacturerView.setText(hotWater.getManufacturer());
 
-        hotWaterModelView = findViewById(R.id.plumbing_hot_water_model);
+        hotWaterModelView = (TextView)findViewById(R.id.plumbing_hot_water_model);
         hotWaterModelView.setText(hotWater.getModel());
 
-        hotWaterInstallDateView = findViewById(R.id.plumbing_hot_water_install_date);
+        hotWaterInstallDateView = (TextView)findViewById(R.id.plumbing_hot_water_install_date);
         hotWaterInstallDateView.setText(hotWater.installDateAsString());
 
-        hotWaterLifeSpanView = findViewById(R.id.plumbing_hot_water_life_span);
+        hotWaterLifeSpanView = (TextView)findViewById(R.id.plumbing_hot_water_life_span);
         hotWaterLifeSpanView.setText(hotWater.lifeSpanAsString());
     }
     private void initializeBoiler() {
         boiler = customerData.getBoiler();
-        boilerEditButton = findViewById(R.id.plumbing_boiler_edit);
+        boilerEditButton = (ImageView)findViewById(R.id.plumbing_boiler_edit);
         boilerEditButton.setOnClickListener(boilerEditButtonClickListener);
 
         if(boiler == null) {
             return;
         }
 
-        boilerManufacturerView = findViewById(R.id.plumbing_boiler_manufacturer);
+        boilerManufacturerView = (TextView)findViewById(R.id.plumbing_boiler_manufacturer);
         boilerManufacturerView.setText(boiler.getManufacturer());
 
-        boilerModelView = findViewById(R.id.plumbing_boiler_model);
+        boilerModelView = (TextView)findViewById(R.id.plumbing_boiler_model);
         boilerModelView.setText(boiler.getModel());
 
-        boilerInstallDateView = findViewById(R.id.plumbing_boiler_install_date);
+        boilerInstallDateView = (TextView)findViewById(R.id.plumbing_boiler_install_date);
         boilerInstallDateView.setText(boiler.installDateAsString());
 
-        boilerLifeSpanView = findViewById(R.id.plumbing_boiler_life_span);
+        boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
         boilerLifeSpanView.setText(boiler.lifeSpanAsString());
     }
     private void initializeContractorServices() {
@@ -155,6 +159,9 @@ public class PlumbingActivity extends AppCompatActivity {
         if(plumber != null) {
             Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo);
             View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
+            plumbingContractor.addView(v);
+        } else {
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
             plumbingContractor.addView(v);
         }
     }

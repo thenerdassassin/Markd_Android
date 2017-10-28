@@ -25,7 +25,7 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String nameSuffix;
-    private MaritalStatus maritalStatus;
+    private String maritalStatus;
     private Address address;
     private Home home;
     private ContractorDetails architect;
@@ -85,10 +85,10 @@ public class Customer {
             this.nameSuffix = nameSuffix;
         }
 
-        public MaritalStatus getMaritalStatus() {
+        public String getMaritalStatus() {
             return maritalStatus;
         }
-        public void setMaritalStatus(MaritalStatus maritalStatus) {
+        public void setMaritalStatus(String maritalStatus) {
             this.maritalStatus = maritalStatus;
         }
         public Home getHome() {
@@ -216,6 +216,13 @@ public class Customer {
         }
 
     //Mark:- Helper functions
+    public void updateProfile(String namePrefix, String firstName, String lastName, String nameSuffix, String maritalStatus) {
+        this.namePrefix = namePrefix;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nameSuffix = nameSuffix;
+        this.maritalStatus = maritalStatus;
+    }
     @Exclude
     public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, nameSuffix, maritalStatus);

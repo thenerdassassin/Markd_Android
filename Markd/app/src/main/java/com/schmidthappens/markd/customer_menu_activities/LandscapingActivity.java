@@ -52,7 +52,7 @@ public class LandscapingActivity extends AppCompatActivity {
         SessionManager sessionManager = new SessionManager(LandscapingActivity.this);
         sessionManager.checkLogin();
 
-        new ActionBarInitializer(this, true);
+        new ActionBarInitializer(this, true, "customer");
 
         //Set Up PaintList
         //TODO change to http call for landscaping history

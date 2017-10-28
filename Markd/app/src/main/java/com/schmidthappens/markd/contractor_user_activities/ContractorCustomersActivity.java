@@ -34,7 +34,7 @@ public class ContractorCustomersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contractor_customers_view);
-        new ActionBarInitializer(this, false);
+        new ActionBarInitializer(this, false, "contractor"); //TODO: change to firebase get usertype
 
         SessionManager sessionManager = new SessionManager(ContractorCustomersActivity.this);
         sessionManager.checkLogin();

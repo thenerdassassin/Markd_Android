@@ -59,7 +59,12 @@ public class PaintingActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_painting_view);
 
         authentication = new FirebaseAuthentication(this);
-        new ActionBarInitializer(this, true);
+
+        if(getIntent().hasExtra("isContractor")) {
+            new ActionBarInitializer(this, true, "contractor");
+        } else {
+            new ActionBarInitializer(this, true, "customer");
+        }
     }
 
 
@@ -89,30 +94,35 @@ public class PaintingActivity extends AppCompatActivity {
     }
     public void initializeButtons() {
         //Initialize Exterior Add Button
-        addExteriorPaintButton = findViewById(R.id.painting_exterior_add_button);
+        addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
         addExteriorPaintButton.setOnClickListener(addExteriorPaintOnClickListener);
 
         //Initialize Interior Add Button
-        addInteriorPaintButton = findViewById(R.id.painting_interior_add_button);
+        addInteriorPaintButton = (ImageView)findViewById(R.id.painting_interior_add_button);
         addInteriorPaintButton.setOnClickListener(addInteriorPaintOnClickListener);
     }
     public void initializePaintLists() {
         //Set Up Exterior PaintList
-        exteriorPaintList = findViewById(R.id.painting_exterior_paint_list);
+        exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
         View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true);
         exteriorPaintList.addView(listOfExteriorPaints);
 
         //Set Up Interior PaintList
-        interiorPaintList = findViewById(R.id.painting_interior_paint_list);
+        interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
         View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false);
         interiorPaintList.addView(listOfInteriorPaints);
     }
     public void initializeFooter() {
-        paintingContractor = findViewById(R.id.painting_footer);
+        paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
         ContractorDetails painter = customerData.getPainter();
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, painter.getCompanyName(), painter.getTelephoneNumber(), painter.getWebsiteUrl());
-        paintingContractor.addView(v);
+        if(painter == null) {
+            View v = ContractorFooterViewInitializer.createFooterView(this);
+            paintingContractor.addView(v);
+        } else {
+            View v = ContractorFooterViewInitializer.createFooterView(this, logo, painter.getCompanyName(), painter.getTelephoneNumber(), painter.getWebsiteUrl());
+            paintingContractor.addView(v);
+        }
     }
 
     // Mark: OnClickListeners

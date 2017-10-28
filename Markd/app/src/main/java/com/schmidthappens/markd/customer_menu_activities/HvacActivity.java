@@ -70,7 +70,11 @@ public class HvacActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_hvac_view);
 
         authentication = new FirebaseAuthentication(this);
-        new ActionBarInitializer(this, true);
+        if(getIntent().hasExtra("isContractor")) {
+            new ActionBarInitializer(this, true, "contractor");
+        } else {
+            new ActionBarInitializer(this, true, "customer");
+        }
     }
     @Override
     public void onStart() {
@@ -142,11 +146,16 @@ public class HvacActivity extends AppCompatActivity {
         hvacServiceList.addView(serviceListView);
     }
     private void initializeFooter() {
-        hvacContractor = findViewById(R.id.hvac_footer);
+        hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
         ContractorDetails hvacTechnician = customerData.getHvacTechnician();
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
-        hvacContractor.addView(v);
+        if(hvacTechnician == null) {
+            View v = ContractorFooterViewInitializer.createFooterView(this);
+            hvacContractor.addView(v);
+        } else {
+            View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
+            hvacContractor.addView(v);
+        }
     }
 
     // Mark: OnClickListener

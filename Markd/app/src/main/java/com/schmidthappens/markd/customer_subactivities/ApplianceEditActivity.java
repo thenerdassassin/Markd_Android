@@ -61,7 +61,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
         setContentView(R.layout.edit_view_plumbing);
 
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication, null); //TODO: add listener
+        customerData = new TempCustomerData(authentication, null);
 
         Intent intent = getIntent();
 
@@ -100,9 +100,8 @@ public class ApplianceEditActivity extends AppCompatActivity {
 
         lifeSpanUnits = (NumberPicker)findViewById(R.id.plumbing_edit_life_span_units);
         lifeSpanUnits.setMinValue(0);
-        lifeSpanUnits.setMaxValue(2);
+        lifeSpanUnits.setMaxValue(unitsArray.length-1);
         setKeyboardDismissal(lifeSpanUnits);
-
         lifeSpanUnits.setDisplayedValues(unitsArray);
 
         if(intent != null && intent.hasExtra("units")) {

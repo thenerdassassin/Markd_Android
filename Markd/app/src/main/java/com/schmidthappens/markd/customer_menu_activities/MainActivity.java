@@ -63,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_home_view);
 
         authentication = new FirebaseAuthentication(this);
-        new ActionBarInitializer(this, true);
+        new ActionBarInitializer(this, true, "customer");
 
-        homeFrame = findViewById(R.id.home_frame);
-        homeImage = findViewById(R.id.home_image);
-        homeImagePlaceholder = findViewById(R.id.home_image_placeholder);
-        preparedFor = findViewById(R.id.prepared_for);
+        homeFrame = (FrameLayout)findViewById(R.id.home_frame);
+        homeImage = (ImageView)findViewById(R.id.home_image);
+        homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
+        preparedFor = (TextView)findViewById(R.id.prepared_for);
     }
 
     @Override

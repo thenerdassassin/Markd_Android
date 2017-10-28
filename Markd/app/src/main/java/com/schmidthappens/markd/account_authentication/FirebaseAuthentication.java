@@ -1,18 +1,22 @@
 package com.schmidthappens.markd.account_authentication;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 
 /**
  * Created by joshua.schmidtibm.com on 10/7/17.
@@ -28,14 +32,14 @@ public class FirebaseAuthentication {
     private FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
         @Override
         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
+            currentUser = firebaseAuth.getCurrentUser();
+            if (currentUser != null) {
                 // User is signed in
-                Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                Log.d(TAG, "onAuthStateChanged:signed_in:" + currentUser.getUid());
             } else {
                 // User is signed out
                 Log.d(TAG, "onAuthStateChanged:signed_out");
-                if(!(activity instanceof LoginActivity) && activity != null) {
+                if(!(activity instanceof LoginActivity || activity instanceof ProfileEditActivity) && activity != null) {
                     Intent intent = new Intent(activity, LoginActivity.class);
                     activity.startActivity(intent);
                     activity.finish();
@@ -53,10 +57,11 @@ public class FirebaseAuthentication {
     }
 
     public FirebaseUser getCurrentUser() {
-        setCurrentUser();
+        if(currentUser == null) {
+            setCurrentUser();
+        }
         return currentUser;
     }
-
     private void setCurrentUser() {
         currentUser = firebaseAuth.getCurrentUser();
     }
@@ -64,7 +69,6 @@ public class FirebaseAuthentication {
     private void attachListener() {
         firebaseAuth.addAuthStateListener(authStateListener);
     }
-
     public void detachListener() {
         firebaseAuth.removeAuthStateListener(authStateListener);
     }
@@ -74,6 +78,11 @@ public class FirebaseAuthentication {
     public boolean checkLogin() {
         currentUser = firebaseAuth.getCurrentUser();
         return (currentUser != null);
+    }
+
+    public AuthCredential getAuthCredential(String email, String password) {
+        return EmailAuthProvider.getCredential(email, password);
+
     }
 
     @NonNull

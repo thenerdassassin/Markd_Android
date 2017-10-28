@@ -99,7 +99,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".electrical_subactivities.ViewPanelActivity" />
         </activity>
+
         <activity android:name=".view_initializers.ServiceDetailActivity" />
+
+        <!-- Settings -->
+        <activity android:name=".customer_menu_activities.SettingsActivity"
+            android:value=".customer_menu_activities.SettingsActivity" />
+        <activity android:name=".customer_subactivities.ProfileEditActivity"
+                android:value=".customer_subactivities.ProfileEditActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".customer_menu_activities.SettingsActivity"/>
+        </activity>
 
      <!-- Contractor Pages -->
         <activity

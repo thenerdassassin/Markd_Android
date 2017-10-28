@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 
@@ -17,18 +18,16 @@ import com.schmidthappens.markd.R;
  */
 
 public class ContractorFooterViewInitializer {
-
-
     public static View createFooterView(final Context ctx, Drawable logo, String contractor, String phone, final String websiteUrl) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
         View v = vi.inflate(R.layout.view_footer, null);
 
         //Initialize XML Objects
-        ImageView footerLogo = (ImageView)v.findViewById(R.id.footer_logo);
-        TextView contractorName = (TextView)v.findViewById(R.id.footer_contractor_name);
-        TextView phoneNumber = (TextView)v.findViewById(R.id.footer_phone_number);
-        TextView website = (TextView)v.findViewById(R.id.footer_website);
+        ImageView footerLogo = v.findViewById(R.id.footer_logo);
+        TextView contractorName = v.findViewById(R.id.footer_contractor_name);
+        TextView phoneNumber = v.findViewById(R.id.footer_phone_number);
+        TextView website = v.findViewById(R.id.footer_website);
 
         footerLogo.setImageDrawable(logo);
         contractorName.setText(contractor);
@@ -50,4 +49,15 @@ public class ContractorFooterViewInitializer {
         return v;
     }
 
+    public static View createFooterView(final Context ctx) {
+        LayoutInflater inflater = LayoutInflater.from(ctx);
+        View v = inflater.inflate(R.layout.view_default_footer, null);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ctx, "Add Contractor Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        return v;
+    }
 }

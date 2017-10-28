@@ -1,6 +1,5 @@
 package com.schmidthappens.markd.account_authentication;
 
-import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -12,7 +11,6 @@ import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -38,8 +36,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
+import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.splash_page_view);
+        setContentView(R.layout.login_or_register);
 
         setUpActionBar();
 
@@ -81,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView = (AutoCompleteTextView)findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = (EditText)findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -93,11 +91,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button)findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+
+        Button mCreateAccountButton = (Button)findViewById(R.id.create_account);
+        mCreateAccountButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createAccount();
             }
         });
 
@@ -208,9 +214,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    private void createAccount() {
+        Intent createAccountActivity = new Intent(this, ProfileEditActivity.class);
+        startActivity(createAccountActivity);
+    }
+
     //Mark:- Firebase Authentication methods
     private void attemptSignIn(final Activity activity, final String email, final String password) {
-        Log.d(TAG, "signing in...");
         authentication.signIn(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -221,27 +231,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     startActivity(goToMainActivity);
                     finish();
                 } else {
-                    Log.d(TAG, "Attempting to create account");
-                    attemptCreateAccount(activity, email, password);
-                }
-            }
-        });
-        Log.d(TAG, "waiting on On complete");
-    }
-
-    private void attemptCreateAccount(final Activity activity, String email, String password) {
-        authentication.createAccount(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                showProgress(false);
-                if(task.isSuccessful()) {
-                    //TODO: New Account Set Up Activity
-                    Log.d(TAG, "Create account success");
-                    Intent goToMainActivity = new Intent(activity, MainActivity.class);
-                    startActivity(goToMainActivity);
-                    finish();
-                } else {
-                    Log.d(TAG, "Could not create account");
+                    Log.d(TAG, "Sign in failed");
                     Toast.makeText(activity, "Unable to log in.", Toast.LENGTH_SHORT).show();
                 }
             }

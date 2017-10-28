@@ -85,12 +85,13 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
         }
 
         private void goToCustomerPage() {
-            SessionManager sessionManager = new SessionManager(ctx);
-            String userType = sessionManager.getUserType();
-            Context activityContext = ctx;
-            Class contractorClass = getContractorActivityType(userType);
-            Intent goToCustomerPage = new Intent(activityContext, contractorClass);
-            ctx.startActivity(goToCustomerPage);
+            //TODO: implement go to customer page
+            //SessionManager sessionManager = new SessionManager(ctx);
+            //String userType = sessionManager.getUserType();
+            //Context activityContext = ctx;
+            //Class contractorClass = getContractorActivityType(userType);
+            //Intent goToCustomerPage = new Intent(activityContext, contractorClass);
+            //ctx.startActivity(goToCustomerPage);
         }
 
         private Class getContractorActivityType(String userType) {

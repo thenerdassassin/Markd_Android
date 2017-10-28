@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
@@ -47,6 +49,7 @@ import java.util.List;
 
 public class ContractorMainActivity extends AppCompatActivity {
     private final static String TAG = "ContractorMainActivity";
+    FirebaseAuthentication authentication;
 
     private FrameLayout logoFrame;
     private ImageView logoImage;
@@ -59,18 +62,15 @@ public class ContractorMainActivity extends AppCompatActivity {
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "contractor_logo.jpg";
-    ContractorDetails contractor = TempContractorData.getInstance().getContractorDetails();
+    ContractorDetails contractor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contractor_main_view);
 
-        SessionManager sessionManager = new SessionManager(ContractorMainActivity.this);
-        sessionManager.checkLogin();
-
-        //Set up ActionBar
-        new ActionBarInitializer(this, false, editCompanyOnClickListener);
+        authentication = new FirebaseAuthentication(this);
+        new ActionBarInitializer(this, false, "contractor", editCompanyOnClickListener);
 
         logoFrame = (FrameLayout)findViewById(R.id.contractor_logo_frame);
         logoImage = (ImageView)findViewById(R.id.contractor_logo);
@@ -80,8 +80,20 @@ public class ContractorMainActivity extends AppCompatActivity {
         companyTelephone = (TextView)findViewById(R.id.contractor_telephone_text);
         companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
         companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
-        initializeTextViews(contractor);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        contractor = TempContractorData.getInstance().getContractorDetails();
+        initializeTextViews(contractor);
         //TODO change to only set as "0" if no image available from http call
         if(getLogoImageFile().exists()) {
             setPhoto(getLogoImageUri());
@@ -93,6 +105,12 @@ public class ContractorMainActivity extends AppCompatActivity {
         }
         logoFrame.setOnClickListener(photoClick);
         logoFrame.setOnLongClickListener(photoLongClick);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
     }
 
     //Mark:- Photo Functions

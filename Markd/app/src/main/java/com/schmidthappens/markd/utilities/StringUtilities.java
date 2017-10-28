@@ -70,13 +70,13 @@ public class StringUtilities {
         return Integer.parseInt(dotFormmatedString.substring(dotFormmatedString.lastIndexOf(".")+1));
     }
 
-    public static String getFormattedName(String prefix, String first, String last, String suffix, Customer.MaritalStatus maritalStatus) {
+    public static String getFormattedName(String prefix, String first, String last, String suffix, String maritalStatus) {
         StringBuilder builder = new StringBuilder();
         if(isNotNullOrEmpty(prefix)) {
             builder.append(prefix).append(" ");
         }
 
-        if(maritalStatus != null && maritalStatus.equals(Customer.MaritalStatus.MARRIED) && isNotNullOrEmpty(prefix)) {
+        if(maritalStatus != null && maritalStatus.equals("Married") && isNotNullOrEmpty(prefix)) {
             builder.append("and Mrs. ");
         } else {
             if(isNotNullOrEmpty(first)) {
@@ -98,7 +98,7 @@ public class StringUtilities {
         return builder.toString();
     }
 
-    private static boolean isNullOrEmpty(String string) {
+    public static boolean isNullOrEmpty(String string) {
         return (string == null || string.isEmpty());
     }
 

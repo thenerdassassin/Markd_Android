@@ -24,18 +24,18 @@ public class ActionBarInitializer {
     private Boolean isCustomerPage;
     private View.OnClickListener onEditButtonClick;
 
-    public ActionBarInitializer(AppCompatActivity ctx, Boolean isCustomerPage, View.OnClickListener onEditButtonClick) {
+    public ActionBarInitializer(AppCompatActivity ctx, Boolean isCustomerPage, String userType, View.OnClickListener onEditButtonClick) {
         this.context = ctx;
         this.actionBar = context.getSupportActionBar();
         this.drawerLayout = (DrawerLayout)context.findViewById(R.id.main_drawer_layout);
-        userType = "customer"; //TODO: change to get from Firebase
+        this.userType = userType;
         this.isCustomerPage = isCustomerPage;
         this.onEditButtonClick = onEditButtonClick;
         setTopBar();
     }
 
-    public ActionBarInitializer(AppCompatActivity ctx, Boolean isCustomerPage) {
-        this(ctx, isCustomerPage, null);
+    public ActionBarInitializer(AppCompatActivity ctx, Boolean isCustomerPage, String userType) {
+        this(ctx, isCustomerPage, userType, null);
     }
 
     // Mark: SetUp Function
@@ -44,7 +44,7 @@ public class ActionBarInitializer {
             setUpBackButton();
         } else {
             setUpActionBar();
-            new NavigationDrawerInitializer(context);
+            new NavigationDrawerInitializer(context, userType);
         }
     }
     private void setUpActionBar() {
