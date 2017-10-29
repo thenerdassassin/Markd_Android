@@ -14,17 +14,17 @@ import org.json.JSONObject;
 @IgnoreExtraProperties
 public class Home {
     private Double bedrooms;
-    private Double squareFootage;
+    private Integer squareFootage;
     private Double bathrooms;
 
     public Home() {
         // Default constructor required for calls to DataSnapshot.getValue(Home.class)
     }
 
-    public Home(Double bedrooms, Double squareFootage, Double bathrooms) {
+    public Home(Double bedrooms, Double bathrooms, Integer squareFootage) {
         this.bedrooms = bedrooms;
-        this.squareFootage = squareFootage;
         this.bathrooms = bathrooms;
+        this.squareFootage = squareFootage;
     }
 
     public Double getBedrooms() {
@@ -34,17 +34,18 @@ public class Home {
         this.bedrooms = bedrooms;
     }
 
-    public Double getSquareFootage() {
-        return squareFootage;
-    }
-    public void setSquareFootage(Double squareFootage) {
-        this.squareFootage = squareFootage;
-    }
-
     public Double getBathrooms() {
         return bathrooms;
     }
     public void setBathrooms(Double bathrooms) {
         this.bathrooms = bathrooms;
     }
+
+    public Integer getSquareFootage() {
+        return squareFootage;
+    }
+    public void setSquareFootage(Integer squareFootage) {
+        this.squareFootage = squareFootage;
+    }
+
 }

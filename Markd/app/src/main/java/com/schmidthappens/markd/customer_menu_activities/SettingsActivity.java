@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
@@ -72,7 +73,8 @@ public class SettingsActivity extends AppCompatActivity {
         edit_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(SettingsActivity.this, "Edit Home Stats", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Start HomeEditActivity");
+                startActivity(createEditHomeIntent());
             }
         });
     }
@@ -89,5 +91,19 @@ public class SettingsActivity extends AppCompatActivity {
         intentToStartProfileEditActivity.putExtra("nameSuffix", customerData.getNameSuffix());
         intentToStartProfileEditActivity.putExtra("maritalStatus", customerData.getMaritalStatus());
         return intentToStartProfileEditActivity;
+    }
+    private Intent createEditHomeIntent() {
+        Context context = SettingsActivity.this;
+        Class destinationClass = HomeEditActivity.class;
+        Intent intentToStartHomeEditActivity = new Intent(context, destinationClass);
+
+        intentToStartHomeEditActivity.putExtra("street", customerData.getStreet());
+        intentToStartHomeEditActivity.putExtra("city", customerData.getCity());
+        intentToStartHomeEditActivity.putExtra("state", customerData.getState());
+        intentToStartHomeEditActivity.putExtra("zipcode", customerData.getZipcode());
+        intentToStartHomeEditActivity.putExtra("bedrooms", customerData.getBedrooms());
+        intentToStartHomeEditActivity.putExtra("bathrooms", customerData.getBathrooms());
+        intentToStartHomeEditActivity.putExtra("squareFootage", customerData.getSquareFootage());
+        return intentToStartHomeEditActivity;
     }
 }

@@ -56,6 +56,7 @@ public class PaintEditActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         customerData = new TempCustomerData(authentication, null); //TODO: add listener
 
+        setTitle("Edit Paint Surface");
         Intent intent = getIntent();
 
         if(intent != null) {

@@ -75,7 +75,7 @@ public class TempCustomerData {
         customer.setLastName("Schmidt");
         customer.setMaritalStatus("Married");
         customer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
-        customer.setHome(new Home(5.0, 1350.0, 2.5));
+        customer.setHome(new Home(5.0, 1350.0, 1250));
         customer.setArchitect(new ContractorDetails("", "", "", "", "architect"));
         customer.setArchitect(new ContractorDetails("", "", "", "", "builder"));
 
@@ -111,6 +111,43 @@ public class TempCustomerData {
             return "";
         }
         return customer.getName();
+    }
+    public String getFormattedAddress() {
+        return getStreet() + "\n" + getCity() + ", " + getState() + " " + getZipcode();
+    }
+    public String getHomeInformation() {
+        StringBuilder builder = new StringBuilder();
+        String middot = "\u2022";
+
+        Home home = getCustomer().getHome();
+        Double bedrooms = home.getBedrooms();
+        Double bathrooms = home.getBathrooms();
+        Integer squareFootage = home.getSquareFootage();
+
+        if(bedrooms % 1 == 0) {
+            builder.append(bedrooms.intValue());
+        } else {
+            builder.append(bedrooms);
+        }
+        if(bedrooms.equals((Double)1.0)) {
+            builder.append(" bedroom ");
+        } else {
+            builder.append(" bedrooms ");
+        }
+        builder.append(middot).append(" ");
+        if(bathrooms % 1 == 0) {
+            builder.append(bathrooms.intValue());
+        } else {
+            builder.append(bathrooms);
+        }
+        if(bathrooms.equals((Double)1.0)) {
+            builder.append(" bathroom ");
+        } else {
+            builder.append(" bathrooms ");
+        }
+        builder.append(middot).append(" ").append(squareFootage).append(" sq ft");
+
+        return builder.toString();
     }
 
     //Mark:- Plumbing
@@ -199,13 +236,44 @@ public class TempCustomerData {
         return getCustomer().getMaritalStatus();
     }
     public void updateProfile(String namePrefix, String firstName, String lastName, String nameSuffix, String maritalStatus) {
-        Customer customer = getCustomer();
         if(customer == null) {
+            Log.e(TAG, "customer null");
             customer = new Customer();
         }
         customer.updateProfile(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
         putCustomer(customer);
     }
+
+    public String getStreet() {
+        return getCustomer().getAddress().getStreet();
+    }
+    public String getCity() {
+        return getCustomer().getAddress().getCity();
+    }
+    public String getState() {
+        return getCustomer().getAddress().getState();
+    }
+    public String getZipcode() {
+        return getCustomer().getAddress().getZipCode();
+    }
+    public String getBedrooms() {
+        return getCustomer().getHome().getBedrooms().toString();
+    }
+    public String getBathrooms() {
+        return getCustomer().getHome().getBathrooms().toString();
+    }
+    public String getSquareFootage() {
+        return getCustomer().getHome().getSquareFootage().toString();
+    }
+    public void updateHome(String street, String city, String state, String zipcode, Double bedrooms, Double bathrooms, Integer squareFootage) {
+        if(customer == null) {
+            Log.e(TAG, "customer null");
+            customer = new Customer();
+        }
+        customer.updateHome(street, city, state, zipcode, bedrooms, bathrooms, squareFootage);
+        putCustomer(customer);
+    }
+
    //TODO: Delete when http calls are here
     //Remove when database is implemented
     private HotWater initialHotWater() {

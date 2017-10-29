@@ -223,6 +223,11 @@ public class Customer {
         this.nameSuffix = nameSuffix;
         this.maritalStatus = maritalStatus;
     }
+    public void updateHome(String street, String city, String state, String zipcode, Double bedrooms, Double bathrooms, Integer squareFootage) {
+        this.address = new Address(street, city, state, zipcode);
+        this.home = new Home(bedrooms, bathrooms, squareFootage);
+    }
+
     @Exclude
     public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
@@ -254,24 +259,5 @@ public class Customer {
     }
     public void deleteInteriorPaintSurface(int paintId) {
         interiorPaintSurfaces.remove(paintId);
-    }
-    //Mark:- enums
-    public enum MaritalStatus {
-        MARRIED("MARRIED"),
-        SINGLE("SINGLE");
-
-        private String value;
-        MaritalStatus(String value) {
-            this.value = value;
-        }
-
-        public static MaritalStatus fromString(String value) {
-            for(MaritalStatus status: values()) {
-                if(value.toUpperCase().equals(status.value)) {
-                    return status;
-                }
-            }
-            return SINGLE;
-        }
     }
 }

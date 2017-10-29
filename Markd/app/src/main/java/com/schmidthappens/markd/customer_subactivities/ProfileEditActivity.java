@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -57,10 +58,8 @@ public class ProfileEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_profile);
-
         authentication = new FirebaseAuthentication(this);
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -76,7 +75,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         processIntent(getIntent());
         email.requestFocus();
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -93,6 +91,25 @@ public class ProfileEditActivity extends AppCompatActivity {
         ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
         menuButton.setClickable(false);
         menuButton.setVisibility(View.GONE);
+        ImageView nextButton = (ImageView)findViewById(R.id.edit_mode);
+        if(isNewAccount) {
+            nextButton.setVisibility(View.VISIBLE);
+            nextButton.setClickable(true);
+            nextButton.setImageDrawable(ContextCompat.getDrawable(ProfileEditActivity.this, R.drawable.ic_action_next));
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(password.getText().toString().equals(confirmPassword.getText().toString())) {
+                        attemptCreateAccount(ProfileEditActivity.this, email.getText().toString(), password.getText().toString());
+                    } else {
+                        Toast.makeText(ProfileEditActivity.this, "Passwords don't match", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } else {
+            nextButton.setClickable(false);
+            nextButton.setVisibility(View.GONE);
+        }
     }
     private void initializeXMLObjects() {
         email = (EditText)findViewById(R.id.profile_edit_email);
@@ -122,9 +139,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         maritalStatusPicker.setMinValue(0);
         maritalStatusPicker.setMaxValue(maritalStatusArray.length-1);
         maritalStatusPicker.setDisplayedValues(maritalStatusArray);
-
         saveButton = (Button)findViewById(R.id.profile_edit_save_button);
-        saveButton.setOnClickListener(saveButtonClickListener);
+        if(isNewAccount) {
+            saveButton.setVisibility(View.GONE);
+        } else {
+            saveButton.setVisibility(View.VISIBLE);
+            saveButton.setOnClickListener(saveButtonClickListener);
+        }
     }
     private void processIntent(Intent intent) {
         if(intent != null) {
@@ -161,6 +182,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             if(!isNewAccount) {
+                //TODO: always new account
                 FirebaseUser user = authentication.getCurrentUser();
                 String password = confirmPassword.getText().toString();
                 if(password.isEmpty()) {
@@ -169,12 +191,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                 }
                 AuthCredential credential = authentication.getAuthCredential(user.getEmail(), password);
                 checkCredential(user, credential);
-            } else {
-                if(password.getText().toString().equals(confirmPassword.getText().toString())) {
-                    attemptCreateAccount(ProfileEditActivity.this, email.getText().toString(), password.getText().toString());
-                } else {
-                    Toast.makeText(ProfileEditActivity.this, "Passwords don't match", Toast.LENGTH_SHORT).show();
-                }
             }
         }
     };
@@ -228,9 +244,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         });
     }
     private void updateEmail(FirebaseUser user) {
-        //TODO: save changes
-        //https://firebase.google.com/docs/auth/android/manage-users
-
         user.updateEmail(email.getText().toString())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -242,7 +255,9 @@ public class ProfileEditActivity extends AppCompatActivity {
                 });
     }
     private void saveProfile() {
-        TempCustomerData customerData = new TempCustomerData(authentication, null);
+        if(customerData == null) {
+            customerData = new TempCustomerData(authentication, null);
+        }
         customerData.updateProfile(
                 namePrefixArray[namePrefixPicker.getValue()],
                 firstName.getText().toString(),
@@ -252,8 +267,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         );
     }
     private void closeActivity() {
-        Intent goToMainActivity = new Intent(ProfileEditActivity.this, MainActivity.class);
-        startActivity(goToMainActivity);
+        Intent goToNextActivity;
+        if(isNewAccount) {
+            goToNextActivity = new Intent(ProfileEditActivity.this, HomeEditActivity.class);
+        } else {
+            goToNextActivity = new Intent(ProfileEditActivity.this, MainActivity.class);
+        }
+        startActivity(goToNextActivity);
         finish();
     }
 

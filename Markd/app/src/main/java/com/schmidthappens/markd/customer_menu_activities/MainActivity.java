@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView homeImage;
     private ImageView homeImagePlaceholder;
     private TextView preparedFor;
+    private TextView homeAddress;
+    private TextView homeInformation;
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "main_photo.jpg";
@@ -69,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         homeImage = (ImageView)findViewById(R.id.home_image);
         homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
         preparedFor = (TextView)findViewById(R.id.prepared_for);
+        homeAddress = (TextView)findViewById(R.id.home_address);
+        homeInformation = (TextView)findViewById(R.id.home_information);
     }
 
     @Override
@@ -259,6 +263,9 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         String preparedForString = "Prepared for " + customerData.getName();
         preparedFor.setText(preparedForString);
+        homeAddress.setText(customerData.getFormattedAddress());
+        homeInformation.setText(customerData.getHomeInformation());
+
     }
 
     private class MainGetDataListener implements OnGetDataListener {
