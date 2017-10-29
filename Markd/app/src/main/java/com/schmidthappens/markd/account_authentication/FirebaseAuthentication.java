@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -118,6 +119,25 @@ public class FirebaseAuthentication {
                         }
                     }
                 });
+    }
+    public void sendPasswordResetEmail(final Activity activity, final String email) {
+        if(email == null) {
+            Log.e(TAG, "Current user email is null");
+            Toast.makeText(activity, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+        } else {
+            firebaseAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "Email sent.");
+                                Toast.makeText(activity, "Sent email to change password.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(activity, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
     }
 
     public void signOut(Activity ctx) {

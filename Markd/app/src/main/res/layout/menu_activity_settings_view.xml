@@ -68,7 +68,35 @@
                     android:textStyle="bold"
                     android:typeface="monospace"
                     android:layout_below="@+id/edit_home_main"
-                    android:text="Change number of bedrooms, bathrooms, address, etc."/>
+                    android:text="Change address, bedrooms, bathrooms, etc."/>
+            </RelativeLayout>
+
+            <!-- Reset Password -->
+            <RelativeLayout
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/edit_password_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="Reset Password"/>
+                <TextView
+                    android:id="@+id/edit_password_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPanel"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:layout_below="@+id/edit_password_main"
+                    android:text="An email will be sent to change password."/>
             </RelativeLayout>
 
 
