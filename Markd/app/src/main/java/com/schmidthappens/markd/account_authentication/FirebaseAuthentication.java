@@ -131,7 +131,6 @@ public class FirebaseAuthentication {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "Email sent.");
-                                Toast.makeText(activity, "Sent email to change password.", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(activity, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
                             }

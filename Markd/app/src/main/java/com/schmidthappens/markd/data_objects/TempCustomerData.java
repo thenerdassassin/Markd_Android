@@ -113,9 +113,15 @@ public class TempCustomerData {
         return customer.getName();
     }
     public String getFormattedAddress() {
+        if(customer.getHome() == null) {
+            return null;
+        }
         return getStreet() + "\n" + getCity() + ", " + getState() + " " + getZipcode();
     }
     public String getHomeInformation() {
+        if(customer.getHome() == null) {
+            return null;
+        }
         StringBuilder builder = new StringBuilder();
         String middot = "\u2022";
 

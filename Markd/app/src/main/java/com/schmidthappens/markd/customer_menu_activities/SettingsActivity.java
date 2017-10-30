@@ -1,6 +1,8 @@
 package com.schmidthappens.markd.customer_menu_activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -86,8 +88,21 @@ public class SettingsActivity extends AppCompatActivity {
         edit_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Send Password Reset");
-                authentication.sendPasswordResetEmail(SettingsActivity.this, authentication.getCurrentUser().getEmail());
+                Log.i(TAG, "Send Password Reset");(new AlertDialog.Builder(SettingsActivity.this)
+                        .setMessage(R.string.password_email_dialog_message)
+                        .setTitle(R.string.password_email_dialog_title)
+                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                                authentication.sendPasswordResetEmail(SettingsActivity.this, authentication.getCurrentUser().getEmail());
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        })
+                        .create())
+                        .show();
             }
         });
     }

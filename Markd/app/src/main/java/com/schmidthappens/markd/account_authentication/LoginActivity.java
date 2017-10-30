@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
@@ -37,6 +39,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
+import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 
 import java.util.ArrayList;
@@ -66,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView mForgotPasswordView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +108,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 createAccount();
+            }
+        });
+
+        TextView mForgotPasswordView = (TextView)findViewById(R.id.forgot_password);
+        mForgotPasswordView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                final String email = mEmailView.getText().toString();
+                if (!isEmailValid(email)) {
+                    mEmailView.setError(getString(R.string.error_field_required));
+                    mEmailView.requestFocus();
+                } else {
+                    (new AlertDialog.Builder(LoginActivity.this)
+                            .setMessage("An email will be sent shortly to " + email + ".")
+                            .setTitle(R.string.password_email_dialog_title)
+                            .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User clicked OK button
+                                    authentication.sendPasswordResetEmail(LoginActivity.this, email);
+                                }
+                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            })
+                            .create())
+                            .show();
+                }
             }
         });
 

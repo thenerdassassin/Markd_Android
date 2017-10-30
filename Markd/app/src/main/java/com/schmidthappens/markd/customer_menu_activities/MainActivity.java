@@ -30,6 +30,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
@@ -263,9 +264,22 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         String preparedForString = "Prepared for " + customerData.getName();
         preparedFor.setText(preparedForString);
-        homeAddress.setText(customerData.getFormattedAddress());
-        homeInformation.setText(customerData.getHomeInformation());
+        if(customerData.getFormattedAddress() == null) {
+            Log.d(TAG, "Home information was null");
+            startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
+            return;
+        } else {
 
+            homeAddress.setText(customerData.getFormattedAddress());
+        }
+        String homeInformationString = customerData.getHomeInformation();
+        if(homeInformationString == null) {
+            Log.d(TAG, "Home information was null");
+            startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
+            return;
+        } else {
+            homeInformation.setText(homeInformationString);
+        }
     }
 
     private class MainGetDataListener implements OnGetDataListener {

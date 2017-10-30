@@ -60,7 +60,16 @@
                     android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
-
+            <TextView
+                android:id="@+id/forgot_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="end"
+                android:textColor="@color/hyperlink"
+                android:textSize="16sp"
+                android:text="@string/action_forgot_password"/>
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
