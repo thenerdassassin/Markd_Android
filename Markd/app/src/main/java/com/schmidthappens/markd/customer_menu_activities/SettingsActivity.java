@@ -116,7 +116,6 @@ public class SettingsActivity extends AppCompatActivity {
         intentToStartProfileEditActivity.putExtra("namePrefix", customerData.getNamePrefix());
         intentToStartProfileEditActivity.putExtra("firstName", customerData.getFirstName());
         intentToStartProfileEditActivity.putExtra("lastName", customerData.getLastName());
-        intentToStartProfileEditActivity.putExtra("nameSuffix", customerData.getNameSuffix());
         intentToStartProfileEditActivity.putExtra("maritalStatus", customerData.getMaritalStatus());
         return intentToStartProfileEditActivity;
     }

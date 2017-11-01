@@ -235,18 +235,15 @@ public class TempCustomerData {
     public String getLastName() {
         return getCustomer().getLastName();
     }
-    public String getNameSuffix() {
-        return getCustomer().getNameSuffix();
-    }
     public String getMaritalStatus() {
         return getCustomer().getMaritalStatus();
     }
-    public void updateProfile(String namePrefix, String firstName, String lastName, String nameSuffix, String maritalStatus) {
+    public void updateProfile(String namePrefix, String firstName, String lastName, String maritalStatus) {
         if(customer == null) {
             Log.e(TAG, "customer null");
             customer = new Customer();
         }
-        customer.updateProfile(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
+        customer.updateProfile(namePrefix, firstName, lastName, maritalStatus);
         putCustomer(customer);
     }
 

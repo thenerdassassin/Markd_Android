@@ -24,13 +24,12 @@ public class Customer {
     private String namePrefix;
     private String firstName;
     private String lastName;
-    private String nameSuffix;
     private String maritalStatus;
     private Address address;
     private Home home;
     private ContractorDetails architect;
     private ContractorDetails builder;
-    private ContractorDetails realtor;
+    private String realtor;
 
     //For Plumbing Page
     private HotWater hotWater;
@@ -78,12 +77,6 @@ public class Customer {
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
-        public String getNameSuffix() {
-            return nameSuffix;
-        }
-        public void setNameSuffix(String nameSuffix) {
-            this.nameSuffix = nameSuffix;
-        }
 
         public String getMaritalStatus() {
             return maritalStatus;
@@ -116,10 +109,10 @@ public class Customer {
         public void setBuilder(ContractorDetails builder) {
             this.builder = builder;
         }
-        public ContractorDetails getRealtor() {
+        public String getRealtor() {
             return realtor;
         }
-        public void setRealtor(ContractorDetails realtor) {
+        public void setRealtor(String realtor) {
             this.realtor = realtor;
         }
 
@@ -216,11 +209,10 @@ public class Customer {
         }
 
     //Mark:- Helper functions
-    public void updateProfile(String namePrefix, String firstName, String lastName, String nameSuffix, String maritalStatus) {
+    public void updateProfile(String namePrefix, String firstName, String lastName, String maritalStatus) {
         this.namePrefix = namePrefix;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.nameSuffix = nameSuffix;
         this.maritalStatus = maritalStatus;
     }
     public void updateHome(String street, String city, String state, String zipcode, Double bedrooms, Double bathrooms, Integer squareFootage) {
@@ -230,7 +222,7 @@ public class Customer {
 
     @Exclude
     public String getName() {
-        return StringUtilities.getFormattedName(namePrefix, firstName, lastName, nameSuffix, maritalStatus);
+        return StringUtilities.getFormattedName(namePrefix, firstName, lastName, maritalStatus);
     }
     @Exclude
     public void setExteriorPaintSurface(int paintId, PaintSurface surface) {

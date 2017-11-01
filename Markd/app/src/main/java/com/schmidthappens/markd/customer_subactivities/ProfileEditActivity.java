@@ -48,7 +48,6 @@ public class ProfileEditActivity extends AppCompatActivity {
     NumberPicker namePrefixPicker;
     EditText firstName;
     EditText lastName;
-    NumberPicker nameSuffixPicker;
     NumberPicker maritalStatusPicker;
     Button saveButton;
 
@@ -130,11 +129,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         firstName = (EditText)findViewById(R.id.profile_edit_first_name);
         lastName = (EditText)findViewById(R.id.profile_edit_last_name);
 
-        nameSuffixPicker = (NumberPicker)findViewById(R.id.profile_edit_name_suffix);
-        nameSuffixPicker.setMinValue(0);
-        nameSuffixPicker.setMaxValue(nameSuffixArray.length-1);
-        nameSuffixPicker.setDisplayedValues(nameSuffixArray);
-
         maritalStatusPicker = (NumberPicker)findViewById(R.id.profile_edit_marital_status);
         maritalStatusPicker.setMinValue(0);
         maritalStatusPicker.setMaxValue(maritalStatusArray.length-1);
@@ -162,9 +156,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                 }
                 if(intent.hasExtra("lastName")) {
                     lastName.setText(intent.getStringExtra("lastName"));
-                }
-                if(intent.hasExtra("nameSuffix")) {
-                    setPicker(nameSuffixPicker, intent.getStringExtra("nameSuffix"), nameSuffixArray);
                 }
                 if(intent.hasExtra("maritalStatus")) {
                     setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray);
@@ -262,7 +253,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                 namePrefixArray[namePrefixPicker.getValue()],
                 firstName.getText().toString(),
                 lastName.getText().toString(),
-                nameSuffixArray[nameSuffixPicker.getValue()],
                 maritalStatusArray[maritalStatusPicker.getValue()]
         );
     }
@@ -284,22 +274,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             "Ms.",
             "Dr.",
             "Rev."
-    };
-
-    private static final String[] nameSuffixArray = {
-            " ",
-            "II",
-            "III",
-            "IV",
-            "CPA",
-            "DDS",
-            "JD",
-            "Jr",
-            "LLD",
-            "MD",
-            "PhD",
-            "RN",
-            "Sr"
     };
 
     private static final String[] maritalStatusArray = {

@@ -70,7 +70,7 @@ public class StringUtilities {
         return Integer.parseInt(dotFormmatedString.substring(dotFormmatedString.lastIndexOf(".")+1));
     }
 
-    public static String getFormattedName(String prefix, String first, String last, String suffix, String maritalStatus) {
+    public static String getFormattedName(String prefix, String first, String last, String maritalStatus) {
         StringBuilder builder = new StringBuilder();
         if(isNotNullOrEmpty(prefix)) {
             builder.append(prefix).append(" ");
@@ -86,13 +86,6 @@ public class StringUtilities {
 
         if(last != null) {
             builder.append(last);
-            if(isNotNullOrEmpty(suffix)) {
-                builder.append(" ");
-            }
-        }
-
-        if(suffix != null) {
-            builder.append(suffix);
         }
 
         return builder.toString();

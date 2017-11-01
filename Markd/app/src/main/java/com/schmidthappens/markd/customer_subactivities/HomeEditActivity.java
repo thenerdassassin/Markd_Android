@@ -118,14 +118,16 @@ public class HomeEditActivity extends AppCompatActivity {
                 editZipCode.setText(intentToProcess.getStringExtra("zipcode"));
             }
             if(intentToProcess.hasExtra("bedrooms")) {
-                String bedrooms = intentToProcess.getStringExtra("bedrooms");
-                bedroomSeekbar.setProgress(Integer.valueOf(bedrooms)*2);
-                numberOfBedrooms.setText(bedrooms);
+                String bedroomString = intentToProcess.getStringExtra("bedrooms");
+                Double bedrooms = Double.valueOf(bedroomString)*2;
+                bedroomSeekbar.setProgress(bedrooms.intValue());
+                numberOfBedrooms.setText(bedroomString);
             }
             if(intentToProcess.hasExtra("bathrooms")) {
-                String bathrooms = intentToProcess.getStringExtra("bathrooms");
-                bathroomSeekbar.setProgress(Integer.valueOf(bathrooms)*2);
-                numberOfBathrooms.setText(bathrooms);
+                String bathroomString = intentToProcess.getStringExtra("bathrooms");
+                Double bathrooms = Double.valueOf(bathroomString)*2;
+                bathroomSeekbar.setProgress(bathrooms.intValue());
+                numberOfBathrooms.setText(bathroomString);
             }
             if(intentToProcess.hasExtra("squareFootage")) {
                 String squareFootageString = intentToProcess.getStringExtra("squareFootage");

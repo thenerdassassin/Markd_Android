@@ -85,7 +85,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray"/>
-
+                    <!-- Architect Information -->
                     <LinearLayout
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
@@ -100,6 +100,7 @@
                             android:fontFamily="sans-serif-light"
                             android:text="Designed by Dattner Architects" />
                         <TextView
+                            android:id="@+id/contact_architect"
                             android:clickable="true"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
@@ -109,7 +110,7 @@
                             android:textColor="@color/hyperlink"
                             android:text="@string/contact"/>
                     </LinearLayout>
-
+                    <!-- Builder Information -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="30sp"
@@ -124,6 +125,7 @@
                             android:textColor="@color/black"
                             android:textSize="15sp" />
                         <TextView
+                            android:id="@+id/contact_builder"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
@@ -133,7 +135,7 @@
                             android:textColor="@color/hyperlink"
                             android:textSize="14sp" />
                     </LinearLayout>
-
+                    <!-- Realtor Information -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="30sp"
@@ -148,6 +150,7 @@
                             android:textColor="@color/black"
                             android:textSize="15sp" />
                         <TextView
+                            android:id="@+id/contact_realtor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"

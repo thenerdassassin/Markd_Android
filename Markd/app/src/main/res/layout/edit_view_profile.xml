@@ -71,32 +71,16 @@
                     android:imeOptions="actionNext"
                     android:hint="First Name"/>
             </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <!-- Edit Last Name -->
-                <EditText
-                    android:id="@+id/profile_edit_last_name"
-                    android:layout_marginEnd="75dp"
-                    android:layout_marginRight="75dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="30dp"
-                    android:maxLines="1"
-                    android:inputType="text"
-                    android:imeOptions="actionNext"
-                    android:hint="Last Name"/>
-                <!-- Edit Name Suffix -->
-                <NumberPicker
-                    android:id="@+id/profile_edit_name_suffix"
-                    android:layout_width="50dp"
-                    android:layout_height="100dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true" />
-            </RelativeLayout>
+            <!-- Edit Last Name -->
+            <EditText
+                android:id="@+id/profile_edit_last_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionNext"
+                android:hint="Last Name"/>
             <!-- Edit Marital Status -->
             <NumberPicker
                 android:id="@+id/profile_edit_marital_status"

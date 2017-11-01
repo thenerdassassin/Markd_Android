@@ -241,7 +241,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(false);
+            showProgress(true);
             Log.d(TAG, "about to attempt sign in");
             attemptSignIn(LoginActivity.this, email, password);
         }

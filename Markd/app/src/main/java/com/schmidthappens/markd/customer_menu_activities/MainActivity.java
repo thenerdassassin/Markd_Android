@@ -1,6 +1,8 @@
 package com.schmidthappens.markd.customer_menu_activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -21,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,6 +45,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView preparedFor;
     private TextView homeAddress;
     private TextView homeInformation;
+
+    private TextView contactRealtor;
+    private TextView contactArchitect;
+    private TextView contactBuilder;
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "main_photo.jpg";
@@ -74,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
         preparedFor = (TextView)findViewById(R.id.prepared_for);
         homeAddress = (TextView)findViewById(R.id.home_address);
         homeInformation = (TextView)findViewById(R.id.home_information);
+
+        contactRealtor = (TextView)findViewById(R.id.contact_realtor);
+        contactRealtor.setOnClickListener(showContactAlertDialog);
+        contactArchitect = (TextView)findViewById(R.id.contact_architect);
+        contactArchitect.setOnClickListener(showContactAlertDialog);
+        contactBuilder = (TextView)findViewById(R.id.contact_builder);
+        contactBuilder.setOnClickListener(showContactAlertDialog);
     }
 
     @Override
@@ -247,6 +262,46 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener showContactAlertDialog = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String[] contactArray = {};
+            if(view.equals(contactRealtor)) {
+                Log.i(TAG, "Contact Realtor");
+                contactArray = realtor_contact_array;
+            } else if(view.equals(contactArchitect)) {
+                Log.i(TAG, "Contact Architect");
+                contactArray = architect_contact_array;
+            } else if(view.equals(contactBuilder)) {
+                Log.i(TAG, "Contact Builder");
+                contactArray = builder_contact_array;
+            } else {
+                Log.e(TAG, "Can't find match for contact");
+            }
+            final String[] options = contactArray;
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Contact Realtor")
+                    .setItems(options, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // The 'which' argument contains the index position
+                            // of the selected item
+                            if(which == 0) {
+                                Intent intent = new Intent()
+                                        .setAction(Intent.ACTION_VIEW)
+                                        .addCategory(Intent.CATEGORY_BROWSABLE)
+                                        .setData(Uri.parse(options[0]));
+                                startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(Intent.ACTION_DIAL)
+                                        .setData(Uri.parse("tel:" + options[1]));
+                                startActivity(intent);
+                            }
+                        }
+                    }).create().show();
+
+        }
+    };
+
     // Mark:- SetUp Functions
     private void initalizeUI() {
         initializeViews();
@@ -298,4 +353,20 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    //TODO: change when realtor loads
+    private String[] realtor_contact_array = {
+            "www.realtorwebsite.com",
+            "(920)428-8454"
+    };
+    //TODO: change when builder loads
+    private String[] builder_contact_array = {
+            "www.builderwebsite.com",
+            "(920)428-8454"
+    };
+    //TODO: change when architect loads
+    private String[] architect_contact_array = {
+            "www.architectwebsite.com",
+            "(920)428-8454"
+    };
 }
