@@ -9,11 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -21,23 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -104,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         homeFrame.setOnClickListener(photoClick);
         homeFrame.setOnLongClickListener(photoLongClick);
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -290,11 +277,11 @@ public class MainActivity extends AppCompatActivity {
                                         .setAction(Intent.ACTION_VIEW)
                                         .addCategory(Intent.CATEGORY_BROWSABLE)
                                         .setData(Uri.parse(options[0]));
-                                startActivity(intent);
+                                MainActivity.this.startActivity(intent);
                             } else {
                                 Intent intent = new Intent(Intent.ACTION_DIAL)
                                         .setData(Uri.parse("tel:" + options[1]));
-                                startActivity(intent);
+                                MainActivity.this.startActivity(intent);
                             }
                         }
                     }).create().show();
@@ -356,17 +343,17 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO: change when realtor loads
     private String[] realtor_contact_array = {
-            "www.realtorwebsite.com",
+            "http://www.realtorwebsite.com",
             "(920)428-8454"
     };
     //TODO: change when builder loads
     private String[] builder_contact_array = {
-            "www.builderwebsite.com",
+            "http://www.builderwebsite.com",
             "(920)428-8454"
     };
     //TODO: change when architect loads
     private String[] architect_contact_array = {
-            "www.architectwebsite.com",
+            "http://www.architectwebsite.com",
             "(920)428-8454"
     };
 }
