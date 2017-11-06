@@ -48,7 +48,7 @@ public class ContractorCustomersActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         customerRecyclerView.setLayoutManager(layoutManager);
         customerRecyclerView.setHasFixedSize(true);
-        customerRecyclerView.setAdapter(new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, TempContractorData.getInstance().getCustomers()));
+        //customerRecyclerView.setAdapter(new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, TempContractorData.getInstance().getCustomers()));
         customerRecyclerView.addItemDecoration(new DividerItemDecoration(ContractorCustomersActivity.this, DividerItemDecoration.VERTICAL));
     }
 }

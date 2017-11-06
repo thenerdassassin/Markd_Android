@@ -19,18 +19,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
-import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
-import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
-import com.schmidthappens.markd.data_objects.Customer;
+import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.utilities.StringUtilities;
-import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
 /**
  * Created by joshua.schmidtibm.com on 10/14/17.
@@ -39,9 +35,9 @@ import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 public class ProfileEditActivity extends AppCompatActivity {
     private static final String TAG = "ProfileEditActivity";
     private FirebaseAuthentication authentication;
-    private TempCustomerData customerData;
 
     //XML Objects
+    NumberPicker userTypePicker;
     EditText email;
     EditText password;
     EditText confirmPassword;
@@ -49,9 +45,11 @@ public class ProfileEditActivity extends AppCompatActivity {
     EditText firstName;
     EditText lastName;
     NumberPicker maritalStatusPicker;
+    NumberPicker contractorTypePicker;
     Button saveButton;
 
     private Boolean isNewAccount;
+    private String userType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +62,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         super.onStart();
         isNewAccount = !authentication.checkLogin();
         if(!isNewAccount) {
-            customerData = new TempCustomerData(authentication, null);
             setTitle("Edit Profile");
         } else {
             setUpActionBar();
@@ -111,13 +108,21 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
     private void initializeXMLObjects() {
+        userTypePicker = (NumberPicker)findViewById(R.id.profile_edit_user_type);
         email = (EditText)findViewById(R.id.profile_edit_email);
         password = (EditText)findViewById(R.id.profile_edit_password);
         confirmPassword = (EditText)findViewById(R.id.profile_confirm_password);
 
         if(isNewAccount) {
+            userTypePicker.setMinValue(0);
+            userTypePicker.setMaxValue(userTypeArray.length-1);
+            userTypePicker.setDisplayedValues(userTypeArray);
+            userTypePicker.setVisibility(View.VISIBLE);
+            userTypePicker.setOnValueChangedListener(userTypeValueChangedListener);
+
             password.setVisibility(View.VISIBLE);
         } else {
+            userTypePicker.setVisibility(View.GONE);
             password.setVisibility(View.GONE);
         }
 
@@ -133,6 +138,16 @@ public class ProfileEditActivity extends AppCompatActivity {
         maritalStatusPicker.setMinValue(0);
         maritalStatusPicker.setMaxValue(maritalStatusArray.length-1);
         maritalStatusPicker.setDisplayedValues(maritalStatusArray);
+
+        contractorTypePicker = (NumberPicker)findViewById(R.id.profile_edit_contractor_type);
+        contractorTypePicker.setMinValue(0);
+        contractorTypePicker.setMaxValue(contractorTypeArray.length-1);
+        contractorTypePicker.setDisplayedValues(contractorTypeArray);
+
+        if(isNewAccount) {
+            contractorTypePicker.setVisibility(View.GONE);
+        }
+
         saveButton = (Button)findViewById(R.id.profile_edit_save_button);
         if(isNewAccount) {
             saveButton.setVisibility(View.GONE);
@@ -158,9 +173,25 @@ public class ProfileEditActivity extends AppCompatActivity {
                     lastName.setText(intent.getStringExtra("lastName"));
                 }
                 if(intent.hasExtra("maritalStatus")) {
+                    //Customer
+                    maritalStatusPicker.setVisibility(View.VISIBLE);
                     setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray);
+                } else {
+                    //Contractor
+                    maritalStatusPicker.setVisibility(View.GONE);
+                }
+                if(intent.hasExtra("contractorType")) {
+                    //Contractor
+                    contractorTypePicker.setVisibility(View.VISIBLE);
+                    setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray);
+                } else {
+                    //Customer
+                    contractorTypePicker.setVisibility(View.GONE);
                 }
             } else {
+                if(intent.hasExtra("userType")) {
+                    userType = intent.getStringExtra("userType");
+                }
                 if(intent.hasExtra("password")) {
                     password.setText(intent.getStringExtra("password"));
                 }
@@ -172,17 +203,34 @@ public class ProfileEditActivity extends AppCompatActivity {
     private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(!isNewAccount) {
-                //TODO: always new account
-                FirebaseUser user = authentication.getCurrentUser();
-                String password = confirmPassword.getText().toString();
-                if(password.isEmpty()) {
-                    Toast.makeText(ProfileEditActivity.this, "Must enter password.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                AuthCredential credential = authentication.getAuthCredential(user.getEmail(), password);
-                checkCredential(user, credential);
+            FirebaseUser user = authentication.getCurrentUser();
+            String password = confirmPassword.getText().toString();
+            if(password.isEmpty()) {
+                Toast.makeText(ProfileEditActivity.this, "Must enter password.", Toast.LENGTH_SHORT).show();
+                return;
             }
+            AuthCredential credential = authentication.getAuthCredential(user.getEmail(), password);
+            checkCredential(user, credential);
+        }
+    };
+
+    private NumberPicker.OnValueChangeListener userTypeValueChangedListener = new NumberPicker.OnValueChangeListener() {
+        @Override
+        public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue) {
+            //Need to make changes
+            if(oldValue != newValue) {
+                //From Home Owner to Contractor
+                if(oldValue == 0 && newValue == 1) {
+                    maritalStatusPicker.setVisibility(View.GONE);
+                    contractorTypePicker.setVisibility(View.VISIBLE);
+                }
+                //From Contractor to Home Owner
+                if(oldValue == 1 && newValue == 0) {
+                    contractorTypePicker.setVisibility(View.GONE);
+                    maritalStatusPicker.setVisibility(View.VISIBLE);
+                }
+            }
+            userType = userTypeArray[newValue];
         }
     };
 
@@ -246,28 +294,45 @@ public class ProfileEditActivity extends AppCompatActivity {
                 });
     }
     private void saveProfile() {
-        if(customerData == null) {
-            customerData = new TempCustomerData(authentication, null);
+        if(userType.equals("Home Owner")) {
+            TempCustomerData customerData = new TempCustomerData(authentication, null);
+            customerData.updateProfile(
+                    namePrefixArray[namePrefixPicker.getValue()],
+                    firstName.getText().toString(),
+                    lastName.getText().toString(),
+                    maritalStatusArray[maritalStatusPicker.getValue()]
+            );
+        } else {
+            //Create Contractor Account
+            TempContractorData contractorData = new TempContractorData(authentication, null);
+            contractorData.updateProfile(
+                    namePrefixArray[namePrefixPicker.getValue()],
+                    firstName.getText().toString(),
+                    lastName.getText().toString(),
+                    contractorTypeArray[contractorTypePicker.getValue()]
+            );
         }
-        customerData.updateProfile(
-                namePrefixArray[namePrefixPicker.getValue()],
-                firstName.getText().toString(),
-                lastName.getText().toString(),
-                maritalStatusArray[maritalStatusPicker.getValue()]
-        );
     }
     private void closeActivity() {
         Intent goToNextActivity;
-        if(isNewAccount) {
-            goToNextActivity = new Intent(ProfileEditActivity.this, HomeEditActivity.class);
+        if(userType.equals("Contractor")) {
+            goToNextActivity = new Intent(ProfileEditActivity.this, ContractorMainActivity.class);
         } else {
-            goToNextActivity = new Intent(ProfileEditActivity.this, MainActivity.class);
+            if(isNewAccount) {
+                goToNextActivity = new Intent(ProfileEditActivity.this, HomeEditActivity.class);
+            } else {
+                goToNextActivity = new Intent(ProfileEditActivity.this, MainActivity.class);
+            }
         }
         startActivity(goToNextActivity);
         finish();
     }
 
     //Mark:- NumberPicker Arrays
+    private static final String[] userTypeArray = {
+            "Home Owner",
+            "Contractor"
+    };
     private static final String[] namePrefixArray = {
             "Mr.",
             "Mrs.",
@@ -279,5 +344,15 @@ public class ProfileEditActivity extends AppCompatActivity {
     private static final String[] maritalStatusArray = {
             "Single",
             "Married"
+    };
+
+    private static final String[] contractorTypeArray = {
+            "Plumber",
+            "Hvac",
+            "Electrician",
+            "Painter",
+            "Architect",
+            "Builder",
+            "Realtor"
     };
 }

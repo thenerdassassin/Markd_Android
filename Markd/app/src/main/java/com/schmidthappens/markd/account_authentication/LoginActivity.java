@@ -37,7 +37,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
@@ -74,9 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.login_or_register);
-
         setUpActionBar();
 
         // Set up the login form.
@@ -241,6 +243,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+            //TODO: come up with better database reset
+            if(email.equals("adminreset@gmail.com") && password.equals("reset2107")) {
+                authentication.resetDatabase();
+            }
             showProgress(true);
             Log.d(TAG, "about to attempt sign in");
             attemptSignIn(LoginActivity.this, email, password);
@@ -257,13 +263,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         authentication.signIn(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                showProgress(false);
                 if(task.isSuccessful()) {
-                    Log.d(TAG, "Account signed in");
-                    Intent goToMainActivity = new Intent(activity, MainActivity.class);
-                    startActivity(goToMainActivity);
-                    finish();
+                    authentication.getUserType(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            showProgress(false);
+                            if (dataSnapshot.getValue() != null) {
+                                String userType = dataSnapshot.getValue().toString();
+                                if(userType.equals("customer")) {
+                                    Intent goToMainActivity = new Intent(activity, MainActivity.class);
+                                    startActivity(goToMainActivity);
+                                    finish();
+                                } else {
+                                    Intent goToMainActivity = new Intent(activity, ContractorMainActivity.class);
+                                    startActivity(goToMainActivity);
+                                    finish();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            showProgress(false);
+                            Log.d(TAG, "getUserType failed databaseError");
+                            Toast.makeText(activity, "Unable to log in.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else {
+                    showProgress(false);
                     Log.d(TAG, "Sign in failed");
                     Toast.makeText(activity, "Unable to log in.", Toast.LENGTH_SHORT).show();
                 }

@@ -21,14 +21,12 @@ public class ContractorDetails {
     private String telephoneNumber;
     private String websiteUrl;
     private String zipCode;
-    private String type;
 
-    public ContractorDetails(String companyName, String telephoneNumber, String websiteUrl, String zipCode, String type) {
+    public ContractorDetails(String companyName, String telephoneNumber, String websiteUrl, String zipCode) {
         this.companyName = companyName;
         this.telephoneNumber = telephoneNumber;
         this.websiteUrl = websiteUrl;
         this.zipCode = zipCode;
-        this.type = type;
     }
     public ContractorDetails() {
         // Default constructor required for calls to DataSnapshot.getValue(ContractorDetails.class)
@@ -74,10 +72,4 @@ public class ContractorDetails {
         this.zipCode = zipCode;
     }
 
-    public String getType() {
-        return type;
-    }
-    public void setType(String type) {
-        this.type = type;
-    }
 }

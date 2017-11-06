@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
@@ -27,6 +29,8 @@ import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 
 public class ContractorEditActivity extends AppCompatActivity {
     private static final String TAG = "ContractorEditActivity";
+    private FirebaseAuthentication authentication;
+    private TempContractorData contractorData;
 
     EditText companyNameEditText;
     EditText telephoneEditText;
@@ -34,14 +38,13 @@ public class ContractorEditActivity extends AppCompatActivity {
     EditText zipcodeEditText;
     Button saveContractorButton;
 
-    private String contractorType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contractor_edit_view);
 
-        SessionManager sessionManager = new SessionManager(ContractorEditActivity.this);
-        sessionManager.checkLogin();
+        authentication = new FirebaseAuthentication(this);
+        contractorData = new TempContractorData(authentication, null);
 
         companyNameEditText = (EditText)findViewById(R.id.contractor_edit_company_name);
         setEnterButtonToKeyboardDismissal(companyNameEditText);
@@ -61,6 +64,22 @@ public class ContractorEditActivity extends AppCompatActivity {
         saveContractorButton.setOnClickListener(saveButtonClickListener);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+    }
+
     //Mark:- Click Listener
     private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
         @Override
@@ -73,14 +92,13 @@ public class ContractorEditActivity extends AppCompatActivity {
 
     private void saveContractorChanges() {
         Log.i(TAG, "Contractor updated");
-        ContractorDetails newContractor = new ContractorDetails(
+        ContractorDetails updatedContractorDetails = new ContractorDetails(
                 companyNameEditText.getText().toString(),
                 telephoneEditText.getText().toString(),
                 webisteEditText.getText().toString(),
-                zipcodeEditText.getText().toString(),
-                "landscaper"
+                zipcodeEditText.getText().toString()
         );
-        TempContractorData.getInstance().updateContractorDetails(newContractor);
+        contractorData.updateContractorDetails(updatedContractorDetails);
     }
     private void initializeEditTextViews(Intent intent) {
         if(intent == null) {
@@ -99,9 +117,6 @@ public class ContractorEditActivity extends AppCompatActivity {
             }
             if (intent.hasExtra("zipCode")) {
                 zipcodeEditText.setText(intent.getStringExtra("zipCode"));
-            }
-            if (intent.hasExtra("type")) {
-                contractorType = intent.getStringExtra("type");
             }
         }
     }

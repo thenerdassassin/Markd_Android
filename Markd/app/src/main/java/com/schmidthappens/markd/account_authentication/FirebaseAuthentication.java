@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
@@ -54,6 +55,10 @@ public class FirebaseAuthentication {
             firebaseAuth = FirebaseAuth.getInstance();
         }
         this.activity = activity;
+        //Make sure at login screen there is no current user
+        if(activity instanceof LoginActivity && firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.signOut();
+        }
         attachListener();
     }
 
@@ -138,8 +143,18 @@ public class FirebaseAuthentication {
                     });
         }
     }
-
+    public void getUserType(ValueEventListener listener) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(getCurrentUser().getUid()).child("userType");
+        reference.addListenerForSingleValueEvent(listener);
+    }
     public void signOut(Activity ctx) {
         firebaseAuth.signOut();
+    }
+
+
+    //TODO: reset database needs to be removed
+    void resetDatabase() {
+        //TODO: implement reset database
     }
 }

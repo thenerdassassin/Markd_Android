@@ -103,7 +103,7 @@ public class NavigationDrawerInitializer {
     private void selectItem(int position) {
         String selectedMenuItem = menuOptions[position];
         Log.i(TAG, "Selected Item-" + selectedMenuItem);
-        String userType = "customer"; //TODO: change to get from Firebase
+        //String userType = "customer"; //TODO: change to get from Firebase
 
         Intent customerIntent = null;
         if(userType == null) {

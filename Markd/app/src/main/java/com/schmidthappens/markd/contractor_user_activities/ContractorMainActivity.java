@@ -23,6 +23,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -32,6 +34,7 @@ import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
@@ -50,6 +53,7 @@ import java.util.List;
 public class ContractorMainActivity extends AppCompatActivity {
     private final static String TAG = "ContractorMainActivity";
     FirebaseAuthentication authentication;
+    TempContractorData contractorData;
 
     private FrameLayout logoFrame;
     private ImageView logoImage;
@@ -62,7 +66,6 @@ public class ContractorMainActivity extends AppCompatActivity {
 
     private static final int IMAGE_REQUEST_CODE = 1;
     private static final String filename = "contractor_logo.jpg";
-    ContractorDetails contractor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,17 +95,7 @@ public class ContractorMainActivity extends AppCompatActivity {
             return;
         }
 
-        contractor = TempContractorData.getInstance().getContractorDetails();
-        initializeTextViews(contractor);
-        //TODO change to only set as "0" if no image available from http call
-        if(getLogoImageFile().exists()) {
-            setPhoto(getLogoImageUri());
-            logoImage.setTag("1");
-        } else {
-            //TODO: try and get photo from http call
-            //if can't get then set to 0
-            logoImage.setTag("0");
-        }
+        contractorData = new TempContractorData((authentication.getCurrentUser().getUid()), new ContractorMainGetDataListener());
         logoFrame.setOnClickListener(photoClick);
         logoFrame.setOnLongClickListener(photoLongClick);
     }
@@ -274,25 +267,57 @@ public class ContractorMainActivity extends AppCompatActivity {
     }
 
     private void addContractorDataToIntent(Intent intent) {
-        if(contractor != null) {
-            intent.putExtra("companyName", contractor.getCompanyName());
-            intent.putExtra("telephoneNumber", contractor.getTelephoneNumber());
-            intent.putExtra("websiteUrl", contractor.getWebsiteUrl());
-            intent.putExtra("zipCode", contractor.getZipCode());
-            intent.putExtra("type", contractor.getType());
+        if(contractorData != null) {
+            ContractorDetails contractorDetails = contractorData.getContractorDetails();
+            if(contractorDetails != null) {
+                intent.putExtra("companyName", contractorDetails.getCompanyName());
+                intent.putExtra("telephoneNumber", contractorDetails.getTelephoneNumber());
+                intent.putExtra("websiteUrl", contractorDetails.getWebsiteUrl());
+                intent.putExtra("zipCode", contractorDetails.getZipCode());
+            }
         }
     }
 
     // Mark:- SetUp Functions
-    private void initializeTextViews(ContractorDetails contractor) {
-        if(contractor == null) {
+    private void initalizeUI() {
+        initializeTextViews(contractorData.getContractorDetails());
+        //TODO change to only set as "0" if no image available from http call
+        if(getLogoImageFile().exists()) {
+            setPhoto(getLogoImageUri());
+            logoImage.setTag("1");
+        } else {
+            //TODO: try and get photo from http call
+            //if can't get then set to 0
+            logoImage.setTag("0");
+        }
+    }
+    private void initializeTextViews(ContractorDetails contractorDetails) {
+        if(contractorDetails == null) {
             Log.i(TAG, "ContractorDetails are null");
             startContractorEditActivity();
         } else {
-            companyNameTextView.setText(contractor.getCompanyName());
-            companyTelephone.setText(contractor.getTelephoneNumber());
-            companyWebpage.setText(contractor.getWebsiteUrl());
-            companyZipCode.setText(contractor.getZipCode());
+            companyNameTextView.setText(contractorDetails.getCompanyName());
+            companyTelephone.setText(contractorDetails.getTelephoneNumber());
+            companyWebpage.setText(contractorDetails.getWebsiteUrl());
+            companyZipCode.setText(contractorDetails.getZipCode());
+        }
+    }
+
+    private class ContractorMainGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+            Log.i(TAG, "Waiting for Data");
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            Log.d(TAG, "Got Data");
+            initalizeUI();
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+            Log.e(TAG, "Failed to get Data");
         }
     }
 }

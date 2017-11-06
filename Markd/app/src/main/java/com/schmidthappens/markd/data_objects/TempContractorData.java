@@ -1,6 +1,15 @@
 package com.schmidthappens.markd.data_objects;
 
+import android.app.Activity;
 import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,46 +22,50 @@ import java.util.List;
  */
 
 public class TempContractorData {
-    private static final String TAG = "ContractorDataSingleton";
-    private static final TempContractorData contractorData = new TempContractorData();
-    public static TempContractorData getInstance() {
-        return contractorData;
+    private static final String TAG = "FirebaseContractorData";
+    private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
+    private String uid;
+    private OnGetDataListener listener;
+
+    public TempContractorData(FirebaseAuthentication authentication, OnGetDataListener listener) {
+        this(authentication.getCurrentUser().getUid(), listener);
     }
+    public TempContractorData(Activity activity, OnGetDataListener listener) {
+        this(new FirebaseAuthentication(activity).getCurrentUser().getUid(), listener);
+    }
+    public TempContractorData(String uid, OnGetDataListener listener) {
+        this.uid = uid;
+        this.listener = listener;
+        DatabaseReference userReference = database.child(uid);
+        if(listener != null) {
+            listener.onStart();
+        }
+        userReference.addValueEventListener(valueEventListener);
+    }
+    private ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            contractor = dataSnapshot.getValue(Contractor.class);
+            if(listener != null) {
+                listener.onSuccess(dataSnapshot);
+            }
+            Log.d(TAG, "valueEventListener:dataChanged");
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.w(TAG, "valueEventListener:onCancelled", databaseError.toException());
+            listener.onFailed(databaseError);
+        }
+    };
 
     private Contractor contractor;
-
     private Contractor getContractor() {
-        //TODO: Add get http call to ensure contractor is up to date
-        //Get user id and sessionToken from SessionManager
-        //HTTP call receive back body data
-        //Check for success in body data
-        //Get message as string
-        //new JSONObject(message)
-        //contractor = Contractor(new JSONObject(message))
         return contractor;
     }
-    private boolean putContractor(Contractor contractor) {
-        //TODO: Add http put call to set in database
-        return true;
-    }
-
-    //Update Contractor
-    private void updatedContractor(ContractorDetails details) {
-        contractor.setContractorDetails(details);
-    }
-
-
-    private TempContractorData() {
-        contractor = getContractor();
-        //Remove when database is implemented
-        JSONObject contractorJson = new JSONObject();
-        try {
-            contractorJson.put("contractorDetails", initialContractorDetails());
-            contractorJson.put("customers", initialCustomerList());
-        } catch (JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        //contractor = new Contractor(contractorJson);
+    private void putContractor(Contractor contractor) {
+        Log.d(TAG, "putting contractor");
+        database.child(uid).setValue(contractor);
     }
 
     //Mark:- initial methods to remove when http calls are implemented
@@ -129,19 +142,23 @@ public class TempContractorData {
     public ContractorDetails getContractorDetails() {
         return getContractor().getContractorDetails();
     }
-    public boolean updateContractorDetails(ContractorDetails contractorDetails) {
-//        Contractor oldContractor = getContractor();                       //update contractor
-//        Contractor contractorToUpdate = new Contractor(oldContractor);   //make copy
-//        contractorToUpdate.setContractorDetails(contractorDetails);     //change component on copy
-//        if(putContractor(contractorToUpdate)) {                        //send to database
-//            this.updatedContractor(contractorDetails);                //update TempContractorData
-//            return true;
-//        }
-        return false;
+    public void updateContractorDetails(ContractorDetails contractorDetails) {
+        contractor.setContractorDetails(contractorDetails);
+        putContractor(contractor);
     }
 
     //Mark:- Customers Page
     public List<Customer> getCustomers() {
         return getContractor().getCustomers();
+    }
+
+    //Mark:- Settings Page
+    public void updateProfile(String namePrefix, String firstName, String lastName, String contractorType) {
+        if(contractor == null) {
+            Log.d(TAG, "customer null");
+            contractor = new Contractor();
+        }
+        contractor.updateProfile(namePrefix, firstName, lastName, contractorType);
+        putContractor(contractor);
     }
 }

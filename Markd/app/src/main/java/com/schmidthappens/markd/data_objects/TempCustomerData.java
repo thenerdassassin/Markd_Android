@@ -76,31 +76,31 @@ public class TempCustomerData {
         customer.setMaritalStatus("Married");
         customer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
         customer.setHome(new Home(5.0, 1350.0, 1250));
-        customer.setArchitect(new ContractorDetails("", "", "", "", "architect"));
-        customer.setArchitect(new ContractorDetails("", "", "", "", "builder"));
+        customer.setArchitect(new ContractorDetails("", "", "", ""));
+        customer.setArchitect(new ContractorDetails("", "", "", ""));
 
         //Plumbing
         customer.setHotWater(initialHotWater());
         customer.setBoiler(initialBoiler());
-        customer.setPlumber(new ContractorDetails("SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com", "06903", "plumber"));
+        customer.setPlumber(new ContractorDetails("SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com", "06903"));
         customer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
 
         //HVAC
         customer.setAirHandler(initialAirHandler());
         customer.setCompressor(initialCompressor());
-        customer.setHvactechnician(new ContractorDetails("AireServ", "203.348.2295", "aireserv.com", "06903", "hvac"));
+        customer.setHvactechnician(new ContractorDetails("AireServ", "203.348.2295", "aireserv.com", "06903"));
         customer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
 
         //Electrical
         //customer.setPanels(TempPanelData.getInstance().getPanels());
         //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
-        customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478", "electrician"));
+        customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
         customer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting
         customer.setInteriorPaintSurfaces(initialInteriorSurfaces());
         customer.setExteriorPaintSurfaces(initialExteriorSurfaces());
-        customer.setPainter(new ContractorDetails("MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com", "06903", "painter"));
+        customer.setPainter(new ContractorDetails("MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com", "06903"));
 
         putCustomer(customer);
     }
@@ -113,7 +113,7 @@ public class TempCustomerData {
         return customer.getName();
     }
     public String getFormattedAddress() {
-        if(customer.getHome() == null) {
+        if(customer == null || customer.getHome() == null) {
             return null;
         }
         return getStreet() + "\n" + getCity() + ", " + getState() + " " + getZipcode();

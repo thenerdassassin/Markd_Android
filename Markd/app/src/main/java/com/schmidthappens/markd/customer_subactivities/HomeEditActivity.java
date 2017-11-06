@@ -122,17 +122,23 @@ public class HomeEditActivity extends AppCompatActivity {
                 Double bedrooms = Double.valueOf(bedroomString)*2;
                 bedroomSeekbar.setProgress(bedrooms.intValue());
                 numberOfBedrooms.setText(bedroomString);
+            } else {
+                numberOfBedrooms.setText("0.0");
             }
             if(intentToProcess.hasExtra("bathrooms")) {
                 String bathroomString = intentToProcess.getStringExtra("bathrooms");
                 Double bathrooms = Double.valueOf(bathroomString)*2;
                 bathroomSeekbar.setProgress(bathrooms.intValue());
                 numberOfBathrooms.setText(bathroomString);
+            } else {
+                numberOfBathrooms.setText("0.0");
             }
             if(intentToProcess.hasExtra("squareFootage")) {
                 String squareFootageString = intentToProcess.getStringExtra("squareFootage");
                 squareFootageSeekbar.setProgress(Integer.valueOf(squareFootageString)/50);
                 squareFootage.setText(squareFootageString);
+            } else {
+                squareFootage.setText("0");
             }
         }
     }
