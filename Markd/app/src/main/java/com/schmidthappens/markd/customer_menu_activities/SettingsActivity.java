@@ -19,10 +19,13 @@ import com.google.android.gms.tasks.Task;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
+
+import java.util.Set;
 
 /**
  * Created by joshua.schmidtibm.com on 10/21/17.
@@ -35,6 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     RelativeLayout edit_profile;
     RelativeLayout edit_home;
+    RelativeLayout edit_contractor;
     RelativeLayout edit_password;
 
     @Override
@@ -81,6 +85,15 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(TAG, "Start HomeEditActivity");
                 startActivity(createEditHomeIntent());
+            }
+        });
+
+        edit_contractor = (RelativeLayout)findViewById(R.id.edit_contractors);
+        edit_contractor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Start ChangeContractorActivity");
+                startActivity(createChangeContractorActivity());
             }
         });
 
@@ -133,5 +146,11 @@ public class SettingsActivity extends AppCompatActivity {
         intentToStartHomeEditActivity.putExtra("squareFootage", customerData.getSquareFootage());
         return intentToStartHomeEditActivity;
     }
+    private Intent createChangeContractorActivity() {
+        Context context = SettingsActivity.this;
+        Class destinationClass = ChangeContractorActivity.class;
+        Intent intentToStartChangeContractorActivity = new Intent(context, destinationClass);
 
+        return intentToStartChangeContractorActivity;
+    }
 }

@@ -23,7 +23,7 @@ import java.util.List;
 
 public class TempContractorData {
     private static final String TAG = "FirebaseContractorData";
-    private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
+    private static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private String uid;
     private OnGetDataListener listener;
 
@@ -36,7 +36,7 @@ public class TempContractorData {
     public TempContractorData(String uid, OnGetDataListener listener) {
         this.uid = uid;
         this.listener = listener;
-        DatabaseReference userReference = database.child(uid);
+        DatabaseReference userReference = database.child("users").child(uid);
         if(listener != null) {
             listener.onStart();
         }
@@ -65,7 +65,18 @@ public class TempContractorData {
     }
     private void putContractor(Contractor contractor) {
         Log.d(TAG, "putting contractor");
-        database.child(uid).setValue(contractor);
+        database.child("users").child(uid).setValue(contractor);
+        putIntoZipCode(contractor);
+    }
+    private void putIntoZipCode(Contractor contractor) {
+        if(contractor != null && contractor.getContractorDetails() != null && contractor.getContractorDetails().getZipCode() != null) {
+            Log.i(TAG, "Putting Contractor into Zipcode:" + contractor.getContractorDetails().getZipCode());
+            database.child("zip_codes").child(contractor.getContractorDetails().getZipCode()).child(uid).setValue(true);
+        }
+    }
+    private void removeFromOldZipCode(String zipCode) {
+        Log.i(TAG, "Removing Contractor from Zipcode:" + zipCode);
+        database.child("zip_codes").child(zipCode).child(uid).removeValue();
     }
 
     //Mark:- initial methods to remove when http calls are implemented
@@ -143,6 +154,7 @@ public class TempContractorData {
         return getContractor().getContractorDetails();
     }
     public void updateContractorDetails(ContractorDetails contractorDetails) {
+        removeFromOldZipCode(contractor.getContractorDetails().getZipCode());
         contractor.setContractorDetails(contractorDetails);
         putContractor(contractor);
     }

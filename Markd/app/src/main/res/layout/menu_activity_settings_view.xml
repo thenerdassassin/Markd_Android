@@ -71,6 +71,34 @@
                     android:text="Change address, bedrooms, bathrooms, etc."/>
             </RelativeLayout>
 
+            <!-- Change Contractors -->
+            <RelativeLayout
+                android:id="@+id/edit_contractors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/edit_contractors_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="Change Contractors"/>
+                <TextView
+                    android:id="@+id/edit_contractors_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPanel"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:layout_below="@+id/edit_contractors_main"
+                    android:text="Set your personal contractor."/>
+            </RelativeLayout>
+
             <!-- Reset Password -->
             <RelativeLayout
                 android:id="@+id/edit_password"
