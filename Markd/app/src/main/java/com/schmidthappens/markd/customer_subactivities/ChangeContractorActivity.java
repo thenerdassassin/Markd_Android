@@ -3,6 +3,8 @@ package com.schmidthappens.markd.customer_subactivities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,22 +12,32 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.schmidthappens.markd.AdapterClasses.ContractorListRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,6 +54,9 @@ public class ChangeContractorActivity extends AppCompatActivity {
     SeekBar milesSeekbar;
     TextView milesTextView;
     Button searchButton;
+    RecyclerView contractorRecyclerView;
+
+    Map<Double, String> zipCodeMap;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -92,6 +107,12 @@ public class ChangeContractorActivity extends AppCompatActivity {
 
         searchButton = (Button)findViewById(R.id.change_contractor_save_button);
         searchButton.setOnClickListener(searchButtonClickListener);
+
+        contractorRecyclerView = (RecyclerView)findViewById(R.id.change_contractor_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        contractorRecyclerView.setLayoutManager(layoutManager);
+        contractorRecyclerView.setHasFixedSize(true);
     }
 
     //Mark:- Listeners
@@ -144,9 +165,8 @@ public class ChangeContractorActivity extends AppCompatActivity {
                        getZipCodesByRadius(zipCode, halfRadius.toString());
                        return;
                    }
-                   Map<Double, String> zipCodeList = sortZipCodes(zipCodes);
-
-                   getContractors(zipCodeList);
+                   zipCodeMap = sortZipCodes(zipCodes);
+                   getContractors();
                } catch (JSONException exception) {
                    Log.d(TAG, exception.toString());
                }
@@ -181,10 +201,41 @@ public class ChangeContractorActivity extends AppCompatActivity {
             return Collections.emptyMap();
         }
     }
-    private void getContractors(Map<Double, String> zipCodeMap) {
-        for(Map.Entry<Double,String> entry:zipCodeMap.entrySet()) {
-            //TODO:
+
+    private void getContractors() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("zip_codes");
+        reference.addListenerForSingleValueEvent(zipCodeReferenceListener);
+    }
+
+    ValueEventListener zipCodeReferenceListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot firebaseZipCodesSnapshot) {
+            List<String> contractors = new ArrayList<>();
+            String contractorType = getContractorType();
+
+            for(Map.Entry<Double, String> zipCode: zipCodeMap.entrySet()) {
+                DataSnapshot listOfContractorsAtZipCode = firebaseZipCodesSnapshot.child(zipCode.getValue());
+                if(listOfContractorsAtZipCode.exists()) {
+                    for(DataSnapshot contractorReference: listOfContractorsAtZipCode.getChildren()) {
+                        String contractorReferenceType = contractorReference.getValue().toString();
+                        if(contractorReferenceType.equals(contractorType)) {
+                            contractors.add(contractorReference.getKey());
+                        }
+                    }
+                }
+            }
+            Log.d(TAG, contractors.toString());
+            contractorRecyclerView.setAdapter(new ContractorListRecyclerViewAdapter(ChangeContractorActivity.this, contractors));
         }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            //TODO
+        }
+    };
+
+    private String getContractorType() {
+        return contractorTypeArray[contractorTypePicker.getValue()];
     }
 
     private static final String[] contractorTypeArray = {
