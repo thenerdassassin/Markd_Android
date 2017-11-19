@@ -44,11 +44,11 @@ public class TempCustomerData {
     private ValueEventListener valueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
+            Log.d(TAG, "valueEventListener:dataChanged");
             customer = dataSnapshot.getValue(Customer.class);
             if(listener != null) {
                 listener.onSuccess(dataSnapshot);
             }
-            Log.d(TAG, "valueEventListener:dataChanged");
         }
 
         @Override
@@ -76,33 +76,53 @@ public class TempCustomerData {
         customer.setMaritalStatus("Married");
         customer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
         customer.setHome(new Home(5.0, 1350.0, 1250));
-        customer.setArchitect(new ContractorDetails("", "", "", ""));
-        customer.setArchitect(new ContractorDetails("", "", "", ""));
+        //customer.setArchitect(new ContractorDetails("", "", "", ""));
+        //customer.setArchitect(new ContractorDetails("", "", "", ""));
 
         //Plumbing
         customer.setHotWater(initialHotWater());
         customer.setBoiler(initialBoiler());
-        customer.setPlumber(new ContractorDetails("SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com", "06903"));
+        //customer.setPlumber(new ContractorDetails("SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com", "06903"));
         customer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
 
         //HVAC
         customer.setAirHandler(initialAirHandler());
         customer.setCompressor(initialCompressor());
-        customer.setHvactechnician(new ContractorDetails("AireServ", "203.348.2295", "aireserv.com", "06903"));
+        //customer.setHvactechnician(new ContractorDetails("AireServ", "203.348.2295", "aireserv.com", "06903"));
         customer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
 
         //Electrical
         //customer.setPanels(TempPanelData.getInstance().getPanels());
         //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
-        customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
+        //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
         customer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting
         customer.setInteriorPaintSurfaces(initialInteriorSurfaces());
         customer.setExteriorPaintSurfaces(initialExteriorSurfaces());
-        customer.setPainter(new ContractorDetails("MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com", "06903"));
+        //customer.setPainter(new ContractorDetails("MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com", "06903"));
 
         putCustomer(customer);
+    }
+    private void addContractorListener(final DatabaseReference reference, final OnGetDataListener contractorListener) {
+        if(contractorListener != null) {
+            contractorListener.onStart();
+        }
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(contractorListener != null) {
+                    contractorListener.onSuccess(dataSnapshot);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                if(contractorListener != null) {
+                    contractorListener.onFailed(databaseError);
+                }
+            }
+        });
     }
 
     //Mark:- Home Page
@@ -171,7 +191,10 @@ public class TempCustomerData {
         customer.setBoiler(boiler);
         putCustomer(customer);
     }
-    public ContractorDetails getPlumber() {return getCustomer().getPlumber();}
+    public void getPlumber(final OnGetDataListener plumberListener) {
+        DatabaseReference plumberReference = database.child(customer.getPlumberReference());
+        addContractorListener(plumberReference, plumberListener);
+    }
     public List<ContractorService> getPlumbingServices() {
         return getCustomer().getPlumbingServices();
     }
@@ -191,8 +214,9 @@ public class TempCustomerData {
         customer.setCompressor(compressor);
         putCustomer(customer);
     }
-    public ContractorDetails getHvacTechnician() {
-        return getCustomer().getHvactechnician();
+    public void getHvacTechnician(final OnGetDataListener hvacListener) {
+        DatabaseReference hvacReference = database.child(uid).child(customer.getHvactechnicianReference());
+        addContractorListener(hvacReference, hvacListener);
     }
     public List<ContractorService>  getHvacServices() {
         return getCustomer().getHvacServices();
@@ -221,8 +245,9 @@ public class TempCustomerData {
         customer.deleteInteriorPaintSurface(paintId);
         putCustomer(customer);
     }
-    public ContractorDetails getPainter() {
-        return getCustomer().getPainter();
+    public void getPainter(final OnGetDataListener painterListener) {
+        DatabaseReference painterReference = database.child(uid).child(customer.getPainterReference());
+        addContractorListener(painterReference, painterListener);
     }
 
     //Mark:- Settings
@@ -244,6 +269,26 @@ public class TempCustomerData {
             customer = new Customer();
         }
         customer.updateProfile(namePrefix, firstName, lastName, maritalStatus);
+        putCustomer(customer);
+    }
+    public void updateContractor(String contractorType, String contractorReference) {
+        if(contractorType.equals("Plumber")) {
+            customer.setPlumber(contractorReference);
+        } else if(contractorType.equals("Hvac")) {
+            customer.setHvactechnician(contractorReference);
+        } else if(contractorType.equals("Electrician")) {
+            customer.setElectrician(contractorReference);
+        } else if(contractorType.equals("Painter")) {
+            customer.setPainter(contractorReference);
+        } else if(contractorType.equals("Architect")) {
+            customer.setArchitect(contractorReference);
+        } else if(contractorType.equals("Builder")) {
+            customer.setBuilder(contractorReference);
+        } else if(contractorType.equals("Realtor")) {
+            customer.setRealtor(contractorReference);
+        } else {
+            Log.e(TAG, "contractorType(" + contractorType + ") not found!");
+        }
         putCustomer(customer);
     }
 

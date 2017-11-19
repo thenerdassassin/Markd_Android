@@ -155,15 +155,34 @@ public class PlumbingActivity extends AppCompatActivity {
         plumbingServiceList.addView(serviceListView);
     }
     private void initializeFooter() {
-        ContractorDetails plumber = customerData.getPlumber();
-        if(plumber != null) {
-            Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo);
-            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, plumber.getCompanyName(), plumber.getTelephoneNumber(), plumber.getWebsiteUrl());
-            plumbingContractor.addView(v);
-        } else {
-            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
-            plumbingContractor.addView(v);
-        }
+        customerData.getPlumber(new OnGetDataListener() {
+            @Override
+            public void onStart() {
+                Log.d(TAG, "Getting plumber data");
+            }
+
+            @Override
+            public void onSuccess(DataSnapshot data) {
+                Contractor plumber = data.getValue(Contractor.class);
+                if(plumber == null || plumber.getContractorDetails() == null) {
+                    Log.d(TAG, "No plumber data");
+                    View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
+                    plumbingContractor.addView(v);
+                } else {
+                    ContractorDetails contractorDetails = plumber.getContractorDetails();
+                    Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo);
+                    View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl());
+                    plumbingContractor.addView(v);
+                }
+            }
+
+            @Override
+            public void onFailed(DatabaseError databaseError) {
+                Log.d(TAG, databaseError.toString());
+                View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
+                plumbingContractor.addView(v);
+            }
+        });
     }
 
     //MARK:- OnClickListeners

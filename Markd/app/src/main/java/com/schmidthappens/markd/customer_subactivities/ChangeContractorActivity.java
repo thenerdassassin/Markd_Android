@@ -1,10 +1,13 @@
 package com.schmidthappens.markd.customer_subactivities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,8 +31,13 @@ import com.schmidthappens.markd.AdapterClasses.ContractorListRecyclerViewAdapter
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.contractor_user_activities.ContractorEditActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.ContractorSearch;
+import com.schmidthappens.markd.utilities.ContractorUpdater;
+import com.schmidthappens.markd.utilities.ZipCodeUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +65,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
     RecyclerView contractorRecyclerView;
 
     Map<Double, String> zipCodeMap;
+    List<String> contractorReferences;
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -137,102 +146,61 @@ public class ChangeContractorActivity extends AppCompatActivity {
     private View.OnClickListener searchButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            getZipCodesByRadius(customerData.getZipcode(), milesTextView.getText().toString());
+            ZipCodeUtilities.getZipCodesByRadius(ChangeContractorActivity.this, customerData.getZipcode(), milesTextView.getText().toString(), successListener, errorListener);
+        }
+    };
+    private Response.Listener<JSONObject> successListener = new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject response) {
+            try {
+                zipCodeMap = ZipCodeUtilities.sortZipCodes(response.getJSONArray("zip_codes"));
+                FirebaseDatabase.getInstance().getReference().child("zip_codes").addListenerForSingleValueEvent(zipCodesListener);
+            } catch (JSONException exception) {
+                Log.d(TAG, exception.toString());
+                Toast.makeText(ChangeContractorActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+    private Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.d(TAG, error.toString());
+            Toast.makeText(ChangeContractorActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     };
 
-    private void getZipCodesByRadius(final String zipCode, final String radius) {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String url ="https://www.zipcodeapi.com/rest/9xTgQJatx64XJImaOJdn8DMqCNEOSsm20fiQYskwyoui6QtVzGiIk58WSMLLf8Nf";
-        if(radius.equals("0")) {
-            url += "/radius.json/" + zipCode + "/1/miles";
-        } else {
-            url += "/radius.json/" + zipCode + "/" + radius + "/miles";
-        }
-
-        // Request a string response from the provided URL.
-        JsonObjectRequest request = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-               try {
-                   JSONArray zipCodes = response.getJSONArray("zip_codes");
-                   Log.d(TAG, zipCodes.toString());
-                   //Make sure there is not too many zipCodes
-                   if(zipCodes.length() > 30) {
-                       Double halfRadius = (Double.parseDouble(radius))/2;
-                       getZipCodesByRadius(zipCode, halfRadius.toString());
-                       return;
-                   }
-                   zipCodeMap = sortZipCodes(zipCodes);
-                   getContractors();
-               } catch (JSONException exception) {
-                   Log.d(TAG, exception.toString());
-               }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
-                Log.d(TAG, error.toString());
-            }
-        });
-
-        // Add the request to the RequestQueue.
-        queue.add(request);
-    }
-
-    private Map<Double, String> sortZipCodes(JSONArray zipCodes) {
-        try {
-            Map<Double, String> zipCodeMap = new TreeMap<Double, String>();
-
-            for (int i = 0; i < zipCodes.length(); i++) {
-                JSONObject zipCode = zipCodes.getJSONObject(i);
-                Double key = zipCode.getDouble("distance");
-                while(zipCodeMap.containsKey(key)) {
-                    key += 0.0000001;
-                }
-                zipCodeMap.put(key, zipCode.getString("zip_code"));
-            }
-            return zipCodeMap;
-        } catch (JSONException exception) {
-            Log.d(TAG, exception.toString());
-            return Collections.emptyMap();
-        }
-    }
-
-    private void getContractors() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("zip_codes");
-        reference.addListenerForSingleValueEvent(zipCodeReferenceListener);
-    }
-
-    ValueEventListener zipCodeReferenceListener = new ValueEventListener() {
+    private ValueEventListener zipCodesListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot firebaseZipCodesSnapshot) {
-            List<String> contractors = new ArrayList<>();
-            String contractorType = getContractorType();
-
-            for(Map.Entry<Double, String> zipCode: zipCodeMap.entrySet()) {
-                DataSnapshot listOfContractorsAtZipCode = firebaseZipCodesSnapshot.child(zipCode.getValue());
-                if(listOfContractorsAtZipCode.exists()) {
-                    for(DataSnapshot contractorReference: listOfContractorsAtZipCode.getChildren()) {
-                        String contractorReferenceType = contractorReference.getValue().toString();
-                        if(contractorReferenceType.equals(contractorType)) {
-                            contractors.add(contractorReference.getKey());
-                        }
-                    }
-                }
-            }
-            Log.d(TAG, contractors.toString());
-            contractorRecyclerView.setAdapter(new ContractorListRecyclerViewAdapter(ChangeContractorActivity.this, contractors));
+            contractorReferences = ContractorSearch.getContractorsInZipCodes(zipCodeMap, getContractorType(), firebaseZipCodesSnapshot);
+            FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(usersListener);
         }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            //TODO
+            Log.d(TAG, databaseError.toString());
+            Toast.makeText(ChangeContractorActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     };
+    private ValueEventListener usersListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot usersSnapshot) {
+            List<Contractor> contractors = ContractorSearch.getContractorsFromReferences(contractorReferences, usersSnapshot);
+            contractorRecyclerView.setAdapter(new ContractorListRecyclerViewAdapter(ChangeContractorActivity.this, contractors, contractorReferences, new UpdateContractorListener()));
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.toString());
+            Toast.makeText(ChangeContractorActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    public class UpdateContractorListener implements ContractorUpdater {
+        public void update(String contractorReference) {
+            customerData.updateContractor(getContractorType(), contractorReference);
+        }
+    }
 
     private String getContractorType() {
         return contractorTypeArray[contractorTypePicker.getValue()];

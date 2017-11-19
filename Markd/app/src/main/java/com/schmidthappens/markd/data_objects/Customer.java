@@ -27,31 +27,31 @@ public class Customer {
     private String maritalStatus;
     private Address address;
     private Home home;
-    private ContractorDetails architect;
-    private ContractorDetails builder;
-    private String realtor;
+    private String architectReference;
+    private String builderReference;
+    private String realtorReference;
 
     //For Plumbing Page
     private HotWater hotWater;
     private Boiler boiler;
-    private ContractorDetails plumber;
+    private String plumberReference;
     private List<ContractorService> plumbingServices;
 
     //For HVAC Page
     private AirHandler airHandler;
     private Compressor compressor;
-    private ContractorDetails hvactechnician;
+    private String hvactechnicianReference;
     private List<ContractorService> hvacServices;
 
     //For Electrical Page
     private List<Panel> panels;
-    private ContractorDetails electrician;
+    private String electricianReference;
     private List<ContractorService> electricalServices;
 
     //For Painting Page
     private List<PaintSurface> interiorPaintSurfaces;
     private List<PaintSurface> exteriorPaintSurfaces;
-    private ContractorDetails painter;
+    private String painterReference;
 
     public Customer() {
         // Default constructor required for calls to DataSnapshot.getValue(Customer.class)
@@ -97,23 +97,23 @@ public class Customer {
             this.address = address;
         }
 
-        public ContractorDetails getArchitect() {
-            return architect;
+        public String getArchitectReference() {
+            return architectReference;
         }
-        public void setArchitect(ContractorDetails architect) {
-            this.architect = architect;
+        public void setArchitect(String architect) {
+            this.architectReference = architect;
         }
-        public ContractorDetails getBuilder() {
-            return builder;
+        public String getBuilder() {
+            return builderReference;
         }
-        public void setBuilder(ContractorDetails builder) {
-            this.builder = builder;
+        public void setBuilder(String builder) {
+            this.builderReference = builder;
         }
         public String getRealtor() {
-            return realtor;
+            return realtorReference;
         }
         public void setRealtor(String realtor) {
-            this.realtor = realtor;
+            this.realtorReference = realtor;
         }
 
         //:- Plumbing Page
@@ -129,11 +129,11 @@ public class Customer {
         public void setBoiler(Boiler boiler) {
             this.boiler = boiler;
         }
-        public ContractorDetails getPlumber() {
-            return plumber;
+        public String getPlumberReference() {
+            return plumberReference;
         }
-        public void setPlumber(ContractorDetails plumber) {
-            this.plumber = plumber;
+        public void setPlumber(String plumber) {
+            this.plumberReference = plumber;
         }
         public List<ContractorService> getPlumbingServices() {
             return plumbingServices;
@@ -155,11 +155,11 @@ public class Customer {
         public void setCompressor(Compressor compressor) {
             this.compressor = compressor;
         }
-        public ContractorDetails getHvactechnician() {
-            return hvactechnician;
+        public String getHvactechnicianReference() {
+            return hvactechnicianReference;
         }
-        public void setHvactechnician(ContractorDetails hvactechnician) {
-            this.hvactechnician = hvactechnician;
+        public void setHvactechnician(String hvactechnician) {
+            this.hvactechnicianReference = hvactechnician;
         }
         public List<ContractorService> getHvacServices() {
             return hvacServices;
@@ -181,11 +181,11 @@ public class Customer {
         public void setInteriorPaintSurfaces(List<PaintSurface> surfaces) {
             this.interiorPaintSurfaces = surfaces;
         }
-        public ContractorDetails getPainter() {
-            return painter;
+        public String getPainterReference() {
+            return painterReference;
         }
-        public void setPainter(ContractorDetails painter) {
-            this.painter = painter;
+        public void setPainter(String painter) {
+            this.painterReference = painter;
         }
 
         //:- Electrical Page
@@ -195,11 +195,11 @@ public class Customer {
         public void setPanels(List<Panel> panels) {
             this.panels = panels;
         }
-        public ContractorDetails getElectrician() {
-            return electrician;
+        public String getElectrician() {
+            return electricianReference;
         }
-        public void setElectrician(ContractorDetails electrician) {
-            this.electrician = electrician;
+        public void setElectrician(String electrician) {
+            this.electricianReference = electrician;
         }
         public List<ContractorService> getElectricalServices() {
             return electricalServices;

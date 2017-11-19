@@ -115,14 +115,34 @@ public class PaintingActivity extends AppCompatActivity {
     public void initializeFooter() {
         paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
-        ContractorDetails painter = customerData.getPainter();
-        if(painter == null) {
-            View v = ContractorFooterViewInitializer.createFooterView(this);
-            paintingContractor.addView(v);
-        } else {
-            View v = ContractorFooterViewInitializer.createFooterView(this, logo, painter.getCompanyName(), painter.getTelephoneNumber(), painter.getWebsiteUrl());
-            paintingContractor.addView(v);
-        }
+        customerData.getPlumber(new OnGetDataListener() {
+            @Override
+            public void onStart() {
+                Log.d(TAG, "Getting painter data");
+            }
+
+            @Override
+            public void onSuccess(DataSnapshot data) {
+                Contractor painter = data.getValue(Contractor.class);
+                if(painter == null || painter.getContractorDetails() == null) {
+                    Log.d(TAG, "No painter data");
+                    View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
+                    paintingContractor.addView(v);
+                } else {
+                    ContractorDetails contractorDetails = painter.getContractorDetails();
+                    Drawable logo = ContextCompat.getDrawable(PaintingActivity.this, R.drawable.sdr_logo);
+                    View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this, logo, contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl());
+                    paintingContractor.addView(v);
+                }
+            }
+
+            @Override
+            public void onFailed(DatabaseError databaseError) {
+                Log.d(TAG, databaseError.toString());
+                View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
+                paintingContractor.addView(v);
+            }
+        });
     }
 
     // Mark: OnClickListeners

@@ -98,26 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         edit_password = (RelativeLayout)findViewById(R.id.edit_password);
-        edit_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG, "Send Password Reset");(new AlertDialog.Builder(SettingsActivity.this)
-                        .setMessage(R.string.password_email_dialog_message)
-                        .setTitle(R.string.password_email_dialog_title)
-                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK button
-                                authentication.sendPasswordResetEmail(SettingsActivity.this, authentication.getCurrentUser().getEmail());
-                            }
-                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        })
-                        .create())
-                        .show();
-            }
-        });
+        edit_password.setOnClickListener(editPasswordClickListener);
     }
 
     private Intent createEditProfileIntent() {
@@ -153,4 +134,25 @@ public class SettingsActivity extends AppCompatActivity {
 
         return intentToStartChangeContractorActivity;
     }
+    private View.OnClickListener editPasswordClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Log.i(TAG, "Send Password Reset");
+            (new AlertDialog.Builder(SettingsActivity.this)
+                    .setMessage(R.string.password_email_dialog_message)
+                    .setTitle(R.string.password_email_dialog_title)
+                    .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            authentication.sendPasswordResetEmail(SettingsActivity.this, authentication.getCurrentUser().getEmail());
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    })
+                    .create())
+                    .show();
+        }
+    };
 }

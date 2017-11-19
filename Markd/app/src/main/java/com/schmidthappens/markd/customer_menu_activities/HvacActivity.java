@@ -147,15 +147,39 @@ public class HvacActivity extends AppCompatActivity {
     }
     private void initializeFooter() {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.aire_logo);
-        ContractorDetails hvacTechnician = customerData.getHvacTechnician();
-        if(hvacTechnician == null) {
-            View v = ContractorFooterViewInitializer.createFooterView(this);
-            hvacContractor.addView(v);
-        } else {
-            View v = ContractorFooterViewInitializer.createFooterView(this, logo, hvacTechnician.getCompanyName(), hvacTechnician.getTelephoneNumber(), hvacTechnician.getWebsiteUrl());
-            hvacContractor.addView(v);
-        }
+        customerData.getHvacTechnician(new OnGetDataListener() {
+            @Override
+            public void onStart() {
+                Log.d(TAG, "Getting hvac technician data");
+            }
+
+            @Override
+            public void onSuccess(DataSnapshot data) {
+                Contractor hvacTech = data.getValue(Contractor.class);
+                if(hvacTech == null || hvacTech.getContractorDetails() == null) {
+                    Log.d(TAG, "No plumber data");
+                    View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
+                    hvacContractor.addView(v);
+                } else {
+                    ContractorDetails contractorDetails = hvacTech.getContractorDetails();
+                    Drawable logo = ContextCompat.getDrawable(HvacActivity.this, R.drawable.aire_logo);
+                    View v = ContractorFooterViewInitializer.createFooterView(
+                            HvacActivity.this,
+                            logo,
+                            contractorDetails.getCompanyName(),
+                            contractorDetails.getTelephoneNumber(),
+                            contractorDetails.getWebsiteUrl());
+                    hvacContractor.addView(v);
+                }
+            }
+
+            @Override
+            public void onFailed(DatabaseError databaseError) {
+                Log.d(TAG, databaseError.toString());
+                View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
+                hvacContractor.addView(v);
+            }
+        });
     }
 
     // Mark: OnClickListener
