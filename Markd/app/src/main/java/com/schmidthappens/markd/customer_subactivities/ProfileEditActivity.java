@@ -21,6 +21,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
@@ -188,6 +191,19 @@ public class ProfileEditActivity extends AppCompatActivity {
                     //Customer
                     contractorTypePicker.setVisibility(View.GONE);
                 }
+                authentication.getUserType(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        userType = dataSnapshot.getValue(String.class);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, databaseError.toString());
+                        Toast.makeText(ProfileEditActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
             } else {
                 if(intent.hasExtra("userType")) {
                     userType = intent.getStringExtra("userType");
@@ -294,7 +310,11 @@ public class ProfileEditActivity extends AppCompatActivity {
                 });
     }
     private void saveProfile() {
-        if(userType.equals("Home Owner")) {
+        if(userType == null) {
+            Log.e(TAG, "userType was null");
+            Toast.makeText(ProfileEditActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+            finish();
+        } else if(userType.equals("Home Owner") || userType.equals("customer")) {
             TempCustomerData customerData = new TempCustomerData(authentication, null);
             customerData.updateProfile(
                     namePrefixArray[namePrefixPicker.getValue()],

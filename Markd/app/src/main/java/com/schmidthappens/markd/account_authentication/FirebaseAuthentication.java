@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
+import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
 
 /**
  * Created by joshua.schmidtibm.com on 10/7/17.
@@ -150,11 +152,5 @@ public class FirebaseAuthentication {
     }
     public void signOut(Activity ctx) {
         firebaseAuth.signOut();
-    }
-
-
-    //TODO: reset database needs to be removed
-    void resetDatabase() {
-        //TODO: implement reset database
     }
 }

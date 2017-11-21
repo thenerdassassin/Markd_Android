@@ -155,7 +155,7 @@ public class PlumbingActivity extends AppCompatActivity {
         plumbingServiceList.addView(serviceListView);
     }
     private void initializeFooter() {
-        customerData.getPlumber(new OnGetDataListener() {
+        if(!customerData.getPlumber(new OnGetDataListener() {
             @Override
             public void onStart() {
                 Log.d(TAG, "Getting plumber data");
@@ -182,7 +182,12 @@ public class PlumbingActivity extends AppCompatActivity {
                 View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
                 plumbingContractor.addView(v);
             }
-        });
+        })) {
+            Log.d(TAG, "No plumber data");
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
+            plumbingContractor.addView(v);
+        }
+
     }
 
     //MARK:- OnClickListeners

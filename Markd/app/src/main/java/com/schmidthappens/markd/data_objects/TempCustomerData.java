@@ -66,44 +66,6 @@ public class TempCustomerData {
         Log.d(TAG, "putting customer");
         database.child(uid).setValue(customer);
     }
-    private void makeCustomer() {
-        customer = new Customer();
-
-        //Home Page
-        customer.setNamePrefix("Mr.");
-        customer.setFirstName("Joshua");
-        customer.setLastName("Schmidt");
-        customer.setMaritalStatus("Married");
-        customer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
-        customer.setHome(new Home(5.0, 1350.0, 1250));
-        //customer.setArchitect(new ContractorDetails("", "", "", ""));
-        //customer.setArchitect(new ContractorDetails("", "", "", ""));
-
-        //Plumbing
-        customer.setHotWater(initialHotWater());
-        customer.setBoiler(initialBoiler());
-        //customer.setPlumber(new ContractorDetails("SDR Plumbing & Heating Inc", "203.348.2295", "sdrplumbing.com", "06903"));
-        customer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
-
-        //HVAC
-        customer.setAirHandler(initialAirHandler());
-        customer.setCompressor(initialCompressor());
-        //customer.setHvactechnician(new ContractorDetails("AireServ", "203.348.2295", "aireserv.com", "06903"));
-        customer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
-
-        //Electrical
-        //customer.setPanels(TempPanelData.getInstance().getPanels());
-        //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
-        //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
-        customer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
-
-        //Painting
-        customer.setInteriorPaintSurfaces(initialInteriorSurfaces());
-        customer.setExteriorPaintSurfaces(initialExteriorSurfaces());
-        //customer.setPainter(new ContractorDetails("MDF Painting & Power Washing", "203.348.2295", "mdfpainting.com", "06903"));
-
-        putCustomer(customer);
-    }
     private void addContractorListener(final DatabaseReference reference, final OnGetDataListener contractorListener) {
         if(contractorListener != null) {
             contractorListener.onStart();
@@ -191,9 +153,14 @@ public class TempCustomerData {
         customer.setBoiler(boiler);
         putCustomer(customer);
     }
-    public void getPlumber(final OnGetDataListener plumberListener) {
-        DatabaseReference plumberReference = database.child(customer.getPlumberReference());
+    public boolean getPlumber(final OnGetDataListener plumberListener) {
+        String plumber = customer.getPlumberReference();
+        if(plumber == null) {
+            return false;
+        }
+        DatabaseReference plumberReference = database.child(plumber);
         addContractorListener(plumberReference, plumberListener);
+        return true;
     }
     public List<ContractorService> getPlumbingServices() {
         return getCustomer().getPlumbingServices();
@@ -214,9 +181,14 @@ public class TempCustomerData {
         customer.setCompressor(compressor);
         putCustomer(customer);
     }
-    public void getHvacTechnician(final OnGetDataListener hvacListener) {
-        DatabaseReference hvacReference = database.child(uid).child(customer.getHvactechnicianReference());
+    public boolean getHvacTechnician(final OnGetDataListener hvacListener) {
+        String hvacTechnician = customer.getHvactechnicianReference();
+        if(hvacTechnician == null) {
+            return false;
+        }
+        DatabaseReference hvacReference = database.child(hvacTechnician);
         addContractorListener(hvacReference, hvacListener);
+        return true;
     }
     public List<ContractorService>  getHvacServices() {
         return getCustomer().getHvacServices();
@@ -245,9 +217,14 @@ public class TempCustomerData {
         customer.deleteInteriorPaintSurface(paintId);
         putCustomer(customer);
     }
-    public void getPainter(final OnGetDataListener painterListener) {
-        DatabaseReference painterReference = database.child(uid).child(customer.getPainterReference());
+    public boolean getPainter(final OnGetDataListener painterListener) {
+        String painter = customer.getPainterReference();
+        if(painter == null) {
+            return false;
+        }
+        DatabaseReference painterReference = database.child(painter);
         addContractorListener(painterReference, painterListener);
+        return true;
     }
 
     //Mark:- Settings
@@ -324,7 +301,44 @@ public class TempCustomerData {
 
    //TODO: Delete when http calls are here
     //Remove when database is implemented
-    private HotWater initialHotWater() {
+    public static Customer makeCustomer() {
+        Customer newCustomer = new Customer();
+        //Home Page
+        newCustomer.setNamePrefix("Mr.");
+        newCustomer.setFirstName("Joshua");
+        newCustomer.setLastName("Schmidt");
+        newCustomer.setMaritalStatus("Married");
+        newCustomer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
+        newCustomer.setHome(new Home(5.0, 2.5, 1250));
+        //newCustomer.setArchitect(new ContractorDetails("", "", "", ""));
+        //newCustomer.setArchitect(new ContractorDetails("", "", "", ""));
+
+        //Plumbing
+        newCustomer.setHotWater(initialHotWater());
+        newCustomer.setBoiler(initialBoiler());
+        newCustomer.setPlumber("defaultPlumberOne");
+        newCustomer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
+
+        //HVAC
+        newCustomer.setAirHandler(initialAirHandler());
+        newCustomer.setCompressor(initialCompressor());
+        newCustomer.setHvactechnician("defaultHvacOne");
+        newCustomer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
+
+        //Electrical
+        //customer.setPanels(TempPanelData.getInstance().getPanels());
+        //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
+        //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
+        //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
+
+        //Painting
+        newCustomer.setInteriorPaintSurfaces(initialInteriorSurfaces());
+        newCustomer.setExteriorPaintSurfaces(initialExteriorSurfaces());
+        newCustomer.setPainter("defaultPainterOne");
+
+        return newCustomer;
+    }
+    private static HotWater initialHotWater() {
         HotWater hotWater = new HotWater();
         hotWater.setManufacturer("Bosch");
         hotWater.setModel("C950 ES NG");
@@ -335,7 +349,7 @@ public class TempCustomerData {
         hotWater.setUnits("years");
         return hotWater;
     }
-    private Boiler initialBoiler() {
+    private static Boiler initialBoiler() {
         Boiler boiler = new Boiler();
         boiler.setManufacturer("Westinghouse");
         boiler.setModel("WBRCLP140W");
@@ -346,7 +360,7 @@ public class TempCustomerData {
         boiler.setUnits("years");
         return boiler;
     }
-    private AirHandler initialAirHandler() {
+    private static AirHandler initialAirHandler() {
         AirHandler airHandler = new AirHandler();
         airHandler.setManufacturer("Goodman");
         airHandler.setModel("ARUF24B14");
@@ -357,7 +371,7 @@ public class TempCustomerData {
         airHandler.setUnits("years");
         return airHandler;
     }
-    private Compressor initialCompressor() {
+    private static Compressor initialCompressor() {
         Compressor compressor = new Compressor();
         compressor.setManufacturer("Goodman");
         compressor.setModel("GSX130361");
@@ -368,7 +382,7 @@ public class TempCustomerData {
         compressor.setUnits("years");
         return compressor;
     }
-    private List<PaintSurface> initialExteriorSurfaces() {
+    private static List<PaintSurface> initialExteriorSurfaces() {
         List<PaintSurface> exteriorSurfaces = new ArrayList<>();
 
         PaintSurface surface1 = new PaintSurface();
@@ -391,7 +405,7 @@ public class TempCustomerData {
 
         return exteriorSurfaces;
     }
-    private List<PaintSurface> initialInteriorSurfaces() {
+    private static List<PaintSurface> initialInteriorSurfaces() {
         List<PaintSurface> interiorSurfaces = new ArrayList<>();
 
         PaintSurface surface1 = new PaintSurface();

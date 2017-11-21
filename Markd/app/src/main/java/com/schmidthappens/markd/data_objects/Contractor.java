@@ -38,36 +38,41 @@ public class Contractor {
     public String getNamePrefix() {
         return namePrefix;
     }
-    public void setNamePrefix(String namePrefix) {
+    public Contractor setNamePrefix(String namePrefix) {
         this.namePrefix = namePrefix;
+        return this;
     }
 
     public String getFirstName() {
         return firstName;
     }
-    public void setFirstName(String firstName) {
+    public Contractor setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
     public String getLastName() {
         return lastName;
     }
-    public void setLastName(String lastName) {
+    public Contractor setLastName(String lastName) {
         this.lastName = lastName;
+        return this;
     }
 
     public String getType() {
         return type;
     }
-    public void setType(String type) {
+    public Contractor setType(String type) {
         this.type = type;
+        return this;
     }
 
     public ContractorDetails getContractorDetails() {
         return contractorDetails;
     }
-    public void setContractorDetails(ContractorDetails contractorDetails) {
+    public Contractor setContractorDetails(ContractorDetails contractorDetails) {
         this.contractorDetails = contractorDetails;
+        return this;
     }
 
     public List<Customer> getCustomers() {

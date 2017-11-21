@@ -147,7 +147,7 @@ public class HvacActivity extends AppCompatActivity {
     }
     private void initializeFooter() {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
-        customerData.getHvacTechnician(new OnGetDataListener() {
+        if(!customerData.getHvacTechnician(new OnGetDataListener() {
             @Override
             public void onStart() {
                 Log.d(TAG, "Getting hvac technician data");
@@ -156,8 +156,9 @@ public class HvacActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DataSnapshot data) {
                 Contractor hvacTech = data.getValue(Contractor.class);
+                Log.d(TAG, "data:" + data.toString());
                 if(hvacTech == null || hvacTech.getContractorDetails() == null) {
-                    Log.d(TAG, "No plumber data");
+                    Log.d(TAG, "No hvac data");
                     View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
                     hvacContractor.addView(v);
                 } else {
@@ -179,7 +180,11 @@ public class HvacActivity extends AppCompatActivity {
                 View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
                 hvacContractor.addView(v);
             }
-        });
+        })) {
+            Log.d(TAG, "No hvac reference data");
+            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
+            hvacContractor.addView(v);
+        }
     }
 
     // Mark: OnClickListener

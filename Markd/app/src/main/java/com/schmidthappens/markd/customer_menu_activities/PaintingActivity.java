@@ -115,7 +115,7 @@ public class PaintingActivity extends AppCompatActivity {
     public void initializeFooter() {
         paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
         Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
-        customerData.getPlumber(new OnGetDataListener() {
+        if(!customerData.getPainter(new OnGetDataListener() {
             @Override
             public void onStart() {
                 Log.d(TAG, "Getting painter data");
@@ -124,6 +124,7 @@ public class PaintingActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DataSnapshot data) {
                 Contractor painter = data.getValue(Contractor.class);
+                Log.d(TAG, "data:" + data.toString());
                 if(painter == null || painter.getContractorDetails() == null) {
                     Log.d(TAG, "No painter data");
                     View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
@@ -142,7 +143,11 @@ public class PaintingActivity extends AppCompatActivity {
                 View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
                 paintingContractor.addView(v);
             }
-        });
+        })) {
+            Log.d(TAG, "No painter data");
+            View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
+            paintingContractor.addView(v);
+        }
     }
 
     // Mark: OnClickListeners

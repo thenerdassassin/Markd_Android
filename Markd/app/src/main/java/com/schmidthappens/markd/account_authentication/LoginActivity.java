@@ -43,8 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
-import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
+import com.schmidthappens.markd.utilities.DatabaseResetter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -212,8 +212,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        final String email = mEmailView.getText().toString();
-        final String password = mPasswordView.getText().toString();
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -244,8 +244,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             //TODO: come up with better database reset
-            if(email.equals("adminreset@gmail.com") && password.equals("reset2107")) {
-                authentication.resetDatabase();
+            if(email.equals("adminreset@gmail.com") && password.equals("reset2017")) {
+                DatabaseResetter.resetDatabase();
+                email = "user@gmail.com";
+                password = "password";
+                Log.i(TAG, "Database reset. Logging in as user@gmail.com");
             }
             showProgress(true);
             Log.d(TAG, "about to attempt sign in");
