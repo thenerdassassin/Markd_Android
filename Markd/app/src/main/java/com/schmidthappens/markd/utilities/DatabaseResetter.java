@@ -188,6 +188,132 @@ public class DatabaseResetter {
                         )));
         zipCodesReference.child("06824").child("defaultPainterFour").setValue("Painter");
 
+        //Architect
+        userReference.child("defaultArchitectOne")
+                .setValue(new Contractor()
+                        .setType("Architect")
+                        .setContractorDetails(new ContractorDetails(
+                                "Granoff Architects",
+                                "(203) 625-9460",
+                                "http://www.granoffarchitects.com",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultArchitectOne").setValue("Architect");
+        userReference.child("defaultArchitectTwo")
+                .setValue(new Contractor()
+                        .setType("Architect")
+                        .setContractorDetails(new ContractorDetails(
+                                "Joeb Moore & Partners",
+                                "(203) 769-5828",
+                                "http://joebmoore.com",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultArchitectTwo").setValue("Architect");
+        userReference.child("defaultArchitectThree")
+                .setValue(new Contractor()
+                        .setType("Architect")
+                        .setContractorDetails(new ContractorDetails(
+                                "Shoreline Design Group",
+                                "(203) 661-3200",
+                                "http://shorelinedesign.net",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultArchitectThree").setValue("Architect");
+        userReference.child("defaultArchitectFour")
+                .setValue(new Contractor()
+                        .setType("Architect")
+                        .setContractorDetails(new ContractorDetails(
+                                "Wadia Associates",
+                                "(203) 966-0048",
+                                "http://www.wadiaassociates.com",
+                                "06840"
+                        )));
+        zipCodesReference.child("06840").child("defaultArchitectFour").setValue("Architect");
+
+        //Builder
+        userReference.child("defaultBuilderOne")
+                .setValue(new Contractor()
+                        .setType("Builder")
+                        .setContractorDetails(new ContractorDetails(
+                                "LOPARCO",
+                                "(203) 629-4800",
+                                "http://loparco.com",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultBuilderOne").setValue("Builder");
+        userReference.child("defaultBuilderTwo")
+                .setValue(new Contractor()
+                        .setType("Builder")
+                        .setContractorDetails(new ContractorDetails(
+                                "Davenport Contracting",
+                                "(203) 324-6308",
+                                "https://www.davenportcontracting.com",
+                                "06902"
+                        )));
+        zipCodesReference.child("06902").child("defaultBuilderTwo").setValue("Builder");
+        userReference.child("defaultBuilderThree")
+                .setValue(new Contractor()
+                        .setType("Builder")
+                        .setContractorDetails(new ContractorDetails(
+                                "RR Builders",
+                                "(203) 972-6100",
+                                "http://www.rrbuilders.com",
+                                "06840"
+                        )));
+        zipCodesReference.child("06840").child("defaultBuilderThree").setValue("Builder");
+        userReference.child("defaultBuilderFour")
+                .setValue(new Contractor()
+                        .setType("Builder")
+                        .setContractorDetails(new ContractorDetails(
+                                "Hobbs Incorporated",
+                                "(203) 966-0726",
+                                "http://www.hobbsinc.com",
+                                "06840"
+                        )));
+        zipCodesReference.child("06840").child("defaultBuilderFour").setValue("Builder");
+
+        //Realtor
+        userReference.child("defaultRealtorOne")
+                .setValue(new Contractor()
+                        .setType("Realtor")
+                        .setContractorDetails(new ContractorDetails(
+                                "Anderson Associates",
+                                "(203) 629-4519",
+                                "http://greenwichliving.com",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultRealtorOne").setValue("Realtor");
+        userReference.child("defaultRealtorTwo")
+                .setValue(new Contractor()
+                        .setType("Realtor")
+                        .setContractorDetails(new ContractorDetails(
+                                "David Oglivy & Associates",
+                                "(203) 869-9866",
+                                "http://www.davidogilvy.com",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultRealtorTwo").setValue("Realtor");
+        userReference.child("defaultRealtorThree")
+                .setValue(new Contractor()
+                        .setType("Realtor")
+                        .setContractorDetails(new ContractorDetails(
+                                "Berkshire Hathaway",
+                                "(203) 869-0500",
+                                "https://www.bhhsneproperties.com",
+                                "06830"
+                        )));
+        zipCodesReference.child("06830").child("defaultRealtorThree").setValue("Realtor");
+        userReference.child("defaultRealtorFour")
+                .setValue(new Contractor()
+                        .setType("Realtor")
+                        .setContractorDetails(new ContractorDetails(
+                                "Kathy Tanner",
+                                "(203) 966-3507",
+                                "http://kathytanner.houlihanlawrence.com",
+                                "06840"
+                        )));
+        zipCodesReference.child("06840").child("defaultRealtorFour").setValue("Realtor");
+
         //Default Customer
         userReference.child("R1EyDxbQK3Uf8ohZDNrazgM4FVc2")
                 .setValue(TempCustomerData.makeCustomer());
