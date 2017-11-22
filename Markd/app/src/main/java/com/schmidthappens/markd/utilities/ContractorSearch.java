@@ -31,13 +31,17 @@ public class ContractorSearch {
 
         for (Map.Entry<Double, String> zipCode : zipCodeMap.entrySet()) {
             DataSnapshot listOfContractorsAtZipCode = firebaseZipCodesSnapshot.child(zipCode.getValue());
+            Log.v(TAG, listOfContractorsAtZipCode.toString());
             if (listOfContractorsAtZipCode.exists()) {
+                Log.d(TAG, "contractors at zipcode:" + zipCode.getValue());
                 for (DataSnapshot contractorReference : listOfContractorsAtZipCode.getChildren()) {
-                    String contractorReferenceType = contractorReference.getValue().toString();
-                    if (contractorReferenceType.equals(contractorType)) {
+                    String contractorReferenceType = contractorReference.getValue(String.class);
+                    if (contractorReferenceType != null && contractorReferenceType.equals(contractorType)) {
                         contractors.add(contractorReference.getKey());
                     }
                 }
+            } else {
+                Log.d(TAG, "No contractors at zipcode:" + zipCode.getValue());
             }
         }
         Log.d(TAG, contractors.toString());

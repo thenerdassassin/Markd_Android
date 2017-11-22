@@ -71,7 +71,7 @@ public class TempContractorData {
     private void putIntoZipCode(Contractor contractor) {
         if(contractor != null && contractor.getContractorDetails() != null && contractor.getContractorDetails().getZipCode() != null) {
             Log.i(TAG, "Putting Contractor into Zipcode:" + contractor.getContractorDetails().getZipCode());
-            database.child("zip_codes").child(contractor.getContractorDetails().getZipCode()).child(uid).setValue(true);
+            database.child("zip_codes").child(contractor.getContractorDetails().getZipCode()).child(uid).setValue(contractor.getType());
         }
     }
     private void removeFromOldZipCode(String zipCode) {

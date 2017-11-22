@@ -63,6 +63,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
     TextView milesTextView;
     Button searchButton;
     RecyclerView contractorRecyclerView;
+    TextView noContractorsFound;
 
     Map<Double, String> zipCodeMap;
     List<String> contractorReferences;
@@ -122,6 +123,9 @@ public class ChangeContractorActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         contractorRecyclerView.setLayoutManager(layoutManager);
         contractorRecyclerView.setHasFixedSize(true);
+
+        noContractorsFound = (TextView)findViewById(R.id.no_contractors_text_view);
+        noContractorsFound.setVisibility(View.INVISIBLE);
     }
 
     //Mark:- Listeners
@@ -154,6 +158,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
         public void onResponse(JSONObject response) {
             try {
                 zipCodeMap = ZipCodeUtilities.sortZipCodes(response.getJSONArray("zip_codes"));
+                Log.v(TAG, zipCodeMap.toString());
                 FirebaseDatabase.getInstance().getReference().child("zip_codes").addListenerForSingleValueEvent(zipCodesListener);
             } catch (JSONException exception) {
                 Log.d(TAG, exception.toString());
@@ -173,6 +178,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
         @Override
         public void onDataChange(DataSnapshot firebaseZipCodesSnapshot) {
             contractorReferences = ContractorSearch.getContractorsInZipCodes(zipCodeMap, getContractorType(), firebaseZipCodesSnapshot);
+            Log.v(TAG, contractorReferences.toString());
             FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(usersListener);
         }
 
@@ -186,6 +192,11 @@ public class ChangeContractorActivity extends AppCompatActivity {
         @Override
         public void onDataChange(DataSnapshot usersSnapshot) {
             List<Contractor> contractors = ContractorSearch.getContractorsFromReferences(contractorReferences, usersSnapshot);
+            if(contractors.size() > 0) {
+                noContractorsFound.setVisibility(View.INVISIBLE);
+            } else {
+                noContractorsFound.setVisibility(View.VISIBLE);
+            }
             contractorRecyclerView.setAdapter(new ContractorListRecyclerViewAdapter(ChangeContractorActivity.this, contractors, contractorReferences, new UpdateContractorListener()));
         }
 
@@ -199,6 +210,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
     public class UpdateContractorListener implements ContractorUpdater {
         public void update(String contractorReference) {
             customerData.updateContractor(getContractorType(), contractorReference);
+            finish();
         }
     }
 

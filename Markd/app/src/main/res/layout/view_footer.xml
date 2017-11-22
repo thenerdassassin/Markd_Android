@@ -54,6 +54,7 @@
             android:textColorLink="@color/hyperlink"
             android:layout_marginBottom="10dp"
             android:autoLink="web"
+            android:textSize="12sp"
             />
     </LinearLayout>
 </RelativeLayout>

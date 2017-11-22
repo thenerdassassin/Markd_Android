@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -79,14 +79,23 @@
                     android:layout_alignParentBottom="true"
                     android:background="@android:color/darker_gray" />
             </RelativeLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/change_contractor_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:verticalScrollbarPosition="right"
                 android:clickable="true"/>
+            <TextView
+                android:id="@+id/no_contractors_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:text="No contractors found..."
+                android:visibility="invisible"/>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <!-- Navigation Drawer-->
     <ListView
