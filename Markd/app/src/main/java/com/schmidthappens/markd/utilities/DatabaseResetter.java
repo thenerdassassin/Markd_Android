@@ -317,5 +317,17 @@ public class DatabaseResetter {
         //Default Customer
         userReference.child("R1EyDxbQK3Uf8ohZDNrazgM4FVc2")
                 .setValue(TempCustomerData.makeCustomer());
+
+        userReference.child("s5VWMQvH17ZJnVqxtOkqvWpufmu2").setValue(new Contractor()
+                .setFirstName("Mario")
+                .setLastName("Plumber")
+                .setNamePrefix("Dr.")
+                .setType("Plumber")
+                .setContractorDetails(new ContractorDetails()
+                .setCompanyName("Mario Bros.")
+                .setTelephoneNumber("(555) 123-8008")
+                .setWebsiteUrl("www.nintendo.com")
+                .setZipCode("06840"))
+                );
     }
 }

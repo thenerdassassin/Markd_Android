@@ -23,10 +23,10 @@ public class Contractor {
     private String lastName;
     private String type;
     private ContractorDetails contractorDetails;
-    private List<Customer> customers;
+    private List<String> customers;
 
     //Mark:- Constructors
-    private Contractor(ContractorDetails details, List<Customer> customers) {
+    private Contractor(ContractorDetails details, List<String> customers) {
         this.contractorDetails = details;
         this.customers = customers;
     }
@@ -75,10 +75,10 @@ public class Contractor {
         return this;
     }
 
-    public List<Customer> getCustomers() {
+    public List<String> getCustomers() {
         return customers;
     }
-    public void setCustomers(List<Customer> customers) {
+    public void setCustomers(List<String> customers) {
         this.customers = customers;
     }
 

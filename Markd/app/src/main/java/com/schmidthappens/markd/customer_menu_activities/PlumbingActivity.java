@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
@@ -63,6 +64,7 @@ public class PlumbingActivity extends AppCompatActivity {
     private static final String TAG = "PlumbingActivity";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    private boolean isContractorViewingPage;
 
     private HotWater hotWater;
     private Boiler boiler;
@@ -71,16 +73,7 @@ public class PlumbingActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_plumbing_view);
-
         authentication = new FirebaseAuthentication(this);
-        if(getIntent().hasExtra("isContractor")) {
-            new ActionBarInitializer(this, true, "contractor");
-        } else {
-            new ActionBarInitializer(this, true, "customer");
-        }
-
-        plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
-        plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
     }
 
     @Override
@@ -92,7 +85,21 @@ public class PlumbingActivity extends AppCompatActivity {
             finish();
         }
 
-        customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new PlumbingGetDataListener());
+        Intent intentToProcess = getIntent();
+        if(intentToProcess.hasExtra("isContractor")) {
+            isContractorViewingPage = true;
+            new ActionBarInitializer(this, true, "contractor");
+            if(intentToProcess.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new PlumbingGetDataListener());
+            } else {
+                Log.e(TAG, "No customer id");
+                Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            isContractorViewingPage = false;
+            new ActionBarInitializer(this, true, "customer");
+            customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new PlumbingGetDataListener());
+        }
     }
 
     @Override
@@ -151,10 +158,12 @@ public class PlumbingActivity extends AppCompatActivity {
         boilerLifeSpanView.setText(boiler.lifeSpanAsString());
     }
     private void initializeContractorServices() {
+        plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
         View serviceListView = createServiceListView(PlumbingActivity.this, customerData.getPlumbingServices(), "SDR Plumbing & Heating Inc", "/services/plumbing");
         plumbingServiceList.addView(serviceListView);
     }
     private void initializeFooter() {
+        plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         if(!customerData.getPlumber(new OnGetDataListener() {
             @Override
             public void onStart() {
@@ -198,10 +207,7 @@ public class PlumbingActivity extends AppCompatActivity {
             Class destinationClass = ApplianceEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
-            if(hotWater != null) {
-                intentToStartPlumbingEditActivity = putHotWaterExtras(intentToStartPlumbingEditActivity);
-            }
-            intentToStartPlumbingEditActivity.putExtra("title", "Domestic Hot Water");
+            intentToStartPlumbingEditActivity = putIntentExtras(intentToStartPlumbingEditActivity, hotWater, "Domestic Hot Water");
             startActivity(intentToStartPlumbingEditActivity);
         }
     };
@@ -220,29 +226,23 @@ public class PlumbingActivity extends AppCompatActivity {
             Class destinationClass = ApplianceEditActivity.class;
             Context context = PlumbingActivity.this;
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
-            if(boiler != null) {
-                intentToStartPlumbingEditActivity = putBoilerExtras(intentToStartPlumbingEditActivity);
-            }
-            intentToStartPlumbingEditActivity.putExtra("title", "Boiler");
+            intentToStartPlumbingEditActivity = putIntentExtras(intentToStartPlumbingEditActivity, boiler, "Boiler");
             startActivity(intentToStartPlumbingEditActivity);
         }
     };
 
     //MARK:- Intent Builders
-    private Intent putHotWaterExtras(Intent intent) {
-        intent.putExtra("manufacturer", hotWaterManufacturerView.getText());
-        intent.putExtra("model", hotWaterModelView.getText());
-        intent.putExtra("installDate", hotWaterInstallDateView.getText());
-        intent.putExtra("lifespanInteger", hotWater.getLifeSpan());
-        intent.putExtra("units", hotWater.getUnits());
-        return intent;
-    }
-    private Intent putBoilerExtras(Intent intent) {
-        intent.putExtra("manufacturer", boilerManufacturerView.getText());
-        intent.putExtra("model", boilerModelView.getText());
-        intent.putExtra("installDate", boilerInstallDateView.getText());
-        intent.putExtra("lifespanInteger", boiler.getLifeSpan());
-        intent.putExtra("units", boiler.getUnits());
+    private Intent putIntentExtras(Intent intent, AbstractAppliance appliance, String title) {
+        intent.putExtra("title", title);
+        if(appliance != null) {
+            intent.putExtra("manufacturer", appliance.getManufacturer());
+            intent.putExtra("model", appliance.getModel());
+            intent.putExtra("installDate", appliance.installDateAsString());
+            intent.putExtra("lifespanInteger", appliance.getLifeSpan());
+            intent.putExtra("units", appliance.getUnits());
+            intent.putExtra("isContractor", isContractorViewingPage);
+            intent.putExtra("customerId", customerData.getUid());
+        }
         return intent;
     }
 

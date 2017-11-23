@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,19 +53,13 @@ public class PaintingActivity extends AppCompatActivity {
     private final static String TAG = "PaintingActivity";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    private boolean isContractorViewingPage;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_painting_view);
-
         authentication = new FirebaseAuthentication(this);
-
-        if(getIntent().hasExtra("isContractor")) {
-            new ActionBarInitializer(this, true, "contractor");
-        } else {
-            new ActionBarInitializer(this, true, "customer");
-        }
     }
 
 
@@ -76,7 +71,8 @@ public class PaintingActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        customerData = new TempCustomerData(authentication, new PaintingGetDataListener());
+        processIntent(getIntent());
+
     }
 
     @Override
@@ -86,6 +82,22 @@ public class PaintingActivity extends AppCompatActivity {
     }
 
     // Mark: Setup
+    private void processIntent(Intent intentToProcess) {
+        if(intentToProcess.hasExtra("isContractor")) {
+            isContractorViewingPage = true;
+            new ActionBarInitializer(this, true, "contractor");
+            if(intentToProcess.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new PaintingGetDataListener());
+            } else {
+                Log.e(TAG, "No customer id");
+                Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            isContractorViewingPage = false;
+            new ActionBarInitializer(this, true, "customer");
+            customerData = new TempCustomerData(authentication, new PaintingGetDataListener());
+        }
+    }
     public void initializeUI() {
         initializeButtons();
         initializePaintLists();
@@ -104,12 +116,12 @@ public class PaintingActivity extends AppCompatActivity {
     public void initializePaintLists() {
         //Set Up Exterior PaintList
         exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
-        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true);
+        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true, customerData.getUid());
         exteriorPaintList.addView(listOfExteriorPaints);
 
         //Set Up Interior PaintList
         interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
-        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false);
+        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false, customerData.getUid());
         interiorPaintList.addView(listOfInteriorPaints);
     }
     public void initializeFooter() {
@@ -181,10 +193,10 @@ public class PaintingActivity extends AppCompatActivity {
         //Used to reset the adapter
         if(isExterior) {
             exteriorPaintList.removeAllViews();
-            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true));
+            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true, customerData.getUid()));
         } else {
             interiorPaintList.removeAllViews();
-            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false));
+            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false, customerData.getUid()));
         }
     }
 
@@ -193,12 +205,10 @@ public class PaintingActivity extends AppCompatActivity {
         public void onStart() {
 
         }
-
         @Override
         public void onSuccess(DataSnapshot data) {
             initializeUI();
         }
-
         @Override
         public void onFailed(DatabaseError databaseError) {
 

@@ -1,6 +1,8 @@
 package com.schmidthappens.markd.view_initializers;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 
 /**
  * Created by joshua.schmidtibm.com on 10/3/17.
@@ -82,7 +85,9 @@ public class ActionBarInitializer {
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.finish();
+                Class destinationClass = ContractorCustomersActivity.class;
+                Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
+                context.startActivity(intentToStartPlumbingEditActivity);
             }
         });
     }

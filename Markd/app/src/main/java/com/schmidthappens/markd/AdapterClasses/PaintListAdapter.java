@@ -38,11 +38,13 @@ public class PaintListAdapter {
     private PaintingActivity activityContext = null;
     private static final String TAG = "PaintListAdapter";
     private TempCustomerData customerData;
+    private String customerId;
 
-    public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, final boolean isExterior) {
+    public View createPaintListView(final Context context, final List<PaintSurface> paintSurfaces, final boolean isExterior, String customerId) {
         if(context instanceof PaintingActivity) {
             activityContext = (PaintingActivity)context;
-            customerData = new TempCustomerData(activityContext, null); //TODO: add listener
+            customerData = new TempCustomerData(customerId, null);
+            this.customerId = customerId;
         } else {
             Log.e(TAG, "Activity Context not Painting Activity");
         }
@@ -199,8 +201,8 @@ public class PaintListAdapter {
         intent.putExtra("paintDate", paintSurface.getDateString());
         intent.putExtra("brand", paintSurface.getBrand());
         intent.putExtra("color", paintSurface.getColor());
+        intent.putExtra("customerId", customerId);
     }
-
 
     private void initializeXValues(LinearLayout row, MotionEvent event){
         historicX = event.getRawX();

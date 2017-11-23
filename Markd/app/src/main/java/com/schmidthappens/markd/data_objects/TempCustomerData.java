@@ -87,6 +87,10 @@ public class TempCustomerData {
         });
     }
 
+    public String getUid() {
+        return uid;
+    }
+
     //Mark:- Home Page
     public String getName() {
         if(customer == null) {
@@ -316,7 +320,7 @@ public class TempCustomerData {
         //Plumbing
         newCustomer.setHotWater(initialHotWater());
         newCustomer.setBoiler(initialBoiler());
-        newCustomer.setPlumber("defaultPlumberOne");
+        newCustomer.setPlumber("s5VWMQvH17ZJnVqxtOkqvWpufmu2");
         newCustomer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
 
         //HVAC

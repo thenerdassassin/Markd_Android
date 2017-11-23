@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -47,6 +48,7 @@ public class PaintEditActivity extends AppCompatActivity {
     private static final String TAG = "PaintEditActivity";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    private String customerId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,6 @@ public class PaintEditActivity extends AppCompatActivity {
         setContentView(R.layout.edit_view_paint);
 
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication, null); //TODO: add listener
 
         setTitle("Edit Paint Surface");
         Intent intent = getIntent();
@@ -62,6 +63,7 @@ public class PaintEditActivity extends AppCompatActivity {
         if(intent != null) {
             instantiateEditTextObjects();
             processIntentExtras(intent);
+            customerData = new TempCustomerData(customerId, null);
         } else {
             Log.e(TAG, "Intent is Null");
             goBackToPaintingActivity();
@@ -88,6 +90,15 @@ public class PaintEditActivity extends AppCompatActivity {
         authentication.detachListener();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return false;
+    }
+
     private void instantiateEditTextObjects(){
         editLocation = (EditText)findViewById(R.id.paint_edit_location);
         setEnterButtonToKeyboardDismissal(editLocation);
@@ -112,19 +123,22 @@ public class PaintEditActivity extends AppCompatActivity {
         if(intent.hasExtra("location")) {
             editLocation.setText(intent.getStringExtra("location"));
         }
-
         if(intent.hasExtra("paintDate")) {
             editInstallDate.setText(intent.getStringExtra("paintDate"));
         } else {
             editInstallDate.setText(StringUtilities.getCurrentDateString());
         }
-
         if(intent.hasExtra("brand")) {
             editBrand.setText(intent.getStringExtra("brand"));
         }
-
         if(intent.hasExtra("color")) {
             editColor.setText(intent.getStringExtra("color"));
+        }
+        if(intent.hasExtra("customerId")) {
+            customerId = intent.getStringExtra("customerId");
+        } else {
+            Log.e(TAG, "No customer id in intent");
+            goBackToPaintingActivity();
         }
     }
 
@@ -167,6 +181,10 @@ public class PaintEditActivity extends AppCompatActivity {
 
     private void goBackToPaintingActivity(){
         Intent paintingActivityIntent = new Intent(getApplicationContext(), PaintingActivity.class);
+        if(!customerId.equals(authentication.getCurrentUser().getUid())) {
+            paintingActivityIntent.putExtra("isContractor", true);
+            paintingActivityIntent.putExtra("customerId", customerId);
+        }
         startActivity(paintingActivityIntent);
         finish();
     }

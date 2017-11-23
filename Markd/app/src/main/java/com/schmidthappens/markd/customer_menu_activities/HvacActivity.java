@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,6 +64,7 @@ public class HvacActivity extends AppCompatActivity {
     private static String TAG = "HvacActivity";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    boolean isContractorViewingPage;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -70,11 +72,7 @@ public class HvacActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_hvac_view);
 
         authentication = new FirebaseAuthentication(this);
-        if(getIntent().hasExtra("isContractor")) {
-            new ActionBarInitializer(this, true, "contractor");
-        } else {
-            new ActionBarInitializer(this, true, "customer");
-        }
+
     }
     @Override
     public void onStart() {
@@ -84,7 +82,21 @@ public class HvacActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        customerData = new TempCustomerData(authentication, new HVACGetDataListener());
+        Intent intentToProcess = getIntent();
+        if(intentToProcess.hasExtra("isContractor")) {
+            isContractorViewingPage = true;
+            new ActionBarInitializer(this, true, "contractor");
+            if(intentToProcess.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new HVACGetDataListener());
+            } else {
+                Log.e(TAG, "No customer id");
+                Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            isContractorViewingPage = false;
+            new ActionBarInitializer(this, true, "customer");
+            customerData = new TempCustomerData(authentication, new HVACGetDataListener());
+        }
     }
     @Override
     public void onStop() {
@@ -220,6 +232,8 @@ public class HvacActivity extends AppCompatActivity {
             intent.putExtra("installDate", appliance.installDateAsString());
             intent.putExtra("lifespanInteger", appliance.getLifeSpan());
             intent.putExtra("units", appliance.getUnits());
+            intent.putExtra("isContractor", isContractorViewingPage);
+            intent.putExtra("customerId", customerData.getUid());
         }
         return intent;
     }

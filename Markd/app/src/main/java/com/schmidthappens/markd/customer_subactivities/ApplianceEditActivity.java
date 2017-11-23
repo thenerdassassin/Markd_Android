@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
+import com.schmidthappens.markd.utilities.NumberPickerUtilities;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.Calendar;
@@ -52,8 +54,10 @@ public class ApplianceEditActivity extends AppCompatActivity {
             "months",
             "years"
     };
+
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    private boolean isContractorEditingPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,59 +67,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         customerData = new TempCustomerData(authentication, null);
 
-        Intent intent = getIntent();
-
-        if(intent != null && intent.hasExtra("title"))
-            setTitle(intent.getStringExtra("title"));
-
-        //Initialize XML Objects
-        editManufacturer = (EditText)findViewById(R.id.plumbing_edit_manufacturer);
-        if(intent != null && intent.hasExtra("manufacturer"))
-            editManufacturer.setText(intent.getStringExtra("manufacturer"));
-        setEnterButtonToKeyboardDismissal(editManufacturer);
-
-        editModel = (EditText)findViewById(R.id.plumbing_edit_model);
-        if(intent != null && intent.hasExtra("model"))
-            editModel.setText(intent.getStringExtra("model"));
-        setEnterButtonToKeyboardDismissal(editModel);
-
-        editInstallDate = (TextView)findViewById(R.id.plumbing_edit_install_date);
-        if(intent != null && intent.hasExtra("installDate")) {
-            editInstallDate.setText(intent.getStringExtra("installDate"));
-        } else {
-            editInstallDate.setText(StringUtilities.getCurrentDateString());
-        }
-
-        setInstallDateButton = (Button)findViewById(R.id.plumbing_set_install_date);
-        setInstallDateButton.setOnClickListener(setInstallDateButtonClickListener);
-
-        lifeSpanIntegerPicker = (NumberPicker)findViewById(R.id.plumbing_edit_lifespan_number_picker);
-        lifeSpanIntegerPicker.setMinValue(0);
-        lifeSpanIntegerPicker.setMaxValue(365);
-        lifeSpanIntegerPicker.setWrapSelectorWheel(false);
-        setKeyboardDismissal(lifeSpanIntegerPicker);
-        if(intent != null) {
-            lifeSpanIntegerPicker.setValue(intent.getIntExtra("lifespanInteger", 0));
-        }
-
-        lifeSpanUnits = (NumberPicker)findViewById(R.id.plumbing_edit_life_span_units);
-        lifeSpanUnits.setMinValue(0);
-        lifeSpanUnits.setMaxValue(unitsArray.length-1);
-        setKeyboardDismissal(lifeSpanUnits);
-        lifeSpanUnits.setDisplayedValues(unitsArray);
-
-        if(intent != null && intent.hasExtra("units")) {
-            String units = intent.getStringExtra("units");
-            for(int i = 0; i < unitsArray.length; i++) {
-                if(unitsArray[i].equals(units)) {
-                    lifeSpanUnits.setValue(i);
-                    break;
-                }
-            }
-        }
-
-        saveButton = (Button)findViewById(R.id.plumbing_edit_save_button);
-        saveButton.setOnClickListener(saveButtonClickListener);
+        initializeXMLObjects();
     }
 
     @Override
@@ -126,12 +78,22 @@ public class ApplianceEditActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        processIntent(getIntent());
     }
 
     @Override
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return false;
     }
 
     //Mark:- Click Listener
@@ -152,6 +114,56 @@ public class ApplianceEditActivity extends AppCompatActivity {
     };
 
     //Mark:- Helper Functions
+    private void initializeXMLObjects() {
+        editManufacturer = (EditText)findViewById(R.id.plumbing_edit_manufacturer);
+        setEnterButtonToKeyboardDismissal(editManufacturer);
+        editModel = (EditText)findViewById(R.id.plumbing_edit_model);
+        setEnterButtonToKeyboardDismissal(editModel);
+        editInstallDate = (TextView)findViewById(R.id.plumbing_edit_install_date);
+        setInstallDateButton = (Button)findViewById(R.id.plumbing_set_install_date);
+        setInstallDateButton.setOnClickListener(setInstallDateButtonClickListener);
+
+        lifeSpanIntegerPicker = (NumberPicker)findViewById(R.id.plumbing_edit_lifespan_number_picker);
+        lifeSpanIntegerPicker.setMinValue(0);
+        lifeSpanIntegerPicker.setMaxValue(365);
+        lifeSpanIntegerPicker.setWrapSelectorWheel(false);
+        setKeyboardDismissal(lifeSpanIntegerPicker);
+
+        lifeSpanUnits = (NumberPicker)findViewById(R.id.plumbing_edit_life_span_units);
+        lifeSpanUnits.setMinValue(0);
+        lifeSpanUnits.setMaxValue(unitsArray.length-1);
+        setKeyboardDismissal(lifeSpanUnits);
+        lifeSpanUnits.setDisplayedValues(unitsArray);
+
+        saveButton = (Button)findViewById(R.id.plumbing_edit_save_button);
+        saveButton.setOnClickListener(saveButtonClickListener);
+    }
+    private void processIntent(Intent intent) {
+        if(intent != null) {
+            if(intent.hasExtra("title")) {
+                setTitle(intent.getStringExtra("title"));
+            }
+            if(intent.hasExtra("manufacturer")) {
+                editManufacturer.setText(intent.getStringExtra("manufacturer"));
+            }
+            if(intent.hasExtra("model")) {
+                editModel.setText(intent.getStringExtra("model"));
+            }
+            if(intent.hasExtra("installDate")) {
+                editInstallDate.setText(intent.getStringExtra("installDate"));
+            } else {
+                editInstallDate.setText(StringUtilities.getCurrentDateString());
+            }
+            lifeSpanIntegerPicker.setValue(intent.getIntExtra("lifespanInteger", 0));
+            if(intent.hasExtra("units")) {
+                NumberPickerUtilities.setPicker(lifeSpanUnits, intent.getStringExtra("units"), unitsArray);
+            }
+            isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
+            if(isContractorEditingPage && intent.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
+            }
+        }
+    }
     private void changeInstallDate(String newDate) {
         editInstallDate.setText(newDate);
     }
@@ -189,7 +201,11 @@ public class ApplianceEditActivity extends AppCompatActivity {
     }
 
     private void goBackToActivity(Class destinationClass){
-        Intent activityIntent = new Intent(getApplicationContext(), destinationClass);
+        Intent activityIntent = new Intent(this, destinationClass);
+        if(isContractorEditingPage) {
+            activityIntent.putExtra("isContractor", true);
+            activityIntent.putExtra("customerId", customerData.getUid());
+        }
         startActivity(activityIntent);
         finish();
     }

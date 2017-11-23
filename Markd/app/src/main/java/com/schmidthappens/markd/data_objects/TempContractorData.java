@@ -154,14 +154,19 @@ public class TempContractorData {
         return getContractor().getContractorDetails();
     }
     public void updateContractorDetails(ContractorDetails contractorDetails) {
-        removeFromOldZipCode(contractor.getContractorDetails().getZipCode());
+        if(contractor.getContractorDetails() != null) {
+            removeFromOldZipCode(contractor.getContractorDetails().getZipCode());
+        }
         contractor.setContractorDetails(contractorDetails);
         putContractor(contractor);
     }
 
     //Mark:- Customers Page
-    public List<Customer> getCustomers() {
+    public List<String> getCustomers() {
         return getContractor().getCustomers();
+    }
+    public String getType() {
+        return getContractor().getType();
     }
 
     //Mark:- Settings Page

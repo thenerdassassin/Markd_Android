@@ -36,8 +36,9 @@ public class ContractorDetails {
     public String getCompanyName() {
         return companyName;
     }
-    public void setCompanyName(String companyName) {
+    public ContractorDetails setCompanyName(String companyName) {
         this.companyName = companyName;
+        return this;
     }
 
     public String getTelephoneNumber() {
@@ -50,26 +51,29 @@ public class ContractorDetails {
             return PhoneNumberUtils.formatNumber(telephoneNumber); //Deprecated method
         }
     }
-    public void setTelephoneNumber(String telephoneNumber) {
+    public ContractorDetails setTelephoneNumber(String telephoneNumber) {
         telephoneNumber = telephoneNumber.replaceAll("[^0-9]", "");
         if(telephoneNumber.length() != 10) {
-            return;
+            return this;
         }
         this.telephoneNumber = telephoneNumber;
+        return this;
     }
 
     public String getWebsiteUrl() {
         return websiteUrl;
     }
-    public void setWebsiteUrl(String websiteUrl) {
+    public ContractorDetails setWebsiteUrl(String websiteUrl) {
         this.websiteUrl = websiteUrl;
+        return this;
     }
 
     public String getZipCode() {
         return zipCode;
     }
-    public void setZipCode(String zipCode) {
+    public ContractorDetails setZipCode(String zipCode) {
         this.zipCode = zipCode;
+        return this;
     }
 
 }
