@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_markd"
@@ -146,13 +149,14 @@
         </activity>
 
         <!-- FCM Messaging -->
-        <service android:name=".firebase_cloud_messaging.MarkdFirebaseMessagingService">
+        <service android:name=".firebase_cloud_messaging.MarkdFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <service
-            android:name=".firebase_cloud_messaging.MarkdFirebaseInstanceIDService">
+        <service android:name=".firebase_cloud_messaging.MarkdFirebaseInstanceIDService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
@@ -161,7 +165,7 @@
             See README(https://goo.gl/l4GJaQ) for more. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher_markd" />
+            android:resource="@drawable/ic_contractor_notification" />
     </application>
 
 </manifest>

@@ -115,7 +115,7 @@ public class FirebaseAuthentication {
     }
 
     @NonNull
-    public Task<AuthResult> signIn(final Activity ctx, final String email, final String password) {
+    Task<AuthResult> signIn(final Activity ctx, final String email, final String password) {
         return firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(ctx, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

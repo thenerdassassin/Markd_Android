@@ -17,19 +17,6 @@ import java.util.List;
 
 public class NotificationHandler {
     private final static String TAG = "NotificationsHandler";
-    private String customerId;
-    private DatabaseReference notifications;
-    private ValueEventListener listener;
-
-    public NotificationHandler(String customerId) {
-        this.customerId = customerId;
-        notifications = FirebaseDatabase.getInstance().getReference("notifications/"+customerId);
-        notifications.addValueEventListener(listener);
-    }
-
-    public void removeNotificationListener() {
-        notifications.removeEventListener(listener);
-    }
 
     //Mark:- Static methods
     public static void sendNotification(String customerId, final String message) {
