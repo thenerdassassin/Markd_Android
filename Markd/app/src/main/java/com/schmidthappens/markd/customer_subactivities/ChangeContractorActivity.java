@@ -1,13 +1,10 @@
 package com.schmidthappens.markd.customer_subactivities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,37 +14,27 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.AdapterClasses.ContractorListRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.contractor_user_activities.ContractorEditActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
-import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.utilities.ContractorSearch;
+import com.schmidthappens.markd.utilities.ContractorUtilities;
 import com.schmidthappens.markd.utilities.ContractorUpdater;
 import com.schmidthappens.markd.utilities.ZipCodeUtilities;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by joshua.schmidtibm.com on 11/8/17.
@@ -177,7 +164,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
     private ValueEventListener zipCodesListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot firebaseZipCodesSnapshot) {
-            contractorReferences = ContractorSearch.getContractorsInZipCodes(zipCodeMap, getContractorType(), firebaseZipCodesSnapshot);
+            contractorReferences = ContractorUtilities.getContractorsInZipCodes(zipCodeMap, getContractorType(), firebaseZipCodesSnapshot);
             Log.v(TAG, contractorReferences.toString());
             FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(usersListener);
         }
@@ -191,7 +178,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
     private ValueEventListener usersListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot usersSnapshot) {
-            List<Contractor> contractors = ContractorSearch.getContractorsFromReferences(contractorReferences, usersSnapshot);
+            List<Contractor> contractors = ContractorUtilities.getContractorsFromReferences(contractorReferences, usersSnapshot);
             if(contractors.size() > 0) {
                 noContractorsFound.setVisibility(View.INVISIBLE);
             } else {

@@ -243,7 +243,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            //TODO: come up with better database reset
             if(email.equals("adminreset@gmail.com") && password.equals("reset2017")) {
                 DatabaseResetter.resetDatabase();
                 email = "user@gmail.com";

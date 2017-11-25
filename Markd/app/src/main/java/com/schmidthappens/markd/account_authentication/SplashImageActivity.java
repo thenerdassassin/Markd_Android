@@ -61,7 +61,7 @@ public class SplashImageActivity extends AppCompatActivity {
                 }
             } else {
                 Log.d(TAG, "dataSnapshot Value was null");
-                authentication.signOut(SplashImageActivity.this);
+                authentication.signOut();
             }
         }
 

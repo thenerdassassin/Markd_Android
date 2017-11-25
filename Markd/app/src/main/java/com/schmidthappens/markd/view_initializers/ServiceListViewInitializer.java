@@ -10,9 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.customer_subactivities.ServiceDetailActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;

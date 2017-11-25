@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseInstanceIDService;
 
 /**
  * Created by joshua.schmidtibm.com on 10/7/17.
@@ -30,7 +31,7 @@ public class FirebaseAuthentication {
     private static final String TAG = "FirebaseAuthentication";
 
     private Activity activity;
-    private FirebaseUser currentUser;
+    private static FirebaseUser currentUser;
     private static FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     private FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -57,6 +58,7 @@ public class FirebaseAuthentication {
             firebaseAuth = FirebaseAuth.getInstance();
         }
         this.activity = activity;
+
         //Make sure at login screen there is no current user
         if(activity instanceof LoginActivity && firebaseAuth.getCurrentUser() != null) {
             firebaseAuth.signOut();
@@ -106,6 +108,7 @@ public class FirebaseAuthentication {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            currentUser = null;
                         }
                     }
                 });
@@ -119,10 +122,9 @@ public class FirebaseAuthentication {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
                             currentUser = firebaseAuth.getCurrentUser();
-                            if(currentUser != null) {
-                                String userId = currentUser.getUid();
-                                //TODO: Get customer from db who has this userId and load into TempCustomerData
-                            }
+                            MarkdFirebaseInstanceIDService.saveToken(currentUser, ctx);
+                        } else {
+                            currentUser = null;
                         }
                     }
                 });
@@ -150,7 +152,14 @@ public class FirebaseAuthentication {
                 .child("users").child(getCurrentUser().getUid()).child("userType");
         reference.addListenerForSingleValueEvent(listener);
     }
-    public void signOut(Activity ctx) {
+    public void signOut() {
+        if(currentUser != null) {
+            Log.d(TAG, "deleteToken for " + currentUser.getUid());
+            MarkdFirebaseInstanceIDService.deleteToken(currentUser.getUid(), activity);
+        } else {
+            Log.d(TAG, "currentUser was null");
+        }
         firebaseAuth.signOut();
+        currentUser = null;
     }
 }

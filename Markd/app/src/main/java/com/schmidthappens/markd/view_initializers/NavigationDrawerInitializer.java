@@ -17,6 +17,7 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
+import com.schmidthappens.markd.contractor_user_activities.SendNotificationsActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
@@ -57,7 +58,7 @@ public class NavigationDrawerInitializer {
         List<MenuItem> menuItemList = new ArrayList<MenuItem>();
         Resources resources = context.getResources();
         if(userType == null) {
-            new FirebaseAuthentication(context).signOut(context);
+            new FirebaseAuthentication(context).signOut();
             return;
         } else if(userType.equals("customer")) {
             menuOptions = resources.getStringArray(R.array.menu_options);
@@ -103,11 +104,10 @@ public class NavigationDrawerInitializer {
     private void selectItem(int position) {
         String selectedMenuItem = menuOptions[position];
         Log.i(TAG, "Selected Item-" + selectedMenuItem);
-        //String userType = "customer"; //TODO: change to get from Firebase
 
-        Intent customerIntent = null;
+        Intent customerIntent;
         if(userType == null) {
-            new FirebaseAuthentication(context).signOut(context);
+            new FirebaseAuthentication(context).signOut();
             return;
         }
 
@@ -120,7 +120,7 @@ public class NavigationDrawerInitializer {
         if(customerIntent != null) {
             context.startActivity(customerIntent);
         } else {
-            new FirebaseAuthentication(context).signOut(context);
+            new FirebaseAuthentication(context).signOut();
         }
 
         drawerLayout.closeDrawer(drawerList);

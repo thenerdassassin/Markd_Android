@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.view_initializers;
+package com.schmidthappens.markd.customer_subactivities;
 
 import android.content.Context;
 import android.content.Intent;

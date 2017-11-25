@@ -1,25 +1,17 @@
 package com.schmidthappens.markd.AdapterClasses;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
-import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
-import com.schmidthappens.markd.customer_menu_activities.LandscapingActivity;
-import com.schmidthappens.markd.customer_menu_activities.MainActivity;
-import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
-import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.Customer;
+import com.schmidthappens.markd.utilities.CustomerSelectedInterface;
 
-import java.io.StringBufferInputStream;
 import java.util.List;
 
 /**
@@ -29,14 +21,12 @@ import java.util.List;
 
 public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<CustomerListRecyclerViewAdapter.CustomerViewHolder> {
     private final static String TAG = "CustomerListRecycler";
+    private Context context;
     private List<Customer> customerList;
     private List<String> customerReferenceList;
-    private String contractorType;
-    private Context context;
 
-    public CustomerListRecyclerViewAdapter(Context context, String contractorType, List<Customer> customerList, List<String> customerReferenceList) {
+    public CustomerListRecyclerViewAdapter(Context context, List<Customer> customerList, List<String> customerReferenceList) {
         this.context = context;
-        this.contractorType = contractorType;
         this.customerList = customerList;
         this.customerReferenceList = customerReferenceList;
     }
@@ -75,41 +65,18 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
         void bindData(final Customer customer, final String customerId) {
             customerNameTextView.setText(customer.getName());
             customerAddressTextView.setText(customer.getAddress().toString());
+            if(context instanceof CustomerSelectedInterface)
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, customer.getName(), Toast.LENGTH_SHORT).show();
-                    goToCustomerPage(customerId);
+                    Log.i(TAG, "customer selected:" + customer.getName());
+                    if(context instanceof CustomerSelectedInterface) {
+                        ((CustomerSelectedInterface) context).onCustomerSelected(customerId);
+                    } else {
+                        Log.e(TAG, "Context does not support CustomerSelectedInterface");
+                    }
                 }
             });
-        }
-
-        private void goToCustomerPage(String customerId) {
-            //TODO: implement go to customer page
-            Class contractorClass = getContractorActivityType(contractorType);
-            if(contractorClass == null) {
-                return;
-            }
-            Intent goToCustomerPage = new Intent(context, contractorClass);
-            goToCustomerPage.putExtra("isContractor", true);
-            goToCustomerPage.putExtra("customerId", customerId);
-            context.startActivity(goToCustomerPage);
-        }
-
-        private Class getContractorActivityType(String userType) {
-            switch (userType){
-                case("Plumber"):
-                    return PlumbingActivity.class;
-                case("Electrician"):
-                    return ElectricalActivity.class;
-                case("Painter"):
-                    return PaintingActivity.class;
-                case("Hvac"):
-                    return HvacActivity.class;
-                default:
-                    Log.e(TAG, "No match for userType:" + userType);
-                    return null;
-            }
         }
     }
 }

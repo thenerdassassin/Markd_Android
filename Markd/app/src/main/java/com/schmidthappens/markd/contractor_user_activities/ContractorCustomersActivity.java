@@ -1,20 +1,14 @@
 package com.schmidthappens.markd.contractor_user_activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -25,13 +19,13 @@ import com.schmidthappens.markd.AdapterClasses.CustomerListRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempContractorData;
+import com.schmidthappens.markd.utilities.ContractorUtilities;
 import com.schmidthappens.markd.utilities.CustomerGetter;
+import com.schmidthappens.markd.utilities.CustomerSelectedInterface;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import java.util.List;
 
@@ -39,12 +33,15 @@ import java.util.List;
  * Created by joshua.schmidtibm.com on 9/30/17.
  */
 
-public class ContractorCustomersActivity extends AppCompatActivity {
+public class ContractorCustomersActivity extends AppCompatActivity implements CustomerSelectedInterface{
     private final static String TAG = "ContractorCustomersActv";
     FirebaseAuthentication authentication;
     TempContractorData contractorData;
-
     private RecyclerView customerRecyclerView;
+    private final String[] alertDialogOptions = {
+            "Send Push Notification",
+            "Edit Customer Page"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +84,7 @@ public class ContractorCustomersActivity extends AppCompatActivity {
                 Log.v(TAG, dataSnapshot.toString());
                 List<Customer> customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
                 customerRecyclerView.setAdapter(
-                        new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, contractorData.getType(), customers, customerReferences)
+                        new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences)
                 );
             }
 
@@ -99,6 +96,44 @@ public class ContractorCustomersActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onCustomerSelected(String customerId) {
+        showAlertDialog(customerId);
+    }
+    private void showAlertDialog(final String customerId) {
+        new AlertDialog.Builder(ContractorCustomersActivity.this)
+                .setTitle("What would you like to do?")
+                .setItems(alertDialogOptions, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // The 'which' argument contains the index position
+                        // of the selected item
+                        if(which == 0) {
+                            Log.i(TAG, "Push Notification:" + customerId);
+                            goToNotificationsPage(customerId);
+                        } else {
+                            Log.i(TAG, "Go to page:" + customerId);
+                            goToCustomerPage(customerId);
+                        }
+                    }
+                })
+                .create().show();
+    }
+    private void goToNotificationsPage(String customerId) {
+        Intent goToSendNotifactionsPage = new Intent(this, SendNotificationsActivity.class)
+                .putExtra("customerId", customerId);
+        startActivity(goToSendNotifactionsPage);
+    }
+    private void goToCustomerPage(String customerId) {
+        Class contractorClass = ContractorUtilities.getClassFromContractorType(contractorData.getType());
+        if(contractorClass == null) {
+            Log.e(TAG, "contractorClass is null");
+        } else {
+            Intent goToCustomerPage = new Intent(this, contractorClass)
+                    .putExtra("isContractor", true)
+                    .putExtra("customerId", customerId);
+            startActivity(goToCustomerPage);
+        }
+    }
     private class ContractorCustomersGetDataListener implements OnGetDataListener {
         @Override
         public void onStart() {
