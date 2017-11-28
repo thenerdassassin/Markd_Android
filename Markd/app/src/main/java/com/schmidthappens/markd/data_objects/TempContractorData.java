@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -163,10 +164,18 @@ public class TempContractorData {
 
     //Mark:- Customers Page
     public List<String> getCustomers() {
-        return getContractor().getCustomers();
+        if(contractor != null) {
+            return getContractor().getCustomers();
+        } else {
+            return Collections.emptyList();
+        }
     }
     public String getType() {
-        return getContractor().getType();
+        if(contractor != null) {
+            return getContractor().getType();
+        } else {
+            return "";
+        }
     }
 
     //Mark:- Settings Page
