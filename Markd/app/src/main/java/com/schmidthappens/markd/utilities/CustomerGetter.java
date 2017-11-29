@@ -4,6 +4,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.schmidthappens.markd.data_objects.Customer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,6 +13,9 @@ import java.util.List;
 
 public class CustomerGetter {
     public static List<Customer> getCustomersFromReferences(List<String> customerReferences, DataSnapshot usersSnapshot) {
+        if(customerReferences == null) {
+            return Collections.emptyList();
+        }
         final List<Customer> customers = new ArrayList<>();
         for(String customerKey: customerReferences) {
             DataSnapshot customer = usersSnapshot.child(customerKey);
