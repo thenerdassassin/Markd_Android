@@ -11,13 +11,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
             android:orientation="vertical">
             <!-- Customers Title -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
                 android:layout_marginTop="30dp"
                 android:orientation="horizontal">
 
@@ -34,12 +34,18 @@
                     android:layout_alignParentBottom="true"
                     android:background="@android:color/darker_gray" />
             </RelativeLayout>
+            <TextView
+                android:id="@+id/contractor_customers_empty_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="Tell your customers to download Markd!"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/contractor_customers_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
                 android:layout_marginBottom="30dp"
                 android:verticalScrollbarPosition="right"
                 android:clickable="true"/>

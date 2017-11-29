@@ -9,6 +9,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +40,7 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     FirebaseAuthentication authentication;
     TempContractorData contractorData;
     private RecyclerView customerRecyclerView;
+    private TextView noCustomerTextView;
     private final String[] alertDialogOptions = {
             "Send Push Notification",
             "Edit Customer Page"
@@ -50,6 +53,7 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, false, "contractor");
         customerRecyclerView = (RecyclerView)findViewById(R.id.contractor_customers_recycler_view);
+        noCustomerTextView = (TextView)findViewById(R.id.contractor_customers_empty_list);
     }
 
     @Override
@@ -77,23 +81,27 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
         customerRecyclerView.setHasFixedSize(true);
         customerRecyclerView.addItemDecoration(new DividerItemDecoration(ContractorCustomersActivity.this, DividerItemDecoration.VERTICAL));
         final List<String> customerReferences = contractorData.getCustomers();
+        if(customerReferences != null && customerReferences.size() > 0) {
+            noCustomerTextView.setVisibility(View.GONE);
+            FirebaseDatabase.getInstance().getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.v(TAG, dataSnapshot.toString());
+                    List<Customer> customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
+                    customerRecyclerView.setAdapter(
+                            new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences)
+                    );
+                }
 
-        FirebaseDatabase.getInstance().getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v(TAG, dataSnapshot.toString());
-                List<Customer> customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
-                customerRecyclerView.setAdapter(
-                        new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences)
-                );
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, databaseError.toString());
-                Toast.makeText(ContractorCustomersActivity.this, "Oops..something went wrong.", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, databaseError.toString());
+                    Toast.makeText(ContractorCustomersActivity.this, "Oops..something went wrong.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            noCustomerTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
