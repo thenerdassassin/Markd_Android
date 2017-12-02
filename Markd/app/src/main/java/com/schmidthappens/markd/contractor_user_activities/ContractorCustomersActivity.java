@@ -145,12 +145,12 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     private class ContractorCustomersGetDataListener implements OnGetDataListener {
         @Override
         public void onStart() {
-            Log.v(TAG, "Getting Temp Customer Data");
+            Log.v(TAG, "Getting TempContractorData");
         }
 
         @Override
         public void onSuccess(DataSnapshot data) {
-            Log.v(TAG, "Got Temp Customer Data");
+            Log.v(TAG, "Got TempContractorData");
             Log.d(TAG, data.toString());
             setUpRecyclerView();
         }

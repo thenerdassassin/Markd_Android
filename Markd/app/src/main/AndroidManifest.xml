@@ -103,6 +103,11 @@
                 android:value=".electrical_subactivities.ViewPanelActivity" />
         </activity>
 
+        <!-- Notifications -->
+        <activity
+            android:name=".customer_menu_activities.NotificationsActivity"
+            android:value=".customer_menu_activities.NotificationsActivity" />
+
         <activity android:name=".customer_subactivities.ServiceDetailActivity" />
 
         <!-- Settings -->

@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,5 +42,15 @@ public class NotificationHandler {
                 Log.e(TAG, databaseError.toString());
             }
         });
+    }
+
+    public static boolean getNotifications(String customerId, ValueEventListener listener) {
+        if(StringUtilities.isNullOrEmpty(customerId) || listener == null) {
+            return false;
+        }
+
+        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("notifications").child(customerId);
+        userReference.addValueEventListener(listener);
+        return true;
     }
 }

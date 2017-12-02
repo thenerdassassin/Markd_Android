@@ -18,6 +18,7 @@ import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.contractor_user_activities.SendNotificationsActivity;
+import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
@@ -146,6 +147,9 @@ public class NavigationDrawerInitializer {
                 break;
             case "Painting":
                 intentToReturn = new Intent(context, PaintingActivity.class);
+                break;
+            case "Notifications":
+                intentToReturn = new Intent(context, NotificationsActivity.class);
                 break;
             case "Settings":
                 intentToReturn = new Intent(context, SettingsActivity.class);
