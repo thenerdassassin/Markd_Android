@@ -141,6 +141,19 @@ public class Customer {
         public void setPlumbingServices(List<ContractorService> plumbingServices) {
             this.plumbingServices = plumbingServices;
         }
+        @Exclude
+        public void addPlumbingService(ContractorService service) {
+            setService(getPlumbingServices(), -1, service);
+        }
+        @Exclude
+        public void updatePlumbingService(int serviceId, String company, String description) {
+            List<ContractorService> services = getPlumbingServices();
+            ContractorService service = services.get(serviceId);
+            service.setContractor(company);
+            service.setComments(description);
+            setService(services, serviceId, service);
+        }
+
 
         //:- HVAC Page
         public AirHandler getAirHandler() {
@@ -166,6 +179,18 @@ public class Customer {
         }
         public void setHvacServices(List<ContractorService> hvacServices) {
             this.hvacServices = hvacServices;
+        }
+        @Exclude
+        public void addHvacService(ContractorService service) {
+            setService(getHvacServices(), -1, service);
+        }
+        @Exclude
+        public void updateHvacService(int serviceId, String company, String description) {
+            List<ContractorService> services = getHvacServices();
+            ContractorService service = services.get(serviceId);
+            service.setContractor(company);
+            service.setComments(description);
+            setService(services, serviceId, service);
         }
 
         //:- Painting Page
@@ -207,6 +232,18 @@ public class Customer {
         public void setElectricalServices(List<ContractorService> electricalServices) {
             this.electricalServices = electricalServices;
         }
+        @Exclude
+        public void addElectricalService(ContractorService service) {
+            setService(getElectricalServices(), -1, service);
+        }
+        @Exclude
+        public void updateElectricalService(int serviceId, String company, String description) {
+            List<ContractorService> services = getElectricalServices();
+            ContractorService service = services.get(serviceId);
+            service.setContractor(company);
+            service.setComments(description);
+            setService(services, serviceId, service);
+        }
 
     //Mark:- Helper functions
     public void updateProfile(String namePrefix, String firstName, String lastName, String maritalStatus) {
@@ -223,6 +260,17 @@ public class Customer {
     @Exclude
     public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, maritalStatus);
+    }
+    @Exclude
+    private void setService(List<ContractorService> services, int serviceId, ContractorService service) {
+        if(serviceId == -1) {
+            if(services == null) {
+                services = new ArrayList<>();
+            }
+            services.add(0, service);
+        } else {
+            services.set(serviceId, service);
+        }
     }
     @Exclude
     public void setExteriorPaintSurface(int paintId, PaintSurface surface) {

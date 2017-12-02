@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.ServiceDetailActivity;
+import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorService;
 
 import java.util.List;
@@ -22,25 +23,18 @@ import static android.content.ContentValues.TAG;
  */
 
 public class ServiceListViewInitializer {
-    String pathToSaveFiles = "";
-
-    //TODO: may need to paginate at some point
-    public static View createServiceListView(final Context ctx, final List<ContractorService> services, final String contractor, final String pathToSaveFiles) {
+    private static final String TAG = "ServiceListViewInit";
+    public static View createServiceListView(final Context ctx, final List<ContractorService> services, final String contractor, final boolean isContractorViewing, final String uid) {
+        Log.d(TAG, "isContractor:" + isContractorViewing);
         LayoutInflater viewInflater = LayoutInflater.from(ctx);
         View view = viewInflater.inflate(R.layout.view_service_list, null);
         LinearLayout listOfServices = (LinearLayout)view.findViewById(R.id.service_list);
         ImageView addButton = (ImageView)view.findViewById(R.id.add_service_button);
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO move to detailed view
-                Intent goToServiceDetailActivityIntent = new Intent(ctx, ServiceDetailActivity.class);
-                goToServiceDetailActivityIntent.putExtra("originalActivity", ctx.getClass());
-                //TODO add identifier for particular service
-                goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles);
-                goToServiceDetailActivityIntent.putExtra("contractor", contractor);
-                goToServiceDetailActivityIntent.putExtra("isNew", true);
-                ctx.startActivity(goToServiceDetailActivityIntent);
+                ctx.startActivity(createServiceDetailIntent(ctx, contractor, isContractorViewing, uid));
             }
         });
         if(services == null || services.size() == 0) {
@@ -48,8 +42,7 @@ public class ServiceListViewInitializer {
             TextView contractorTextView = v.findViewById(R.id.contractor_name);
             contractorTextView.setText("No services yet!");
             listOfServices.addView(v);
-        }
-        if(services != null) {
+        } else {
             for (final ContractorService service : services) {
                 View v = viewInflater.inflate(R.layout.list_row_service, null);
 
@@ -64,34 +57,40 @@ public class ServiceListViewInitializer {
                     if (serviceDate != null) {
                         serviceDate.setText(service.getDate());
                     }
-                }
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //TODO move to detailed view
-                        Intent goToServiceDetailActivityIntent = new Intent(ctx, ServiceDetailActivity.class);
-                        goToServiceDetailActivityIntent.putExtra("originalActivity", ctx.getClass());
-                        //TODO add identifier for particular service
-                        goToServiceDetailActivityIntent.putExtra("pathOfFiles", pathToSaveFiles);
-                        if(service != null) {
-                            //TODO change ID to service id in database
-                            goToServiceDetailActivityIntent.putExtra("serviceId", ""+services.indexOf(service));
-                            goToServiceDetailActivityIntent.putExtra("contractor", service.getContractor());
-                            goToServiceDetailActivityIntent.putExtra("description", service.getComments());
-                            goToServiceDetailActivityIntent.putExtra("month", service.getMonth());
-                            goToServiceDetailActivityIntent.putExtra("day", service.getDay());
-                            goToServiceDetailActivityIntent.putExtra("year", service.getYear());
-                        } else {
-                            Log.e(TAG, "On view click service was null");
-                        }
 
-                        ctx.startActivity(goToServiceDetailActivityIntent);
-                    }
-                });
+                    v.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ctx.startActivity(getServiceDetailActivityIntent(ctx, service, ""+services.indexOf(service), isContractorViewing, uid));
+                        }
+                    });
+                }
                 listOfServices.addView(v);
             }
         }
 
         return view;
+    }
+
+    private static Intent getServiceDetailActivityIntent(Context ctx,  ContractorService service, String serviceId, boolean isContractor, String customerId) {
+        Intent intentToReturn = new Intent(ctx, ServiceDetailActivity.class);
+        if(service != null) {
+            intentToReturn.putExtra("originalActivity", ctx.getClass());
+            intentToReturn.putExtra("serviceId", serviceId);
+            intentToReturn.putExtra("contractor", service.getContractor());
+            intentToReturn.putExtra("description", service.getComments());
+        }
+        intentToReturn.putExtra("isContractor", isContractor);
+        intentToReturn.putExtra("customerId", customerId);
+        return intentToReturn;
+    }
+    private static Intent createServiceDetailIntent(Context ctx, String contractor, boolean isContractor, String customerId) {
+        Intent intentToReturn = new Intent(ctx, ServiceDetailActivity.class);
+        intentToReturn.putExtra("originalActivity", ctx.getClass());
+        intentToReturn.putExtra("contractor", contractor);
+        intentToReturn.putExtra("isNew", true);
+        intentToReturn.putExtra("isContractor", isContractor);
+        intentToReturn.putExtra("customerId", customerId);
+        return intentToReturn;
     }
 }

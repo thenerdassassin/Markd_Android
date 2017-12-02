@@ -86,7 +86,7 @@ public class ElectricalActivity extends AppCompatActivity {
         //TODO change to get electrical services/contractor from TempCustomerData
         TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
 
-        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), "Conn-West Electric", "/services/electrical");
+        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), "Conn-West Electric", false, "blue"); //TODO: change like plumbing page
         electricalServiceList.addView(electricalServiceListView);
 
         //Set up ElectricalContractor

@@ -169,6 +169,14 @@ public class TempCustomerData {
     public List<ContractorService> getPlumbingServices() {
         return getCustomer().getPlumbingServices();
     }
+    public void addPlumbingService(ContractorService service) {
+        customer.addPlumbingService(service);
+        putCustomer(customer);
+    }
+    public void updatePlumbingService(int serviceId, String contractor, String description) {
+        customer.updatePlumbingService(serviceId, contractor, description);
+        putCustomer(customer);
+    }
 
     //Mark:- HVAC
     public AirHandler getAirHandler() {
@@ -194,8 +202,26 @@ public class TempCustomerData {
         addContractorListener(hvacReference, hvacListener);
         return true;
     }
-    public List<ContractorService>  getHvacServices() {
+    public List<ContractorService> getHvacServices() {
         return getCustomer().getHvacServices();
+    }
+    public void addHvacService(ContractorService service) {
+        customer.addHvacService(service);
+        putCustomer(customer);
+    }
+    public void updateHvacService(int serviceId, String contractor, String description) {
+        customer.updateHvacService(serviceId, contractor, description);
+        putCustomer(customer);
+    }
+
+    //MarK:- Electrical
+    public void addElectricalService(ContractorService service) {
+        customer.addElectricalService(service);
+        putCustomer(customer);
+    }
+    public void updateElectricalService(int serviceId, String contractor, String description) {
+        customer.updateElectricalService(serviceId, contractor, description);
+        putCustomer(customer);
     }
 
     //Mark:- Painting
