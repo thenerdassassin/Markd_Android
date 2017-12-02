@@ -280,22 +280,45 @@ public class TempCustomerData {
     }
     public void updateContractor(String contractorType, String contractorReference) {
         if(contractorType.equals("Plumber")) {
+            if(customer.getPlumberReference() != null) {
+                Log.d(TAG, "Deleting plumber:" + customer.getPlumberReference());
+                TempContractorData.removeCustomerFromContractor(customer.getPlumberReference(), uid);
+            }
             customer.setPlumber(contractorReference);
         } else if(contractorType.equals("Hvac")) {
+            if(customer.getHvactechnicianReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getHvactechnicianReference(), uid);
+            }
             customer.setHvactechnician(contractorReference);
         } else if(contractorType.equals("Electrician")) {
+            if(customer.getElectrician() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getElectrician(), uid);
+            }
             customer.setElectrician(contractorReference);
         } else if(contractorType.equals("Painter")) {
+            if(customer.getPainterReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getPainterReference(), uid);
+            }
             customer.setPainter(contractorReference);
         } else if(contractorType.equals("Architect")) {
+            if(customer.getArchitectReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getArchitectReference(), uid);
+            }
             customer.setArchitect(contractorReference);
         } else if(contractorType.equals("Builder")) {
+            if(customer.getBuilder() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getBuilder(), uid);
+            }
             customer.setBuilder(contractorReference);
         } else if(contractorType.equals("Realtor")) {
+            if(customer.getRealtor() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getRealtor(), uid);
+            }
             customer.setRealtor(contractorReference);
         } else {
             Log.e(TAG, "contractorType(" + contractorType + ") not found!");
         }
+        TempContractorData.addCustomerToContractor(contractorReference, uid);
         putCustomer(customer);
     }
 
