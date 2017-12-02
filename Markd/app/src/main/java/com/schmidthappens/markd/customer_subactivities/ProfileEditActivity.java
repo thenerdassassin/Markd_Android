@@ -311,10 +311,9 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
     private void saveProfile() {
         if(userType == null) {
-            Log.e(TAG, "userType was null");
-            Toast.makeText(ProfileEditActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
-            finish();
-        } else if(userType.equals("Home Owner") || userType.equals("customer")) {
+            userType = "Home Owner";
+        }
+        if(userType.equals("Home Owner") || userType.equals("customer")) {
             TempCustomerData customerData = new TempCustomerData(authentication, null);
             customerData.updateProfile(
                     namePrefixArray[namePrefixPicker.getValue()],
@@ -335,7 +334,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
     private void closeActivity() {
         Intent goToNextActivity;
-        if(userType.equals("Contractor")) {
+        if(userType != null && userType.equals("Contractor")) {
             goToNextActivity = new Intent(ProfileEditActivity.this, ContractorMainActivity.class);
         } else {
             if(isNewAccount) {
