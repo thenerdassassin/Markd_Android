@@ -86,9 +86,6 @@
         </activity>
 
         <!-- Landscaping -->
-        <activity
-            android:name=".customer_menu_activities.LandscapingActivity"
-            android:value=".MenuOptionActivities.LandscapingActivity"/>
 
         <!-- Painting -->
         <activity

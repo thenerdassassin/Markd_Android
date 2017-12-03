@@ -21,8 +21,10 @@ import java.util.List;
 
 /**
  * Created by joshua.schmidtibm.com on 9/23/17.
- */
+*/
 
+
+//TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
 public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
     private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
@@ -215,6 +217,13 @@ public class TempCustomerData {
     }
 
     //MarK:- Electrical
+    public List<Panel> getPanels() {
+        return getCustomer().getPanels();
+    }
+    //TODO Update Panel
+    //public void addPanel(Panel newPanel)
+    //public void updatePanel(int panelid, Panel updatedPanel){}
+    //public void removePanel(int panelId)
     public void addElectricalService(ContractorService service) {
         customer.addElectricalService(service);
         putCustomer(customer);
@@ -352,8 +361,7 @@ public class TempCustomerData {
         putCustomer(customer);
     }
 
-   //TODO: Delete when http calls are here
-    //Remove when database is implemented
+   //TODO: Remove with database reset
     public static Customer makeCustomer() {
         Customer newCustomer = new Customer();
         //Home Page
@@ -380,7 +388,6 @@ public class TempCustomerData {
 
         //Electrical
         //customer.setPanels(TempPanelData.getInstance().getPanels());
-        //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
         //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
         //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
