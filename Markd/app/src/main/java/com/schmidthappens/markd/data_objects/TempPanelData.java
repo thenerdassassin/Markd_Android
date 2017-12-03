@@ -8,6 +8,7 @@ import java.util.List;
  * Created by Josh on 3/19/2017.
  */
 
+//TODO: Remove
 public class TempPanelData {
     private static final TempPanelData myData = new TempPanelData();
     private List<Panel> panels;

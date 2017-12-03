@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Breaker;
-import com.schmidthappens.markd.data_objects.BreakerAmperage;
-import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 
 /**
@@ -32,7 +30,6 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private Spinner breakerTypeSpinner;
     private Button deleteBreakerButton;
     private Button saveBreakerButton;
-
 
     private String breakerNumberString;
     private String breakerDescription;
@@ -60,7 +57,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         breakerDetailEdit.setOnEditorActionListener(editOnAction);
 
         //Initialze Spinner Values
-        String[] amperages = BreakerAmperage.getValues();
+        String[] amperages = Breaker.getAmperageValues();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, amperages);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         amperageSpinner.setClickable(false);
@@ -68,7 +65,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         //Used to dismiss keyboard on touch
         amperageSpinner.setOnTouchListener(spinnerOnTouch);
 
-        String[] breakerTypes = BreakerType.getValues();
+        String[] breakerTypes = Breaker.getBreakerTypeValues();
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, breakerTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         breakerTypeSpinner.setClickable(false);
@@ -103,8 +100,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
             if (intentThatStartedThisActivity.hasExtra("breakerType")) {
                 breakerType = intentThatStartedThisActivity.getStringExtra("breakerType");
                 //Breaker is Bottom of Double Pole
-                if (breakerType.equals(BreakerType.DoublePoleBottom.toString())) {
-                    breakerType = BreakerType.DoublePole.toString();
+                if (breakerType.equals(Breaker.DoublePoleBottom)) {
+                    breakerType = Breaker.DoublePole;
                     isDoublePoleBottom = true;
                 }
             }
@@ -145,9 +142,9 @@ public class BreakerDetailActivity extends AppCompatActivity {
         //Get BreakerType Value
         String breakerTypeString = (String)breakerTypeSpinner.getItemAtPosition(breakerTypeSpinner.getSelectedItemPosition());
         // Breaker was DoublePole Bottom and set to stay as double-pole
-        if(isDoublePoleBottom && breakerTypeString.equals(BreakerType.DoublePole.toString())) {
-            breakerTypeString = BreakerType.DoublePoleBottom.toString();
-            breakerType = BreakerType.DoublePole.toString();
+        if(isDoublePoleBottom && breakerTypeString.equals(Breaker.DoublePole)) {
+            breakerTypeString = Breaker.DoublePoleBottom;
+            breakerType = Breaker.DoublePole;
         } else {
             isDoublePoleBottom = false;
             breakerType = breakerTypeString;
@@ -158,7 +155,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         //Get Breaker Description Value
         breakerDescription = breakerDetailEdit.getText().toString();
 
-        return new Breaker(Integer.parseInt(breakerNumberString), breakerDescription, BreakerAmperage.fromString(breakerAmperage), BreakerType.fromString(breakerTypeString));
+        return new Breaker(Integer.parseInt(breakerNumberString), breakerDescription, breakerAmperage, breakerTypeString);
     }
 
     private void deleteBreaker() {
@@ -172,8 +169,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
     }
 
     private void updateView() {
-        amperageSpinner.setSelection(BreakerAmperage.fromString(breakerAmperage).ordinal());
-        breakerTypeSpinner.setSelection(BreakerType.fromString(breakerType).ordinal());
+        //amperageSpinner.setSelection(BreakerAmperage.fromString(breakerAmperage).ordinal()); //TODO
+        //breakerTypeSpinner.setSelection(BreakerType.fromString(breakerType).ordinal());
         breakerDetailEdit.setText(breakerDescription);
         breakerDetailEdit.setSelection(breakerDescription.length()); //Sets cursor to end of EditText
     }

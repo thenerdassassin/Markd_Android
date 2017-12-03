@@ -387,7 +387,7 @@ public class TempCustomerData {
         newCustomer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
 
         //Electrical
-        //customer.setPanels(TempPanelData.getInstance().getPanels());
+        newCustomer.setPanels(TempPanelData.getInstance().getPanels());
         //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
         //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
