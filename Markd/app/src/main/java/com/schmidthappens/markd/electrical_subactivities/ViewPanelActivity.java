@@ -35,16 +35,18 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_panel);
 
+        //TODO: Remove Session Manager
         SessionManager sessionManager = new SessionManager(ViewPanelActivity.this);
         sessionManager.checkLogin();
 
+        //TODO: send isContractorViewingPage when option selected
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Set RecyclerView Layout
         recyclerList = (RecyclerView) findViewById(R.id.recycler_view);
         setUpRecyclerView();
 
-        //TODO: Change to http get panel list
+        //TODO: Change to get panel from TempCustomerData
         myPanels = TempPanelData.getInstance();
         //Can probably remove in future
         currentPanel = myPanels.currentPanel;
@@ -101,6 +103,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
         Context context = this;
         Class destinationClass = BreakerDetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        //TODO: add isContractorViewingpage
         passBreakerData(intentToStartDetailActivity, breakerClicked);
         startActivity(intentToStartDetailActivity);
     }
@@ -112,6 +115,7 @@ public class ViewPanelActivity extends AppCompatActivity implements PanelAdapter
             Context context = ViewPanelActivity.this;
             Class destinationClass = PanelDetailActivity.class;
             Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+            //TODO: add isContractorViewingpage
             passPanelData(intentToStartDetailActivity, myPanels.getPanel(currentPanel));
             startActivity(intentToStartDetailActivity);
         }

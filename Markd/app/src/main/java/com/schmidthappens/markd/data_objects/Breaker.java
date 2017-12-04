@@ -120,7 +120,6 @@ public class Breaker {
     public static final String ONEHUNDREDFIFTY_AMP = "150A";
     public static final String TWOHUNDRED_AMP = "200A";
 
-    private final static int AMPERAGE_TYPE_COUNT = 12;
     private final static String[] amperageValues = {
             FIFTEEN_AMP, TWENTY_AMP, THIRTY_AMP, FOURTY_AMP, FIFTY_AMP, SIXTY_AMP, SEVENTY_AMP, EIGHTY_AMP, ONEHUNDRED_AMP, ONEHUNDREDTWENTYFIVE_AMP, ONEHUNDREDFIFTY_AMP, TWOHUNDRED_AMP
     };
@@ -131,7 +130,7 @@ public class Breaker {
     }
     @Exclude
     public static int getAmperageTypeCount() {
-        return AMPERAGE_TYPE_COUNT;
+        return amperageValues.length;
     }
     @StringDef({FIFTEEN_AMP, TWENTY_AMP, THIRTY_AMP, FOURTY_AMP, FIFTY_AMP, SIXTY_AMP, SEVENTY_AMP, EIGHTY_AMP, ONEHUNDRED_AMP, ONEHUNDREDTWENTYFIVE_AMP, ONEHUNDREDFIFTY_AMP, TWOHUNDRED_AMP})
     @Retention(RetentionPolicy.SOURCE)

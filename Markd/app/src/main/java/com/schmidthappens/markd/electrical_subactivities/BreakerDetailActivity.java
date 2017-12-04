@@ -44,10 +44,12 @@ public class BreakerDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_breaker);
 
+        //TODO: remove sessionManager
         SessionManager sessionManager = new SessionManager(BreakerDetailActivity.this);
         sessionManager.checkLogin();
 
         //Set XML Objects
+        //TODO: move initialization to function
         breakerDetailEdit = (EditText)findViewById(R.id.electrical_breaker_description);
         amperageSpinner = (Spinner) findViewById(R.id.electrical_amperage_spinner);
         deleteBreakerButton = (Button)findViewById(R.id.electrical_delete_breaker_button);
@@ -57,6 +59,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
         breakerDetailEdit.setOnEditorActionListener(editOnAction);
 
         //Initialze Spinner Values
+        //TODO: change spinner to number picker
         String[] amperages = Breaker.getAmperageValues();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, amperages);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -81,7 +84,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        //TODO: check for isContractorViewingPage
         Intent intentThatStartedThisActivity = getIntent();
         if(intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("breakerNumber")) {
@@ -122,12 +125,12 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private void setSaveBreakerListener(final Button editButton) {
         editButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //TODO: Change to http call to Server in Future
+                //TODO: Change to TempCustomerData
                 TempPanelData panel = TempPanelData.getInstance();
 
                 hideKeyboard();
 
-                //TODO: Change to http call to Server in Future
+                //TODO: Change to update TempCustomerData
                 panel.updateBreaker(Integer.parseInt(breakerNumberString), makeBreaker());
 
                 goBackToViewPanel();
@@ -138,7 +141,6 @@ public class BreakerDetailActivity extends AppCompatActivity {
     //Mark: :- Helper functions
     //Used to Collect Updated Info
     private Breaker makeBreaker() {
-
         //Get BreakerType Value
         String breakerTypeString = (String)breakerTypeSpinner.getItemAtPosition(breakerTypeSpinner.getSelectedItemPosition());
         // Breaker was DoublePole Bottom and set to stay as double-pole
@@ -164,12 +166,14 @@ public class BreakerDetailActivity extends AppCompatActivity {
         Intent intentToStartViewPanelActivity = new Intent(context, destinationClass);
         intentToStartViewPanelActivity.putExtra("actionType", "Delete Breaker");
         intentToStartViewPanelActivity.putExtra("breakerNumber", breakerNumberString);
+        //TODO: add isContractorViewingPage
         startActivity(intentToStartViewPanelActivity);
         finish();
     }
 
     private void updateView() {
-        //amperageSpinner.setSelection(BreakerAmperage.fromString(breakerAmperage).ordinal()); //TODO
+        //TODO: set Spinners based on info from intent
+        //amperageSpinner.setSelection(BreakerAmperage.fromString(breakerAmperage).ordinal());
         //breakerTypeSpinner.setSelection(BreakerType.fromString(breakerType).ordinal());
         breakerDetailEdit.setText(breakerDescription);
         breakerDetailEdit.setSelection(breakerDescription.length()); //Sets cursor to end of EditText
@@ -184,6 +188,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
     }
 
     private void goBackToViewPanel() {
+        //TODO: pass isContractorViewingPage
         Context context = BreakerDetailActivity.this;
         Class destinationClass = ViewPanelActivity.class;
         Intent intentToStartMainActivity = new Intent(context, destinationClass);

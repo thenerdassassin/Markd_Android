@@ -23,8 +23,6 @@ import java.util.List;
  * Created by joshua.schmidtibm.com on 9/23/17.
 */
 
-
-//TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
 public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
     private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
@@ -220,10 +218,17 @@ public class TempCustomerData {
     public List<Panel> getPanels() {
         return getCustomer().getPanels();
     }
-    //TODO Update Panel
+    //TODO addPanel
     //public void addPanel(Panel newPanel)
+    //TODO Update Panel
     //public void updatePanel(int panelid, Panel updatedPanel){}
-    //public void removePanel(int panelId)
+    public void removePanel(int panelId) {
+        //TODO removePanel
+        return;
+    }
+    public List<ContractorService> getElectricalServices() {
+        return getCustomer().getElectricalServices();
+    }
     public void addElectricalService(ContractorService service) {
         customer.addElectricalService(service);
         putCustomer(customer);
@@ -231,6 +236,15 @@ public class TempCustomerData {
     public void updateElectricalService(int serviceId, String contractor, String description) {
         customer.updateElectricalService(serviceId, contractor, description);
         putCustomer(customer);
+    }
+    public boolean getElectrician(final OnGetDataListener electricianListener) {
+        String electrician = customer.getElectrician();
+        if(electrician == null) {
+            return false;
+        }
+        DatabaseReference electricianReference = database.child(electrician);
+        addContractorListener(electricianReference, electricianListener);
+        return true;
     }
 
     //Mark:- Painting
@@ -388,7 +402,7 @@ public class TempCustomerData {
 
         //Electrical
         newCustomer.setPanels(TempPanelData.getInstance().getPanels());
-        //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
+        newCustomer.setElectrician("defaultElectricianThree");
         //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting

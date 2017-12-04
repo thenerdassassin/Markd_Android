@@ -18,13 +18,23 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.data_objects.Contractor;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.data_objects.TempPanelData;
 import com.schmidthappens.markd.electrical_subactivities.PanelDetailActivity;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
@@ -37,62 +47,48 @@ import static com.schmidthappens.markd.view_initializers.ServiceListViewInitiali
 
 
 public class ElectricalActivity extends AppCompatActivity {
-    //ActionBar
-    private ActionBar actionBar;
-    private ActionBarDrawerToggle drawerToggle;
-
-    //NavigationDrawer
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
+    private static final String TAG = "ElectricalActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+    private boolean isContractorViewingPage;
 
     //XML Objects
     ListView panelList;
     TextView addPanelHyperlink;
     FrameLayout electricalServiceList;
     FrameLayout electricalContractor;
-
-    ArrayAdapter adapter;
-    TempPanelData panelData = TempPanelData.getInstance();
-    private static final String TAG = "ElectricalActivity";
+    ArrayAdapter<Panel> adapter;
 
     @Override
-    public void onCreate(Bundle savedInstance){
+    public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_electrical_view);
+        authentication = new FirebaseAuthentication(this);
+        initializeXMLObjects();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
-        //TODO: remove session manager
-        SessionManager sessionManager = new SessionManager(ElectricalActivity.this);
-        sessionManager.checkLogin();
-        new ActionBarInitializer(this, true, "customer"); //TODO: change to get customer from Firebase
-
-        //Initialize XML Objects
-        electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
-        electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
-
-        //Initialize Panel List
-        //TODO change to get panels from TempCustomerData
-        panelData = TempPanelData.getInstance();
-        panelList = (ListView)findViewById(R.id.electrical_panel_list);
-        View headerView = getLayoutInflater().inflate(R.layout.list_header_panel, panelList, false);
-        panelList.addHeaderView(headerView);
-        adapter = new PanelListAdapter(this, R.layout.list_row_panel, panelData.getPanels());
-        panelList.setAdapter(adapter);
-
-        //Set Up Add Panel Hyperlink
-        addPanelHyperlink = (TextView)findViewById(R.id.electrical_add_panel_hyperlink);
-        addPanelHyperlink.setOnClickListener(addPanelOnClickListener);
-
-        //Set up ElectricalService List
-        //TODO change to get electrical services/contractor from TempCustomerData
-        TempContractorServiceData serviceData = TempContractorServiceData.getInstance();
-
-        View electricalServiceListView = createServiceListView(this, serviceData.getElectricalServices(), "Conn-West Electric", false, "blue"); //TODO: change like plumbing page
-        electricalServiceList.addView(electricalServiceListView);
-
-        //Set up ElectricalContractor
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.connwestlogocrop);
-        View v = ContractorFooterViewInitializer.createFooterView(this, logo, "Conn-West Electric", "203.922.2011", "connwestelectric.com");
-        electricalContractor.addView(v);
+        Intent intentToProcess = getIntent();
+        isContractorViewingPage = intentToProcess.getBooleanExtra("isContractor", false);
+        if(isContractorViewingPage) {
+            new ActionBarInitializer(this, true, "contractor");
+            if(intentToProcess.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new ElectricalGetDataListener());
+            } else {
+                Log.e(TAG, "No customer id");
+                Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            new ActionBarInitializer(this, true, "customer");
+            customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new ElectricalGetDataListener());
+        }
     }
 
     //Mark:- OnClick Listeners
@@ -110,11 +106,97 @@ public class ElectricalActivity extends AppCompatActivity {
     };
 
     public void deletePanel(int position) {
-        //TODO change to delete panel from TempCustomerData
-        Log.i(TAG, "Delete Panel " + panelData.getPanel(position).getPanelDescription());
-        panelData.deletePanel(position);
+        Log.i(TAG, "Delete Panel " + position);
+        customerData.removePanel(position);
         adapter.clear();
-        adapter.addAll(panelData.getPanels());
+        adapter.addAll(customerData.getPanels());
         panelList.setAdapter(adapter);
+    }
+
+    private void initializeXMLObjects() {
+        electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
+        electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
+        panelList = (ListView)findViewById(R.id.electrical_panel_list);
+        addPanelHyperlink = (TextView)findViewById(R.id.electrical_add_panel_hyperlink);
+    }
+    private void setUpPanelList() {
+        if(panelList.getHeaderViewsCount() == 0) {
+            View headerView = getLayoutInflater().inflate(R.layout.list_header_panel, panelList, false);
+            panelList.addHeaderView(headerView);
+        }
+        if(adapter == null) {
+            adapter = new PanelListAdapter(ElectricalActivity.this, R.layout.list_row_panel, customerData.getPanels());
+        } else {
+            adapter.clear();
+            adapter.addAll(customerData.getPanels());
+        }
+        panelList.setAdapter(adapter);
+        //Set Up Add Panel Hyperlink
+        addPanelHyperlink.setOnClickListener(addPanelOnClickListener);
+    }
+    private void setUpServiceList(Contractor electrician) {
+        String company;
+        if(electrician != null && electrician.getContractorDetails() != null && electrician.getContractorDetails().getCompanyName() != null) {
+            company = electrician.getContractorDetails().getCompanyName();
+        } else {
+            company = "";
+        }
+        View electricalServiceListView = createServiceListView(this, customerData.getElectricalServices(), company, isContractorViewingPage, customerData.getUid());
+        electricalServiceList.addView(electricalServiceListView);
+    }
+    private void initializeFooter(Contractor electrician) {
+        if(electrician == null || electrician.getContractorDetails() == null) {
+            Log.d(TAG, "No electrician data");
+            View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this);
+            electricalContractor.addView(v);
+        } else {
+            ContractorDetails electricianDetails = electrician.getContractorDetails();
+            Drawable logo = ContextCompat.getDrawable(this, R.drawable.connwestlogocrop); //TODO: change to get logo
+            View v = ContractorFooterViewInitializer.createFooterView(this, logo, electricianDetails.getCompanyName(), electricianDetails.getTelephoneNumber(), electricianDetails.getWebsiteUrl());
+            electricalContractor.addView(v);
+        }
+    }
+
+    private class ElectricalGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Getting Electrical Data");
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            Log.d(TAG, "Received Electrical Data");
+            setUpPanelList();
+            if(!customerData.getElectrician(new ElectricianGetDataListener())) {
+                setUpServiceList(null);
+                initializeFooter(null);
+            }
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+
+        }
+    }
+    private class ElectricianGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Getting Electrician Data");
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            Log.d(TAG, "Received Electrician Data");
+            Contractor electrician = data.getValue(Contractor.class);
+            setUpServiceList(electrician);
+            initializeFooter(electrician);
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.toString());
+            View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this);
+            electricalContractor.addView(v);
+        }
     }
 }

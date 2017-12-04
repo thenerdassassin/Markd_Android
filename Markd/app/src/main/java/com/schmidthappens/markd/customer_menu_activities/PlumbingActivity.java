@@ -46,6 +46,11 @@ import static com.schmidthappens.markd.view_initializers.ServiceListViewInitiali
  */
 
 public class PlumbingActivity extends AppCompatActivity {
+    private static final String TAG = "PlumbingActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+    private boolean isContractorViewingPage;
+
     //XML Objects
     ImageView hotWaterEditButton;
     TextView hotWaterManufacturerView;
@@ -62,16 +67,11 @@ public class PlumbingActivity extends AppCompatActivity {
     FrameLayout plumbingServiceList;
     FrameLayout plumbingContractor;
 
-    private static final String TAG = "PlumbingActivity";
-    private FirebaseAuthentication authentication;
-    private TempCustomerData customerData;
-    private boolean isContractorViewingPage;
-
     private HotWater hotWater;
     private Boiler boiler;
 
     @Override
-    public void onCreate(Bundle savedInstance){
+    public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_plumbing_view);
         authentication = new FirebaseAuthentication(this);

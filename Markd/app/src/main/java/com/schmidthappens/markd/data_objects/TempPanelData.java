@@ -67,11 +67,11 @@ public class TempPanelData {
         breakerList2.add(new Breaker(12, "Microwave"));
 
         this.panels = new ArrayList<Panel>();
-        this.panels.add(0, new Panel(true, MainPanelAmperage.TwoHundred, breakerList));
+        this.panels.add(0, new Panel(true, Panel.TwoHundred, breakerList));
         this.panels.get(0).setPanelDescription("Attic Panel");
         this.panels.get(0).setInstallDate("11", "07", "16");
 
-        this.panels.add(1, new Panel(false, SubPanelAmperage.OneHundredTwentyFive, breakerList2));
+        this.panels.add(1, new Panel(false, Panel.OneHundredTwentyFive, breakerList2));
         this.panels.get(1).setPanelDescription("Basement Panel");
         this.panels.get(1).setInstallDate("01", "11", "17");
     }
@@ -103,7 +103,7 @@ public class TempPanelData {
         this.panels.get(currentPanel).addBreaker(newBreaker);
         return this.panels.get(currentPanel);
     }
-    public Panel updatePanel(String panelDescription, int numberOfBreakers, boolean isMainPanel, String panelInstallDate, PanelAmperage panelAmperage, PanelManufacturer manufacturer) {
+    public Panel updatePanel(String panelDescription, int numberOfBreakers, boolean isMainPanel, String panelInstallDate, @Panel.PanelAmperage String panelAmperage, @Panel.PanelManufacturer String manufacturer) {
         this.panels.get(currentPanel).updatePanel(panelDescription, numberOfBreakers, isMainPanel, panelInstallDate, panelAmperage, manufacturer);
         return this.panels.get(currentPanel);
     }
