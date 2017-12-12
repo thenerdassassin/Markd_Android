@@ -63,10 +63,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_plumbing);
-
         authentication = new FirebaseAuthentication(this);
-        customerData = new TempCustomerData(authentication, null);
-
         initializeXMLObjects();
     }
 
@@ -78,6 +75,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        customerData = new TempCustomerData(authentication, null);
         processIntent(getIntent());
     }
 
@@ -85,6 +83,9 @@ public class ApplianceEditActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     @Override

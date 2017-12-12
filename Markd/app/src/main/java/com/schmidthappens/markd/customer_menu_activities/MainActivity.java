@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     //Mark:- Photo Functions
@@ -318,7 +321,6 @@ public class MainActivity extends AppCompatActivity {
         if(homeInformationString == null) {
             Log.d(TAG, "Home information was null");
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
-            return;
         } else {
             homeInformation.setText(homeInformationString);
         }

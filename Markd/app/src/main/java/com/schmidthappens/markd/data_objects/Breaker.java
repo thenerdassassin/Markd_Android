@@ -72,8 +72,8 @@ public class Breaker {
 
         if (number != breaker.number) return false;
         if (!breakerDescription.equals(breaker.breakerDescription)) return false;
-        if (amperage != breaker.amperage) return false;
-        return breakerType == breaker.breakerType;
+        if (!amperage.equals(breaker.amperage)) return false;
+        return breakerType.equals(breaker.breakerType);
 
     }
     @Override

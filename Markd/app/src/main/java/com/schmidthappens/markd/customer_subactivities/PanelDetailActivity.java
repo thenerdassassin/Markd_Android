@@ -1,4 +1,4 @@
-package com.schmidthappens.markd.electrical_subactivities;
+package com.schmidthappens.markd.customer_subactivities;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -22,12 +22,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.account_authentication.SessionManager;
-import com.schmidthappens.markd.data_objects.Breaker;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
 import com.schmidthappens.markd.data_objects.Panel;
-import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.DateUtitilities;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -35,6 +37,13 @@ import java.util.Calendar;
  */
 
 public class PanelDetailActivity extends AppCompatActivity {
+    private static final String TAG = "PanelDetailActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+    private boolean isContractorViewingPage;
+    private int panelId;
+    private boolean isNewPanel = false;
+
     //XML Objects
     EditText panelDescription;
     NumberPicker numberOfBreakers;
@@ -45,75 +54,37 @@ public class PanelDetailActivity extends AppCompatActivity {
     Spinner manufacturerSpinner;
     Button savePanelButton;
 
-    ArrayAdapter<String> mainPanelAmpAdapter;
-    ArrayAdapter<String> subPanelAmpAdapter;
+    private final String[] panelManufacturers = Panel.getPanelManufacturers();
+    private final String[] mainPanelAmperages = Panel.getMainPanelAmperageValues();
+    private final String[] subPanelAmperages = Panel.getSubPanelAmperageValues();
+    private ArrayAdapter<String> mainPanelAmpAdapter;
+    private ArrayAdapter<String> subPanelAmpAdapter;
 
-    boolean isNewPanel = false;
-    private static final String TAG = "PanelDetailActivity";
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view_panel);
+        authentication = new FirebaseAuthentication(this);
         initializeXMLObjects();
-
-        //TODO: remove session manager
-        SessionManager sessionManager = new SessionManager(PanelDetailActivity.this);
-        sessionManager.checkLogin();
     }
-
+    @Override
     public void onStart() {
-       super.onStart();
-
-       Intent intentThatStartedThisActivity = getIntent();
-       if(intentThatStartedThisActivity != null) {
-           String amperageString = "";
-
-           if(intentThatStartedThisActivity.hasExtra("newPanel")) {
-               isNewPanel = true;
-           } else {
-               isNewPanel = false;
-           }
-
-           if(intentThatStartedThisActivity.hasExtra("panelDescription")) {
-               String panelDescriptionString = intentThatStartedThisActivity.getStringExtra("panelDescription");
-               panelDescription.setText(panelDescriptionString);
-               panelDescription.setSelection(panelDescriptionString.length()); //Sets cursor to end of EditText
-           }
-
-           if(intentThatStartedThisActivity.hasExtra("numberOfBreakers")) {
-               numberOfBreakers.setValue(intentThatStartedThisActivity.getIntExtra("numberOfBreakers", 1));
-           }
-
-           if(intentThatStartedThisActivity.hasExtra("panelInstallDate")) {
-               panelInstallDate.setText(intentThatStartedThisActivity.getStringExtra("panelInstallDate"));
-           }
-
-           if(intentThatStartedThisActivity.hasExtra("panelAmperage")) {
-               amperageString = intentThatStartedThisActivity.getStringExtra("panelAmperage");
-           }
-
-           if(intentThatStartedThisActivity.hasExtra("isMainPanel")) {
-               boolean isMainPanel = intentThatStartedThisActivity.getBooleanExtra("isMainPanel", true);
-               if(!isMainPanel) {
-                   isSubPanel.setChecked(true);
-                   amperageSpinner.setAdapter(subPanelAmpAdapter);
-                   //amperageSpinner.setSelection(SubPanelAmperage.fromString(amperageString).ordinal()); TODO
-               } else {
-                   isSubPanel.setChecked(false);
-                   amperageSpinner.setAdapter(mainPanelAmpAdapter);
-                   try {
-                       //amperageSpinner.setSelection(MainPanelAmperage.fromString(amperageString).ordinal()); TODO
-                   } catch (NullPointerException e) {
-                       amperageSpinner.setSelection(0);
-                   }
-               }
-           }
-
-           if(intentThatStartedThisActivity.hasExtra("manufacturer")) {
-               String manufacturer = intentThatStartedThisActivity.getStringExtra("manufacturer");
-               //manufacturerSpinner.setSelection(PanelManufacturer.fromString(manufacturer).ordinal()); //TODO
-           }
-       }
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        processIntent(getIntent());
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     private void initializeXMLObjects() {
@@ -131,6 +102,58 @@ public class PanelDetailActivity extends AppCompatActivity {
         setUpSpinnerAdapters();
         setClickListeners();
     }
+    private void processIntent(Intent intentThatStartedThisActivity) {
+        if(intentThatStartedThisActivity != null) {
+            isContractorViewingPage = intentThatStartedThisActivity.getBooleanExtra("isContractor", false);
+            if(intentThatStartedThisActivity.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intentThatStartedThisActivity.getStringExtra("customerId"), null);
+            } else {
+                Log.e(TAG, "No customer id");
+                Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+            }
+
+            String amperageString = "";
+
+            isNewPanel = intentThatStartedThisActivity.hasExtra("newPanel");
+            panelId = intentThatStartedThisActivity.getIntExtra("panelId", -1);
+
+            if(intentThatStartedThisActivity.hasExtra("panelDescription")) {
+                String panelDescriptionString = intentThatStartedThisActivity.getStringExtra("panelDescription");
+                panelDescription.setText(panelDescriptionString);
+                panelDescription.setSelection(panelDescriptionString.length()); //Sets cursor to end of EditText
+            }
+
+            if(intentThatStartedThisActivity.hasExtra("numberOfBreakers")) {
+                numberOfBreakers.setValue(intentThatStartedThisActivity.getIntExtra("numberOfBreakers", 1));
+            }
+
+            if(intentThatStartedThisActivity.hasExtra("panelInstallDate")) {
+                panelInstallDate.setText(intentThatStartedThisActivity.getStringExtra("panelInstallDate"));
+            }
+
+            if(intentThatStartedThisActivity.hasExtra("panelAmperage")) {
+                amperageString = intentThatStartedThisActivity.getStringExtra("panelAmperage");
+            }
+
+            if(intentThatStartedThisActivity.hasExtra("isMainPanel")) {
+                boolean isMainPanel = intentThatStartedThisActivity.getBooleanExtra("isMainPanel", true);
+                if(!isMainPanel) {
+                    isSubPanel.setChecked(true);
+                    amperageSpinner.setAdapter(subPanelAmpAdapter);
+                    setSpinner(amperageSpinner, subPanelAmperages, amperageString);
+                } else {
+                    isSubPanel.setChecked(false);
+                    amperageSpinner.setAdapter(mainPanelAmpAdapter);
+                    setSpinner(amperageSpinner, mainPanelAmperages, amperageString);
+                }
+            }
+
+            if(intentThatStartedThisActivity.hasExtra("manufacturer")) {
+                String manufacturer = intentThatStartedThisActivity.getStringExtra("manufacturer");
+                setSpinner(manufacturerSpinner, panelManufacturers, manufacturer);
+            }
+        }
+    }
     public void setUpNumberPicker(NumberPicker picker) {
         picker.setMinValue(1);
         picker.setMaxValue(52);
@@ -139,16 +162,12 @@ public class PanelDetailActivity extends AppCompatActivity {
     //TODO: change Spinners to NumberPickers
     private void setUpSpinnerAdapters() {
         //Initialize SpinnerAdapters for Amperages
-        String[] mainPanelAmperages = Panel.getMainPanelAmperageValues();
-        String[] subPanelAmperages = Panel.getSubPanelAmperageValues();
-
         mainPanelAmpAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mainPanelAmperages);
         mainPanelAmpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subPanelAmpAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, subPanelAmperages);
         subPanelAmpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         //Add Manufacturer Adapter to Spinner
-        String[] panelManufacturers = Panel.getPanelManufacturers();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, panelManufacturers);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         manufacturerSpinner.setAdapter(adapter);
@@ -174,7 +193,6 @@ public class PanelDetailActivity extends AppCompatActivity {
             }
         }
     };
-
     private View.OnClickListener panelInstallDateButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -182,16 +200,24 @@ public class PanelDetailActivity extends AppCompatActivity {
             showDatePickerDialog(v);
         }
     };
-
     private View.OnClickListener onSaveClicked = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             hideKeyboard(v);
             Log.i(TAG, "Save Panel");
             savePanel();
-            backToMain();
+            backToViewPanelActivity();
         }
     };
+    @Override
+    public boolean onSupportNavigateUp(){
+        Log.i(TAG, "Navigate Up");
+        if(isNewPanel) {
+            backToElectricalActivity();
+        }
+        backToViewPanelActivity();
+        return true;
+    }
 
     //Mark:- Date Picker
     private void showDatePickerDialog(View v) {
@@ -236,38 +262,63 @@ public class PanelDetailActivity extends AppCompatActivity {
     }
 
     //Mark:- Helper Functions
+    private void setSpinner(Spinner spinner, String[] values, String selectedValue) {
+        for(int i = 0; i<values.length; i++) {
+            String value = values[i];
+            if(value.equals(selectedValue)) {
+                spinner.setSelection(i);
+            }
+        }
+    }
     private void changeInstallDate(String newDate) {
         panelInstallDate.setText(newDate);
     }
     private void savePanel() {
-        //TODO change to http call to update electrical panel
-        TempPanelData myPanels = TempPanelData.getInstance();
+        Panel panelToUpdate;
 
         //Get Info
         String panelDescriptionString = panelDescription.getText().toString();
+        if(panelDescriptionString.isEmpty()) {
+            panelDescriptionString = "Panel";
+        }
         int breakersNumber = numberOfBreakers.getValue();
         boolean isSubPanelChecked = isSubPanel.isChecked();
         String panelInstallDateString = panelInstallDate.getText().toString();
+        if(panelInstallDateString.isEmpty()) {
+            panelInstallDateString = StringUtilities.getDateString(DateUtitilities.getCurrentMonth()+1, DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear());
+        }
         String panelAmpString = (String)amperageSpinner.getItemAtPosition(amperageSpinner.getSelectedItemPosition());
-
         String manufacturerString = (String)manufacturerSpinner.getItemAtPosition(manufacturerSpinner.getSelectedItemPosition());
 
-
         if(isNewPanel) {
-            //TODO change to http call to add Panel
-            myPanels.addPanel(new Panel(0, new ArrayList<Breaker>()));
+            panelToUpdate = new Panel();
+        } else {
+            panelToUpdate = customerData.getPanels().get(panelId);
         }
-        //Send Update
-        //TODO change to http call to update Panel
-        myPanels.updatePanel(panelDescriptionString, breakersNumber, !isSubPanelChecked, panelInstallDateString, panelAmpString, manufacturerString);
-
+        panelToUpdate = panelToUpdate.updatePanel(panelDescriptionString, breakersNumber, !isSubPanelChecked, panelInstallDateString, panelAmpString, manufacturerString);
+        customerData.updatePanel(panelId, panelToUpdate);
     }
-    private void backToMain() {
+    private void backToViewPanelActivity() {
         Context context = PanelDetailActivity.this;
         Class destinationClass = ViewPanelActivity.class;
         Intent intentToStartMainActivity = new Intent(context, destinationClass);
-        intentToStartMainActivity.putExtra("source", "PanelDetailActivity");
+        intentToStartMainActivity.putExtra("isContractor", isContractorViewingPage);
+        intentToStartMainActivity.putExtra("customerId", customerData.getUid());
+        if(panelId == -1) {
+            panelId = customerData.getPanels().size()-1;
+        }
+        intentToStartMainActivity.putExtra("panelId", panelId);
         startActivity(intentToStartMainActivity);
+        finish();
+    }
+    private void backToElectricalActivity() {
+        Context context = PanelDetailActivity.this;
+        Class destinationClass = ElectricalActivity.class;
+        Intent intentToStartElectricalActivity = new Intent(context, destinationClass);
+        intentToStartElectricalActivity.putExtra("isContractor", isContractorViewingPage);
+        intentToStartElectricalActivity.putExtra("customerId", customerData.getUid());
+        startActivity(intentToStartElectricalActivity);
+        finish();
     }
 
     //MARK:- Keyboard Functions

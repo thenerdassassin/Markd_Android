@@ -1,12 +1,15 @@
 package com.schmidthappens.markd.data_objects;
 
 import android.support.annotation.StringDef;
+import android.util.Log;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,6 +18,8 @@ import java.util.List;
 
 @IgnoreExtraProperties
 public class Panel {
+    @Exclude
+    private static final String TAG = "PanelDataObject";
     private boolean isMainPanel;
     private @PanelAmperage String amperage;
     private String panelDescription;
@@ -101,7 +106,9 @@ public class Panel {
     }
     public void setNumberOfBreakers(int numberOfBreakers) {
         this.numberOfBreakers = numberOfBreakers;
-
+        if(breakerList == null) {
+            breakerList = new ArrayList<>();
+        }
         while(breakerList.size() < numberOfBreakers) {
             breakerList.add(new Breaker(breakerList.size()+1, ""));
         }
@@ -121,13 +128,13 @@ public class Panel {
     public String getPanelTitle() {
         String panelTitleString = "";
 
-        if(this.isMainPanel) {
+        if(isMainPanel) {
             panelTitleString += "Main Panel ";
         } else {
             panelTitleString += "Sub Panel ";
         }
 
-        panelTitleString += this.amperage.toString();
+        panelTitleString += this.amperage;
 
         return panelTitleString;
     }
@@ -157,6 +164,7 @@ public class Panel {
         }
         if(breakerToDelete.equals(lastBreaker)) {
             breakerList.remove(breakerToDelete);
+            numberOfBreakers--;
         }
         else {
             //Reset to default values
@@ -167,16 +175,23 @@ public class Panel {
         return this;
     }
     public Panel editBreaker(int breakerNumber, Breaker updatedBreaker) {
+        Log.d(TAG, "BreakerNumber:" + breakerNumber);
         int breakerIndex = breakerNumber-1;
         this.breakerList.set(breakerIndex, updatedBreaker);
         // Updated Breaker is top of Double-Pole
         if(updatedBreaker.getBreakerType().equals(Breaker.DoublePole)) {
+            Log.d(TAG, "Updated Breaker is top of Double Pole");
             // Add Breakers to Panel if needed
-            if(breakerIndex + 2  >= this.breakerCount()) {
+            if(breakerIndex+2  >= this.breakerCount()) {
+                Log.d(TAG, "Need to add breakers to panel");
                 while(breakerIndex+2 > this.breakerCount()) {
+                    Log.d(TAG, "Breaker added at:" + (breakerCount()+1));
                     this.breakerList.add(this.breakerCount(), new Breaker(this.breakerCount()+1, ""));
+                    numberOfBreakers++;
                 }
+                Log.d(TAG, "Adding breaker at:" + (breakerCount()+1));
                 this.breakerList.add(this.breakerCount(), new Breaker(this.breakerCount()+1, updatedBreaker.getBreakerDescription(), updatedBreaker.getAmperage(), Breaker.DoublePoleBottom));
+                numberOfBreakers++;
             }
             // Simply update the bottom of Double Pole
             else {
@@ -188,6 +203,7 @@ public class Panel {
         }
         // Updated Breaker is bottom of Double-Pole
         else if(updatedBreaker.getBreakerType().equals(Breaker.DoublePoleBottom)) {
+            Log.d(TAG, "Updated Breaker is bottom of Double Pole");
             //Copy Changes to Upper Part of Double-Pole
             Breaker topDoublePole = this.breakerList.get(breakerIndex-2);
             topDoublePole.setBreakerDescription(updatedBreaker.getBreakerDescription());
@@ -195,6 +211,7 @@ public class Panel {
         }
         // Updated Breaker is Single-Pole
         else {
+            Log.d(TAG, "Updated Breaker is top of Single Pole");
             //Set above breaker to single pole
             if(breakerIndex > 1) {
                 Breaker aboveBreaker = this.getBreakerList().get(breakerIndex-2);
@@ -210,15 +227,17 @@ public class Panel {
                 }
             }
         }
-
         return this;
     }
     public Panel addBreaker(Breaker newBreaker) {
         this.breakerList.add(newBreaker);
+        numberOfBreakers++;
 
         if(newBreaker.getBreakerType().equals(Breaker.DoublePole)) {
             this.breakerList.add(new Breaker(this.breakerCount()+1, ""));
+            numberOfBreakers++;
             this.breakerList.add(new Breaker(this.breakerCount()+1, newBreaker.getBreakerDescription(), newBreaker.getAmperage(), Breaker.DoublePoleBottom));
+            numberOfBreakers++;
         }
         return this;
     }

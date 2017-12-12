@@ -220,10 +220,10 @@ public class Customer {
         public void setPanels(List<Panel> panels) {
             this.panels = panels;
         }
-        public String getElectrician() {
+        public String getElectricianReference() {
             return electricianReference;
         }
-        public void setElectrician(String electrician) {
+        public void setElectricianReference(String electrician) {
             this.electricianReference = electrician;
         }
         public List<ContractorService> getElectricalServices() {
@@ -256,7 +256,6 @@ public class Customer {
         this.address = new Address(street, city, state, zipcode);
         this.home = new Home(bedrooms, bathrooms, squareFootage);
     }
-
     @Exclude
     public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, maritalStatus);
@@ -272,6 +271,7 @@ public class Customer {
             services.set(serviceId, service);
         }
     }
+    //Painting
     @Exclude
     public void setExteriorPaintSurface(int paintId, PaintSurface surface) {
         if(paintId == -1) {
@@ -299,5 +299,20 @@ public class Customer {
     }
     public void deleteInteriorPaintSurface(int paintId) {
         interiorPaintSurfaces.remove(paintId);
+    }
+    //Electrical
+    @Exclude
+    public void setPanel(int panelId, Panel updatedPanel) {
+        if(panelId == -1) {
+            if(panels == null) {
+                panels = new ArrayList<>();
+            }
+            panels.add(updatedPanel);
+        } else {
+            panels.set(panelId, updatedPanel);
+        }
+    }
+    public void deletePanel(int panelId) {
+        panels.remove(panelId);
     }
 }

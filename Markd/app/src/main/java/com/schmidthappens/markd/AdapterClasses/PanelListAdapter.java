@@ -15,9 +15,8 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Panel;
-import com.schmidthappens.markd.data_objects.TempPanelData;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
-import com.schmidthappens.markd.electrical_subactivities.ViewPanelActivity;
+import com.schmidthappens.markd.customer_subactivities.ViewPanelActivity;
 
 import java.util.List;
 
@@ -28,14 +27,17 @@ import java.util.List;
 //TODO abstract duplicate code in PaintListAdapter
 // (May need to make LinearLayout and TableRow the same)
 public class PanelListAdapter extends ArrayAdapter<Panel> {
+    private static final String TAG = "PanelListAdapter";
+
+    private ElectricalActivity activityContext = null;
+    private boolean isContractor;
+    private String customerId;
+
     private float dX, historicX, newX;
     private float originalX = Float.NaN;
     private final float DELTA = (float)-50.0;
     private final float LAG = (float)15.0;
     private final int DURATION = 400;
-
-    private ElectricalActivity activityContext = null;
-    private static final String TAG = "PanelListAdapter";
 
     public PanelListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -46,13 +48,15 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         }
     }
 
-    public PanelListAdapter(Context context, int resource, List<Panel> items) {
+    public PanelListAdapter(Context context, int resource, List<Panel> items, boolean isContractor, String customerId) {
         super(context, resource, items);
         if(context instanceof ElectricalActivity) {
             activityContext = (ElectricalActivity)context;
         } else {
             Log.e(TAG, "Activity Context not Electrical Activity");
         }
+        this.isContractor = isContractor;
+        this.customerId = customerId;
     }
 
     @Override
@@ -119,7 +123,6 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         panelDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO change to http call to delete Panel
                 if(activityContext != null) {
                     Log.i(TAG, "Delete Panel " + position);
                     activityContext.deletePanel(position);
@@ -144,7 +147,7 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         }
 
         if (panelAmperageTextView != null) {
-            panelAmperageTextView.setText(panel.getAmperage().toString());
+            panelAmperageTextView.setText(panel.getAmperage());
         }
 
         if (panelInstallDateTextView != null) {
@@ -153,11 +156,17 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
     }
 
     private void viewClickedPanel(int panelClicked) {
+        Log.i(TAG, "panelClicked");
         Class destinationClass = ViewPanelActivity.class;
-        //TODO remove when http call comes pass data instead
-        TempPanelData.getInstance().currentPanel = panelClicked;
         if(activityContext != null) {
+            if(panelClicked >= getCount()) {
+                Log.e(TAG, "panelClick greater than list size");
+                return;
+            }
             Intent intentToStartViewPanelActivity = new Intent(activityContext, destinationClass);
+            intentToStartViewPanelActivity.putExtra("panelId", panelClicked);
+            intentToStartViewPanelActivity.putExtra("isContractor", isContractor);
+            intentToStartViewPanelActivity.putExtra("customerId", customerId);
             activityContext.startActivity(intentToStartViewPanelActivity);
         } else {
             Log.e(TAG, "Activity Context NULL");

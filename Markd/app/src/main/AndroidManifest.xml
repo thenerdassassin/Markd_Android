@@ -37,7 +37,8 @@
         </activity>
 
         <!-- Login Page -->
-        <activity android:name=".account_authentication.LoginActivity"/>
+        <activity android:name=".account_authentication.LoginActivity"
+            android:launchMode="singleTop"/>
 
     <!-- Customer Pages -->
         <!-- Main Page -->
@@ -46,7 +47,8 @@
         <!-- Plumbing -->
         <activity
             android:name=".customer_menu_activities.PlumbingActivity"
-            android:value=".MenuOptionActivities.PlumbingActivity"/>
+            android:value=".MenuOptionActivities.PlumbingActivity"
+            android:launchMode="singleTop"/>
         <!-- Plumbing Sub-Activities -->
         <activity
             android:name=".customer_subactivities.ApplianceEditActivity"
@@ -59,52 +61,53 @@
         <!-- HVAC -->
         <activity
             android:name=".customer_menu_activities.HvacActivity"
-            android:value=".MenuOptionActivities.HvacActivity"/>
+            android:value=".MenuOptionActivities.HvacActivity"
+            android:launchMode="singleTop"/>
         <!-- Hvac Sub-Activities -->
 
         <!-- Electrical -->
         <activity
             android:name=".customer_menu_activities.ElectricalActivity"
-            android:value=".MenuOptionActivities.ElectricalActivity"/>
+            android:value=".MenuOptionActivities.ElectricalActivity"
+            android:launchMode="singleTop"/>
         <!-- Electrical Sub-Activities -->
         <activity
-            android:name=".electrical_subactivities.ViewPanelActivity"
+            android:name=".customer_subactivities.ViewPanelActivity"
             android:value=".MenuOptionActivities.ViewPanelActivity" />
         <activity
-            android:name=".electrical_subactivities.BreakerDetailActivity"
-            android:parentActivityName=".electrical_subactivities.ViewPanelActivity">
+            android:name=".customer_subactivities.BreakerDetailActivity"
+            android:parentActivityName=".customer_subactivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".electrical_subactivities.PanelDetailActivity" />
+                android:value=".customer_subactivities.PanelDetailActivity" />
         </activity>
         <activity
-            android:name=".electrical_subactivities.PanelDetailActivity"
-            android:parentActivityName=".electrical_subactivities.ViewPanelActivity">
+            android:name=".customer_subactivities.PanelDetailActivity"
+            android:parentActivityName=".customer_subactivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".electrical_subactivities.ViewPanelActivity" />
+                android:value=".customer_subactivities.ViewPanelActivity" />
         </activity>
-
-        <!-- Landscaping -->
-
         <!-- Painting -->
         <activity
             android:name=".customer_menu_activities.PaintingActivity"
-            android:value=".menu_option_activities.PaintingActivity"/>
+            android:value=".menu_option_activities.PaintingActivity"
+            android:launchMode="singleTop"/>
         <!-- Paint Sub-Activities -->
         <activity
             android:name=".customer_subactivities.PaintEditActivity"
             android:parentActivityName=".customer_menu_activities.PaintingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".electrical_subactivities.ViewPanelActivity" />
+                android:value=".customer_subactivities.ViewPanelActivity" />
         </activity>
 
         <activity android:name=".customer_subactivities.ServiceDetailActivity" />
 
         <!-- Settings -->
         <activity android:name=".customer_menu_activities.SettingsActivity"
-            android:value=".customer_menu_activities.SettingsActivity" />
+            android:value=".customer_menu_activities.SettingsActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".customer_subactivities.ProfileEditActivity"
                 android:value=".customer_subactivities.ProfileEditActivity">
             <meta-data
@@ -127,7 +130,8 @@
      <!-- Contractor Pages -->
         <activity
             android:name=".contractor_user_activities.ContractorMainActivity"
-            android:value=".contractor_user_activities.ContractorMainActivity"/>
+            android:value=".contractor_user_activities.ContractorMainActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".contractor_user_activities.ContractorEditActivity"
             android:value=".contractor_user_activities.ContractorEditActivity"
             android:parentActivityName=".contractor_user_activities.ContractorMainActivity">
@@ -136,7 +140,8 @@
                 android:value=".contractor_user_activities.ContractorMainActivity" />
         </activity>
         <activity android:name=".contractor_user_activities.ContractorCustomersActivity"
-            android:value=".contractor_user_activities.ContractorCustomersActivity" />
+            android:value=".contractor_user_activities.ContractorCustomersActivity"
+            android:launchMode="singleTop"/>
         <activity android:name=".contractor_user_activities.SendNotificationsActivity"
             android:value=".contractor_user_activities.SendNotificationsActivity"
             android:parentActivityName=".contractor_user_activities.ContractorCustomersActivity">

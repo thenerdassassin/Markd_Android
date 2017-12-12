@@ -104,6 +104,9 @@ public class PlumbingActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     //MARK:- UI Initializers

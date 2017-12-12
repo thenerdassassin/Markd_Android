@@ -100,6 +100,9 @@ public class HvacActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     // Mark: SetUp Function

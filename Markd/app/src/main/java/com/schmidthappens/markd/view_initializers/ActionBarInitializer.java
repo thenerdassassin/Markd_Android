@@ -86,8 +86,8 @@ public class ActionBarInitializer {
             @Override
             public void onClick(View v) {
                 Class destinationClass = ContractorCustomersActivity.class;
-                Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
-                context.startActivity(intentToStartPlumbingEditActivity);
+                Intent intentToGoBackActivity = new Intent(context, destinationClass);
+                context.startActivity(intentToGoBackActivity);
             }
         });
     }

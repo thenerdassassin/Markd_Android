@@ -26,6 +26,7 @@ import java.util.List;
 public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
     private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
+    private DatabaseReference userReference;
     private String uid;
     private OnGetDataListener listener;
 
@@ -38,7 +39,7 @@ public class TempCustomerData {
     public TempCustomerData(String uid, OnGetDataListener listener) {
         this.uid = uid;
         this.listener = listener;
-        DatabaseReference userReference = database.child(uid);
+        userReference = database.child(uid);
         userReference.addValueEventListener(valueEventListener);
     }
     private ValueEventListener valueEventListener = new ValueEventListener() {
@@ -86,7 +87,12 @@ public class TempCustomerData {
             }
         });
     }
-
+    public void attachListener() {
+        userReference.addValueEventListener(valueEventListener);
+    }
+    public void removeListeners() {
+        userReference.removeEventListener(valueEventListener);
+    }
     public String getUid() {
         return uid;
     }
@@ -218,13 +224,13 @@ public class TempCustomerData {
     public List<Panel> getPanels() {
         return getCustomer().getPanels();
     }
-    //TODO addPanel
-    //public void addPanel(Panel newPanel)
-    //TODO Update Panel
-    //public void updatePanel(int panelid, Panel updatedPanel){}
+    public void updatePanel(int panelId, Panel updatedPanel){
+        customer.setPanel(panelId, updatedPanel);
+        putCustomer(customer);
+    }
     public void removePanel(int panelId) {
-        //TODO removePanel
-        return;
+        customer.deletePanel(panelId);
+        putCustomer(customer);
     }
     public List<ContractorService> getElectricalServices() {
         return getCustomer().getElectricalServices();
@@ -238,7 +244,7 @@ public class TempCustomerData {
         putCustomer(customer);
     }
     public boolean getElectrician(final OnGetDataListener electricianListener) {
-        String electrician = customer.getElectrician();
+        String electrician = customer.getElectricianReference();
         if(electrician == null) {
             return false;
         }
@@ -314,10 +320,10 @@ public class TempCustomerData {
             }
             customer.setHvactechnician(contractorReference);
         } else if(contractorType.equals("Electrician")) {
-            if(customer.getElectrician() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getElectrician(), uid);
+            if(customer.getElectricianReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getElectricianReference(), uid);
             }
-            customer.setElectrician(contractorReference);
+            customer.setElectricianReference(contractorReference);
         } else if(contractorType.equals("Painter")) {
             if(customer.getPainterReference() != null) {
                 TempContractorData.removeCustomerFromContractor(customer.getPainterReference(), uid);
@@ -402,7 +408,7 @@ public class TempCustomerData {
 
         //Electrical
         newCustomer.setPanels(TempPanelData.getInstance().getPanels());
-        newCustomer.setElectrician("defaultElectricianThree");
+        newCustomer.setElectricianReference("defaultElectricianThree");
         //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting
