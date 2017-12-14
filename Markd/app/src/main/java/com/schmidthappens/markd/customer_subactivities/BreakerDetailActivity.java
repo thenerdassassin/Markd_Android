@@ -12,17 +12,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.data_objects.Breaker;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.data_objects.TempPanelData;
+import com.schmidthappens.markd.utilities.NumberPickerUtilities;
 
 /**
  * Created by Josh on 3/8/2017.
@@ -36,8 +36,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
 
     //XML objects
     private EditText breakerDetailEdit;
-    private Spinner amperageSpinner;
-    private Spinner breakerTypeSpinner;
+    private NumberPicker amperageNumberPicker;
+    private NumberPicker breakerTypeNumberPicker;
     private Button deleteBreakerButton;
     private Button saveBreakerButton;
 
@@ -47,6 +47,9 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private String breakerType;
     private boolean isDoublePoleBottom;
     private String breakerAmperage;
+
+    private final String[] amperages = Breaker.getAmperageValues();
+    private final String[] breakerTypes = Breaker.getBreakerTypeValues();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,40 +84,35 @@ public class BreakerDetailActivity extends AppCompatActivity {
         return true;
     }
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Log.i(TAG, "Back Pressed");
         goBackToViewPanel();
     }
     private void initializeXMLObjects() {
         breakerDetailEdit = (EditText)findViewById(R.id.electrical_breaker_description);
-        amperageSpinner = (Spinner) findViewById(R.id.electrical_amperage_spinner);
+        amperageNumberPicker = (NumberPicker) findViewById(R.id.electrical_amperage_spinner);
         deleteBreakerButton = (Button)findViewById(R.id.electrical_delete_breaker_button);
         saveBreakerButton = (Button)findViewById(R.id.electrical_save_breaker_button);
-        breakerTypeSpinner = (Spinner)findViewById(R.id.electrical_breaker_type_spinner);
+        breakerTypeNumberPicker = (NumberPicker)findViewById(R.id.electrical_breaker_type_spinner);
         //Used to dismiss keyboard on enter pressed
         breakerDetailEdit.setOnEditorActionListener(editOnAction);
+
         setDeleteBreakerListener(deleteBreakerButton);
         setSaveBreakerListener(saveBreakerButton);
-        setUpSpinners();
+        setUpNumberPickers();
     }
-    //TODO: change spinner to number picker
-    private void setUpSpinners() {
-        String[] amperages = Breaker.getAmperageValues();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, amperages);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        amperageSpinner.setClickable(false);
-        amperageSpinner.setAdapter(adapter);
+    private void setUpNumberPickers() {
+        amperageNumberPicker.setMinValue(0);
+        amperageNumberPicker.setMaxValue(amperages.length-1);
+        amperageNumberPicker.setDisplayedValues(amperages);
         //Used to dismiss keyboard on touch
-        amperageSpinner.setOnTouchListener(spinnerOnTouch);
+        amperageNumberPicker.setOnTouchListener(spinnerOnTouch);
 
-        String[] breakerTypes = Breaker.getBreakerTypeValues();
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, breakerTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        breakerTypeSpinner.setClickable(false);
-        breakerTypeSpinner.setAdapter(arrayAdapter);
+        breakerTypeNumberPicker.setMinValue(0);
+        breakerTypeNumberPicker.setMaxValue(breakerTypes.length-1);
+        breakerTypeNumberPicker.setDisplayedValues(breakerTypes);
         //Used to dismiss keyboard on touch
-        breakerTypeSpinner.setOnTouchListener(spinnerOnTouch);
+        breakerTypeNumberPicker.setOnTouchListener(spinnerOnTouch);
     }
     private void processIntent(Intent intentThatStartedThisActivity) {
         if(intentThatStartedThisActivity != null) {
@@ -177,8 +175,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
     //Mark: :- Helper functions
     //Used to Collect Updated Info
     private Breaker makeBreaker() {
-        //Get BreakerType Value
-        String breakerTypeString = (String)breakerTypeSpinner.getItemAtPosition(breakerTypeSpinner.getSelectedItemPosition());
+        String breakerTypeString = breakerTypes[breakerTypeNumberPicker.getValue()];
         // Breaker was DoublePole Bottom and set to stay as double-pole
         if(isDoublePoleBottom && breakerTypeString.equals(Breaker.DoublePole)) {
             breakerTypeString = Breaker.DoublePoleBottom;
@@ -187,10 +184,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
             isDoublePoleBottom = false;
             breakerType = breakerTypeString;
         }
-        //Get Breaker Amperage Value
-        breakerAmperage = (String)amperageSpinner.getItemAtPosition(amperageSpinner.getSelectedItemPosition());
 
-        //Get Breaker Description Value
+        breakerAmperage = amperages[amperageNumberPicker.getValue()];
         breakerDescription = breakerDetailEdit.getText().toString();
         Breaker newBreaker = new Breaker(Integer.parseInt(breakerNumberString), breakerDescription, breakerAmperage, breakerTypeString);
 
@@ -205,8 +200,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
         goBackToViewPanel();
     }
     private void updateView() {
-        setSpinner(amperageSpinner, Breaker.getAmperageValues(), breakerAmperage);
-        setSpinner(breakerTypeSpinner, Breaker.getBreakerTypeValues(), breakerType);
+        NumberPickerUtilities.setPicker(amperageNumberPicker, breakerAmperage, amperages);
+        NumberPickerUtilities.setPicker(breakerTypeNumberPicker, breakerType, breakerTypes);
         breakerDetailEdit.setText(breakerDescription);
         breakerDetailEdit.setSelection(breakerDescription.length()); //Sets cursor to end of EditText
     }
@@ -244,7 +239,6 @@ public class BreakerDetailActivity extends AppCompatActivity {
             return false;
         }
     };
-
     private TextView.OnEditorActionListener editOnAction = new TextView.OnEditorActionListener() {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (event != null&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {

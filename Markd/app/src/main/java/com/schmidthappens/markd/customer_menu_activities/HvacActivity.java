@@ -5,17 +5,11 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,19 +18,16 @@ import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.AirHandler;
 import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 

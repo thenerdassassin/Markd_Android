@@ -30,6 +30,7 @@ import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivit
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.NumberPickerUtilities;
 
 /**
  * Created by joshua.schmidtibm.com on 10/14/17.
@@ -167,7 +168,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
             if(!isNewAccount) {
                 if(intent.hasExtra("namePrefix")) {
-                    setPicker(namePrefixPicker, intent.getStringExtra("namePrefix"), namePrefixArray);
+                    NumberPickerUtilities.setPicker(namePrefixPicker, intent.getStringExtra("namePrefix"), namePrefixArray);
+                    //setPicker(namePrefixPicker, intent.getStringExtra("namePrefix"), namePrefixArray); //TODO: test and remove
                 }
                 if(intent.hasExtra("firstName")) {
                     firstName.setText(intent.getStringExtra("firstName"));
@@ -178,7 +180,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                 if(intent.hasExtra("maritalStatus")) {
                     //Customer
                     maritalStatusPicker.setVisibility(View.VISIBLE);
-                    setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray);
+                    NumberPickerUtilities.setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray);
+                    //setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray); //TODO: test and remove
                 } else {
                     //Contractor
                     maritalStatusPicker.setVisibility(View.GONE);
@@ -186,7 +189,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                 if(intent.hasExtra("contractorType")) {
                     //Contractor
                     contractorTypePicker.setVisibility(View.VISIBLE);
-                    setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray);
+                    NumberPickerUtilities.setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray);
+                    //setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray); //TODO: test and remove
                 } else {
                     //Customer
                     contractorTypePicker.setVisibility(View.GONE);
@@ -267,7 +271,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         });
     }
 
-    //Mark:- Helper functions
+    //Mark:- Helper functions //TODO: test and remove
+    /*
     private void setPicker(NumberPicker picker, String toSetTo, String[] array) {
         for(int i = 0; i < array.length; i++) {
             if(array[i].equals(toSetTo)) {
@@ -276,6 +281,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         }
     }
+    */
     private void checkCredential(final FirebaseUser user, AuthCredential credential) {
         user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

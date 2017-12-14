@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginStart="30dp"
     android:layout_marginLeft="30dp"
     android:layout_marginEnd="30dp"
-    android:layout_marginRight="30dp"
+    android:layout_marginRight="30dp">
+<LinearLayout
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
     android:orientation="vertical">
 
     <!-- Edit Panel Description -->
@@ -124,26 +128,30 @@
         </Button>
     </LinearLayout>
 
-    <!-- Amperage/Manufacturer Spinners -->
+    <!-- Amperage/Manufacturer NumberPickers -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
-        <!-- Panel Amperage Spinner -->
-        <Spinner
+        <!-- Panel Amperage NumberPickers -->
+        <NumberPicker
             android:id="@+id/panel_amperage_spinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="20dp"
             android:textAlignment="center"/>
 
-        <!-- Panel Manufacturer Spinner -->
-        <Spinner
+        <!-- Panel Manufacturer NumberPickers -->
+        <NumberPicker
             android:id="@+id/panel_manufacturer_spinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="40dp"
             android:textAlignment="center"/>
     </LinearLayout>
 
@@ -166,3 +174,4 @@
         android:layout_weight="6"/>
 
 </LinearLayout>
+</ScrollView>

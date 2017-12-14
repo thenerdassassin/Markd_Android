@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,17 +18,13 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
 import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
+import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
-import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.DateUtitilities;
-
-import java.util.List;
 
 /**
  * Created by Josh on 8/5/2017.

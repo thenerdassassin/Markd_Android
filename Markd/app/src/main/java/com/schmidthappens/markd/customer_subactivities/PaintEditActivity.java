@@ -21,9 +21,8 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
-import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
+import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.StringUtilities;
 

@@ -28,14 +28,18 @@
         android:layout_weight="1.5"
         android:orientation="horizontal">
 
-        <Spinner
+        <NumberPicker
             android:id="@+id/electrical_amperage_spinner"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="20dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.5"
             android:textAlignment="center"/>
-        <Spinner
+        <NumberPicker
             android:id="@+id/electrical_breaker_type_spinner"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="40dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.5"
