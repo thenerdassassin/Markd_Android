@@ -76,11 +76,11 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void getNotifications(String customerId) {
-        if(customerId == null) {
+        if(customerId == null || !NotificationHandler.getNotifications(customerId, notificationValueListener)) {
             noNotificationsTextView.setVisibility(View.VISIBLE);
-            return;
+        } else {
+            noNotificationsTextView.setVisibility(View.GONE);
         }
-        NotificationHandler.getNotifications(customerId, notificationValueListener);
     }
 
     private ValueEventListener notificationValueListener = new ValueEventListener() {

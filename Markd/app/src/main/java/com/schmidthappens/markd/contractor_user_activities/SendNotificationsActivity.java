@@ -79,7 +79,9 @@ public class SendNotificationsActivity extends AppCompatActivity{
             if(!StringUtilities.isNullOrEmpty(message)) {
                 Log.i(TAG, "Add Notification:{ user:" + customerId + ", message:" + message + "}");
                 Toast.makeText(SendNotificationsActivity.this, "Send Notifications", Toast.LENGTH_SHORT).show();
-                NotificationHandler.sendNotification(customerId, message);
+                if(contractorData != null && contractorData.getContractorDetails() != null && contractorData.getContractorDetails().getCompanyName() != null) {
+                    NotificationHandler.sendNotification(customerId, message, contractorData.getContractorDetails().getCompanyName());
+                }
                 finish();
             }
         }
