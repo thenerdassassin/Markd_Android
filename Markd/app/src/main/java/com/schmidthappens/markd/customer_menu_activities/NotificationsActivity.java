@@ -16,9 +16,11 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.schmidthappens.markd.AdapterClasses.NotificationRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.data_objects.CustomerNotificationMessage;
 import com.schmidthappens.markd.utilities.NotificationHandler;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
@@ -32,19 +34,17 @@ import java.util.List;
 public class NotificationsActivity extends AppCompatActivity {
     public static final String TAG = "NotificationsActivity";
     FirebaseAuthentication authentication;
-    private ListView notificationsListView;
+    private RecyclerView notificationRecyclerView;
     private TextView noNotificationsTextView;
 
     @Override
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_notifications_view);
-
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true, "customer");
         initializeViews();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -57,7 +57,6 @@ public class NotificationsActivity extends AppCompatActivity {
             getNotifications(authentication.getCurrentUser().getUid());
         }
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -65,16 +64,17 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        notificationsListView = (ListView)findViewById(R.id.notifications_list_view);
+        notificationRecyclerView = (RecyclerView)findViewById(R.id.notifications_list_view);
         noNotificationsTextView = (TextView)findViewById(R.id.notifications_empty_list);
-
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        //layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        //notificationsListView.setLayoutManager(layoutManager);
-        //notificationsListView.setHasFixedSize(true);
-        //notificationsListView.addItemDecoration(new DividerItemDecoration(NotificationsActivity.this, DividerItemDecoration.VERTICAL));
     }
-
+    private void setUpRecyclerView(List<CustomerNotificationMessage> notifications) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        notificationRecyclerView.setLayoutManager(layoutManager);
+        notificationRecyclerView.setHasFixedSize(false);
+        notificationRecyclerView.addItemDecoration(new DividerItemDecoration(NotificationsActivity.this, DividerItemDecoration.VERTICAL));
+        notificationRecyclerView.setAdapter(new NotificationRecyclerViewAdapter(notifications));
+    }
     private void getNotifications(String customerId) {
         if(customerId == null || !NotificationHandler.getNotifications(customerId, notificationValueListener)) {
             noNotificationsTextView.setVisibility(View.VISIBLE);
@@ -82,22 +82,20 @@ public class NotificationsActivity extends AppCompatActivity {
             noNotificationsTextView.setVisibility(View.GONE);
         }
     }
-
     private ValueEventListener notificationValueListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            List<String> notifications = new ArrayList<>();
+            List<CustomerNotificationMessage> notifications = new ArrayList<>();
             for (DataSnapshot data: dataSnapshot.getChildren()) {
-                notifications.add(data.getValue(String.class));
+                Log.d(TAG, data.toString());
+                notifications.add(data.getValue(CustomerNotificationMessage.class));
             }
             Log.d(TAG, "notifications size:" + notifications.size());
             if(notifications.size() > 0) {
                 noNotificationsTextView.setVisibility(View.GONE);
+                setUpRecyclerView(notifications);
             } else {
                 noNotificationsTextView.setVisibility(View.VISIBLE);
-                // TODO:
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(NotificationsActivity.this, android.R.layout.simple_list_item_1, notifications);
-                notificationsListView.setAdapter(adapter);
             }
         }
 

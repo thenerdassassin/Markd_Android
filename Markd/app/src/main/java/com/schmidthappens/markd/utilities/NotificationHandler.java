@@ -31,10 +31,6 @@ public class NotificationHandler {
                     notifications.add(string.getValue(CustomerNotificationMessage.class));
                 }
                 notifications.add(0, new CustomerNotificationMessage(companyFrom, message));
-                //Limit notifications to last 10
-                if(notifications.size() > 10) {
-                    notifications = notifications.subList(0, 10);
-                }
                 notificationMessages.setValue(notifications);
             }
 
