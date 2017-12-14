@@ -16,36 +16,42 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.account_authentication.SessionManager;
-import com.schmidthappens.markd.data_objects.ContractorService;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
+import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
+import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
-
-import java.util.List;
+import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
+import com.schmidthappens.markd.data_objects.ContractorService;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.DateUtitilities;
 
 /**
  * Created by Josh on 8/5/2017.
  */
 
 public class ServiceDetailActivity extends AppCompatActivity {
+    String TAG = "ServiceDetailActivity";
+    FirebaseAuthentication authentication;
+    TempCustomerData customerData;
+
     //XML Objects
     EditText editContractor;
     EditText editServiceDescription;
     Button saveButton;
 
-    String pathOfFiles;
     int serviceId;
     boolean isNew;
-    String TAG = "ServiceDetailActivity";
+    boolean isContractorEditingPage;
 
     Class<?> originalActivity;
+
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.edit_view_service);
 
-        SessionManager sessionManager = new SessionManager(ServiceDetailActivity.this);
-        sessionManager.checkLogin();
+        authentication = new FirebaseAuthentication(this);
 
         setTitle("Edit Service");
         try {
@@ -55,86 +61,61 @@ public class ServiceDetailActivity extends AppCompatActivity {
         }
 
         initializeXMLObjects();
-
-        Intent intent = getIntent();
-        if(intent != null) {
-            if(intent.hasExtra("originalActivity")) {
-                originalActivity = (Class<?>)intent.getSerializableExtra("originalActivity");
-            }
-
-            if(intent.hasExtra("pathOfFiles")) {
-                pathOfFiles = intent.getStringExtra("pathOfFiles");
-            }
-
-            //defaults to false if "isNew" does not exist
-            isNew = intent.getBooleanExtra("isNew", false);
-
-            if(intent.hasExtra("serviceId")) {
-                serviceId = Integer.parseInt(intent.getStringExtra("serviceId"));
-            } else if(!isNew) {
-                sendErrorMessage("Service Id doesn't exist");
-            }
-
-            if(intent.hasExtra("contractor")) {
-                editContractor.setText(intent.getStringExtra("contractor"));
-            } else if(isNew) {
-
-            }
-
-            if(intent.hasExtra("description")) {
-                editServiceDescription.setText(intent.getStringExtra("description"));
-            }
-        } else {
-            sendErrorMessage("Intent is Null");
-        }
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
-                //TODO save changes
-                saveServiceData();
-                goBackToActivity(originalActivity);
-            }
-        });
-    }
-
-    private void saveServiceData() {
-        List<ContractorService> services;
-
-        if(pathOfFiles.contains("electrical")) {
-            services = TempContractorServiceData.getInstance().getElectricalServices();
-        } else if(pathOfFiles.contains("plumbing")) {
-            services = TempContractorServiceData.getInstance().getPlumbingServices();
-        } else if(pathOfFiles.contains("hvac")) {
-            services = TempContractorServiceData.getInstance().getHvacServices();
-        } else {
-            sendErrorMessage("Service pathOfFiles didn't match");
-            return;
-        }
-
-        if(isNew) {
-            //TODO change to get date
-            services.add(new ContractorService(8, 8, 17, editContractor.getText().toString(), editServiceDescription.getText().toString()));
-        } else {
-            services.get(serviceId).update(editContractor.getText().toString(), editServiceDescription.getText().toString());
-        }
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
-        Log.i(TAG, "Navigate Up");
-        hideKeyboard(this.getCurrentFocus());
-        goBackToActivity(originalActivity);
-        finish();
-        return true;
+    public void onStart() {
+        super.onStart();
+        if(!authentication.checkLogin()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        processIntent(getIntent());
     }
 
-    private void goBackToActivity(Class<?> originalActivity){
-        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
-        hideKeyboard(this.getCurrentFocus());
-        startActivity(originalActivityIntent);
-        finish();
+    @Override
+    public void onStop() {
+        super.onStop();
+        authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
+    }
+
+    private void saveServiceData() {
+        if(isNew) {
+            ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth(), DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
+                    editContractor.getText().toString(), editServiceDescription.getText().toString());
+            addService(serviceToAdd);
+
+        } else {
+            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString());
+        }
+    }
+
+    private void addService(ContractorService service) {
+        if (originalActivity.equals(PlumbingActivity.class)) {
+            customerData.addPlumbingService(service);
+        } else if (originalActivity.equals(HvacActivity.class)) {
+            customerData.addHvacService(service);
+        } else if (originalActivity.equals(ElectricalActivity.class)) {
+            customerData.addElectricalService(service);
+        } else {
+            sendErrorMessage("Activity does not match");
+        }
+    }
+    private void updateService(int serviceId, String contractor, String description) {
+        if (originalActivity.equals(PlumbingActivity.class)) {
+            customerData.updatePlumbingService(serviceId, contractor, description);
+        } else if (originalActivity.equals(HvacActivity.class)) {
+            customerData.updateHvacService(serviceId, contractor, description);
+        } else if (originalActivity.equals(ElectricalActivity.class)) {
+            customerData.updateElectricalService(serviceId, contractor, description);
+        } else {
+            sendErrorMessage("Activity does not match");
+        }
     }
 
     private void initializeXMLObjects() {
@@ -148,8 +129,66 @@ public class ServiceDetailActivity extends AppCompatActivity {
         editServiceDescription.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
         saveButton = (Button)findViewById(R.id.service_edit_save_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
+                saveServiceData();
+                goBackToActivity(originalActivity);
+            }
+        });
+    }
+    private void processIntent(Intent intent) {
+        if(intent != null) {
+            if(intent.hasExtra("originalActivity")) {
+                originalActivity = (Class<?>)intent.getSerializableExtra("originalActivity");
+            }
+
+            isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
+            if(intent.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
+            } else {
+                sendErrorMessage("customerId is null");
+            }
+
+            if(intent.hasExtra("contractor")) {
+                editContractor.setText(intent.getStringExtra("contractor"));
+            }
+
+            //defaults to false if "isNew" does not exist
+            isNew = intent.getBooleanExtra("isNew", false);
+            if(!isNew) {
+                if(intent.hasExtra("serviceId")) {
+                    serviceId = Integer.parseInt(intent.getStringExtra("serviceId"));
+                } else {
+                    sendErrorMessage("Service Id doesn't exist");
+                }
+                if(intent.hasExtra("description")) {
+                    editServiceDescription.setText(intent.getStringExtra("description"));
+                }
+            }
+        } else {
+            sendErrorMessage("Intent is Null");
+        }
     }
 
+    @Override
+    public boolean onSupportNavigateUp(){
+        Log.i(TAG, "Navigate Up");
+        hideKeyboard(this.getCurrentFocus());
+        goBackToActivity(originalActivity);
+        finish();
+        return true;
+    }
+    private void goBackToActivity(Class<?> originalActivity){
+        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
+        Log.d(TAG, "isContractor:" + isContractorEditingPage);
+        originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
+        originalActivityIntent.putExtra("customerId", customerData.getUid());
+        hideKeyboard(this.getCurrentFocus());
+        startActivity(originalActivityIntent);
+        finish();
+    }
     //Makes the enter button dismiss soft keyboard
     private void setEnterButtonToKeyboardDismissal(final EditText view) {
         view.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -162,7 +201,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             }
         });
     }
-
     //Hides Keyboard
     private void hideKeyboard(View v) {
         if (v != null) {
@@ -170,7 +208,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-
     private void sendErrorMessage(String message) {
         Log.e(TAG, message);
         Toast.makeText(getApplicationContext(), "Oops...something went wrong.", Toast.LENGTH_SHORT).show();

@@ -5,17 +5,11 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,19 +18,16 @@ import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.account_authentication.SessionManager;
+import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.AirHandler;
 import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
@@ -70,7 +61,6 @@ public class HvacActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_hvac_view);
-
         authentication = new FirebaseAuthentication(this);
 
     }
@@ -83,8 +73,8 @@ public class HvacActivity extends AppCompatActivity {
             finish();
         }
         Intent intentToProcess = getIntent();
-        if(intentToProcess.hasExtra("isContractor")) {
-            isContractorViewingPage = true;
+        isContractorViewingPage = intentToProcess.getBooleanExtra("isContractor", false);
+        if(isContractorViewingPage) {
             new ActionBarInitializer(this, true, "contractor");
             if(intentToProcess.hasExtra("customerId")) {
                 customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new HVACGetDataListener());
@@ -93,7 +83,6 @@ public class HvacActivity extends AppCompatActivity {
                 Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
             }
         } else {
-            isContractorViewingPage = false;
             new ActionBarInitializer(this, true, "customer");
             customerData = new TempCustomerData(authentication, new HVACGetDataListener());
         }
@@ -102,14 +91,19 @@ public class HvacActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     // Mark: SetUp Function
-    private void initializeUI() {
+    private void initializeAppliances() {
         initializeAirHandler();
         initializeCompressor();
-        initializeServices();
-        initializeFooter();
+    }
+    private void initializeContractor(Contractor hvacTechnician) {
+        initializeServices(hvacTechnician);
+        initializeFooter(hvacTechnician);
     }
     private void initializeAirHandler() {
         AirHandler airHandler = customerData.getAirHandler();
@@ -152,49 +146,28 @@ public class HvacActivity extends AppCompatActivity {
         compressorLifeSpanView = (TextView)findViewById(R.id.hvac_compressor_life_span);
         compressorLifeSpanView.setText(compressor.lifeSpanAsString());
     }
-    private void initializeServices() {
+    private void initializeServices(Contractor hvacTechnician) {
         hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
-        View serviceListView = createServiceListView(this, customerData.getHvacServices(), "AireServ", "/services/hvac");
+        String company;
+        if(hvacTechnician != null && hvacTechnician.getContractorDetails() != null && hvacTechnician.getContractorDetails().getCompanyName() != null) {
+            company = hvacTechnician.getContractorDetails().getCompanyName();
+        } else {
+            company = "";
+        }
+
+        View serviceListView = createServiceListView(this, customerData.getHvacServices(), company, isContractorViewingPage, customerData.getUid());
         hvacServiceList.addView(serviceListView);
     }
-    private void initializeFooter() {
+    private void initializeFooter(Contractor hvacTechnician) {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
-        if(!customerData.getHvacTechnician(new OnGetDataListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "Getting hvac technician data");
-            }
-
-            @Override
-            public void onSuccess(DataSnapshot data) {
-                Contractor hvacTech = data.getValue(Contractor.class);
-                Log.d(TAG, "data:" + data.toString());
-                if(hvacTech == null || hvacTech.getContractorDetails() == null) {
-                    Log.d(TAG, "No hvac data");
-                    View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
-                    hvacContractor.addView(v);
-                } else {
-                    ContractorDetails contractorDetails = hvacTech.getContractorDetails();
-                    Drawable logo = ContextCompat.getDrawable(HvacActivity.this, R.drawable.aire_logo);
-                    View v = ContractorFooterViewInitializer.createFooterView(
-                            HvacActivity.this,
-                            logo,
-                            contractorDetails.getCompanyName(),
-                            contractorDetails.getTelephoneNumber(),
-                            contractorDetails.getWebsiteUrl());
-                    hvacContractor.addView(v);
-                }
-            }
-
-            @Override
-            public void onFailed(DatabaseError databaseError) {
-                Log.d(TAG, databaseError.toString());
-                View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
-                hvacContractor.addView(v);
-            }
-        })) {
-            Log.d(TAG, "No hvac reference data");
+        if(hvacTechnician == null || hvacTechnician.getContractorDetails() == null) {
+            Log.d(TAG, "No plumber data");
             View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
+            hvacContractor.addView(v);
+        } else {
+            ContractorDetails contractorDetails = hvacTechnician.getContractorDetails();
+            Drawable logo = ContextCompat.getDrawable(HvacActivity.this, R.drawable.sdr_logo); //TODO: change to get logo
+            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this, logo, contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl());
             hvacContractor.addView(v);
         }
     }
@@ -211,7 +184,6 @@ public class HvacActivity extends AppCompatActivity {
             startActivity(intentToStartApplianceEditActivity);
         }
     };
-
     private View.OnClickListener compressorEditButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -241,17 +213,42 @@ public class HvacActivity extends AppCompatActivity {
     private class HVACGetDataListener implements OnGetDataListener {
         @Override
         public void onStart() {
-
+            Log.d(TAG, "Getting Hvac Data");
         }
 
         @Override
         public void onSuccess(DataSnapshot data) {
-            initializeUI();
+            Log.d(TAG, "Received Hvac Data");
+            initializeAppliances();
+            if(!customerData.getHvacTechnician(new HvacTechnicianGetDataListener())) {
+                initializeContractor(null);
+            }
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
+            Log.e(TAG, databaseError.toString());
+            initializeContractor(null);
+            Toast.makeText(HvacActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private class HvacTechnicianGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Getting HvacTechnician Data");
+        }
 
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            Log.d(TAG, "Received HvacTechnician Data");
+            initializeContractor(data.getValue(Contractor.class));
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+            Log.e(TAG, databaseError.toString());
+            initializeContractor(null);
+            Toast.makeText(HvacActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }
 }

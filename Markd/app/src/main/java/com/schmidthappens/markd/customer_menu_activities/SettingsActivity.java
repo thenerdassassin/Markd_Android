@@ -67,6 +67,9 @@ public class SettingsActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     private void initializeUI() {

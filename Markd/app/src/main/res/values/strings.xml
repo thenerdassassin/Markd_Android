@@ -7,7 +7,6 @@
         <item>Plumbing</item>
         <item>HVAC</item>
         <item>Electrical</item>
-        <!--<item>Landscaping</item>-->
         <item>Painting</item>
         <!-- Coming soon!-->
         <!--<item>FAQs</item>-->
@@ -28,7 +27,6 @@
         <item>ic_action_plumbing</item>
         <item>ic_action_hvac</item>
         <item>ic_action_electrical</item>
-        <!--<item>ic_action_landscaping</item>-->
         <item>ic_action_painter</item>
         <!--<item>ic_action_faqs</item>-->
         <item>ic_action_notifications</item>

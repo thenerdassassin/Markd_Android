@@ -7,5 +7,5 @@ import com.schmidthappens.markd.data_objects.Contractor;
  */
 
 public interface ContractorUpdater {
-    public void update(String contractorReference);
+    void update(String contractorReference);
 }

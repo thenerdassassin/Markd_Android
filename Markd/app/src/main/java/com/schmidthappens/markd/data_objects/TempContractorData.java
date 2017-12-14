@@ -164,11 +164,47 @@ public class TempContractorData {
 
     //Mark:- Customers Page
     public List<String> getCustomers() {
-        if(contractor != null) {
+        if(contractor != null && getContractor().getCustomers() != null) {
             return getContractor().getCustomers();
         } else {
             return Collections.emptyList();
         }
+    }
+    static void addCustomerToContractor(String contractorReference, final String customerReference) {
+        final DatabaseReference customerListReference = database.child("users").child(contractorReference).child("customers");
+        customerListReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot customerListSnapshot) {
+                long listSize = customerListSnapshot.getChildrenCount();
+                customerListReference.child(String.valueOf(listSize)).setValue(customerReference);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+    }
+    static void removeCustomerFromContractor(String contractorReference, final String customerReference) {
+        DatabaseReference customerListReference = database.child("users").child(contractorReference).child("customers");
+        customerListReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot customerListSnapshot) {
+                List<String> customers = Collections.emptyList();
+                for(DataSnapshot customerSnapshot: customerListSnapshot.getChildren()) {
+                    String customer = customerSnapshot.getValue(String.class);
+                    if(customer != null && !customer.equals(customerReference)) {
+                        customers.add(customer);
+                    }
+                }
+                customerListSnapshot.getRef().setValue(customers);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
     }
     public String getType() {
         if(contractor != null) {

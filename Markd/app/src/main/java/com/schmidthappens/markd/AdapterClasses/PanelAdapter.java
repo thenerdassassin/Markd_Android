@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Breaker;
-import com.schmidthappens.markd.data_objects.BreakerType;
 import com.schmidthappens.markd.data_objects.Panel;
 
 
@@ -47,14 +46,14 @@ public class PanelAdapter extends RecyclerView.Adapter<PanelAdapter.BreakerViewH
         breakerViewHolder.breaker_number_textview.setText(String.valueOf(breaker.getNumber()));
 
         //Check if DoublePole
-        if(breaker.getBreakerType().equals(BreakerType.DoublePole)) {
+        if(breaker.getBreakerType().equals(Breaker.DoublePole)) {
             breakerViewHolder.breaker_bottom_views.setVisibility(View.VISIBLE);
         } else {
             breakerViewHolder.breaker_bottom_views.setVisibility(View.INVISIBLE);
         }
 
         //Check if bottom of DoublePole
-        if(breaker.getBreakerType().equals(BreakerType.DoublePoleBottom)) {
+        if(breaker.getBreakerType().equals(Breaker.DoublePoleBottom)) {
             breakerViewHolder.breaker_top_views.setVisibility(View.VISIBLE);
         } else {
             breakerViewHolder.breaker_top_views.setVisibility(View.INVISIBLE);

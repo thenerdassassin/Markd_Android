@@ -38,7 +38,7 @@ public class ContractorUtilities {
             DataSnapshot listOfContractorsAtZipCode = firebaseZipCodesSnapshot.child(zipCode.getValue());
             Log.v(TAG, listOfContractorsAtZipCode.toString());
             if (listOfContractorsAtZipCode.exists()) {
-                Log.d(TAG, "contractors at zipcode:" + zipCode.getValue());
+                Log.i(TAG, "contractors at zipcode:" + zipCode.getValue());
                 for (DataSnapshot contractorReference : listOfContractorsAtZipCode.getChildren()) {
                     String contractorReferenceType = contractorReference.getValue(String.class);
                     if (contractorReferenceType != null && contractorReferenceType.equals(contractorType)) {
@@ -46,7 +46,7 @@ public class ContractorUtilities {
                     }
                 }
             } else {
-                Log.d(TAG, "No contractors at zipcode:" + zipCode.getValue());
+                Log.i(TAG, "No contractors at zipcode:" + zipCode.getValue());
             }
         }
         Log.d(TAG, contractors.toString());

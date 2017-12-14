@@ -5,17 +5,11 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 import com.schmidthappens.markd.data_objects.AbstractAppliance;
 import com.schmidthappens.markd.data_objects.Boiler;
 import com.schmidthappens.markd.data_objects.Contractor;
@@ -33,10 +28,6 @@ import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-import com.schmidthappens.markd.view_initializers.NavigationDrawerInitializer;
-import com.schmidthappens.markd.account_authentication.SessionManager;
-import com.schmidthappens.markd.data_objects.TempContractorServiceData;
-import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
 
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
@@ -45,6 +36,11 @@ import static com.schmidthappens.markd.view_initializers.ServiceListViewInitiali
  */
 
 public class PlumbingActivity extends AppCompatActivity {
+    private static final String TAG = "PlumbingActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+    private boolean isContractorViewingPage;
+
     //XML Objects
     ImageView hotWaterEditButton;
     TextView hotWaterManufacturerView;
@@ -61,21 +57,15 @@ public class PlumbingActivity extends AppCompatActivity {
     FrameLayout plumbingServiceList;
     FrameLayout plumbingContractor;
 
-    private static final String TAG = "PlumbingActivity";
-    private FirebaseAuthentication authentication;
-    private TempCustomerData customerData;
-    private boolean isContractorViewingPage;
-
     private HotWater hotWater;
     private Boiler boiler;
 
     @Override
-    public void onCreate(Bundle savedInstance){
+    public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_plumbing_view);
         authentication = new FirebaseAuthentication(this);
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -86,8 +76,8 @@ public class PlumbingActivity extends AppCompatActivity {
         }
 
         Intent intentToProcess = getIntent();
-        if(intentToProcess.hasExtra("isContractor")) {
-            isContractorViewingPage = true;
+        isContractorViewingPage = intentToProcess.getBooleanExtra("isContractor", false);
+        if(isContractorViewingPage) {
             new ActionBarInitializer(this, true, "contractor");
             if(intentToProcess.hasExtra("customerId")) {
                 customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new PlumbingGetDataListener());
@@ -96,24 +86,27 @@ public class PlumbingActivity extends AppCompatActivity {
                 Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
             }
         } else {
-            isContractorViewingPage = false;
             new ActionBarInitializer(this, true, "customer");
             customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new PlumbingGetDataListener());
         }
     }
-
     @Override
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        if(customerData != null) {
+            customerData.removeListeners();
+        }
     }
 
     //MARK:- UI Initializers
-    private void initializeUI() {
+    private void initializeAppliances() {
         initializeHotWater();
         initializeBoiler();
-        initializeContractorServices();
-        initializeFooter();
+    }
+    private void initializeContractor(Contractor plumber) {
+        initializeContractorServices(plumber);
+        initializeFooter(plumber);
     }
     private void initializeHotWater() {
         hotWater = customerData.getHotWater();
@@ -157,46 +150,30 @@ public class PlumbingActivity extends AppCompatActivity {
         boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
         boilerLifeSpanView.setText(boiler.lifeSpanAsString());
     }
-    private void initializeContractorServices() {
+    private void initializeContractorServices(Contractor plumber) {
         plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
-        View serviceListView = createServiceListView(PlumbingActivity.this, customerData.getPlumbingServices(), "SDR Plumbing & Heating Inc", "/services/plumbing");
+        String company;
+        if(plumber != null && plumber.getContractorDetails() != null && plumber.getContractorDetails().getCompanyName() != null) {
+            company = plumber.getContractorDetails().getCompanyName();
+        } else {
+            company = "";
+        }
+
+        View serviceListView = createServiceListView(PlumbingActivity.this, customerData.getPlumbingServices(), company, isContractorViewingPage, customerData.getUid());
         plumbingServiceList.addView(serviceListView);
     }
-    private void initializeFooter() {
+    private void initializeFooter(Contractor plumber) {
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
-        if(!customerData.getPlumber(new OnGetDataListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "Getting plumber data");
-            }
-
-            @Override
-            public void onSuccess(DataSnapshot data) {
-                Contractor plumber = data.getValue(Contractor.class);
-                if(plumber == null || plumber.getContractorDetails() == null) {
-                    Log.d(TAG, "No plumber data");
-                    View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
-                    plumbingContractor.addView(v);
-                } else {
-                    ContractorDetails contractorDetails = plumber.getContractorDetails();
-                    Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo);
-                    View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl());
-                    plumbingContractor.addView(v);
-                }
-            }
-
-            @Override
-            public void onFailed(DatabaseError databaseError) {
-                Log.d(TAG, databaseError.toString());
-                View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
-                plumbingContractor.addView(v);
-            }
-        })) {
+        if(plumber == null || plumber.getContractorDetails() == null) {
             Log.d(TAG, "No plumber data");
             View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
             plumbingContractor.addView(v);
+        } else {
+            ContractorDetails contractorDetails = plumber.getContractorDetails();
+            Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo); //TODO: change to get logo
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl());
+            plumbingContractor.addView(v);
         }
-
     }
 
     //MARK:- OnClickListeners
@@ -209,13 +186,6 @@ public class PlumbingActivity extends AppCompatActivity {
             Intent intentToStartPlumbingEditActivity = new Intent(context, destinationClass);
             intentToStartPlumbingEditActivity = putIntentExtras(intentToStartPlumbingEditActivity, hotWater, "Domestic Hot Water");
             startActivity(intentToStartPlumbingEditActivity);
-        }
-    };
-
-    private View.OnClickListener addServiceClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "Add New Plumbing Service", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -249,17 +219,40 @@ public class PlumbingActivity extends AppCompatActivity {
     private class PlumbingGetDataListener implements OnGetDataListener {
         @Override
         public void onStart() {
-
+            Log.d(TAG, "Getting Plumbing Data");
         }
 
         @Override
         public void onSuccess(DataSnapshot data) {
-            initializeUI();
+            Log.d(TAG, "Received Plumbing Data");
+            initializeAppliances();
+            if(!customerData.getPlumber(new PlumberGetDataListener())) {
+                initializeContractor(null);
+            }
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
 
+        }
+    }
+    private class PlumberGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Getting Plumber Data");
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            Log.d(TAG, "Received Plumber Data");
+            initializeContractor(data.getValue(Contractor.class));
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+            Log.d(TAG, databaseError.toString());
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
+            plumbingContractor.addView(v);
         }
     }
 }

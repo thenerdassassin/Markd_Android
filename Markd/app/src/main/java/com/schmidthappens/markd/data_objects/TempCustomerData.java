@@ -17,15 +17,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by joshua.schmidtibm.com on 9/23/17.
- */
+*/
 
 public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
     private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
+    private DatabaseReference userReference;
     private String uid;
     private OnGetDataListener listener;
 
@@ -38,7 +40,7 @@ public class TempCustomerData {
     public TempCustomerData(String uid, OnGetDataListener listener) {
         this.uid = uid;
         this.listener = listener;
-        DatabaseReference userReference = database.child(uid);
+        userReference = database.child(uid);
         userReference.addValueEventListener(valueEventListener);
     }
     private ValueEventListener valueEventListener = new ValueEventListener() {
@@ -86,7 +88,12 @@ public class TempCustomerData {
             }
         });
     }
-
+    public void attachListener() {
+        userReference.addValueEventListener(valueEventListener);
+    }
+    public void removeListeners() {
+        userReference.removeEventListener(valueEventListener);
+    }
     public String getUid() {
         return uid;
     }
@@ -169,6 +176,14 @@ public class TempCustomerData {
     public List<ContractorService> getPlumbingServices() {
         return getCustomer().getPlumbingServices();
     }
+    public void addPlumbingService(ContractorService service) {
+        customer.addPlumbingService(service);
+        putCustomer(customer);
+    }
+    public void updatePlumbingService(int serviceId, String contractor, String description) {
+        customer.updatePlumbingService(serviceId, contractor, description);
+        putCustomer(customer);
+    }
 
     //Mark:- HVAC
     public AirHandler getAirHandler() {
@@ -194,8 +209,49 @@ public class TempCustomerData {
         addContractorListener(hvacReference, hvacListener);
         return true;
     }
-    public List<ContractorService>  getHvacServices() {
+    public List<ContractorService> getHvacServices() {
         return getCustomer().getHvacServices();
+    }
+    public void addHvacService(ContractorService service) {
+        customer.addHvacService(service);
+        putCustomer(customer);
+    }
+    public void updateHvacService(int serviceId, String contractor, String description) {
+        customer.updateHvacService(serviceId, contractor, description);
+        putCustomer(customer);
+    }
+
+    //MarK:- Electrical
+    public List<Panel> getPanels() {
+        return getCustomer().getPanels();
+    }
+    public void updatePanel(int panelId, Panel updatedPanel){
+        customer.setPanel(panelId, updatedPanel);
+        putCustomer(customer);
+    }
+    public void removePanel(int panelId) {
+        customer.deletePanel(panelId);
+        putCustomer(customer);
+    }
+    public List<ContractorService> getElectricalServices() {
+        return getCustomer().getElectricalServices();
+    }
+    public void addElectricalService(ContractorService service) {
+        customer.addElectricalService(service);
+        putCustomer(customer);
+    }
+    public void updateElectricalService(int serviceId, String contractor, String description) {
+        customer.updateElectricalService(serviceId, contractor, description);
+        putCustomer(customer);
+    }
+    public boolean getElectrician(final OnGetDataListener electricianListener) {
+        String electrician = customer.getElectricianReference();
+        if(electrician == null) {
+            return false;
+        }
+        DatabaseReference electricianReference = database.child(electrician);
+        addContractorListener(electricianReference, electricianListener);
+        return true;
     }
 
     //Mark:- Painting
@@ -254,22 +310,45 @@ public class TempCustomerData {
     }
     public void updateContractor(String contractorType, String contractorReference) {
         if(contractorType.equals("Plumber")) {
+            if(customer.getPlumberReference() != null) {
+                Log.d(TAG, "Deleting plumber:" + customer.getPlumberReference());
+                TempContractorData.removeCustomerFromContractor(customer.getPlumberReference(), uid);
+            }
             customer.setPlumber(contractorReference);
         } else if(contractorType.equals("Hvac")) {
+            if(customer.getHvactechnicianReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getHvactechnicianReference(), uid);
+            }
             customer.setHvactechnician(contractorReference);
         } else if(contractorType.equals("Electrician")) {
-            customer.setElectrician(contractorReference);
+            if(customer.getElectricianReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getElectricianReference(), uid);
+            }
+            customer.setElectricianReference(contractorReference);
         } else if(contractorType.equals("Painter")) {
+            if(customer.getPainterReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getPainterReference(), uid);
+            }
             customer.setPainter(contractorReference);
         } else if(contractorType.equals("Architect")) {
+            if(customer.getArchitectReference() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getArchitectReference(), uid);
+            }
             customer.setArchitect(contractorReference);
         } else if(contractorType.equals("Builder")) {
+            if(customer.getBuilder() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getBuilder(), uid);
+            }
             customer.setBuilder(contractorReference);
         } else if(contractorType.equals("Realtor")) {
+            if(customer.getRealtor() != null) {
+                TempContractorData.removeCustomerFromContractor(customer.getRealtor(), uid);
+            }
             customer.setRealtor(contractorReference);
         } else {
             Log.e(TAG, "contractorType(" + contractorType + ") not found!");
         }
+        TempContractorData.addCustomerToContractor(contractorReference, uid);
         putCustomer(customer);
     }
 
@@ -303,8 +382,7 @@ public class TempCustomerData {
         putCustomer(customer);
     }
 
-   //TODO: Delete when http calls are here
-    //Remove when database is implemented
+   //TODO: Remove with database reset
     public static Customer makeCustomer() {
         Customer newCustomer = new Customer();
         //Home Page
@@ -330,9 +408,8 @@ public class TempCustomerData {
         newCustomer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
 
         //Electrical
-        //customer.setPanels(TempPanelData.getInstance().getPanels());
-        //TODO: https://stackoverflow.com/questions/37368952/what-is-the-best-way-to-save-java-enums-using-firebase
-        //customer.setElectrician(new ContractorDetails("Conn-West Electric", "203.922.2011", "connwestelectric.com", "06478"));
+        newCustomer.setPanels(initialPanelList());
+        newCustomer.setElectricianReference("defaultElectricianThree");
         //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting
@@ -458,5 +535,68 @@ public class TempCustomerData {
         interiorSurfaces.add(surface5);
 
         return interiorSurfaces;
+    }
+
+    private static List<Panel> initialPanelList() {
+        List<Panel> panels = new ArrayList<>();
+
+        List<Breaker> breakerList = new LinkedList<Breaker>();
+        breakerList.add(new Breaker(1, "Master Bedroom Receptacles"));
+        breakerList.add(new Breaker(2, "Master Bedroom Lighting"));
+        breakerList.add(new Breaker(3, "Master Bathroom GFCI"));
+        breakerList.add(new Breaker(4, "Master Bathroom Floor Heat"));
+        breakerList.add(new Breaker(5, "Bedroom Receptacles"));
+        breakerList.add(new Breaker(6, "2nd Floor Hallway Lighting"));
+        breakerList.add(new Breaker(7, "Washing Machine"));
+        breakerList.add(new Breaker(8, "Dryer"));
+        breakerList.add(new Breaker(9, "Hot water Heater"));
+        breakerList.add(new Breaker(10, "Well pump"));
+        breakerList.add(new Breaker(11, "Refrigerator"));
+        breakerList.add(new Breaker(12, "Microwave"));
+        breakerList.add(new Breaker(13, "Oven"));
+        breakerList.add(new Breaker(14, "Kitchen Receptacles"));
+        breakerList.add(new Breaker(15, "Kitchen Island Receptacles"));
+        breakerList.add(new Breaker(16, "Kitchen Lighting"));
+        breakerList.add(new Breaker(17, "Spot Lights"));
+        breakerList.add(new Breaker(18, "Garbage Disposal"));
+        breakerList.add(new Breaker(19, "Dishwasher"));
+        breakerList.add(new Breaker(20, "Kitchen Hood"));
+        breakerList.add(new Breaker(21, "Dining Room Receptacles"));
+        breakerList.add(new Breaker(22, "Dining Room Lighting"));
+        breakerList.add(new Breaker(23, "Living Room Receptacles"));
+        breakerList.add(new Breaker(24, "Family Room Lighting"));
+        breakerList.add(new Breaker(25, "Foyer Receptacles"));
+        breakerList.add(new Breaker(26, "Foyer Lighting"));
+        breakerList.add(new Breaker(27, "Furnace"));
+        breakerList.add(new Breaker(28, "Air Compressor"));
+        breakerList.add(new Breaker(29, "Air Handler"));
+        breakerList.add(new Breaker(30, "Central Vacuum"));
+        breakerList.add(new Breaker(31, "Sump Pump"));
+        breakerList.add(new Breaker(32, "Basement Lighting"));
+        breakerList.add(new Breaker(33, "Exterior Lighting"));
+        breakerList.add(new Breaker(34, "Landscape Lighting"));
+        breakerList.add(new Breaker(35, "Garage Door Receptacles"));
+        panels.add(0, new Panel(true, Panel.TwoHundred, breakerList));
+        panels.get(0).setPanelDescription("Attic Panel");
+        panels.get(0).setInstallDate("11", "07", "16");
+
+        List<Breaker> breakerList2 = new LinkedList<Breaker>();
+        breakerList2.add(new Breaker(1, "Master Bedroom Receptacles"));
+        breakerList2.add(new Breaker(2, "Master Bedroom Lighting"));
+        breakerList2.add(new Breaker(3, "Master Bathroom GFCI"));
+        breakerList2.add(new Breaker(4, "Master Bathroom Floor Heat"));
+        breakerList2.add(new Breaker(5, "Bedroom Receptacles"));
+        breakerList2.add(new Breaker(6, "2nd Floor Hallway Lighting"));
+        breakerList2.add(new Breaker(7, "Washing Machine"));
+        breakerList2.add(new Breaker(8, "Dryer"));
+        breakerList2.add(new Breaker(9, "Hot water Heater"));
+        breakerList2.add(new Breaker(10, "Well pump"));
+        breakerList2.add(new Breaker(11, "Refrigerator"));
+        breakerList2.add(new Breaker(12, "Microwave"));
+        panels.add(1, new Panel(false, Panel.OneHundredTwentyFive, breakerList2));
+        panels.get(1).setPanelDescription("Basement Panel");
+        panels.get(1).setInstallDate("01", "11", "17");
+
+        return panels;
     }
 }

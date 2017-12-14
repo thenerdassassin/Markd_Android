@@ -7,20 +7,21 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Josh on 4/19/2017.
  */
 
 @IgnoreExtraProperties
-public class ContractorService implements Comparable<ContractorService>{
+public class ContractorService implements Comparable<ContractorService> {
     private int month;
     private int day;
     private int year;
     private String contractor;
     private String comments;
-    private List<String> imageFiles;
-    //TODO add image uploads
+    private List<String> imageFiles; //TODO add image uploads
+
 
     public ContractorService() {
         // Default constructor required for calls to DataSnapshot.getValue(ContractorService.class)

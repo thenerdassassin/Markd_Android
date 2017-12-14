@@ -23,6 +23,9 @@ public class CustomerGetter {
         final List<Customer> customers = new ArrayList<>();
         for(String customerKey: customerReferences) {
             Log.d(TAG, "customerReferences:" + customerReferences.toString());
+            if(StringUtilities.isNullOrEmpty(customerKey)) {
+                continue;
+            }
             DataSnapshot customer = usersSnapshot.child(customerKey);
             if (customer.exists()) {
                 customers.add(customer.getValue(Customer.class));
