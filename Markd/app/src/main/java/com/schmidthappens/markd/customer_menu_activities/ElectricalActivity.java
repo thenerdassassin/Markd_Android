@@ -29,6 +29,9 @@ import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 
+import java.util.Collections;
+import java.util.List;
+
 import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
 /**
@@ -125,11 +128,17 @@ public class ElectricalActivity extends AppCompatActivity {
             View headerView = getLayoutInflater().inflate(R.layout.list_header_panel, panelList, false);
             panelList.addHeaderView(headerView);
         }
+        List<Panel> panels;
+        if(customerData.getPanels() == null) {
+            panels = Collections.emptyList();
+        } else {
+            panels = customerData.getPanels();
+        }
         if(adapter == null) {
-            adapter = new PanelListAdapter(ElectricalActivity.this, R.layout.list_row_panel, customerData.getPanels(), isContractorViewingPage, customerData.getUid());
+            adapter = new PanelListAdapter(ElectricalActivity.this, R.layout.list_row_panel, panels, isContractorViewingPage, customerData.getUid());
         } else {
             adapter.clear();
-            adapter.addAll(customerData.getPanels());
+            adapter.addAll(panels);
         }
         panelList.setAdapter(adapter);
         //Set Up Add Panel Hyperlink
