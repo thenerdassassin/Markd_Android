@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +25,7 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorData;
+import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
@@ -52,8 +54,8 @@ public class ContractorMainActivity extends AppCompatActivity {
     private TextView companyWebpage;
     private TextView companyZipCode;
 
+    private boolean hasImage;
     private static final int IMAGE_REQUEST_CODE = 1;
-    private static final String filename = "contractor_logo.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
         companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -87,137 +88,57 @@ public class ContractorMainActivity extends AppCompatActivity {
         logoFrame.setOnClickListener(photoClick);
         logoFrame.setOnLongClickListener(photoLongClick);
     }
-
     @Override
     public void onStop() {
         super.onStop();
         authentication.detachListener();
+        contractorData.removeListener();
     }
 
     //Mark:- Photo Functions
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO Save Image in Database
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if(copyFileToPermanentStorage()) {
-                //Camera Results
-                setPhoto(getLogoImageUri());
-            } else {
-                //Gallery Results
-                Log.e(TAG, "Copy did not work");
-                if(data.getData() != null) {
-                    copyUriToPermanentStorage(data.getData());
-                    setPhoto(data.getData());
-                }
-                return;
-            }
+            String oldFileName = contractorData.getLogoFileName();
+            String oldPath = "logos/" + authentication.getCurrentUser().getUid() + "/" + oldFileName;
 
+            String fileName = contractorData.setLogoFileName();
+            String path = "logos/" + authentication.getCurrentUser().getUid() + "/" + fileName;
+
+            Uri photo = null;
+            //TODO: camera result implementations
+           /* if(temp.exists() && temp.length() > 0) {
+                //Camera Result
+                File temp = getTempFile();
+                photo = Uri.fromFile(temp);
+            } else {
+                //Gallery Result
+                photo = data.getData();
+            }
+            */
+           photo = data.getData();
+            if(photo != null) {
+                MarkdFirebaseStorage.updateImage(ContractorMainActivity.this, path, photo, logoImage);
+                MarkdFirebaseStorage.deleteImage(oldPath);
+                Toast.makeText(this, "Updating Logo", Toast.LENGTH_LONG).show();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    private boolean setPhoto(Uri uri) {
-        logoFrame.setBackgroundColor(Color.TRANSPARENT);
-        logoImage.setLayoutParams(
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-        );
-
-        logoImage.setImageURI(null); //work around to prevent caching
-        logoImage.setImageURI(uri);
-        logoImagePlaceholder.setVisibility(View.GONE);
-        return true;
-    }
     private Intent createPhotoOrGalleryChooserIntent() {
-        Intent pickIntent = new Intent();
+        Intent pickIntent = new Intent(Intent.ACTION_PICK);
         pickIntent.setType("image/*");
-        pickIntent.setAction(Intent.ACTION_GET_CONTENT);
 
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePhotoIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile()));
+        //TODO: implement camera intent
+        //Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile()));
 
         String pickTitle = "Take or select a photo";
         Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
+        //chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
 
         return chooserIntent;
-    }
-    private boolean copyFileToPermanentStorage() {
-        File temp = getTempFile();
-        if(!temp.exists()) {
-            Log.e(TAG, "Temp file did not exist!");
-            return false;
-        }
-
-        File logoImageFile = getLogoImageFile();
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(temp);
-            out = new FileOutputStream(logoImageFile);
-            // Transfer bytes from in to out
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            if(!temp.delete()) {
-                Log.e(TAG, "Temp file was not deleted");
-            }
-            return true;
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
-        }  finally {
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            } catch(IOException ioe) {
-                //ignore
-            }
-        }
-        if(!temp.delete()) {
-            Log.e(TAG, "Temp file was not deleted");
-        }
-        return false;
-    }
-    private boolean copyUriToPermanentStorage(Uri uri) {
-        File logoImageFile = getLogoImageFile();
-        InputStream in = null;
-        OutputStream out = null;
-
-        try {
-            in = getContentResolver().openInputStream(uri);
-            out = new FileOutputStream(logoImageFile);
-            // Transfer bytes from in to out
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            return true;
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
-        }  finally {
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            } catch(IOException ioe) {
-                //ignore
-            }
-        }
-        return false;
-    }
-    private Uri getLogoImageUri() {
-        return Uri.fromFile(getLogoImageFile());
-    }
-    private File getLogoImageFile() {
-        return new File(ContractorMainActivity.this.getFilesDir(), filename);
-    }
-    private File getTempFile() {
-        return new File(Environment.getExternalStorageDirectory(), "image.tmp");
     }
 
     // Mark:- Action Listeners
@@ -228,24 +149,21 @@ public class ContractorMainActivity extends AppCompatActivity {
             return true;
         }
     };
-
     private View.OnClickListener photoClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             //Only resets image if no image exists
-            if(logoImage.getTag().equals("0")) {
+            if(hasImage) {
                 startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
             }
         }
     };
-
     private View.OnClickListener editCompanyOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             startContractorEditActivity();
         }
     };
-
     private void startContractorEditActivity() {
         Context activityContext = ContractorMainActivity.this;
         Class destinationClass = ContractorEditActivity.class;
@@ -253,7 +171,6 @@ public class ContractorMainActivity extends AppCompatActivity {
         addContractorDataToIntent(gotToContractorEditActivityIntent);
         startActivity(gotToContractorEditActivityIntent);
     }
-
     private void addContractorDataToIntent(Intent intent) {
         if(contractorData != null) {
             ContractorDetails contractorDetails = contractorData.getContractorDetails();
@@ -268,15 +185,18 @@ public class ContractorMainActivity extends AppCompatActivity {
 
     // Mark:- SetUp Functions
     private void initalizeUI() {
+        Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
-        //TODO change to only set as "0" if no image available from http call
-        if(getLogoImageFile().exists()) {
-            setPhoto(getLogoImageUri());
-            logoImage.setTag("1");
+        hasImage = MarkdFirebaseStorage.loadImage(this, "logos/" + authentication.getCurrentUser().getUid() + "/" + contractorData.getLogoFileName(), logoImage);
+
+        if(hasImage) {
+            logoFrame.setBackgroundColor(Color.TRANSPARENT);
+            logoImage.setLayoutParams(
+                    new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+            );
+            logoImagePlaceholder.setVisibility(View.GONE);
         } else {
-            //TODO: try and get photo from http call
-            //if can't get then set to 0
-            logoImage.setTag("0");
+            logoImagePlaceholder.setVisibility(View.VISIBLE);
         }
     }
     private void initializeTextViews(ContractorDetails contractorDetails) {
@@ -290,7 +210,6 @@ public class ContractorMainActivity extends AppCompatActivity {
             companyZipCode.setText(contractorDetails.getZipCode());
         }
     }
-
     private class ContractorMainGetDataListener implements OnGetDataListener {
         @Override
         public void onStart() {

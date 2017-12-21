@@ -26,6 +26,7 @@ public class TempContractorData {
     private static final String TAG = "FirebaseContractorData";
     private static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private String uid;
+    private DatabaseReference userReference;
     private OnGetDataListener listener;
 
     public TempContractorData(FirebaseAuthentication authentication, OnGetDataListener listener) {
@@ -37,7 +38,7 @@ public class TempContractorData {
     public TempContractorData(String uid, OnGetDataListener listener) {
         this.uid = uid;
         this.listener = listener;
-        DatabaseReference userReference = database.child("users").child(uid);
+        userReference = database.child("users").child(uid);
         if(listener != null) {
             listener.onStart();
         }
@@ -59,6 +60,9 @@ public class TempContractorData {
             listener.onFailed(databaseError);
         }
     };
+    public void removeListener() {
+        userReference.removeEventListener(valueEventListener);
+    }
 
     private Contractor contractor;
     private Contractor getContractor() {
@@ -152,7 +156,10 @@ public class TempContractorData {
 
     //Mark:- Home Page
     public ContractorDetails getContractorDetails() {
-        return getContractor().getContractorDetails();
+        if(getContractor() != null) {
+            return getContractor().getContractorDetails();
+        }
+        return null;
     }
     public void updateContractorDetails(ContractorDetails contractorDetails) {
         if(contractor.getContractorDetails() != null) {
@@ -160,6 +167,20 @@ public class TempContractorData {
         }
         contractor.setContractorDetails(contractorDetails);
         putContractor(contractor);
+    }
+    public String getLogoFileName() {
+        if(contractor == null) {
+            return null;
+        } else if(contractor.getLogoFileName() == null) {
+            return setLogoFileName();
+        } else {
+            return contractor.getLogoFileName();
+        }
+    }
+    public String setLogoFileName() {
+        contractor.setLogoFileName();
+        putContractor(contractor);
+        return contractor.getLogoFileName();
     }
 
     //Mark:- Customers Page

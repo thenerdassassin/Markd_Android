@@ -1,15 +1,9 @@
 package com.schmidthappens.markd.data_objects;
 
-import android.util.Log;
-import android.widget.Toast;
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by joshua.schmidtibm.com on 9/30/17.
@@ -24,6 +18,7 @@ public class Contractor {
     private String type;
     private ContractorDetails contractorDetails;
     private List<String> customers;
+    private String logoFileName;
 
     //Mark:- Constructors
     private Contractor(ContractorDetails details, List<String> customers) {
@@ -78,8 +73,17 @@ public class Contractor {
     public List<String> getCustomers() {
         return customers;
     }
-    public void setCustomers(List<String> customers) {
+    public Contractor setCustomers(List<String> customers) {
         this.customers = customers;
+        return this;
+    }
+
+    public String getLogoFileName() {
+        return logoFileName;
+    }
+    public Contractor setLogoFileName() {
+        this.logoFileName = UUID.randomUUID().toString();
+        return this;
     }
 
     //Mark:- Helper functions
