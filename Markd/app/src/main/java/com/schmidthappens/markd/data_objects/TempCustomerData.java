@@ -173,6 +173,9 @@ public class TempCustomerData {
         addContractorListener(plumberReference, plumberListener);
         return true;
     }
+    public String getPlumberReference() {
+        return customer.getPlumberReference();
+    }
     public List<ContractorService> getPlumbingServices() {
         return getCustomer().getPlumbingServices();
     }
@@ -220,6 +223,9 @@ public class TempCustomerData {
         customer.updateHvacService(serviceId, contractor, description);
         putCustomer(customer);
     }
+    public String getHvactechnicianReference() {
+        return customer.getHvactechnicianReference();
+    }
 
     //MarK:- Electrical
     public List<Panel> getPanels() {
@@ -253,6 +259,9 @@ public class TempCustomerData {
         addContractorListener(electricianReference, electricianListener);
         return true;
     }
+    public String getElectricianReference() {
+        return customer.getElectricianReference();
+    }
 
     //Mark:- Painting
     public List<PaintSurface> getExteriorSurfaces() {
@@ -285,6 +294,9 @@ public class TempCustomerData {
         DatabaseReference painterReference = database.child(painter);
         addContractorListener(painterReference, painterListener);
         return true;
+    }
+    public String getPainterReference() {
+        return customer.getPainterReference();
     }
 
     //Mark:- Settings
