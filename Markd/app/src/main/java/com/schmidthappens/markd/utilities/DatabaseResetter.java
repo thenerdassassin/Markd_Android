@@ -318,7 +318,7 @@ public class DatabaseResetter {
         userReference.child("R1EyDxbQK3Uf8ohZDNrazgM4FVc2")
                 .setValue(TempCustomerData.makeCustomer());
 
-        userReference.child("s5VWMQvH17ZJnVqxtOkqvWpufmu2").setValue(new Contractor()
+        userReference.child("s5VWMQvH17ZJnVqxtOkqvWpufmu2").setValue(new Contractor("632e4355-612f-4ab6-a206-7d2586048b5f")
                 .setFirstName("Mario")
                 .setLastName("Plumber")
                 .setNamePrefix("Dr.")

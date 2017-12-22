@@ -25,6 +25,9 @@ public class Contractor {
         this.contractorDetails = details;
         this.customers = customers;
     }
+    public Contractor(String logoFileName) {
+        this.logoFileName = logoFileName;
+    }
     public Contractor() {
         // Default constructor required for calls to DataSnapshot.getValue(Home.class)
     }

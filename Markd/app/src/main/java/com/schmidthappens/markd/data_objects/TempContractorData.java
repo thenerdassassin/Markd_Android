@@ -171,8 +171,6 @@ public class TempContractorData {
     public String getLogoFileName() {
         if(contractor == null) {
             return null;
-        } else if(contractor.getLogoFileName() == null) {
-            return setLogoFileName();
         } else {
             return contractor.getLogoFileName();
         }

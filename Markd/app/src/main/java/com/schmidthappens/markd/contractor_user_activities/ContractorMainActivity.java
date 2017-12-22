@@ -25,16 +25,11 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorData;
+import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
+import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * Created by Josh on 9/16/2017.
@@ -83,7 +78,10 @@ public class ContractorMainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
+        hasImage = false;
+        logoFrame.setBackgroundColor(View.GONE);
+        logoImage.setVisibility(View.GONE);
+        logoImagePlaceholder.setVisibility(View.GONE);
         contractorData = new TempContractorData((authentication.getCurrentUser().getUid()), new ContractorMainGetDataListener());
         logoFrame.setOnClickListener(photoClick);
         logoFrame.setOnLongClickListener(photoLongClick);
@@ -101,10 +99,10 @@ public class ContractorMainActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult");
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String oldFileName = contractorData.getLogoFileName();
-            String oldPath = "logos/" + authentication.getCurrentUser().getUid() + "/" + oldFileName;
+            String oldPath = ContractorLogoStorageUtility.getLogoPath(authentication.getCurrentUser().getUid(), oldFileName);
 
             String fileName = contractorData.setLogoFileName();
-            String path = "logos/" + authentication.getCurrentUser().getUid() + "/" + fileName;
+            String path = ContractorLogoStorageUtility.getLogoPath(authentication.getCurrentUser().getUid(), fileName);
 
             Uri photo = null;
             //TODO: camera result implementations
@@ -119,7 +117,7 @@ public class ContractorMainActivity extends AppCompatActivity {
             */
            photo = data.getData();
             if(photo != null) {
-                MarkdFirebaseStorage.updateImage(ContractorMainActivity.this, path, photo, logoImage);
+                MarkdFirebaseStorage.updateImage(ContractorMainActivity.this, path, photo, logoImage, new LogoLoadingListener());
                 MarkdFirebaseStorage.deleteImage(oldPath);
                 Toast.makeText(this, "Updating Logo", Toast.LENGTH_LONG).show();
             }
@@ -153,7 +151,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //Only resets image if no image exists
-            if(hasImage) {
+            if(!hasImage) {
                 startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
             }
         }
@@ -187,17 +185,10 @@ public class ContractorMainActivity extends AppCompatActivity {
     private void initalizeUI() {
         Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
-        hasImage = MarkdFirebaseStorage.loadImage(this, "logos/" + authentication.getCurrentUser().getUid() + "/" + contractorData.getLogoFileName(), logoImage);
-
-        if(hasImage) {
-            logoFrame.setBackgroundColor(Color.TRANSPARENT);
-            logoImage.setLayoutParams(
-                    new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-            );
-            logoImagePlaceholder.setVisibility(View.GONE);
-        } else {
-            logoImagePlaceholder.setVisibility(View.VISIBLE);
-        }
+        MarkdFirebaseStorage.loadImage(this,
+                ContractorLogoStorageUtility.getLogoPath(authentication.getCurrentUser().getUid(), contractorData.getLogoFileName()),
+                logoImage,
+                new LogoLoadingListener());
     }
     private void initializeTextViews(ContractorDetails contractorDetails) {
         if(contractorDetails == null) {
@@ -225,6 +216,43 @@ public class ContractorMainActivity extends AppCompatActivity {
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.e(TAG, "Failed to get Data");
+        }
+    }
+    private class LogoLoadingListener implements ImageLoadingListener {
+        @Override
+        public void onStart() {
+            Log.i(TAG, "Loading photo");
+            hasImage = false;
+            logoFrame.setBackgroundColor(View.GONE);
+            logoImage.setVisibility(View.GONE);
+            logoImagePlaceholder.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onSuccess() {
+            hasImage = true;
+            Log.d(TAG, "Got photo");
+
+            logoFrame.setBackgroundColor(View.VISIBLE);
+            logoImage.setVisibility(View.VISIBLE);
+
+            logoFrame.setBackgroundColor(Color.TRANSPARENT);
+            logoImage.setLayoutParams(
+                    new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+            );
+            logoImagePlaceholder.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFailed(Exception e) {
+            hasImage = false;
+            Log.e(TAG, e.toString());
+
+            logoFrame.setBackgroundColor(View.VISIBLE);
+            logoImage.setVisibility(View.GONE);
+
+            logoFrame.setBackgroundColor(getResources().getColor(R.color.colorPanel));
+            logoImagePlaceholder.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 
 
 /**
@@ -18,7 +19,7 @@ import com.schmidthappens.markd.R;
  */
 
 public class ContractorFooterViewInitializer {
-    public static View createFooterView(final Context ctx, Drawable logo, String contractor, String phone, final String websiteUrl) {
+    public static View createFooterView(final Context ctx, String contractor, String phone, final String websiteUrl, String photoPath) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
         View v = vi.inflate(R.layout.view_footer, null);
@@ -29,7 +30,7 @@ public class ContractorFooterViewInitializer {
         TextView phoneNumber = v.findViewById(R.id.footer_phone_number);
         TextView website = v.findViewById(R.id.footer_website);
 
-        footerLogo.setImageDrawable(logo);
+        MarkdFirebaseStorage.loadImage(ctx, photoPath, footerLogo, null);
         contractorName.setText(contractor);
         phoneNumber.setText(phone);
         website.setText(websiteUrl);

@@ -25,6 +25,7 @@ import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.HotWater;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
@@ -170,8 +171,10 @@ public class PlumbingActivity extends AppCompatActivity {
             plumbingContractor.addView(v);
         } else {
             ContractorDetails contractorDetails = plumber.getContractorDetails();
-            Drawable logo = ContextCompat.getDrawable(PlumbingActivity.this, R.drawable.sdr_logo); //TODO: change to get logo
-            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, logo, contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl());
+            View v = ContractorFooterViewInitializer.createFooterView(
+                    PlumbingActivity.this,
+                    contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl(),
+                    ContractorLogoStorageUtility.getLogoPath(customerData.getPlumberReference(), plumber.getLogoFileName()));
             plumbingContractor.addView(v);
         }
     }
