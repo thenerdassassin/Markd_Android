@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +25,9 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.file_storage.CustomerHomeImageStorageUtility;
+import com.schmidthappens.markd.file_storage.ImageLoadingListener;
+import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
@@ -37,6 +40,10 @@ import java.io.OutputStream;
 
 
 public class MainActivity extends AppCompatActivity {
+    private String TAG = "MainActivity";
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+
     //XML Objects
     private FrameLayout homeFrame;
     private ImageView homeImage;
@@ -49,12 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView contactArchitect;
     private TextView contactBuilder;
 
+    private boolean hasImage;
     private static final int IMAGE_REQUEST_CODE = 1;
-    private static final String filename = "main_photo.jpg";
-
-    private String TAG = "MainActivity";
-    private FirebaseAuthentication authentication;
-    TempCustomerData customerData;
+    private static final String filename = "main_photo.jpg"; //TODO: remove
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,20 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true, "customer");
-
-        homeFrame = (FrameLayout)findViewById(R.id.home_frame);
-        homeImage = (ImageView)findViewById(R.id.home_image);
-        homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
-        preparedFor = (TextView)findViewById(R.id.prepared_for);
-        homeAddress = (TextView)findViewById(R.id.home_address);
-        homeInformation = (TextView)findViewById(R.id.home_information);
-
-        contactRealtor = (TextView)findViewById(R.id.contact_realtor);
-        contactRealtor.setOnClickListener(showContactAlertDialog);
-        contactArchitect = (TextView)findViewById(R.id.contact_architect);
-        contactArchitect.setOnClickListener(showContactAlertDialog);
-        contactBuilder = (TextView)findViewById(R.id.contact_builder);
-        contactBuilder.setOnClickListener(showContactAlertDialog);
+        initializeViews();
     }
 
     @Override
@@ -87,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        hasImage = false;
+        homeFrame.setBackgroundColor(View.GONE);
+        homeImage.setVisibility(View.GONE);
+        homeImagePlaceholder.setVisibility(View.GONE);
 
         customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new MainGetDataListener());
         homeFrame.setOnClickListener(photoClick);
@@ -104,130 +99,58 @@ public class MainActivity extends AppCompatActivity {
     //Mark:- Photo Functions
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO Save Image in Database
+        Log.d(TAG, "onActivityResult");
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if(copyFileToPermanentStorage()) {
-                //Camera Results
-                setPhoto(getHomeImageUri());
+            String oldFileName = customerData.getHomeImageFileName();
+            String oldPath = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), oldFileName);
+
+            String fileName = customerData.setHomeImageFileName();
+            String path = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), fileName);
+
+            Uri photo = null;
+            //TODO: camera result implementations
+            /*
+            if(temp.exists() && temp.length() > 0) {
+                //Camera Result
+                File temp = getTempFile();
+                photo = Uri.fromFile(temp);
             } else {
-                //Gallery Results
-                Log.e(TAG, "Copy did not work");
-                if(data.getData() != null) {
-                    copyUriToPermanentStorage(data.getData());
-                    setPhoto(data.getData());
-                }
-                return;
+                //Gallery Result
+                photo = data.getData();
+            }
+            */
+
+            photo = data.getData();
+
+            if(photo != null) {
+                MarkdFirebaseStorage.updateImage(this, path, photo, homeImage, new HomeImageLoadingListener());
+                MarkdFirebaseStorage.deleteImage(oldPath);
+                Toast.makeText(this, "Updating Photo", Toast.LENGTH_LONG).show();
             }
 
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+    private Intent createPhotoOrGalleryChooserIntent() {
+        Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        pickIntent.setType("image/*");
 
-    private boolean setPhoto(Uri uri) {
-        homeFrame.setBackgroundColor(Color.TRANSPARENT);
-        homeImage.setLayoutParams(
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-        );
+        //TODO: implement camera intent
+        //Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile()));
 
-        homeImage.setImageURI(null); //work around to prevent caching
-        homeImage.setImageURI(uri);
-        homeImagePlaceholder.setVisibility(View.GONE);
-        return true;
-    }
+        String pickTitle = "Take or select a photo";
+        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+        //chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
 
-    private boolean copyFileToPermanentStorage() {
-        File temp = getTempFile();
-        if(!temp.exists()) {
-            Log.e(TAG, "Temp file did not exist!");
-            return false;
-        }
-
-        File homeImageFile = getHomeImageFile();
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(temp);
-            out = new FileOutputStream(homeImageFile);
-            // Transfer bytes from in to out
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            temp.delete();
-            return true;
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
-        }  finally {
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            } catch(IOException ioe) {
-                //ignore
-            }
-        }
-        temp.delete();
-        return false;
-    }
-    private boolean copyUriToPermanentStorage(Uri uri) {
-        File homeImageFile = getHomeImageFile();
-        InputStream in = null;
-        OutputStream out = null;
-
-        try {
-            in = getContentResolver().openInputStream(uri);
-            out = new FileOutputStream(homeImageFile);
-            // Transfer bytes from in to out
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-            return true;
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
-        }  finally {
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-            } catch(IOException ioe) {
-                //ignore
-            }
-        }
-        return false;
-    }
-
-    private Uri getHomeImageUri() {
-        return Uri.fromFile(getHomeImageFile());
-    }
-    private File getHomeImageFile() {
-        return new File(MainActivity.this.getFilesDir(), filename);
-    }
-    private File getTempFile() {
-        return new File(Environment.getExternalStorageDirectory(), "image.tmp");
+        return chooserIntent;
     }
 
     // Mark:- Action Listeners
     private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            Intent pickIntent = new Intent();
-            pickIntent.setType("image/*");
-            pickIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(getTempFile()));
-
-            String pickTitle = "Take or select a photo";
-
-            Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
-            startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
-
+            startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
             return true;
         }
     };
@@ -236,18 +159,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //Only resets image if no image exists
-            if(homeImage.getTag().equals("0")) {
-                Intent pickIntent = new Intent();
-                pickIntent.setType("image/*");
-                pickIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                takePhotoIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile()));
-
-                String pickTitle = "Take or select a photo";
-                Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
-                startActivityForResult(takePhotoIntent, IMAGE_REQUEST_CODE);
+            if(!hasImage) {
+                startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
             }
         }
     };
@@ -293,20 +206,30 @@ public class MainActivity extends AppCompatActivity {
     };
 
     // Mark:- SetUp Functions
-    private void initalizeUI() {
-        initializeViews();
-
-        //TODO change to only set as "0" if no image available from http call
-        if(getHomeImageFile().exists()) {
-            setPhoto(getHomeImageUri());
-            homeImage.setTag("1");
-        } else {
-            //TODO: try and get photo from http call
-            //if can't get then set to 0
-            homeImage.setTag("0");
-        }
-    }
     private void initializeViews() {
+        homeFrame = (FrameLayout)findViewById(R.id.home_frame);
+        homeImage = (ImageView)findViewById(R.id.home_image);
+        homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
+        preparedFor = (TextView)findViewById(R.id.prepared_for);
+        homeAddress = (TextView)findViewById(R.id.home_address);
+        homeInformation = (TextView)findViewById(R.id.home_information);
+
+        contactRealtor = (TextView)findViewById(R.id.contact_realtor);
+        contactRealtor.setOnClickListener(showContactAlertDialog);
+        contactArchitect = (TextView)findViewById(R.id.contact_architect);
+        contactArchitect.setOnClickListener(showContactAlertDialog);
+        contactBuilder = (TextView)findViewById(R.id.contact_builder);
+        contactBuilder.setOnClickListener(showContactAlertDialog);
+    }
+    private void initializeUI() {
+        fillCustomerInformation();
+
+        MarkdFirebaseStorage.loadImage(this,
+                CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), customerData.getHomeImageFileName()),
+                homeImage,
+                new HomeImageLoadingListener());
+    }
+    private void fillCustomerInformation() {
         String preparedForString = "Prepared for " + customerData.getName();
         preparedFor.setText(preparedForString);
         if(customerData.getFormattedAddress() == null) {
@@ -334,12 +257,49 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSuccess(DataSnapshot data) {
-            initalizeUI();
+            initializeUI();
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
 
+        }
+    }
+    private class HomeImageLoadingListener implements ImageLoadingListener {
+        @Override
+        public void onStart() {
+            Log.i(TAG, "Loading photo");
+            hasImage = false;
+            homeFrame.setBackgroundColor(View.GONE);
+            homeImage.setVisibility(View.GONE);
+            homeImagePlaceholder.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onSuccess() {
+            hasImage = true;
+            Log.d(TAG, "Got photo");
+
+            homeFrame.setBackgroundColor(View.VISIBLE);
+            homeImage.setVisibility(View.VISIBLE);
+
+            homeFrame.setBackgroundColor(Color.TRANSPARENT);
+            homeImage.setLayoutParams(
+                    new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
+            );
+            homeImagePlaceholder.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFailed(Exception e) {
+            hasImage = false;
+            Log.e(TAG, e.toString());
+
+            homeFrame.setBackgroundColor(View.VISIBLE);
+            homeImage.setVisibility(View.GONE);
+
+            homeFrame.setBackgroundColor(getResources().getColor(R.color.colorPanel));
+            homeImagePlaceholder.setVisibility(View.VISIBLE);
         }
     }
 

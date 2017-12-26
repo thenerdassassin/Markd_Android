@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by joshua.schmidtibm.com on 9/23/17.
@@ -30,6 +31,7 @@ public class Customer {
     private String architectReference;
     private String builderReference;
     private String realtorReference;
+    private String homeImageFileName;
 
     //For Plumbing Page
     private HotWater hotWater;
@@ -114,6 +116,14 @@ public class Customer {
         }
         public void setRealtor(String realtor) {
             this.realtorReference = realtor;
+        }
+
+        public String getHomeImageFileName() {
+            return homeImageFileName;
+        }
+        public Customer setHomeImageFileName() {
+            this.homeImageFileName = UUID.randomUUID().toString();
+            return this;
         }
 
         //:- Plumbing Page
