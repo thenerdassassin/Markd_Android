@@ -148,6 +148,18 @@ public class TempCustomerData {
 
         return builder.toString();
     }
+    public String getHomeImageFileName() {
+        if(customer == null) {
+            return null;
+        } else {
+            return customer.getHomeImageFileName();
+        }
+    }
+    public String setHomeImageFileName() {
+        customer.setHomeImageFileName();
+        putCustomer(customer);
+        return customer.getHomeImageFileName();
+    }
 
     //Mark:- Plumbing
     public HotWater getHotWater() {

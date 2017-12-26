@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -56,18 +54,9 @@ public class ContractorMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contractor_main_view);
-
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, false, "contractor", editCompanyOnClickListener);
-
-        logoFrame = (FrameLayout)findViewById(R.id.contractor_logo_frame);
-        logoImage = (ImageView)findViewById(R.id.contractor_logo);
-        logoImagePlaceholder = (ImageView)findViewById(R.id.contractor_logo_placeholder);
-
-        companyNameTextView = (TextView)findViewById(R.id.contractor_company_name);
-        companyTelephone = (TextView)findViewById(R.id.contractor_telephone_text);
-        companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
-        companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
+        initializeXmlObjects();
     }
     @Override
     public void onStart() {
@@ -90,7 +79,9 @@ public class ContractorMainActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         authentication.detachListener();
-        contractorData.removeListener();
+        if(contractorData != null) {
+            contractorData.removeListener();
+        }
     }
 
     //Mark:- Photo Functions
@@ -182,7 +173,17 @@ public class ContractorMainActivity extends AppCompatActivity {
     }
 
     // Mark:- SetUp Functions
-    private void initalizeUI() {
+    private void initializeXmlObjects() {
+        logoFrame = (FrameLayout)findViewById(R.id.contractor_logo_frame);
+        logoImage = (ImageView)findViewById(R.id.contractor_logo);
+        logoImagePlaceholder = (ImageView)findViewById(R.id.contractor_logo_placeholder);
+
+        companyNameTextView = (TextView)findViewById(R.id.contractor_company_name);
+        companyTelephone = (TextView)findViewById(R.id.contractor_telephone_text);
+        companyWebpage = (TextView)findViewById(R.id.contractor_website_textview);
+        companyZipCode = (TextView)findViewById(R.id.contractor_zipcode_textview);
+    }
+    private void initializeUI() {
         Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
         MarkdFirebaseStorage.loadImage(this,
@@ -210,7 +211,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         @Override
         public void onSuccess(DataSnapshot data) {
             Log.d(TAG, "Got Data");
-            initalizeUI();
+            initializeUI();
         }
 
         @Override
