@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean hasImage;
     private static final int IMAGE_REQUEST_CODE = 1;
-    private static final String filename = "main_photo.jpg"; //TODO: remove
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         new ActionBarInitializer(this, true, "customer");
         initializeViews();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -154,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
-
     private View.OnClickListener photoClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -164,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
     private View.OnClickListener showContactAlertDialog = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
