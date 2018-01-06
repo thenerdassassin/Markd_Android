@@ -1,8 +1,10 @@
 package com.schmidthappens.markd.AdapterClasses;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,8 +26,6 @@ import java.util.List;
  * Created by Josh on 3/24/2017
  */
 
-//TODO abstract duplicate code in PaintListAdapter
-// (May need to make LinearLayout and TableRow the same)
 public class PanelListAdapter extends ArrayAdapter<Panel> {
     private static final String TAG = "PanelListAdapter";
 
@@ -59,8 +59,8 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         this.customerId = customerId;
     }
 
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    @Override @NonNull
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         View panelListView = convertView;
 
         if (panelListView == null) {
@@ -73,8 +73,61 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         if (panel != null) {
             insertPanelInfo(panelListView, panel);
         }
+        panelListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewClickedPanel(position);
+            }
+        });
+        // Not using slide to delete
+        //setTouchListener(panelListView, position);
+        //setDeleteListener((ImageButton)panelListView.findViewById(R.id.panel_list_row_delete_button), position);
 
-        panelListView.setOnTouchListener(new View.OnTouchListener() {
+        return panelListView;
+    }
+
+    //Mark:- Helper Functions
+    private void insertPanelInfo(View view, Panel panel) {
+        TextView panelDescriptionTextView = (TextView)view.findViewById(R.id.panel_description);
+        TextView panelAmperageTextView = (TextView)view.findViewById(R.id.panel_amperage);
+        TextView panelInstallDateTextView = (TextView)view.findViewById(R.id.panel_install_date);
+
+        if (panelDescriptionTextView != null) {
+            panelDescriptionTextView.setText(panel.getPanelDescription());
+        }
+
+        if (panelAmperageTextView != null) {
+            panelAmperageTextView.setText(panel.getAmperage());
+        }
+
+        if (panelInstallDateTextView != null) {
+            panelInstallDateTextView.setText(panel.getInstallDate());
+        }
+    }
+    private void viewClickedPanel(int panelClicked) {
+        Log.i(TAG, "panelClicked");
+        Class destinationClass = ViewPanelActivity.class;
+        if(activityContext != null) {
+            if(panelClicked >= getCount()) {
+                Log.e(TAG, "panelClick greater than list size");
+                return;
+            }
+            Intent intentToStartViewPanelActivity = new Intent(activityContext, destinationClass);
+            intentToStartViewPanelActivity.putExtra("panelId", panelClicked);
+            intentToStartViewPanelActivity.putExtra("isContractor", isContractor);
+            intentToStartViewPanelActivity.putExtra("customerId", customerId);
+            activityContext.startActivity(intentToStartViewPanelActivity);
+        } else {
+            Log.e(TAG, "Activity Context NULL");
+        }
+    }
+
+    //Mark:- Slide to delete Features
+    private void setTouchListener(View panelListView, int position) {
+        panelListView.setOnTouchListener(createTouchListener(position));
+    }
+    private View.OnTouchListener createTouchListener(final int position) {
+        return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 TableRow rowToMove = (TableRow)v.findViewById(R.id.panel_list_row_information);
@@ -117,10 +170,14 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
                 }
                 return false;
             }
-        });
-
-        ImageButton panelDelete = (ImageButton)panelListView.findViewById(R.id.panel_list_row_delete_button);
-        panelDelete.setOnClickListener(new View.OnClickListener() {
+        };
+    }
+    private void setDeleteListener(ImageButton deleteButton, int position) {
+        deleteButton.setOnClickListener(createDeleteListener(position));
+        deleteButton.setClickable(false);
+    }
+    private View.OnClickListener createDeleteListener(final int position) {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(activityContext != null) {
@@ -130,48 +187,7 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
                     Log.e(TAG, "Activity Context NULL");
                 }
             }
-        });
-        panelDelete.setClickable(false);
-
-        return panelListView;
-    }
-
-    //Mark:- Panel Deletion
-
-    //Mark:- Helper Functions
-    private void insertPanelInfo(View view, Panel panel) {
-        TextView panelDescriptionTextView = (TextView)view.findViewById(R.id.panel_description);
-        TextView panelAmperageTextView = (TextView)view.findViewById(R.id.panel_amperage);
-        TextView panelInstallDateTextView = (TextView)view.findViewById(R.id.panel_install_date);
-
-        if (panelDescriptionTextView != null) {
-            panelDescriptionTextView.setText(panel.getPanelDescription());
-        }
-
-        if (panelAmperageTextView != null) {
-            panelAmperageTextView.setText(panel.getAmperage());
-        }
-
-        if (panelInstallDateTextView != null) {
-            panelInstallDateTextView.setText(panel.getInstallDate());
-        }
-    }
-    private void viewClickedPanel(int panelClicked) {
-        Log.i(TAG, "panelClicked");
-        Class destinationClass = ViewPanelActivity.class;
-        if(activityContext != null) {
-            if(panelClicked >= getCount()) {
-                Log.e(TAG, "panelClick greater than list size");
-                return;
-            }
-            Intent intentToStartViewPanelActivity = new Intent(activityContext, destinationClass);
-            intentToStartViewPanelActivity.putExtra("panelId", panelClicked);
-            intentToStartViewPanelActivity.putExtra("isContractor", isContractor);
-            intentToStartViewPanelActivity.putExtra("customerId", customerId);
-            activityContext.startActivity(intentToStartViewPanelActivity);
-        } else {
-            Log.e(TAG, "Activity Context NULL");
-        }
+        };
     }
     private void initializeXValues(TableRow row, MotionEvent event){
         historicX = event.getRawX();

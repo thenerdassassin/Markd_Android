@@ -26,16 +26,7 @@ import java.util.List;
  * Created by Josh on 5/29/2017.
  */
 
-//TODO abstract duplicate code in PanelListAdapter
-// (May need to make LinearLayout and TableRow the same)
 public class PaintListAdapter {
-
-    private float dX, historicX, newX;
-    private float originalX = Float.NaN;
-    private final float DELTA = (float)-50.0;
-    private final float LAG = (float)15.0;
-    private final int DURATION = 400;
-
     private PaintingActivity activityContext = null;
     private static final String TAG = "PaintListAdapter";
     private TempCustomerData customerData;
@@ -149,6 +140,12 @@ public class PaintListAdapter {
     }
 
     //Mark:- Slide to delete Features
+    private float dX, historicX, newX;
+    private float originalX = Float.NaN;
+    private final float DELTA = (float)-50.0;
+    private final float LAG = (float)15.0;
+    private final int DURATION = 400;
+
     private void setTouchListener(View paintView, int position, boolean isExterior) {
         paintView.setOnTouchListener(createSlideListener(position, isExterior));
     }
