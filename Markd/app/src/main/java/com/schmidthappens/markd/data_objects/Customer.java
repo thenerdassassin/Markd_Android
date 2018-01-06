@@ -163,7 +163,10 @@ public class Customer {
             service.setComments(description);
             setService(services, serviceId, service);
         }
-
+        @Exclude
+        public void deletePlumbingService(int serviceId) {
+            setPlumbingServices(deleteService(getPlumbingServices(), serviceId));
+        }
 
         //:- HVAC Page
         public AirHandler getAirHandler() {
@@ -201,6 +204,10 @@ public class Customer {
             service.setContractor(company);
             service.setComments(description);
             setService(services, serviceId, service);
+        }
+        @Exclude
+        public void deleteHvacService(int serviceId) {
+            setHvacServices(deleteService(getHvacServices(), serviceId));
         }
 
         //:- Painting Page
@@ -255,6 +262,10 @@ public class Customer {
             service.setComments(description);
             setService(services, serviceId, service);
         }
+        @Exclude
+        public void deleteElectricalService(int serviceId) {
+            setElectricalServices(deleteService(getElectricalServices(), serviceId));
+        }
 
     //Mark:- Helper functions
     public void updateProfile(String namePrefix, String firstName, String lastName, String maritalStatus) {
@@ -280,6 +291,13 @@ public class Customer {
             services.add(0, service);
         } else {
             services.set(serviceId, service);
+        }
+        return services;
+    }
+    @Exclude
+    private List<ContractorService> deleteService(List<ContractorService> services, int serviceId) {
+        if(services != null && serviceId >= 0 && serviceId < services.size()) {
+            services.remove(serviceId);
         }
         return services;
     }

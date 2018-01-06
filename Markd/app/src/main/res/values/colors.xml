@@ -9,5 +9,5 @@
     <color name="editTextOutline">#D3D3D3</color>
     <color name="black">#000000</color>
     <color name="hyperlink">@android:color/holo_blue_dark</color>
-    <color name="delete">@android:color/holo_red_dark</color>
+    <color name="delete">#ED4337</color>
 </resources>

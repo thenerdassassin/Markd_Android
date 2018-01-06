@@ -199,6 +199,10 @@ public class TempCustomerData {
         customer.updatePlumbingService(serviceId, contractor, description);
         putCustomer(customer);
     }
+    public void removePlumbingService(int serviceId) {
+        customer.deletePlumbingService(serviceId);
+        putCustomer(customer);
+    }
 
     //Mark:- HVAC
     public AirHandler getAirHandler() {
@@ -224,6 +228,9 @@ public class TempCustomerData {
         addContractorListener(hvacReference, hvacListener);
         return true;
     }
+    public String getHvactechnicianReference() {
+        return customer.getHvactechnicianReference();
+    }
     public List<ContractorService> getHvacServices() {
         return getCustomer().getHvacServices();
     }
@@ -235,8 +242,9 @@ public class TempCustomerData {
         customer.updateHvacService(serviceId, contractor, description);
         putCustomer(customer);
     }
-    public String getHvactechnicianReference() {
-        return customer.getHvactechnicianReference();
+    public void removeHvacService(int serviceId) {
+        customer.deleteHvacService(serviceId);
+        putCustomer(customer);
     }
 
     //MarK:- Electrical
@@ -260,6 +268,10 @@ public class TempCustomerData {
     }
     public void updateElectricalService(int serviceId, String contractor, String description) {
         customer.updateElectricalService(serviceId, contractor, description);
+        putCustomer(customer);
+    }
+    public void removeElectricalService(int serviceId) {
+        customer.deleteElectricalService(serviceId);
         putCustomer(customer);
     }
     public boolean getElectrician(final OnGetDataListener electricianListener) {
