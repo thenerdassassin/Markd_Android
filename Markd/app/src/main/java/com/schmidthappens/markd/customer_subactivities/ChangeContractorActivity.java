@@ -28,6 +28,7 @@ import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.ContractorUtilities;
 import com.schmidthappens.markd.utilities.ContractorUpdater;
+import com.schmidthappens.markd.utilities.NumberPickerUtilities;
 import com.schmidthappens.markd.utilities.ZipCodeUtilities;
 
 import org.json.JSONException;
@@ -75,6 +76,7 @@ public class ChangeContractorActivity extends AppCompatActivity {
             finish();
         }
         customerData = new TempCustomerData(this, null);
+        processIntent(getIntent());
     }
 
     @Override
@@ -116,6 +118,13 @@ public class ChangeContractorActivity extends AppCompatActivity {
 
         noContractorsFound = (TextView)findViewById(R.id.no_contractors_text_view);
         noContractorsFound.setVisibility(View.INVISIBLE);
+    }
+    private void processIntent(Intent intent) {
+        if(intent != null) {
+            if(intent.hasExtra("contractorType")) {
+                NumberPickerUtilities.setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray);
+            }
+        }
     }
 
     //Mark:- Listeners

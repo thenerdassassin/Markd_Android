@@ -167,7 +167,7 @@ public class PlumbingActivity extends AppCompatActivity {
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         if(plumber == null || plumber.getContractorDetails() == null) {
             Log.d(TAG, "No plumber data");
-            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, "Plumber");
             plumbingContractor.addView(v);
         } else {
             ContractorDetails contractorDetails = plumber.getContractorDetails();
@@ -254,7 +254,7 @@ public class PlumbingActivity extends AppCompatActivity {
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.d(TAG, databaseError.toString());
-            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this);
+            View v = ContractorFooterViewInitializer.createFooterView(PlumbingActivity.this, "Plumber");
             plumbingContractor.addView(v);
         }
     }

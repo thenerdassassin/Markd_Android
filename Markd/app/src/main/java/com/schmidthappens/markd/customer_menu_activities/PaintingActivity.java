@@ -132,7 +132,7 @@ public class PaintingActivity extends AppCompatActivity {
                 Log.d(TAG, "data:" + data.toString());
                 if(painter == null || painter.getContractorDetails() == null) {
                     Log.d(TAG, "No painter data");
-                    View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
+                    View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this, "Painter");
                     paintingContractor.addView(v);
                 } else {
                     ContractorDetails contractorDetails = painter.getContractorDetails();
@@ -148,12 +148,12 @@ public class PaintingActivity extends AppCompatActivity {
             @Override
             public void onFailed(DatabaseError databaseError) {
                 Log.d(TAG, databaseError.toString());
-                View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
+                View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this, "Painter");
                 paintingContractor.addView(v);
             }
         })) {
             Log.d(TAG, "No painter data");
-            View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this);
+            View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this, "Painter");
             paintingContractor.addView(v);
         }
     }
