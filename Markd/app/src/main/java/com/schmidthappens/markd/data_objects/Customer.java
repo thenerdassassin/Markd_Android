@@ -153,7 +153,7 @@ public class Customer {
         }
         @Exclude
         public void addPlumbingService(ContractorService service) {
-            setService(getPlumbingServices(), -1, service);
+            setPlumbingServices(setService(getPlumbingServices(), -1, service));
         }
         @Exclude
         public void updatePlumbingService(int serviceId, String company, String description) {
@@ -192,7 +192,7 @@ public class Customer {
         }
         @Exclude
         public void addHvacService(ContractorService service) {
-            setService(getHvacServices(), -1, service);
+            setHvacServices(setService(getHvacServices(), -1, service));
         }
         @Exclude
         public void updateHvacService(int serviceId, String company, String description) {
@@ -244,7 +244,8 @@ public class Customer {
         }
         @Exclude
         public void addElectricalService(ContractorService service) {
-            setService(getElectricalServices(), -1, service);
+            setElectricalServices(setService(getElectricalServices(), -1, service));
+
         }
         @Exclude
         public void updateElectricalService(int serviceId, String company, String description) {
@@ -271,7 +272,7 @@ public class Customer {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, maritalStatus);
     }
     @Exclude
-    private void setService(List<ContractorService> services, int serviceId, ContractorService service) {
+    private List<ContractorService> setService(List<ContractorService> services, int serviceId, ContractorService service) {
         if(serviceId == -1) {
             if(services == null) {
                 services = new ArrayList<>();
@@ -280,6 +281,7 @@ public class Customer {
         } else {
             services.set(serviceId, service);
         }
+        return services;
     }
     //Painting
     @Exclude

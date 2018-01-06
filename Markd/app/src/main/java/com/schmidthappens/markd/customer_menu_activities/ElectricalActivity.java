@@ -100,7 +100,9 @@ public class ElectricalActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        alertDialog.dismiss();
+        if(alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
+        }
     }
 
     //Mark:- OnClick Listeners
