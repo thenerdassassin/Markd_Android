@@ -168,6 +168,8 @@ public class PaintingActivity extends AppCompatActivity {
             Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
             intentToStartPaintEditActivity.putExtra("isNew", true);
             intentToStartPaintEditActivity.putExtra("isExterior", true);
+            intentToStartPaintEditActivity.putExtra("customerId", customerData.getUid());
+            intentToStartPaintEditActivity.putExtra("isContractor", isContractorViewingPage);
             activityContext.startActivity(intentToStartPaintEditActivity);
         }
     };
@@ -180,6 +182,8 @@ public class PaintingActivity extends AppCompatActivity {
 
             Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
             intentToStartPaintEditActivity.putExtra("isNew", true);
+            intentToStartPaintEditActivity.putExtra("customerId", customerData.getUid());
+            intentToStartPaintEditActivity.putExtra("isContractor", isContractorViewingPage);
             activityContext.startActivity(intentToStartPaintEditActivity);
         }
     };

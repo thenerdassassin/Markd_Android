@@ -63,13 +63,12 @@ public class PaintEditActivity extends AppCompatActivity {
             instantiateEditTextObjects();
             processIntentExtras(intent);
             customerData = new TempCustomerData(customerId, null);
+            setInstallDateButton.setOnClickListener(setPaintDateButtonClickListener);
+            saveButton.setOnClickListener(onSaveClickListener);
         } else {
-            Log.e(TAG, "Intent is Null");
+            Log.e(TAG, "Intent or customerId is Null");
             goBackToPaintingActivity();
         }
-
-        setInstallDateButton.setOnClickListener(setPaintDateButtonClickListener);
-        saveButton.setOnClickListener(onSaveClickListener);
     }
 
 
@@ -183,7 +182,7 @@ public class PaintEditActivity extends AppCompatActivity {
 
     private void goBackToPaintingActivity(){
         Intent paintingActivityIntent = new Intent(getApplicationContext(), PaintingActivity.class);
-        if(!customerId.equals(authentication.getCurrentUser().getUid())) {
+        if(customerId != null && !customerId.equals(authentication.getCurrentUser().getUid())) {
             paintingActivityIntent.putExtra("isContractor", true);
             paintingActivityIntent.putExtra("customerId", customerId);
         }

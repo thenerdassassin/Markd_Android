@@ -10,6 +10,8 @@ import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 
+import java.util.ArrayList;
+
 /**
  * Created by joshua.schmidtibm.com on 11/18/17.
  */
@@ -318,7 +320,10 @@ public class DatabaseResetter {
         userReference.child("R1EyDxbQK3Uf8ohZDNrazgM4FVc2")
                 .setValue(TempCustomerData.makeCustomer());
 
+        ArrayList<String> customers = new ArrayList<>();
+        customers.set(0, "R1EyDxbQK3Uf8ohZDNrazgM4FVc2");
         userReference.child("s5VWMQvH17ZJnVqxtOkqvWpufmu2").setValue(new Contractor("632e4355-612f-4ab6-a206-7d2586048b5f")
+                .setCustomers(customers)
                 .setFirstName("Mario")
                 .setLastName("Plumber")
                 .setNamePrefix("Dr.")
