@@ -1,8 +1,10 @@
 package com.schmidthappens.markd.customer_subactivities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -34,11 +36,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
     String TAG = "ServiceDetailActivity";
     FirebaseAuthentication authentication;
     TempCustomerData customerData;
+    AlertDialog alertDialog;
 
     //XML Objects
     EditText editContractor;
     EditText editServiceDescription;
     Button saveButton;
+    Button deleteButton;
 
     int serviceId;
     boolean isNew;
@@ -50,7 +54,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.edit_view_service);
-
         authentication = new FirebaseAuthentication(this);
 
         setTitle("Edit Service");
@@ -81,6 +84,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
             customerData.removeListeners();
         }
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
+        }
+    }
 
     private void saveServiceData() {
         if(isNew) {
@@ -92,7 +102,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString());
         }
     }
-
     private void addService(ContractorService service) {
         if (originalActivity.equals(PlumbingActivity.class)) {
             Log.d(TAG, "Add Plumbing Service");
@@ -121,6 +130,40 @@ public class ServiceDetailActivity extends AppCompatActivity {
             sendErrorMessage("Activity does not match");
         }
     }
+    private void showRemoveServiceWarning() {
+        alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Delete Service")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this service?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel the service deletions");
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        Log.d(TAG, "Confirm service deletion");
+                        removeService();
+                        dialog.dismiss();
+                        goBackToActivity(originalActivity);
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
+    private void removeService() {
+        if (originalActivity.equals(PlumbingActivity.class)) {
+            customerData.removePlumbingService(serviceId);
+        } else if (originalActivity.equals(HvacActivity.class)) {
+            customerData.removeHvacService(serviceId);
+        } else if (originalActivity.equals(ElectricalActivity.class)) {
+            customerData.removeElectricalService(serviceId);
+        } else {
+            sendErrorMessage("Activity does not match");
+        }
+    }
 
     private void initializeXMLObjects() {
         editContractor = (EditText)findViewById(R.id.service_edit_contractor);
@@ -139,6 +182,19 @@ public class ServiceDetailActivity extends AppCompatActivity {
                 hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
                 saveServiceData();
                 goBackToActivity(originalActivity);
+            }
+        });
+
+        deleteButton = (Button)findViewById(R.id.service_edit_delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
+                if(!isNew) {
+                    showRemoveServiceWarning();
+                } else {
+                    goBackToActivity(originalActivity);
+                }
             }
         });
     }
