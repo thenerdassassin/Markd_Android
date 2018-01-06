@@ -182,7 +182,7 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
             public void onClick(View v) {
                 if(activityContext != null) {
                     Log.i(TAG, "Delete Panel " + position);
-                    activityContext.deletePanel(position);
+                    //activityContext.deletePanel(position);
                 } else {
                     Log.e(TAG, "Activity Context NULL");
                 }

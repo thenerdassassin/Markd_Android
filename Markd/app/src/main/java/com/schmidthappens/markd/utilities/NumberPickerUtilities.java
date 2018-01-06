@@ -11,8 +11,9 @@ public class NumberPickerUtilities {
         for(int i = 0; i < values.length; i++) {
             if(values[i].equalsIgnoreCase(value)) {
                 picker.setValue(i);
-                break;
+                return;
             }
         }
+        picker.setValue(0);
     }
 }
