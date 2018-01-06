@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
+import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 
 
@@ -19,6 +22,8 @@ import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
  */
 
 public class ContractorFooterViewInitializer {
+    private static final String TAG = "FooterViewInitializer";
+
     public static View createFooterView(final Context ctx, String contractor, String phone, final String websiteUrl, String photoPath) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
@@ -50,13 +55,17 @@ public class ContractorFooterViewInitializer {
         return v;
     }
 
-    public static View createFooterView(final Context ctx) {
+    public static View createFooterView(final Context ctx, final String contractorType) {
         LayoutInflater inflater = LayoutInflater.from(ctx);
         View v = inflater.inflate(R.layout.view_default_footer, null);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ctx, "Add Contractor Clicked", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Add Contractor Clicked");
+                Class destinationClass = ChangeContractorActivity.class;
+                Intent intentToStartChangeContractorActivity = new Intent(ctx, destinationClass);
+                intentToStartChangeContractorActivity.putExtra("contractorType", contractorType);
+                ctx.startActivity(intentToStartChangeContractorActivity);
             }
         });
         return v;

@@ -163,7 +163,7 @@ public class HvacActivity extends AppCompatActivity {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
         if(hvacTechnician == null || hvacTechnician.getContractorDetails() == null) {
             Log.d(TAG, "No plumber data");
-            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this);
+            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this, "Hvac");
             hvacContractor.addView(v);
         } else {
             ContractorDetails contractorDetails = hvacTechnician.getContractorDetails();

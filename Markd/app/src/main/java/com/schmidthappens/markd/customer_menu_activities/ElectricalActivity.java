@@ -158,7 +158,7 @@ public class ElectricalActivity extends AppCompatActivity {
     private void initializeFooter(Contractor electrician) {
         if(electrician == null || electrician.getContractorDetails() == null) {
             Log.d(TAG, "No electrician data");
-            View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this);
+            View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this, "Electrician");
             electricalContractor.addView(v);
         } else {
             ContractorDetails electricianDetails = electrician.getContractorDetails();
@@ -206,7 +206,7 @@ public class ElectricalActivity extends AppCompatActivity {
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.d(TAG, databaseError.toString());
-            View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this);
+            View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this, "Electrician");
             electricalContractor.addView(v);
         }
     }
