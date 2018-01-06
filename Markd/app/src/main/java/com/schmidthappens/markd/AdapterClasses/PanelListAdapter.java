@@ -136,6 +136,8 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
         return panelListView;
     }
 
+    //Mark:- Panel Deletion
+
     //Mark:- Helper Functions
     private void insertPanelInfo(View view, Panel panel) {
         TextView panelDescriptionTextView = (TextView)view.findViewById(R.id.panel_description);
@@ -154,7 +156,6 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
             panelInstallDateTextView.setText(panel.getInstallDate());
         }
     }
-
     private void viewClickedPanel(int panelClicked) {
         Log.i(TAG, "panelClicked");
         Class destinationClass = ViewPanelActivity.class;
@@ -172,7 +173,6 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
             Log.e(TAG, "Activity Context NULL");
         }
     }
-
     private void initializeXValues(TableRow row, MotionEvent event){
         historicX = event.getRawX();
         dX = row.getX() - event.getRawX();
@@ -181,15 +181,12 @@ public class PanelListAdapter extends ArrayAdapter<Panel> {
             originalX = historicX + dX;
         }
     }
-
     private void snapRowToSlideOutPosition(TableRow row, float amountToLeft) {
         row.animate().x(originalX-amountToLeft).setDuration(DURATION).start();
     }
-
     private void snapRowToOriginalPosition(TableRow row) {
         row.animate().x(originalX).setDuration(DURATION).start();
     }
-
     private void moveRowWithDrag(TableRow row, MotionEvent event) {
         row.animate().x(event.getRawX() + dX).setDuration(0).start();
         newX = event.getRawX();

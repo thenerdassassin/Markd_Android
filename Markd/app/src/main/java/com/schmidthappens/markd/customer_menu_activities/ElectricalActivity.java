@@ -1,10 +1,12 @@
 package com.schmidthappens.markd.customer_menu_activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -53,6 +55,8 @@ public class ElectricalActivity extends AppCompatActivity {
     FrameLayout electricalContractor;
     ArrayAdapter<Panel> adapter;
 
+    AlertDialog alertDialog;
+
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -93,6 +97,11 @@ public class ElectricalActivity extends AppCompatActivity {
             customerData.removeListeners();
         }
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        alertDialog.dismiss();
+    }
 
     //Mark:- OnClick Listeners
     private View.OnClickListener addPanelOnClickListener = new View.OnClickListener() {
@@ -112,10 +121,33 @@ public class ElectricalActivity extends AppCompatActivity {
 
     public void deletePanel(int position) {
         Log.i(TAG, "Delete Panel " + position);
-        customerData.removePanel(position);
-        adapter.clear();
-        adapter.addAll(customerData.getPanels());
-        panelList.setAdapter(adapter);
+        showDeletePanelWarning(position);
+
+    }
+    public void showDeletePanelWarning(final int position) {
+        alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Delete Panel")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this panel?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel the panel deletion");
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Delete the panel");
+                        customerData.removePanel(position);
+                        adapter.clear();
+                        adapter.addAll(customerData.getPanels());
+                        panelList.setAdapter(adapter);
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
     }
 
     private void initializeXMLObjects() {
