@@ -1,6 +1,8 @@
 package com.schmidthappens.markd.customer_subactivities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -155,7 +157,8 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private void setDeleteBreakerListener(final Button deleteButton) {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                deleteBreaker();
+                hideKeyboard();
+                showDeleteBreakerWarning();
             }
         });
     }
@@ -193,25 +196,35 @@ public class BreakerDetailActivity extends AppCompatActivity {
         return newBreaker;
     }
     private void deleteBreaker() {
-        hideKeyboard();
         Panel panel = customerData.getPanels().get(panelId);
         panel.deleteBreaker(Integer.parseInt(breakerNumberString));
         customerData.updatePanel(panelId, panel);
         goBackToViewPanel();
+    }
+    private void showDeleteBreakerWarning() {
+        (new AlertDialog.Builder(this)
+                .setTitle("Delete Breaker")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this breaker? ")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel the breaker");
+                    }
+                })
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        deleteBreaker();
+                    }
+                })
+                .create())
+                .show();
     }
     private void updateView() {
         NumberPickerUtilities.setPicker(amperageNumberPicker, breakerAmperage, amperages);
         NumberPickerUtilities.setPicker(breakerTypeNumberPicker, breakerType, breakerTypes);
         breakerDetailEdit.setText(breakerDescription);
         breakerDetailEdit.setSelection(breakerDescription.length()); //Sets cursor to end of EditText
-    }
-    private void setSpinner(Spinner spinner, String[] values, String selectedValue) {
-        for(int i = 0; i<values.length; i++) {
-            String value = values[i];
-            if(value.equals(selectedValue)) {
-                spinner.setSelection(i);
-            }
-        }
     }
     private void hideKeyboard() {
         View view = this.getCurrentFocus();

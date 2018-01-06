@@ -262,14 +262,6 @@ public class PanelDetailActivity extends AppCompatActivity {
     }
 
     //Mark:- Helper Functions
-    private void setSpinner(Spinner spinner, String[] values, String selectedValue) {
-        for(int i = 0; i<values.length; i++) {
-            String value = values[i];
-            if(value.equals(selectedValue)) {
-                spinner.setSelection(i);
-            }
-        }
-    }
     private void changeInstallDate(String newDate) {
         panelInstallDate.setText(newDate);
     }

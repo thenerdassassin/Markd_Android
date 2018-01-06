@@ -9,7 +9,7 @@ import android.widget.NumberPicker;
 public class NumberPickerUtilities {
     public static void setPicker(NumberPicker picker, String value, String[] values) {
         for(int i = 0; i < values.length; i++) {
-            if(values[i].equals(value)) {
+            if(values[i].equalsIgnoreCase(value)) {
                 picker.setValue(i);
                 break;
             }
