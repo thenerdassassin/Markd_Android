@@ -62,7 +62,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
         initializeXMLObjects();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -74,7 +73,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
         processIntent(getIntent());
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -86,7 +84,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
     private void saveServiceData() {
         if(isNew) {
-            ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth(), DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
+            ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth()+1, DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
                     editContractor.getText().toString(), editServiceDescription.getText().toString());
             addService(serviceToAdd);
 
@@ -97,10 +95,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
     private void addService(ContractorService service) {
         if (originalActivity.equals(PlumbingActivity.class)) {
+            Log.d(TAG, "Add Plumbing Service");
             customerData.addPlumbingService(service);
         } else if (originalActivity.equals(HvacActivity.class)) {
+            Log.d(TAG, "Add Hvac Service");
             customerData.addHvacService(service);
         } else if (originalActivity.equals(ElectricalActivity.class)) {
+            Log.d(TAG, "Add Electrical Service");
             customerData.addElectricalService(service);
         } else {
             sendErrorMessage("Activity does not match");
@@ -108,10 +109,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
     }
     private void updateService(int serviceId, String contractor, String description) {
         if (originalActivity.equals(PlumbingActivity.class)) {
+            Log.d(TAG, "Edit Plumbing Service");
             customerData.updatePlumbingService(serviceId, contractor, description);
         } else if (originalActivity.equals(HvacActivity.class)) {
+            Log.d(TAG, "Edit Hvac Service");
             customerData.updateHvacService(serviceId, contractor, description);
         } else if (originalActivity.equals(ElectricalActivity.class)) {
+            Log.d(TAG, "Edit Electrical Service");
             customerData.updateElectricalService(serviceId, contractor, description);
         } else {
             sendErrorMessage("Activity does not match");
