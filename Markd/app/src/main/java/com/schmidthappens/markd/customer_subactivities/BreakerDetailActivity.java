@@ -83,7 +83,9 @@ public class BreakerDetailActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        alertDialog.dismiss();
+        if(alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
+        }
     }
     @Override
     public boolean onSupportNavigateUp(){
