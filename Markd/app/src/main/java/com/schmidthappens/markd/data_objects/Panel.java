@@ -164,7 +164,6 @@ public class Panel {
         }
         if(breakerToDelete.equals(lastBreaker)) {
             breakerList.remove(breakerToDelete);
-            numberOfBreakers--;
         }
         else {
             //Reset to default values
@@ -252,7 +251,6 @@ public class Panel {
     }
 
     //MARK:- StringDefs
-
     //PanelAmperageConstants
     public static final String OneHundred = "100A";
     public static final String TwoHundred = "200A";

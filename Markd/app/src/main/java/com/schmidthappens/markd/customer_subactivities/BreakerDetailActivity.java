@@ -50,6 +50,7 @@ public class BreakerDetailActivity extends AppCompatActivity {
     private boolean isDoublePoleBottom;
     private String breakerAmperage;
 
+    AlertDialog alertDialog;
     private final String[] amperages = Breaker.getAmperageValues();
     private final String[] breakerTypes = Breaker.getBreakerTypeValues();
 
@@ -78,6 +79,11 @@ public class BreakerDetailActivity extends AppCompatActivity {
         if(customerData != null) {
             customerData.removeListeners();
         }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        alertDialog.dismiss();
     }
     @Override
     public boolean onSupportNavigateUp(){
@@ -202,23 +208,26 @@ public class BreakerDetailActivity extends AppCompatActivity {
         goBackToViewPanel();
     }
     private void showDeleteBreakerWarning() {
-        (new AlertDialog.Builder(this)
+        alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Delete Breaker")
-                .setMessage("This action can not be reversed. Are you sure you want to delete this breaker? ")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this breaker?")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked Cancel button
                         Log.d(TAG, "Cancel the breaker");
+                        dialog.dismiss();
                     }
                 })
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked Delete button
+                        Log.d(TAG, "Confirm breaker deletions");
                         deleteBreaker();
+                        dialog.dismiss();
                     }
                 })
-                .create())
-                .show();
+                .create();
+        alertDialog.show();
     }
     private void updateView() {
         NumberPickerUtilities.setPicker(amperageNumberPicker, breakerAmperage, amperages);

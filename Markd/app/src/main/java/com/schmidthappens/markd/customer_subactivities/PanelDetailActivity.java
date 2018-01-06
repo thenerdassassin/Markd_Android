@@ -1,9 +1,11 @@
 package com.schmidthappens.markd.customer_subactivities;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +46,7 @@ public class PanelDetailActivity extends AppCompatActivity {
     private boolean isContractorViewingPage;
     private int panelId;
     private boolean isNewPanel = false;
+    private int originalNumberOfBreakers;
 
     //XML Objects
     EditText panelDescription;
@@ -55,10 +58,10 @@ public class PanelDetailActivity extends AppCompatActivity {
     NumberPicker manufacturerNumberPicker;
     Button savePanelButton;
 
+    AlertDialog alertDialog;
     private final String[] panelManufacturers = Panel.getPanelManufacturers();
     private final String[] mainPanelAmperages = Panel.getMainPanelAmperageValues();
     private final String[] subPanelAmperages = Panel.getSubPanelAmperageValues();
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,13 @@ public class PanelDetailActivity extends AppCompatActivity {
         authentication.detachListener();
         if(customerData != null) {
             customerData.removeListeners();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
         }
     }
 
@@ -121,9 +131,8 @@ public class PanelDetailActivity extends AppCompatActivity {
                 panelDescription.setSelection(panelDescriptionString.length()); //Sets cursor to end of EditText
             }
 
-            if(intentThatStartedThisActivity.hasExtra("numberOfBreakers")) {
-                numberOfBreakers.setValue(intentThatStartedThisActivity.getIntExtra("numberOfBreakers", 1));
-            }
+            numberOfBreakers.setValue(intentThatStartedThisActivity.getIntExtra("numberOfBreakers", 1));
+            originalNumberOfBreakers = numberOfBreakers.getValue();
 
             if(intentThatStartedThisActivity.hasExtra("panelInstallDate")) {
                 panelInstallDate.setText(intentThatStartedThisActivity.getStringExtra("panelInstallDate"));
@@ -133,18 +142,17 @@ public class PanelDetailActivity extends AppCompatActivity {
                 amperageString = intentThatStartedThisActivity.getStringExtra("panelAmperage");
             }
 
-            if(intentThatStartedThisActivity.hasExtra("isMainPanel")) {
-                boolean isMainPanel = intentThatStartedThisActivity.getBooleanExtra("isMainPanel", true);
-                if(!isMainPanel) {
-                    isSubPanel.setChecked(true);
-                    setAsSubAmperages();
-                    NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, subPanelAmperages);
-                } else {
-                    isSubPanel.setChecked(false);
-                    setAsMainAmperages();
-                    NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, mainPanelAmperages);
-                }
+            boolean isMainPanel = intentThatStartedThisActivity.getBooleanExtra("isMainPanel", true);
+            if(!isMainPanel) {
+                isSubPanel.setChecked(true);
+                setAsSubAmperages();
+                NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, subPanelAmperages);
+            } else {
+                isSubPanel.setChecked(false);
+                setAsMainAmperages();
+                NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, mainPanelAmperages);
             }
+
 
             if(intentThatStartedThisActivity.hasExtra("manufacturer")) {
                 String manufacturer = intentThatStartedThisActivity.getStringExtra("manufacturer");
@@ -206,7 +214,6 @@ public class PanelDetailActivity extends AppCompatActivity {
             hideKeyboard(v);
             Log.i(TAG, "Save Panel");
             savePanel();
-            backToViewPanelActivity();
         }
     };
     @Override
@@ -293,7 +300,35 @@ public class PanelDetailActivity extends AppCompatActivity {
             panelToUpdate = customerData.getPanels().get(panelId);
         }
         panelToUpdate = panelToUpdate.updatePanel(panelDescriptionString, breakersNumber, !isSubPanelChecked, panelInstallDateString, panelAmpString, manufacturerString);
-        customerData.updatePanel(panelId, panelToUpdate);
+        if(originalNumberOfBreakers <= breakersNumber) {
+            customerData.updatePanel(panelId, panelToUpdate);
+            backToViewPanelActivity();
+        } else {
+            showDeleteBreakerWarning(panelToUpdate);
+        }
+    }
+    private void showDeleteBreakerWarning(final Panel newPanel) {
+        alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Delete Breakers")
+                .setMessage("This action will delete some breakers and can not be reversed. Are you sure you want to continue?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel update Panel");
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        Log.d(TAG, "Confirm update Panel");
+                        customerData.updatePanel(panelId, newPanel);
+                        dialog.dismiss();
+                        backToViewPanelActivity();
+                    }
+                })
+                .create();
+        alertDialog.show();
     }
     private void backToViewPanelActivity() {
         Context context = PanelDetailActivity.this;
