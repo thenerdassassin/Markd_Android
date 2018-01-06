@@ -121,37 +121,6 @@ public class ElectricalActivity extends AppCompatActivity {
         }
     };
 
-    public void deletePanel(int position) {
-        Log.i(TAG, "Delete Panel " + position);
-        showDeletePanelWarning(position);
-
-    }
-    public void showDeletePanelWarning(final int position) {
-        alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Delete Panel")
-                .setMessage("This action can not be reversed. Are you sure you want to delete this panel?")
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked Cancel button
-                        Log.d(TAG, "Cancel the panel deletion");
-                        dialog.dismiss();
-                    }
-                })
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User clicked Cancel button
-                        Log.d(TAG, "Delete the panel");
-                        customerData.removePanel(position);
-                        adapter.clear();
-                        adapter.addAll(customerData.getPanels());
-                        panelList.setAdapter(adapter);
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        alertDialog.show();
-    }
-
     private void initializeXMLObjects() {
         electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
         electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);

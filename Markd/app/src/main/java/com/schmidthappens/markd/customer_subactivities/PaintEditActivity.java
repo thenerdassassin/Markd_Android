@@ -4,8 +4,10 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -40,6 +42,7 @@ public class PaintEditActivity extends AppCompatActivity {
     EditText editBrand;
     EditText editColor;
     Button saveButton;
+    Button deleteButton;
 
     int paintId;
     boolean isExterior;
@@ -47,6 +50,7 @@ public class PaintEditActivity extends AppCompatActivity {
     private static final String TAG = "PaintEditActivity";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    private AlertDialog alertDialog;
     private String customerId;
 
     @Override
@@ -60,19 +64,17 @@ public class PaintEditActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if(intent != null) {
-            instantiateEditTextObjects();
+            instantiateXMLObjects();
             processIntentExtras(intent);
             customerData = new TempCustomerData(customerId, null);
+            setInstallDateButton.setOnClickListener(setPaintDateButtonClickListener);
+            saveButton.setOnClickListener(onSaveClickListener);
+            deleteButton.setOnClickListener(onDeleteClickListener);
         } else {
-            Log.e(TAG, "Intent is Null");
+            Log.e(TAG, "Intent or customerId is Null");
             goBackToPaintingActivity();
         }
-
-        setInstallDateButton.setOnClickListener(setPaintDateButtonClickListener);
-        saveButton.setOnClickListener(onSaveClickListener);
     }
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -82,7 +84,6 @@ public class PaintEditActivity extends AppCompatActivity {
             finish();
         }
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -91,7 +92,13 @@ public class PaintEditActivity extends AppCompatActivity {
             customerData.removeListeners();
         }
     }
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(alertDialog != null && alertDialog.isShowing()) {
+            alertDialog.dismiss();
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -101,7 +108,7 @@ public class PaintEditActivity extends AppCompatActivity {
         return false;
     }
 
-    private void instantiateEditTextObjects(){
+    private void instantiateXMLObjects(){
         editLocation = (EditText)findViewById(R.id.paint_edit_location);
         setEnterButtonToKeyboardDismissal(editLocation);
 
@@ -115,8 +122,8 @@ public class PaintEditActivity extends AppCompatActivity {
         setEnterButtonToKeyboardDismissal(editColor);
 
         saveButton = (Button)findViewById(R.id.paint_edit_save_button);
+        deleteButton = (Button)findViewById(R.id.paint_edit_delete_button);
     }
-
     private void processIntentExtras(Intent intent){
         paintId = intent.getIntExtra("id", -1);
         Log.d("TAG", "paintId:"+paintId);
@@ -153,7 +160,13 @@ public class PaintEditActivity extends AppCompatActivity {
             goBackToPaintingActivity();
         }
     };
-
+    private View.OnClickListener onDeleteClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            hideKeyboard(PaintEditActivity.this.getCurrentFocus());
+            showDeletePaintWarning();
+        }
+    };
     private View.OnClickListener setPaintDateButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -180,10 +193,39 @@ public class PaintEditActivity extends AppCompatActivity {
             customerData.updateInteriorPaintSurface(paintId, paintSurface);
         }
     }
-
+    private void showDeletePaintWarning() {
+        alertDialog = new android.support.v7.app.AlertDialog.Builder(this)
+                .setTitle("Delete Paint Surface")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this paint surface?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel the paint deletion");
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        Log.d(TAG, "Delete the paint surface");
+                        deletePaint();
+                        dialog.dismiss();
+                        goBackToPaintingActivity();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
+    private void deletePaint() {
+        if(isExterior) {
+            customerData.removeExteriorPaintSurface(paintId);
+        } else {
+            customerData.removeInteriorPaintSurface(paintId);
+        }
+    }
     private void goBackToPaintingActivity(){
         Intent paintingActivityIntent = new Intent(getApplicationContext(), PaintingActivity.class);
-        if(!customerId.equals(authentication.getCurrentUser().getUid())) {
+        if(customerId != null && !customerId.equals(authentication.getCurrentUser().getUid())) {
             paintingActivityIntent.putExtra("isContractor", true);
             paintingActivityIntent.putExtra("customerId", customerId);
         }
@@ -217,12 +259,10 @@ public class PaintEditActivity extends AppCompatActivity {
     private void changeInstallDate(int month, int day, int year) {
         editInstallDate.setText(StringUtilities.getDateString(month, day, year));
     }
-
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
     }
-
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginStart="30dp"
@@ -140,8 +140,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:textAlignment="center"/>
 
         <!-- Panel Manufacturer NumberPickers -->
@@ -150,21 +150,33 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:textAlignment="center"/>
     </LinearLayout>
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/electrical_save_panel_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:text="Save" />
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:layout_weight="1">
+        <!-- Save Button -->
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/electrical_delete_panel_button"
+            android:layout_height="wrap_content"
+            android:layout_width="130dp"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/delete"
+            android:text="Delete"/>
+        <!-- Delete Button -->
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/electrical_save_panel_button"
+            android:layout_height="wrap_content"
+            android:layout_width="130dp"
+            android:layout_marginStart="30dp"
+            android:text="Save"/>
+    </LinearLayout>
 
 
     <!-- Eating up some white space -->

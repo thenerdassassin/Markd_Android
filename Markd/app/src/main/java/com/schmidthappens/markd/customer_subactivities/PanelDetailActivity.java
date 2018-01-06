@@ -1,6 +1,5 @@
 package com.schmidthappens.markd.customer_subactivities;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -8,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -57,6 +57,7 @@ public class PanelDetailActivity extends AppCompatActivity {
     NumberPicker amperageNumberPicker;
     NumberPicker manufacturerNumberPicker;
     Button savePanelButton;
+    Button deletePanelButton;
 
     AlertDialog alertDialog;
     private final String[] panelManufacturers = Panel.getPanelManufacturers();
@@ -105,6 +106,7 @@ public class PanelDetailActivity extends AppCompatActivity {
         amperageNumberPicker = (NumberPicker) findViewById(R.id.panel_amperage_spinner);
         manufacturerNumberPicker = (NumberPicker) findViewById(R.id.panel_manufacturer_spinner);
         savePanelButton = (Button)findViewById(R.id.electrical_save_panel_button);
+        deletePanelButton = (Button)findViewById(R.id.electrical_delete_panel_button);
 
         setEnterButtonToKeyboardDismissal(panelDescription);
         setUpNumberPickers();
@@ -145,10 +147,12 @@ public class PanelDetailActivity extends AppCompatActivity {
             boolean isMainPanel = intentThatStartedThisActivity.getBooleanExtra("isMainPanel", true);
             if(!isMainPanel) {
                 isSubPanel.setChecked(true);
+                NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, subPanelAmperages);
                 setAsSubAmperages();
                 NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, subPanelAmperages);
             } else {
                 isSubPanel.setChecked(false);
+                NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, mainPanelAmperages);
                 setAsMainAmperages();
                 NumberPickerUtilities.setPicker(amperageNumberPicker, amperageString, mainPanelAmperages);
             }
@@ -173,16 +177,19 @@ public class PanelDetailActivity extends AppCompatActivity {
         setAsMainAmperages();
     }
     private void setAsMainAmperages() {
-        amperageNumberPicker.setMaxValue(mainPanelAmperages.length-1);
+        amperageNumberPicker.setValue(0);
         amperageNumberPicker.setDisplayedValues(mainPanelAmperages);
+        amperageNumberPicker.setMaxValue(mainPanelAmperages.length-1);
     }
     private void setAsSubAmperages() {
+        amperageNumberPicker.setValue(0);
         amperageNumberPicker.setMaxValue(subPanelAmperages.length-1);
         amperageNumberPicker.setDisplayedValues(subPanelAmperages);
     }
     private void setClickListeners() {
         setPanelInstallDateButton.setOnClickListener(panelInstallDateButtonClickListener);
         savePanelButton.setOnClickListener(onSaveClicked);
+        deletePanelButton.setOnClickListener(onDeleteClicked);
         isSubPanel.setOnClickListener(isSubPanelClick);
     }
 
@@ -214,6 +221,14 @@ public class PanelDetailActivity extends AppCompatActivity {
             hideKeyboard(v);
             Log.i(TAG, "Save Panel");
             savePanel();
+        }
+    };
+    private View.OnClickListener onDeleteClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            hideKeyboard(v);
+            Log.i(TAG, "Delete Panel");
+            deletePanel(panelId);
         }
     };
     @Override
@@ -325,6 +340,34 @@ public class PanelDetailActivity extends AppCompatActivity {
                         customerData.updatePanel(panelId, newPanel);
                         dialog.dismiss();
                         backToViewPanelActivity();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
+    public void deletePanel(int position) {
+        Log.i(TAG, "Delete Panel " + position);
+        showDeletePanelWarning(position);
+
+    }
+    public void showDeletePanelWarning(final int position) {
+        alertDialog = new android.support.v7.app.AlertDialog.Builder(this)
+                .setTitle("Delete Panel")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this panel?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel the panel deletion");
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Delete the panel");
+                        customerData.removePanel(position);
+                        dialog.dismiss();
+                        backToElectricalActivity();
                     }
                 })
                 .create();
