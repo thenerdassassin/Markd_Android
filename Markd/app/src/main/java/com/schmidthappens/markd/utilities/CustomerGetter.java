@@ -7,6 +7,7 @@ import com.schmidthappens.markd.data_objects.Customer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -31,6 +32,14 @@ public class CustomerGetter {
                 customers.add(customer.getValue(Customer.class));
             }
         }
+        Collections.sort(customers, new LastNameComparator());
         return customers;
+    }
+
+    private static class LastNameComparator implements Comparator<Customer> {
+        @Override
+        public int compare(Customer o1, Customer o2) {
+            return o1.getLastName().compareToIgnoreCase(o2.getLastName());
+        }
     }
 }
