@@ -146,6 +146,9 @@ public class NavigationDrawerInitializer {
             case "Settings":
                 intentToReturn = new Intent(context, SettingsActivity.class);
                 break;
+            case "Help":
+                intentToReturn = new Intent(context, MainActivity.class); //TODO: Change to HelpActivity
+                break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);
         }
@@ -162,6 +165,9 @@ public class NavigationDrawerInitializer {
                 break;
             case"Settings":
                 intentToReturn = new Intent(context, ContractorMainActivity.class);
+                break;
+            case "Help":
+                intentToReturn = new Intent(context, MainActivity.class); //TODO: Change to HelpActivity
                 break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);

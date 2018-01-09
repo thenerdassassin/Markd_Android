@@ -8,11 +8,10 @@
         <item>HVAC</item>
         <item>Electrical</item>
         <item>Painting</item>
-        <!-- Coming soon!-->
-        <!--<item>FAQs</item>-->
         <item>Notifications</item>
         <item>Settings</item>
         <item>Sign Out</item>
+        <item>Help</item>
     </string-array>
 
     <string-array name="contractor_menu_options">
@@ -20,6 +19,7 @@
         <item>Customers</item>
         <item>Settings</item>
         <item>Sign Out</item>
+        <item>Help</item>
     </string-array>
 
     <string-array name="menu_icons">
@@ -28,10 +28,10 @@
         <item>ic_action_hvac</item>
         <item>ic_action_electrical</item>
         <item>ic_action_painter</item>
-        <!--<item>ic_action_faqs</item>-->
         <item>ic_action_notifications</item>
         <item>ic_action_settings</item>
         <item>ic_action_sign_out</item>
+        <item>ic_action_help</item>
     </string-array>
 
     <string-array name="contractor_menu_icons">
@@ -39,6 +39,7 @@
         <item>ic_action_customers</item>
         <item>ic_action_settings</item>
         <item>ic_action_sign_out</item>
+        <item>ic_action_help</item>
     </string-array>
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer closed</string>
