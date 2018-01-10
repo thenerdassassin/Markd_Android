@@ -43,7 +43,7 @@ public class ActionBarInitializer {
 
     // Mark: SetUp Function
     private void setTopBar() {
-        if(isCustomerPage && !userType.equals("customer")) {
+        if(isCustomerPage && !userType.equalsIgnoreCase("customer")) {
             setUpBackButton();
         } else {
             setUpActionBar();

@@ -15,6 +15,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
+import com.schmidthappens.markd.customer_menu_activities.HelpActivity;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
@@ -148,8 +149,7 @@ public class NavigationDrawerInitializer {
                 intentToReturn = new Intent(context, SettingsActivity.class);
                 break;
             case "Help":
-                SendEmail.sendMessage(context, "markdhelp@markd.com", "Testing the new encoding feature", null, null);
-                intentToReturn = new Intent(context, MainActivity.class); //TODO: Change to HelpActivity
+                intentToReturn = new Intent(context, HelpActivity.class);
                 break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);
@@ -166,10 +166,10 @@ public class NavigationDrawerInitializer {
                 intentToReturn = new Intent(context, ContractorCustomersActivity.class);
                 break;
             case"Settings":
-                intentToReturn = new Intent(context, ContractorMainActivity.class);
+                intentToReturn = new Intent(context, ContractorMainActivity.class); //TODO: implement SettingsActivity
                 break;
             case "Help":
-                intentToReturn = new Intent(context, MainActivity.class); //TODO: Change to HelpActivity
+                intentToReturn = new Intent(context, HelpActivity.class);
                 break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);

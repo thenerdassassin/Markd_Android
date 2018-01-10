@@ -132,6 +132,11 @@
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
 
+        <!-- Help -->
+        <activity android:name=".customer_menu_activities.HelpActivity"
+            android:value=".customer_menu_activities.HelpActivity"
+            android:launchMode="singleTop" />
+
      <!-- Contractor Pages -->
         <activity
             android:name=".contractor_user_activities.ContractorMainActivity"

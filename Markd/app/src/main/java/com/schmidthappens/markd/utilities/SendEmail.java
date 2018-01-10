@@ -46,20 +46,7 @@ public class SendEmail {
         }
 
         // Request a JSONOBject response from the provided URL.
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                // display response
-                Log.d(TAG, response.toString());
-            }
-        }, new Response.ErrorListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, error.toString());
-                error.printStackTrace();
-            }
-        }) {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null, successListener, errorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 try {
@@ -75,7 +62,6 @@ public class SendEmail {
                 return super.getParams();
             }
         };
-
         queue.add(request);
     }
 
@@ -88,7 +74,6 @@ public class SendEmail {
         }
         return url;
     }
-
     private static String addQueryParam(String url, String param, String value) throws IOException{
         if(!url.contains("?")) {
             return url + "?" + encodedString(param) + "=" + encodedString(value);
@@ -96,7 +81,6 @@ public class SendEmail {
             return url + "&" + encodedString(param) + "=" + encodedString(value);
         }
     }
-
     private static String encodedString(String valueToEncode) throws IOException {
         return URLEncoder.encode(valueToEncode, "UTF-8");
     }
