@@ -23,6 +23,7 @@ import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
+import com.schmidthappens.markd.utilities.SendEmail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,6 +148,7 @@ public class NavigationDrawerInitializer {
                 intentToReturn = new Intent(context, SettingsActivity.class);
                 break;
             case "Help":
+                SendEmail.sendMessage(context, "markdhelp@markd.com", "Testing the new encoding feature", null, null);
                 intentToReturn = new Intent(context, MainActivity.class); //TODO: Change to HelpActivity
                 break;
             default:
