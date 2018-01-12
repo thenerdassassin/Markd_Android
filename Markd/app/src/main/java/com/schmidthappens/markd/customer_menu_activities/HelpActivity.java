@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -31,8 +32,18 @@ public class HelpActivity extends AppCompatActivity {
     private FirebaseAuthentication authentication;
     private String userEmail;
 
+    private TextView helpText;
     private EditText userMessage;
-    private Button saveButton;
+    private Button sendButton;
+
+    private String helpString = "We are happy to here from the the people who make Markd great, YOU! \n" +
+                                "\n" +
+                                "Please don't be shy to ask for help or if there is something new you want us to add let us know!\n" +
+                                "\n" +
+                                "Thanks again for using Markd!\n" +
+                                "\n" +
+                                "Sincerly,\n" +
+                                "The Markd Support Team";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,26 +88,36 @@ public class HelpActivity extends AppCompatActivity {
         super.onStop();
         authentication.detachListener();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        //do not give the EditText focus automatically when activity starts
+        userMessage.clearFocus();
+        helpText.requestFocus();
+    }
     private void initializeXmlObjects() {
+        helpText = (TextView)findViewById(R.id.help_text);
+        helpText.setText(helpString);
         userMessage = (EditText)findViewById(R.id.help_message);
-        saveButton = (Button)findViewById(R.id.help_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(StringUtilities.isNullOrEmpty(userMessage.getText().toString())) {
-                    Toast.makeText(HelpActivity.this, "Message is empty", Toast.LENGTH_SHORT).show();
-                } else {
-                    sendMessage();
-                }
-            }
-        });
+        sendButton = (Button)findViewById(R.id.help_send_button);
+        sendButton.setOnClickListener(sendButtonClickListener);
     }
 
+    private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(StringUtilities.isNullOrEmpty(userMessage.getText().toString())) {
+                Toast.makeText(HelpActivity.this, "Message is empty", Toast.LENGTH_SHORT).show();
+            } else {
+                sendMessage();
+            }
+        }
+    };
     private void sendMessage() {
         SendEmail.sendMessage(this, userEmail, userMessage.getText().toString(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                // display response
+                // Display response
                 Log.d(TAG, response.toString());
                 Toast.makeText(HelpActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
                 HelpActivity.this.finish();
@@ -110,7 +131,6 @@ public class HelpActivity extends AppCompatActivity {
         });
 
     }
-
     private void somethingWentWrong(String logMessage) {
         Log.d(TAG, logMessage);
         Toast.makeText(HelpActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
