@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.file_storage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -34,7 +35,7 @@ public class MarkdFirebaseStorage {
         return reference.putFile(file);
     }
 
-    public static void loadImage(final Context context, String path, final ImageView imageView, final ImageLoadingListener listener) {
+    public static void loadImage(final Activity context, String path, final ImageView imageView, final ImageLoadingListener listener) {
         if(listener != null) {
             listener.onStart();
         }
@@ -57,18 +58,20 @@ public class MarkdFirebaseStorage {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
                 // Load the image using Glide
-                Glide.with(context)
-                        .using(new FirebaseImageLoader())
-                        .load(storageReference)
-                        .into(imageView);
-                if(listener != null) {
-                    listener.onSuccess();
+                if(!context.isDestroyed()) {
+                    Glide.with(context)
+                            .using(new FirebaseImageLoader())
+                            .load(storageReference)
+                            .into(imageView);
+                    if (listener != null) {
+                        listener.onSuccess();
+                    }
                 }
             }
         });
     }
 
-    public static void updateImage(final Context context, final String path, final Uri file, final ImageView imageView, final ImageLoadingListener listener) {
+    public static void updateImage(final Activity context, final String path, final Uri file, final ImageView imageView, final ImageLoadingListener listener) {
         if(listener != null) {
             listener.onStart();
         }
