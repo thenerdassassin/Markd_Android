@@ -37,7 +37,7 @@ public class ZipCodeUtilities {
             url += "/radius.json/" + zipCode + "/" + radius + "/miles";
         }
 
-        // Request a string response from the provided URL.
+        // Request a JsonObject response from the provided URL.
         JsonObjectRequest request = new JsonObjectRequest(url, null, successListener, errorListener);
 
         // Add the request to the RequestQueue.

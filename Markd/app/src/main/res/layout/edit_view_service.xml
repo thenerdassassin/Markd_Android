@@ -42,7 +42,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         android:layout_weight="1">
-        <!-- Save Button -->
+        <!-- Delete Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/service_edit_delete_button"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
             android:textColor="@android:color/white"
             app:backgroundTint="@color/delete"
             android:text="Delete"/>
-        <!-- Delete Button -->
+        <!-- Save Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/service_edit_save_button"
             android:layout_height="wrap_content"

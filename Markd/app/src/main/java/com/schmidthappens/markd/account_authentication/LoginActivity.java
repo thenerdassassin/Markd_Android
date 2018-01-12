@@ -272,7 +272,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             showProgress(false);
                             if (dataSnapshot.getValue() != null) {
                                 String userType = dataSnapshot.getValue().toString();
-                                if(userType.equals("customer")) {
+                                if(userType.equalsIgnoreCase("customer")) {
                                     Intent goToMainActivity = new Intent(activity, MainActivity.class);
                                     startActivity(goToMainActivity);
                                     finish();
