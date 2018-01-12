@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.view_initializers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -24,7 +25,7 @@ import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 public class ContractorFooterViewInitializer {
     private static final String TAG = "FooterViewInitializer";
 
-    public static View createFooterView(final Context ctx, String contractor, String phone, final String websiteUrl, String photoPath) {
+    public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
         View v = vi.inflate(R.layout.view_footer, null);
