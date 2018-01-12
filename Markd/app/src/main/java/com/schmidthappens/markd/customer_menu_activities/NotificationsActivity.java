@@ -21,6 +21,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.CustomerNotificationMessage;
+import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseMessagingService;
 import com.schmidthappens.markd.utilities.NotificationHandler;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
@@ -56,6 +57,7 @@ public class NotificationsActivity extends AppCompatActivity {
         if(authentication.getCurrentUser() != null) {
             getNotifications(authentication.getCurrentUser().getUid());
         }
+        MarkdFirebaseMessagingService.resetBadgeCount();
     }
     @Override
     public void onStop() {

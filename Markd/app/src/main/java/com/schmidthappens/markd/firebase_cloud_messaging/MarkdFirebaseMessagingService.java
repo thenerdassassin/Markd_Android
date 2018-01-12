@@ -21,12 +21,15 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 /**
  * Created by joshua.schmidtibm.com on 11/24/17.
  */
 
 public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMessagingSvc";
+    private static int badgeCount = 0;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -34,6 +37,8 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            ShortcutBadger.applyCount(getApplicationContext(), badgeCount++);
+            Log.d(TAG, "BadgeCount - " + badgeCount);
             sendNotification(remoteMessage.getNotification().getBody());
         }
     }
@@ -80,7 +85,13 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.enableVibration(true);
+            notificationChannel.setShowBadge(true);
             notificationManager.createNotificationChannel(notificationChannel);
         }
+    }
+
+    public static void resetBadgeCount() {
+        Log.d(TAG, "BadgeCount - " + badgeCount);
+        badgeCount = 0;
     }
 }

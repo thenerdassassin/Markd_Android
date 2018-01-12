@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:11.4.2'
     implementation 'com.firebaseui:firebase-ui-storage:2.1.0'
     implementation 'com.android.volley:volley:1.0.0'
+    implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
 
     testImplementation 'junit:junit:4.12'
 }
