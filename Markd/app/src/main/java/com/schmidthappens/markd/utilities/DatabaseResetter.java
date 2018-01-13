@@ -321,7 +321,7 @@ public class DatabaseResetter {
                 .setValue(TempCustomerData.makeCustomer());
 
         ArrayList<String> customers = new ArrayList<>();
-        customers.set(0, "R1EyDxbQK3Uf8ohZDNrazgM4FVc2");
+        customers.add("R1EyDxbQK3Uf8ohZDNrazgM4FVc2");
         userReference.child("s5VWMQvH17ZJnVqxtOkqvWpufmu2").setValue(new Contractor("632e4355-612f-4ab6-a206-7d2586048b5f")
                 .setCustomers(customers)
                 .setFirstName("Mario")

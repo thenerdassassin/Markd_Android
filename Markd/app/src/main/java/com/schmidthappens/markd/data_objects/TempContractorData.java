@@ -64,7 +64,7 @@ public class TempContractorData {
         userReference.removeEventListener(valueEventListener);
     }
 
-    private Contractor contractor;
+    private static Contractor contractor;
     private Contractor getContractor() {
         return contractor;
     }
@@ -82,76 +82,6 @@ public class TempContractorData {
     private void removeFromOldZipCode(String zipCode) {
         Log.i(TAG, "Removing Contractor from Zipcode:" + zipCode);
         database.child("zip_codes").child(zipCode).child(uid).removeValue();
-    }
-
-    //Mark:- initial methods to remove when http calls are implemented
-    private JSONObject initialContractorDetails() {
-        JSONObject contractor = new JSONObject();
-        try {
-            contractor.put("companyName", "SDR Plumbing & Heating Inc");
-            contractor.put("telephoneNumber", "203.348.2295");
-            contractor.put("websiteUrl", "sdrplumbing.com");
-            contractor.put("profession", "plumber");
-            contractor.put("zipCode", "06903");
-        } catch(JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-        }
-        return contractor;
-    }
-    private JSONArray initialCustomerList() {
-        JSONArray customerArray = new JSONArray();
-        try {
-            JSONObject customer1 = new JSONObject();
-            customer1.put("namePrefix", "Mr.");
-            customer1.put("firstName", "Joshua");
-            customer1.put("lastName", "Schmidt");
-            customer1.put("nameSuffix", "");
-            customer1.put("maritalStatus", "MARRIED");
-            customer1.put("address", (new JSONObject()
-                    .put("street", "1571 Day Street")
-                    .put("state", "WI")
-                    .put("zipCode", "54126")
-                    .put("city", "Greenleaf")));
-            customerArray.put(customer1);
-
-            JSONObject customer2 = new JSONObject();
-            customer2.put("firstName", "Tiger");
-            customer2.put("lastName", "Woods");
-            customer2.put("maritalStatus", "single");
-            customer2.put("address", (new JSONObject()
-                    .put("street", "135 Maple Tree Hill Rd")
-                    .put("state", "CT")
-                    .put("zipCode", "06214")
-                    .put("city", "Oxford")));
-            customerArray.put(customer2);
-
-            JSONObject customer3 = new JSONObject();
-            customer3.put("firstName", "Bobby");
-            customer3.put("lastName", "Burt");
-            customer3.put("maritalStatus", "single");
-            customer3.put("address", (new JSONObject()
-                    .put("street", "800 Discovery Way Apt 824")
-                    .put("state", "NC")
-                    .put("zipCode", "27703")
-                    .put("city", "Durham")));
-            customerArray.put(customer3);
-
-            JSONObject customer4 = new JSONObject();
-            customer4.put("firstName", "Dirk");
-            customer4.put("lastName", "Smithsonian");
-            customer4.put("maritalStatus", "MARRIED");
-            customer4.put("address", (new JSONObject()
-                    .put("street", "1234 Mainish Street")
-                    .put("state", "NY")
-                    .put("zipCode", "34567")
-                    .put("city", "Buffalo")));
-            customerArray.put(customer4);
-
-        } catch(JSONException exception) {
-            Log.e(TAG, exception.getMessage());
-            return customerArray;
-        }
-        return customerArray;
     }
 
     //Mark:- Home Page
@@ -234,6 +164,27 @@ public class TempContractorData {
     }
 
     //Mark:- Settings Page
+    public String getNamePrefix() {
+        if(contractor != null) {
+            return contractor.getNamePrefix();
+        } else {
+            return "";
+        }
+    }
+    public String getFirstName() {
+        if(contractor != null) {
+            return contractor.getFirstName();
+        } else {
+            return "";
+        }
+    }
+    public String getLastName() {
+        if(contractor != null) {
+            return contractor.getLastName();
+        } else {
+            return "";
+        }
+    }
     public void updateProfile(String namePrefix, String firstName, String lastName, String contractorType) {
         if(contractor == null) {
             Log.d(TAG, "customer null");

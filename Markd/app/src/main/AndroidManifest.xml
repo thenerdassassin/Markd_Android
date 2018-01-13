@@ -159,6 +159,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".contractor_user_activities.ContractorCustomersActivity" />
         </activity>
+        <activity
+            android:name=".contractor_user_activities.ContractorSettingsActivity"
+            android:value=".contractor_user_activities.ContractorSettingsActivity"
+            android:launchMode="singleTop"/>
 
         <!-- FCM Messaging -->
         <service android:name=".firebase_cloud_messaging.MarkdFirebaseMessagingService"
