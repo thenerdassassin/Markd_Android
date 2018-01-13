@@ -41,6 +41,16 @@ public class NotificationHandler {
         });
     }
 
+    public static void sendNotifications(List<String> customers, final String message, final String companyFrom) {
+        if(!StringUtilities.isNullOrEmpty(message) && !StringUtilities.isNullOrEmpty(companyFrom) && customers != null) {
+            for (String customer : customers) {
+                if (!StringUtilities.isNullOrEmpty(customer)) {
+                    sendNotification(customer, message, companyFrom);
+                }
+            }
+        }
+    }
+
     public static boolean getNotifications(String customerId, ValueEventListener listener) {
         if(StringUtilities.isNullOrEmpty(customerId) || listener == null) {
             return false;

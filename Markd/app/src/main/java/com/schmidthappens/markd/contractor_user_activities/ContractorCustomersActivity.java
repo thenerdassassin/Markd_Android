@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.contractor_user_activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     TempContractorData contractorData;
     private RecyclerView customerRecyclerView;
     private TextView noCustomerTextView;
+    private Button messageAll;
     private final String[] alertDialogOptions = {
             "Send Push Notification",
             "Edit Customer Page"
@@ -52,8 +55,8 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
         setContentView(R.layout.contractor_customers_view);
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, false, "contractor");
-        customerRecyclerView = (RecyclerView)findViewById(R.id.contractor_customers_recycler_view);
-        noCustomerTextView = (TextView)findViewById(R.id.contractor_customers_empty_list);
+        initializeXmlObjects();
+
     }
 
     @Override
@@ -67,13 +70,18 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
         }
         contractorData = new TempContractorData((authentication.getCurrentUser().getUid()), new ContractorCustomersActivity.ContractorCustomersGetDataListener());
     }
-
     @Override
     public void onStop() {
         super.onStop();
         authentication.detachListener();
     }
 
+    private void initializeXmlObjects() {
+        customerRecyclerView = (RecyclerView)findViewById(R.id.contractor_customers_recycler_view);
+        noCustomerTextView = (TextView)findViewById(R.id.contractor_customers_empty_list);
+        messageAll = (Button)findViewById(R.id.contractor_customers_message_all);
+        messageAll.setOnClickListener(messageAllClickListener);
+    }
     private void setUpRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -160,4 +168,10 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
             Log.e(TAG, databaseError.toString());
         }
     }
+    private View.OnClickListener messageAllClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            startActivity(new Intent(ContractorCustomersActivity.this, SendNotificationsActivity.class));
+        }
+    };
 }
