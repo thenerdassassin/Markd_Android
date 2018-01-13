@@ -37,8 +37,6 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            ShortcutBadger.applyCount(getApplicationContext(), badgeCount++);
-            Log.d(TAG, "BadgeCount - " + badgeCount);
             sendNotification(remoteMessage.getNotification().getBody());
         }
     }
@@ -63,12 +61,13 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
         } else if(Build.VERSION.SDK_INT < 26 && notificationManager != null) {
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.add_button_round_black)
+                            .setSmallIcon(R.drawable.ic_contractor_notification)
                             .setContentTitle("Contractor Notification")
                             .setContentText(messageBody)
                             .setAutoCancel(true)
                             .setDefaults(Notification.DEFAULT_SOUND);
 
+            notificationManager.notify(0, notificationBuilder.build());
         } else {
             Log.d(TAG, "notificationManager null");
         }
@@ -90,8 +89,16 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    public static void resetBadgeCount() {
+    public static void resetBadgeCount(Context context) {
         Log.d(TAG, "BadgeCount - " + badgeCount);
         badgeCount = 0;
+        ShortcutBadger.applyCount(context, badgeCount);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ShortcutBadger.applyCount(MarkdFirebaseMessagingService.this, ++badgeCount);
+        Log.d(TAG, "BadgeCount - " + badgeCount);
     }
 }

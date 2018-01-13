@@ -57,7 +57,7 @@ public class NotificationsActivity extends AppCompatActivity {
         if(authentication.getCurrentUser() != null) {
             getNotifications(authentication.getCurrentUser().getUid());
         }
-        MarkdFirebaseMessagingService.resetBadgeCount();
+        MarkdFirebaseMessagingService.resetBadgeCount(this);
     }
     @Override
     public void onStop() {
