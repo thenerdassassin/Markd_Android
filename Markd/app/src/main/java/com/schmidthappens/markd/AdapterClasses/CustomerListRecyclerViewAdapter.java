@@ -11,7 +11,10 @@ import android.widget.TextView;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.utilities.CustomerSelectedInterface;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -29,6 +32,31 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
         this.context = context;
         this.customerList = customerList;
         this.customerReferenceList = customerReferenceList;
+    }
+
+    public CustomerListRecyclerViewAdapter(Context context, List<Customer> customerList, List<String> customerReferenceList, String lastName) {
+        this.context = context;
+        this.customerList = new ArrayList<>();
+        this.customerList.addAll(customerList);
+        this.customerReferenceList = new ArrayList<>();
+        this.customerReferenceList.addAll(customerReferenceList);
+        filterListByLastName(lastName);
+    }
+
+    private void filterListByLastName(String lastName) {
+        if(customerList != null) {
+            Iterator<String> referenceIterator = customerReferenceList.iterator();
+            for (Iterator<Customer> customerIterator = customerList.iterator(); customerIterator.hasNext();) {
+                Customer customer = customerIterator.next();
+                referenceIterator.next();
+                if (customer != null && !StringUtilities.isNullOrEmpty(customer.getLastName())) {
+                    if(!customer.getLastName().toLowerCase().contains(lastName.toLowerCase())) {
+                        customerIterator.remove();
+                        referenceIterator.remove();
+                    }
+                }
+            }
+        }
     }
 
     @Override

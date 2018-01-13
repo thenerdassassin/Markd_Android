@@ -92,7 +92,7 @@ public class StringUtilities {
     }
 
     public static boolean isNullOrEmpty(String string) {
-        return (string == null || string.isEmpty());
+        return (string == null || string.isEmpty() || string.replace(" ", "").isEmpty());
     }
 
     private static boolean isNotNullOrEmpty(String string) {

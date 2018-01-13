@@ -18,13 +18,33 @@
             <!-- Message All Button -->
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/contractor_customers_message_all"
-                android:layout_gravity="end"
+                android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 android:layout_width="130dp"
                 android:layout_marginTop="20dp"
                 android:textColor="@android:color/white"
                 app:backgroundTint="@color/hyperlink"
                 android:text="Message All"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:textAppearanceSmall"
+                android:gravity="center"
+                android:text="- or -"
+                android:textStyle="bold"/>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/customer_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Filter by Last Name"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1" />
+
+            </android.support.design.widget.TextInputLayout>
             <!-- Customers Title -->
             <RelativeLayout
                 android:layout_width="match_parent"
