@@ -15,6 +15,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
+import com.schmidthappens.markd.contractor_user_activities.ContractorSettingsActivity;
 import com.schmidthappens.markd.customer_menu_activities.HelpActivity;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
@@ -166,7 +167,7 @@ public class NavigationDrawerInitializer {
                 intentToReturn = new Intent(context, ContractorCustomersActivity.class);
                 break;
             case"Settings":
-                intentToReturn = new Intent(context, ContractorMainActivity.class); //TODO: implement SettingsActivity
+                intentToReturn = new Intent(context, ContractorSettingsActivity.class);
                 break;
             case "Help":
                 intentToReturn = new Intent(context, HelpActivity.class);

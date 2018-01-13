@@ -169,7 +169,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             if(!isNewAccount) {
                 if(intent.hasExtra("namePrefix")) {
                     NumberPickerUtilities.setPicker(namePrefixPicker, intent.getStringExtra("namePrefix"), namePrefixArray);
-                    //setPicker(namePrefixPicker, intent.getStringExtra("namePrefix"), namePrefixArray); //TODO: test and remove
                 }
                 if(intent.hasExtra("firstName")) {
                     firstName.setText(intent.getStringExtra("firstName"));
@@ -181,7 +180,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                     //Customer
                     maritalStatusPicker.setVisibility(View.VISIBLE);
                     NumberPickerUtilities.setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray);
-                    //setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray); //TODO: test and remove
                 } else {
                     //Contractor
                     maritalStatusPicker.setVisibility(View.GONE);
@@ -190,7 +188,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                     //Contractor
                     contractorTypePicker.setVisibility(View.VISIBLE);
                     NumberPickerUtilities.setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray);
-                    //setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray); //TODO: test and remove
                 } else {
                     //Customer
                     contractorTypePicker.setVisibility(View.GONE);
@@ -270,18 +267,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         });
     }
-
-    //Mark:- Helper functions //TODO: test and remove
-    /*
-    private void setPicker(NumberPicker picker, String toSetTo, String[] array) {
-        for(int i = 0; i < array.length; i++) {
-            if(array[i].equals(toSetTo)) {
-                picker.setValue(i);
-                break;
-            }
-        }
-    }
-    */
     private void checkCredential(final FirebaseUser user, AuthCredential credential) {
         user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -319,7 +304,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         if(userType == null) {
             userType = "Home Owner";
         }
-        if(userType.equals("Home Owner") || userType.equals("customer")) {
+        if(userType.equalsIgnoreCase("Home Owner") || userType.equalsIgnoreCase("customer")) {
             TempCustomerData customerData = new TempCustomerData(authentication, null);
             customerData.updateProfile(
                     namePrefixArray[namePrefixPicker.getValue()],
@@ -328,8 +313,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     maritalStatusArray[maritalStatusPicker.getValue()]
             );
         } else {
-            //Create Contractor Account
-            TempContractorData contractorData = new TempContractorData(authentication, null);
+            TempContractorData contractorData = new TempContractorData(authentication.getCurrentUser().getUid(), null);
             contractorData.updateProfile(
                     namePrefixArray[namePrefixPicker.getValue()],
                     firstName.getText().toString(),
@@ -340,7 +324,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
     private void closeActivity() {
         Intent goToNextActivity;
-        if(userType != null && userType.equals("Contractor")) {
+        if(userType != null && userType.equalsIgnoreCase("Contractor")) {
             goToNextActivity = new Intent(ProfileEditActivity.this, ContractorMainActivity.class);
         } else {
             if(isNewAccount) {
