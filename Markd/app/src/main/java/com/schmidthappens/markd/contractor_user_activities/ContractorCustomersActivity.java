@@ -10,8 +10,10 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +45,10 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     TempContractorData contractorData;
     private RecyclerView customerRecyclerView;
     private TextView noCustomerTextView;
+    private EditText customerFilter;
     private Button messageAll;
+    private List<Customer> customers;
+    private List<String> customerReferences;
     private final String[] alertDialogOptions = {
             "Send Push Notification",
             "Edit Customer Page"
@@ -58,7 +63,6 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
         initializeXmlObjects();
 
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -79,6 +83,17 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     private void initializeXmlObjects() {
         customerRecyclerView = (RecyclerView)findViewById(R.id.contractor_customers_recycler_view);
         noCustomerTextView = (TextView)findViewById(R.id.contractor_customers_empty_list);
+        customerFilter = (EditText)findViewById(R.id.customer_filter);
+        customerFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                String lastNameFilter = textView.getText().toString();
+                Log.d(TAG, "LastName - " +textView.getText().toString());
+                customerRecyclerView.setAdapter(new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences, lastNameFilter));
+                Log.d(TAG, "Customers size:" + customers.size());
+                return false;
+            }
+        });
         messageAll = (Button)findViewById(R.id.contractor_customers_message_all);
         messageAll.setOnClickListener(messageAllClickListener);
     }
@@ -88,14 +103,14 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
         customerRecyclerView.setLayoutManager(layoutManager);
         customerRecyclerView.setHasFixedSize(true);
         customerRecyclerView.addItemDecoration(new DividerItemDecoration(ContractorCustomersActivity.this, DividerItemDecoration.VERTICAL));
-        final List<String> customerReferences = contractorData.getCustomers();
+        customerReferences = contractorData.getCustomers();
         if(customerReferences != null && customerReferences.size() > 0) {
             noCustomerTextView.setVisibility(View.GONE);
             FirebaseDatabase.getInstance().getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.v(TAG, dataSnapshot.toString());
-                    List<Customer> customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
+                    customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
                     customerRecyclerView.setAdapter(
                             new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences)
                     );
