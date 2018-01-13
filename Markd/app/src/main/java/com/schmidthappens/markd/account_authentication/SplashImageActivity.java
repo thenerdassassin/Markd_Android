@@ -14,6 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
+import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
+import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseMessagingService;
 
 /**
  * Created by Josh on 8/9/2017.
@@ -51,8 +53,13 @@ public class SplashImageActivity extends AppCompatActivity {
             if (dataSnapshot.getValue() != null) {
                 String userType = dataSnapshot.getValue().toString();
                 if (userType.equals("customer")) {
-                    Intent mainIntent = new Intent(SplashImageActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
+                    if(MarkdFirebaseMessagingService.hasNotifications()) {
+                        Intent mainIntent = new Intent(SplashImageActivity.this, NotificationsActivity.class);
+                        startActivity(mainIntent);
+                    } else {
+                        Intent mainIntent = new Intent(SplashImageActivity.this, MainActivity.class);
+                        startActivity(mainIntent);
+                    }
                     finish();
                 } else {
                     Intent contractorMainIntent = new Intent(SplashImageActivity.this, ContractorMainActivity.class);

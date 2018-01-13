@@ -20,6 +20,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
+import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -31,6 +32,12 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMessagingSvc";
     private static int badgeCount = 0;
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        ShortcutBadger.applyCount(MarkdFirebaseMessagingService.this, ++badgeCount);
+        Log.d(TAG, "BadgeCount - " + badgeCount);
+    }
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -44,6 +51,7 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
     @SuppressWarnings("deprecation")
     private void sendNotification(String messageBody) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        PendingIntent intentToOpenNotificationActivity = createNotificationActivityPendingIntent();
 
         if(Build.VERSION.SDK_INT >= 26 && notificationManager != null) {
             if(notificationManager.getNotificationChannel("contractorChannel") == null) {
@@ -55,7 +63,8 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
                             .setContentTitle("Contractor Notification")
                             .setContentText(messageBody)
                             .setAutoCancel(true)
-                            .setDefaults(Notification.DEFAULT_SOUND);
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setContentIntent(intentToOpenNotificationActivity);
             Log.d(TAG, "Notifying manager");
             notificationManager.notify(0, notificationBuilder.build());
         } else if(Build.VERSION.SDK_INT < 26 && notificationManager != null) {
@@ -65,7 +74,8 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
                             .setContentTitle("Contractor Notification")
                             .setContentText(messageBody)
                             .setAutoCancel(true)
-                            .setDefaults(Notification.DEFAULT_SOUND);
+                            .setDefaults(Notification.DEFAULT_SOUND)
+                            .setContentIntent(intentToOpenNotificationActivity);
 
             notificationManager.notify(0, notificationBuilder.build());
         } else {
@@ -74,8 +84,8 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void createNotificationChannel() {
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         if(Build.VERSION.SDK_INT >= 26 && notificationManager != null) {
             String channelId = "contractorChannel";
             CharSequence channelName = "Notifications sent from contractors";
@@ -88,17 +98,23 @@ public class MarkdFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
     }
-
+    private PendingIntent createNotificationActivityPendingIntent() {
+        Intent resultIntent = new Intent(this, NotificationsActivity.class);
+        // Because clicking the notification opens a new ("special") activity, there's
+        // no need to create an artificial back stack.
+        return PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+    }
+    public static boolean hasNotifications() {
+        return (badgeCount > 0);
+    }
     public static void resetBadgeCount(Context context) {
         Log.d(TAG, "BadgeCount - " + badgeCount);
         badgeCount = 0;
         ShortcutBadger.applyCount(context, badgeCount);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        ShortcutBadger.applyCount(MarkdFirebaseMessagingService.this, ++badgeCount);
-        Log.d(TAG, "BadgeCount - " + badgeCount);
     }
 }
