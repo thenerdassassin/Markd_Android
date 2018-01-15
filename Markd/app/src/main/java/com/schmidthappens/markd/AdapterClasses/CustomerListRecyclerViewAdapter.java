@@ -37,14 +37,17 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
     public CustomerListRecyclerViewAdapter(Context context, List<Customer> customerList, List<String> customerReferenceList, String lastName) {
         this.context = context;
         this.customerList = new ArrayList<>();
-        this.customerList.addAll(customerList);
         this.customerReferenceList = new ArrayList<>();
-        this.customerReferenceList.addAll(customerReferenceList);
-        filterListByLastName(lastName);
+        if(customerList != null && customerReferenceList != null) {
+            this.customerList.addAll(customerList);
+            this.customerReferenceList.addAll(customerReferenceList);
+            filterListByLastName(lastName);
+        }
+
     }
 
     private void filterListByLastName(String lastName) {
-        if(customerList != null) {
+        if(customerList != null && customerReferenceList != null) {
             Iterator<String> referenceIterator = customerReferenceList.iterator();
             for (Iterator<Customer> customerIterator = customerList.iterator(); customerIterator.hasNext();) {
                 Customer customer = customerIterator.next();
@@ -91,8 +94,14 @@ public class CustomerListRecyclerViewAdapter extends RecyclerView.Adapter<Custom
         }
 
         void bindData(final Customer customer, final String customerId) {
-            customerNameTextView.setText(customer.getName());
-            customerAddressTextView.setText(customer.getAddress().toString());
+            if(customer!= null) {
+                if(customer.getName() != null) {
+                    customerNameTextView.setText(customer.getName());
+                }
+                if(customer.getAddress() != null) {
+                    customerAddressTextView.setText(customer.getAddress().toString());
+                }
+            }
             if(context instanceof CustomerSelectedInterface)
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
