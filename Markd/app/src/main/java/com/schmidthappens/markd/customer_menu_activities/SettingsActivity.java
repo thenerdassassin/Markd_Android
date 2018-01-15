@@ -45,10 +45,8 @@ public class SettingsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.menu_activity_settings_view);
-
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true, "customer");
-
         initializeUI();
     }
 
