@@ -62,11 +62,10 @@ public class ChangeContractorActivity extends AppCompatActivity {
         setContentView(R.layout.edit_view_change_contractor);
 
         authentication = new FirebaseAuthentication(this);
-        setTitle("Change Contractor");
+        setTitle("Find Contractor");
 
         initializeXMLObjects();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -78,7 +77,6 @@ public class ChangeContractorActivity extends AppCompatActivity {
         customerData = new TempCustomerData(this, null);
         processIntent(getIntent());
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -96,7 +94,6 @@ public class ChangeContractorActivity extends AppCompatActivity {
         }
         return false;
     }
-
     private void initializeXMLObjects() {
         contractorTypePicker = (NumberPicker)findViewById(R.id.change_contractor_type);
         contractorTypePicker.setMinValue(0);

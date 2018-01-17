@@ -86,7 +86,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:text="Change Contractors"/>
+                    android:text="Find Contractor"/>
                 <TextView
                     android:id="@+id/edit_contractors_sub"
                     android:layout_width="match_parent"

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,10 @@ public class ContractorFooterViewInitializer {
     private static final String TAG = "FooterViewInitializer";
 
     public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath) {
+        return createFooterView(ctx, contractor, phone, websiteUrl, photoPath, false);
+    }
+
+    public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath, boolean isLightTheme) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
         View v = vi.inflate(R.layout.view_footer, null);
@@ -52,6 +57,11 @@ public class ContractorFooterViewInitializer {
                 ctx.startActivity(intent);
             }
         });
+
+        if(isLightTheme) {
+            v.setBackgroundColor(ContextCompat.getColor(ctx, R.color.colorLabel));
+            contractorName.setTextColor(ContextCompat.getColor(ctx, R.color.black));
+        }
 
         return v;
     }
