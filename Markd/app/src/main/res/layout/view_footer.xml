@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-
     android:layout_gravity="bottom"
     android:orientation="horizontal"
     android:background="#000d1a">
@@ -14,19 +13,19 @@
     <ImageView
         android:id="@+id/footer_logo"
         android:layout_height="match_parent"
-        android:layout_width="80dp"
-        android:layout_marginLeft="20dp"
-        android:maxWidth="80dp"
-        android:maxHeight="80dp"
+        android:layout_width="60dp"
+        android:layout_marginStart="20dp"
+        android:maxWidth="60dp"
+        android:maxHeight="60dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:scaleType="fitCenter"
+        android:contentDescription="Contractor Logo"
         android:clickable="true"/>
     <LinearLayout
-        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/footer_logo"
+        android:layout_toEndOf="@+id/footer_logo"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
         <TextView
@@ -44,8 +43,7 @@
             android:textColorLink="@color/hyperlink"
             android:textStyle="normal"
             android:autoLink="phone"
-            android:linksClickable="true"
-            />
+            android:linksClickable="true" />
         <TextView
             android:id="@+id/footer_website"
             android:layout_width="match_parent"
@@ -54,7 +52,6 @@
             android:textColorLink="@color/hyperlink"
             android:layout_marginBottom="10dp"
             android:autoLink="web"
-            android:textSize="12sp"
-            />
+            android:textSize="12sp" />
     </LinearLayout>
 </RelativeLayout>

@@ -92,7 +92,7 @@
                 android:layout_height="100dp"
                 android:textColor="@color/black"
                 android:textSize="20sp"
-                android:text="No contractors found..."
+                android:text="No contractors found. Try increasing search radius."
                 android:visibility="invisible"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

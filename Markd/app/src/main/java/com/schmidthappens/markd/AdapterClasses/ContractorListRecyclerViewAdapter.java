@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.AdapterClasses;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,22 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
-import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.utilities.ContractorUpdater;
+import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by joshua.schmidtibm.com on 11/11/17.
@@ -64,30 +58,31 @@ public class ContractorListRecyclerViewAdapter extends RecyclerView.Adapter<Cont
 
     @Override
     public int getItemViewType(final int position) {
-        return R.layout.list_row_contractor;
+        return R.layout.frame_layout_footer_view;
     }
 
     class ContractorViewHolder extends RecyclerView.ViewHolder {
-        TextView contractorCompanyTextView;
-        TextView contractorTelephone;
-        ImageButton phoneButton;
         Contractor contractor;
         String contractorReference;
+        FrameLayout footerFrame;
 
         ContractorViewHolder(View v) {
             super(v);
-            contractorCompanyTextView = (TextView)v.findViewById(R.id.contractor_list_company);
-            contractorTelephone = (TextView)v.findViewById(R.id.contractor_list_telephone);
-            phoneButton = (ImageButton)v.findViewById(R.id.contractor_list_phone_button);
+            if(v instanceof FrameLayout) {
+                footerFrame = (FrameLayout)v;
+            }
             v.setOnClickListener(setContractorClickListener);
         }
 
         void bindData(final Contractor contractor, final String reference) {
-            this.contractor = contractor;
-            this.contractorReference = reference;
-            contractorCompanyTextView.setText(contractor.getContractorDetails().getCompanyName());
-            contractorTelephone.setText(contractor.getContractorDetails().getTelephoneNumber());
-            phoneButton.setOnClickListener(phoneClickListener);
+            footerFrame.addView(ContractorFooterViewInitializer
+                    .createFooterView(
+                            (Activity)ctx,
+                            contractor.getContractorDetails().getCompanyName(),
+                            contractor.getContractorDetails().getTelephoneNumber(),
+                            contractor.getContractorDetails().getWebsiteUrl(),
+                            ContractorLogoStorageUtility.getLogoPath(reference, contractor.getLogoFileName()),
+                            true));
         }
 
         private View.OnClickListener phoneClickListener = new View.OnClickListener() {

@@ -50,7 +50,6 @@ public class SettingsActivity extends AppCompatActivity {
         new ActionBarInitializer(this, true, "customer");
         initializeUI();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -61,7 +60,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
         customerData = new TempCustomerData(this, null);
     }
-
     @Override
     public void onStop() {
         super.onStop();
