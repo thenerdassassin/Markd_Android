@@ -34,7 +34,10 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"/>
         <TextView
             android:id="@+id/footer_phone_number"
             android:layout_width="match_parent"
@@ -43,7 +46,10 @@
             android:textColorLink="@color/hyperlink"
             android:textStyle="normal"
             android:autoLink="phone"
-            android:linksClickable="true" />
+            android:linksClickable="true"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1"/>
         <TextView
             android:id="@+id/footer_website"
             android:layout_width="match_parent"
@@ -52,6 +58,9 @@
             android:textColorLink="@color/hyperlink"
             android:layout_marginBottom="10dp"
             android:autoLink="web"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLines="1" />
     </LinearLayout>
 </RelativeLayout>

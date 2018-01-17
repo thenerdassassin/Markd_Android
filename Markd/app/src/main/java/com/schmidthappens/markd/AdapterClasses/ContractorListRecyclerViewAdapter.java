@@ -75,6 +75,8 @@ public class ContractorListRecyclerViewAdapter extends RecyclerView.Adapter<Cont
         }
 
         void bindData(final Contractor contractor, final String reference) {
+            this.contractor = contractor;
+            this.contractorReference = reference;
             footerFrame.addView(ContractorFooterViewInitializer
                     .createFooterView(
                             (Activity)ctx,
