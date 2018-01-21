@@ -121,7 +121,6 @@ public class TempCustomerData {
         Home home = getCustomer().getHome();
         Double bedrooms = home.getBedrooms();
         Double bathrooms = home.getBathrooms();
-        //Integer squareFootage = home.getSquareFootage();
 
         if(bedrooms % 1 == 0) {
             builder.append(bedrooms.intValue());
@@ -144,7 +143,6 @@ public class TempCustomerData {
         } else {
             builder.append(" bathrooms");
         }
-        //builder.append(middot).append(" ").append(squareFootage).append(" sq ft");
 
         return builder.toString();
     }
