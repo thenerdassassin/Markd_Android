@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.schmidthappens.markd">
 
     <!-- Necessary to perform network access. -->
@@ -8,12 +9,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
     <!-- Necessary permission to use phone -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <!-- Necessary permission to get list of accounts on the device -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -183,6 +183,16 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_contractor_notification" />
 
+        <!-- FileProvider Configuration -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.schmidthappens.markd.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

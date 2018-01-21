@@ -111,7 +111,7 @@ public class TempCustomerData {
         }
         return getStreet() + "\n" + getCity() + ", " + getState() + " " + getZipcode();
     }
-    public String getHomeInformation() {
+    public String getRoomInformation() {
         if(customer.getHome() == null) {
             return null;
         }
@@ -121,7 +121,6 @@ public class TempCustomerData {
         Home home = getCustomer().getHome();
         Double bedrooms = home.getBedrooms();
         Double bathrooms = home.getBathrooms();
-        Integer squareFootage = home.getSquareFootage();
 
         if(bedrooms % 1 == 0) {
             builder.append(bedrooms.intValue());
@@ -140,13 +139,19 @@ public class TempCustomerData {
             builder.append(bathrooms);
         }
         if(bathrooms.equals((Double)1.0)) {
-            builder.append(" bathroom ");
+            builder.append(" bathroom");
         } else {
-            builder.append(" bathrooms ");
+            builder.append(" bathrooms");
         }
-        builder.append(middot).append(" ").append(squareFootage).append(" sq ft");
 
         return builder.toString();
+    }
+    public String getSquareFootageString() {
+        if(getCustomer().getHome() == null) {
+            return null;
+        } else {
+            return getCustomer().getHome().getSquareFootage() + " square feet";
+        }
     }
     public String getHomeImageFileName() {
         if(customer == null) {
