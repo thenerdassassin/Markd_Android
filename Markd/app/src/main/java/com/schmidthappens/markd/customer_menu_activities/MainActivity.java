@@ -7,11 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.BuildConfig;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -40,8 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import static android.os.Build.VERSION_CODES.M;
-
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
@@ -54,14 +50,15 @@ public class MainActivity extends AppCompatActivity {
     private ImageView homeImagePlaceholder;
     private TextView preparedFor;
     private TextView homeAddress;
-    private TextView homeInformation;
+    private TextView roomInformation;
+    private TextView squareFootage;
 
     private TextView contactRealtor;
     private TextView contactArchitect;
     private TextView contactBuilder;
 
     private boolean hasImage;
-    private static final int IMAGE_REQUEST_CODE = 5;
+    private static final int IMAGE_REQUEST_CODE = 524;
     private String currentPhotoPath;
 
     @Override
@@ -99,88 +96,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Mark:- Photo Functions
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult");
-        if (requestCode == IMAGE_REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK) {
-                String oldFileName = customerData.getHomeImageFileName();
-                String oldPath = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), oldFileName);
-
-                String fileName = customerData.setHomeImageFileName();
-                String path = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), fileName);
-
-                Uri photo = null;
-                //TODO: camera result implementations
-                File tempImage = new File(currentPhotoPath);
-                if(data != null) {
-                    Log.d(TAG, "Getting data from intent");
-                    photo = data.getData();
-                }
-                if (photo == null) {
-                    Log.d(TAG, "Getting Uri from tempImage file");
-                    photo = Uri.fromFile(tempImage);
-                }
-
-                if (photo != null) {
-                    MarkdFirebaseStorage.updateImage(this, path, photo, homeImage, new HomeImageLoadingListener());
-                    MarkdFirebaseStorage.deleteImage(oldPath);
-                    Toast.makeText(this, "Loading Photo", Toast.LENGTH_LONG).show();
-                }
-            } else {
-                Log.d(TAG, "Result not okay");
-            }
-        } else {
-            Log.e(TAG, "Unknown Request");
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-    private Intent createPhotoOrGalleryChooserIntent() {
-        Intent pickIntent = new Intent(Intent.ACTION_PICK);
-        pickIntent.setType("image/*");
-
-
-        String pickTitle = "Take or select a photo";
-        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-
-        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // Ensure that there's a camera activity to handle the intent
-            if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
-
-                // Create the File where the photo should go
-                File photoFile = null;
-                try {
-                    photoFile = createImageFile();
-                } catch (IOException e) {
-                    // Error occurred while creating the File
-                    Log.e(TAG, e.toString());
-                    return null;
-                }
-                // Continue only if the File was successfully created
-                if (photoFile != null && photoFile.exists()) {
-                    Log.d(TAG, "Using FileProvider");
-                    Uri photoURI = FileProvider.getUriForFile(this,
-                            "com.schmidthappens.markd.provider",
-                            photoFile);
-                    takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-
-                } else {
-                    Log.e(TAG, "photoFile not configured");
-                    return null;
-                }
-            } else {
-                Log.e(TAG, "ResolveActivity is null");
-            }
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
-            Log.d(TAG, "chooserIntent intent being returned");
-            return chooserIntent;
-        } else {
-            return pickIntent;
-        }
-    }
-
     // Mark:- SetUp Functions
     private void initializeViews() {
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
@@ -188,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
         homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
         preparedFor = (TextView)findViewById(R.id.prepared_for);
         homeAddress = (TextView)findViewById(R.id.home_address);
-        homeInformation = (TextView)findViewById(R.id.home_information);
+        roomInformation = (TextView)findViewById(R.id.home_information_rooms);
+        squareFootage = (TextView)findViewById(R.id.home_information_square_footage);
 
         contactRealtor = (TextView)findViewById(R.id.contact_realtor);
         contactRealtor.setOnClickListener(showContactAlertDialog);
@@ -208,24 +124,122 @@ public class MainActivity extends AppCompatActivity {
     private void fillCustomerInformation() {
         String preparedForString = "Prepared for " + customerData.getName();
         preparedFor.setText(preparedForString);
-        if(customerData.getFormattedAddress() == null) {
+        String address = customerData.getFormattedAddress();
+        if(address == null) {
             Log.d(TAG, "Home information was null");
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
             return;
         } else {
-
-            homeAddress.setText(customerData.getFormattedAddress());
+            homeAddress.setText(address);
         }
-        String homeInformationString = customerData.getHomeInformation();
+        String homeInformationString = customerData.getRoomInformation();
         if(homeInformationString == null) {
             Log.d(TAG, "Home information was null");
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
         } else {
-            homeInformation.setText(homeInformationString);
+            roomInformation.setText(homeInformationString);
+        }
+        String squareFootageString = customerData.getSquareFootageString();
+        if(squareFootageString == null) {
+            Log.d(TAG, "Square Footage was null");
+            startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
+        } else {
+            squareFootage.setText(squareFootageString);
+        }
+    }
+
+    //Mark:- Photo Functions
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
+        if (requestCode == IMAGE_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                String oldFileName = customerData.getHomeImageFileName();
+                String oldPath = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), oldFileName);
+
+                String fileName = customerData.setHomeImageFileName();
+                String path = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), fileName);
+
+                Uri photo = getPhotoUri(data);
+
+                if (photo != null) {
+                    MarkdFirebaseStorage.updateImage(this, path, photo, homeImage, new HomeImageLoadingListener());
+                    MarkdFirebaseStorage.deleteImage(oldPath);
+                    Toast.makeText(this, "Loading Photo", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Log.d(TAG, "Result not okay");
+            }
+        } else {
+            Log.e(TAG, "Unknown Request");
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    private Uri getPhotoUri(Intent data) {
+        Uri photoUri = null;
+        File tempImage = new File(currentPhotoPath);
+        if(data != null) {
+            Log.d(TAG, "Getting data from intent");
+            photoUri = data.getData();
+        }
+        if (photoUri == null) {
+            Log.d(TAG, "Getting Uri from tempImage file");
+            photoUri = Uri.fromFile(tempImage);
+        }
+        return photoUri;
+    }
+    private Intent createPhotoOrGalleryChooserIntent() {
+        Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        pickIntent.setType("image/*");
+
+        String pickTitle = "Take or select a photo";
+        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+
+        Intent cameraIntent = getCameraIntent();
+        if(cameraIntent != null) {
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
+            return chooserIntent;
+        } else {
+            return pickIntent;
         }
     }
 
     // Mark:- Camera Functions
+    private Intent getCameraIntent() {
+        //Check if Camera Feature Exists
+        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // Ensure that there's a camera activity to handle the intent
+            if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException e) {
+                    // Error occurred while creating the File
+                    Log.e(TAG, e.toString());
+                    return null;
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null && photoFile.exists()) {
+                    Log.d(TAG, "Using FileProvider");
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            "com.schmidthappens.markd.provider",
+                            photoFile);
+                    takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    return takePhotoIntent;
+                } else {
+                    Log.e(TAG, "photoFile not configured");
+                    return null;
+                }
+            } else {
+                Log.e(TAG, "ResolveActivity is null");
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
     private File createImageFile() throws IOException {
         File image = File.createTempFile(
                 "home_image_" + UUID.randomUUID().toString(),  /* prefix */
