@@ -4,10 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.BuildConfig;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,11 +37,10 @@ import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.UUID;
+
+import static android.os.Build.VERSION_CODES.M;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView contactBuilder;
 
     private boolean hasImage;
-    private static final int IMAGE_REQUEST_CODE = 1;
+    private static final int IMAGE_REQUEST_CODE = 5;
+    private String currentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,36 +101,38 @@ public class MainActivity extends AppCompatActivity {
 
     //Mark:- Photo Functions
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult");
-        if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            String oldFileName = customerData.getHomeImageFileName();
-            String oldPath = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), oldFileName);
+        if (requestCode == IMAGE_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                String oldFileName = customerData.getHomeImageFileName();
+                String oldPath = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), oldFileName);
 
-            String fileName = customerData.setHomeImageFileName();
-            String path = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), fileName);
+                String fileName = customerData.setHomeImageFileName();
+                String path = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), fileName);
 
-            Uri photo = null;
-            //TODO: camera result implementations
-            /*
-            if(temp.exists() && temp.length() > 0) {
-                //Camera Result
-                File temp = getTempFile();
-                photo = Uri.fromFile(temp);
+                Uri photo = null;
+                //TODO: camera result implementations
+                File tempImage = new File(currentPhotoPath);
+                if(data != null) {
+                    Log.d(TAG, "Getting data from intent");
+                    photo = data.getData();
+                }
+                if (photo == null) {
+                    Log.d(TAG, "Getting Uri from tempImage file");
+                    photo = Uri.fromFile(tempImage);
+                }
+
+                if (photo != null) {
+                    MarkdFirebaseStorage.updateImage(this, path, photo, homeImage, new HomeImageLoadingListener());
+                    MarkdFirebaseStorage.deleteImage(oldPath);
+                    Toast.makeText(this, "Loading Photo", Toast.LENGTH_LONG).show();
+                }
             } else {
-                //Gallery Result
-                photo = data.getData();
+                Log.d(TAG, "Result not okay");
             }
-            */
-
-            photo = data.getData();
-
-            if(photo != null) {
-                MarkdFirebaseStorage.updateImage(this, path, photo, homeImage, new HomeImageLoadingListener());
-                MarkdFirebaseStorage.deleteImage(oldPath);
-                Toast.makeText(this, "Updating Photo", Toast.LENGTH_LONG).show();
-            }
-
+        } else {
+            Log.e(TAG, "Unknown Request");
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -133,73 +140,46 @@ public class MainActivity extends AppCompatActivity {
         Intent pickIntent = new Intent(Intent.ACTION_PICK);
         pickIntent.setType("image/*");
 
-        //TODO: implement camera intent
-        //Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile()));
 
         String pickTitle = "Take or select a photo";
         Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-        //chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
 
-        return chooserIntent;
-    }
+        if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // Ensure that there's a camera activity to handle the intent
+            if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
 
-    // Mark:- Action Listeners
-    private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
-            return true;
-        }
-    };
-    private View.OnClickListener photoClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //Only resets image if no image exists
-            if(!hasImage) {
-                startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
-            }
-        }
-    };
-    private View.OnClickListener showContactAlertDialog = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String[] contactArray = {};
-            if(view.equals(contactRealtor)) {
-                Log.i(TAG, "Contact Realtor");
-                contactArray = realtor_contact_array;
-            } else if(view.equals(contactArchitect)) {
-                Log.i(TAG, "Contact Architect");
-                contactArray = architect_contact_array;
-            } else if(view.equals(contactBuilder)) {
-                Log.i(TAG, "Contact Builder");
-                contactArray = builder_contact_array;
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = createImageFile();
+                } catch (IOException e) {
+                    // Error occurred while creating the File
+                    Log.e(TAG, e.toString());
+                    return null;
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null && photoFile.exists()) {
+                    Log.d(TAG, "Using FileProvider");
+                    Uri photoURI = FileProvider.getUriForFile(this,
+                            "com.schmidthappens.markd.provider",
+                            photoFile);
+                    takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                } else {
+                    Log.e(TAG, "photoFile not configured");
+                    return null;
+                }
             } else {
-                Log.e(TAG, "Can't find match for contact");
+                Log.e(TAG, "ResolveActivity is null");
             }
-            final String[] options = contactArray;
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Contact Realtor")
-                    .setItems(options, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // The 'which' argument contains the index position
-                            // of the selected item
-                            if(which == 0) {
-                                Intent intent = new Intent()
-                                        .setAction(Intent.ACTION_VIEW)
-                                        .addCategory(Intent.CATEGORY_BROWSABLE)
-                                        .setData(Uri.parse(options[0]));
-                                MainActivity.this.startActivity(intent);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_DIAL)
-                                        .setData(Uri.parse("tel:" + options[1]));
-                                MainActivity.this.startActivity(intent);
-                            }
-                        }
-                    }).create().show();
-
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takePhotoIntent});
+            Log.d(TAG, "chooserIntent intent being returned");
+            return chooserIntent;
+        } else {
+            return pickIntent;
         }
-    };
+    }
 
     // Mark:- SetUp Functions
     private void initializeViews() {
@@ -242,6 +222,102 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
         } else {
             homeInformation.setText(homeInformationString);
+        }
+    }
+
+    // Mark:- Camera Functions
+    private File createImageFile() throws IOException {
+        File image = File.createTempFile(
+                "home_image_" + UUID.randomUUID().toString(),  /* prefix */
+                ".jpg",         /* suffix */
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES)      /* directory */
+        );
+
+        if(!image.getParentFile().exists()) {
+            Log.d(TAG, "Parent File does not exist");
+            if(image.getParentFile().mkdirs()) {
+                Log.e(TAG, "mkdirs:true");
+            }else {
+                Log.e(TAG, "mkdirs:false");
+            }
+        } else {
+            Log.d(TAG, "Parent File exists");
+        }
+        if(image.exists()) {
+            Log.e(TAG, "Image exists");
+            Log.e(TAG, "Path:"+image.getAbsolutePath());
+        } else {
+            Log.e(TAG, "Image does not exist");
+        }
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    // Mark:- Action Listeners
+    private View.OnLongClickListener photoLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Intent chooserIntent = createPhotoOrGalleryChooserIntent();
+            if (chooserIntent != null){
+                startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
+            }
+            return true;
+        }
+    };
+    private View.OnClickListener photoClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //Only resets image if no image exists
+            if(!hasImage) {
+                Intent chooserIntent = createPhotoOrGalleryChooserIntent();
+                if (chooserIntent != null){
+                    startActivityForResult(chooserIntent, IMAGE_REQUEST_CODE);
+                }
+            }
+        }
+    };
+    private View.OnClickListener showContactAlertDialog = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final String[] options = getContactArray(view);
+            if(options != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Contact Realtor")
+                        .setItems(options, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                                if (which == 0) {
+                                    Intent intent = new Intent()
+                                            .setAction(Intent.ACTION_VIEW)
+                                            .addCategory(Intent.CATEGORY_BROWSABLE)
+                                            .setData(Uri.parse(options[0]));
+                                    MainActivity.this.startActivity(intent);
+                                } else {
+                                    Intent intent = new Intent(Intent.ACTION_DIAL)
+                                            .setData(Uri.parse("tel:" + options[1]));
+                                    MainActivity.this.startActivity(intent);
+                                }
+                            }
+                        }).create().show();
+            }
+        }
+    };
+    private String[] getContactArray(View view) {
+        if(view.equals(contactRealtor)) {
+            Log.i(TAG, "Contact Realtor");
+            return realtor_contact_array;
+        } else if(view.equals(contactArchitect)) {
+            Log.i(TAG, "Contact Architect");
+            return architect_contact_array;
+        } else if(view.equals(contactBuilder)) {
+            Log.i(TAG, "Contact Builder");
+            return builder_contact_array;
+        } else {
+            Log.e(TAG, "Can't find match for contact");
+            return null;
         }
     }
 
