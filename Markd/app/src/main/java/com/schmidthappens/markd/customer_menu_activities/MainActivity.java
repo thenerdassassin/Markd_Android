@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.customer_menu_activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -58,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView contactBuilder;
 
     private boolean hasImage;
+    private boolean cameraPermissionGranted;
     private static final int IMAGE_REQUEST_CODE = 524;
+    private static final int CAMERA_PERMISSION_CODE = 99;
     private String currentPhotoPath;
 
     @Override
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true, "customer");
         initializeViews();
+        checkForCameraPermission();
     }
     @Override
     public void onStart() {
@@ -93,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
         authentication.detachListener();
         if(customerData != null) {
             customerData.removeListeners();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                cameraPermissionGranted = true;
+            }
         }
     }
 
@@ -195,17 +209,24 @@ public class MainActivity extends AppCompatActivity {
 
         String pickTitle = "Take or select a photo";
         Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
-
-        Intent cameraIntent = getCameraIntent();
-        if(cameraIntent != null) {
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
-            return chooserIntent;
-        } else {
-            return pickIntent;
+        if(cameraPermissionGranted) {
+            Intent cameraIntent = getCameraIntent();
+            if(cameraIntent != null) {
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
+                return chooserIntent;
+            }
         }
+        return pickIntent;
     }
 
     // Mark:- Camera Functions
+    private void checkForCameraPermission() {
+        cameraPermissionGranted = true;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            cameraPermissionGranted = false;
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE }, CAMERA_PERMISSION_CODE);
+        }
+    }
     private Intent getCameraIntent() {
         //Check if Camera Feature Exists
         if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
