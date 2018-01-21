@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         roomInformation = (TextView)findViewById(R.id.home_information_rooms);
         squareFootage = (TextView)findViewById(R.id.home_information_square_footage);
 
+        // TODO: decide if Coming Soon!
         contactRealtor = (TextView)findViewById(R.id.contact_realtor);
         contactRealtor.setOnClickListener(showContactAlertDialog);
         contactArchitect = (TextView)findViewById(R.id.contact_architect);

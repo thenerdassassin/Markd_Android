@@ -93,6 +93,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray"/>
+                    <!-- TODO: Decide if want to remove -->
                     <!-- Architect Information -->
                     <LinearLayout
                         android:layout_marginTop="10dp"
@@ -168,6 +169,18 @@
                             android:textColor="@color/hyperlink"
                             android:textSize="14sp" />
                     </LinearLayout>
+
+                    <!-- TODO: Decide if want to add these later -->
+                    <TextView
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="sans-serif-light"
+                        android:text="Coming Soon!!! Add you personal Architects, Builders, and Realtors to the home page."
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
                 </LinearLayout>
         </LinearLayout>
     </FrameLayout>
