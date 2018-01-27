@@ -46,6 +46,7 @@ public class MarkdFirebaseStorage {
             if(listener != null) {
                 listener.onFailed(new IllegalArgumentException("Path is null or empty"));
             }
+            return;
         }
 
         final StorageReference storageReference = storage.getReference().child("images/" + path);

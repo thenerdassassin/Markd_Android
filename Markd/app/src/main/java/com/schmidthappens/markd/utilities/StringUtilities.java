@@ -13,12 +13,16 @@ import java.util.Calendar;
 
 public class StringUtilities {
     private final static String TAG = "StringUtilities";
+
+    public static String getDateString(int month, int day, int year) {
+        return getDateString(month, day, year, ".");
+    }
     /*
         Returns string in format mm.dd.yy
         If something is wrong returns null
      */
     @Nullable
-    public static String getDateString(int month, int day, int year) {
+    public static String getDateString(int month, int day, int year, String separator) {
         String dateString = "";
 
         if(month > 12) {
@@ -27,7 +31,7 @@ public class StringUtilities {
         } else if(month < 10) {
             dateString += "0";
         }
-        dateString += (month + ".");
+        dateString += (month + separator);
 
         if(day > 31) {
             Log.e(TAG, "Day was greater than 31 it was " + day);
@@ -35,7 +39,7 @@ public class StringUtilities {
         } else if(day < 10) {
             dateString += "0";
         }
-        dateString += (day + ".");
+        dateString += (day + separator);
 
         if(year > 9 && year < 100) {
             dateString += year;

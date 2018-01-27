@@ -20,7 +20,7 @@ public class ContractorService implements Comparable<ContractorService> {
     private int year;
     private String contractor;
     private String comments;
-    private List<String> imageFiles; //TODO add image uploads
+    private List<String> imageFiles;
 
 
     public ContractorService() {
@@ -65,11 +65,9 @@ public class ContractorService implements Comparable<ContractorService> {
     public void setComments(String comments) {
         this.comments = comments;
     }
-    @Exclude
     public List<String> getImageFiles() {
         return imageFiles;
     }
-    @Exclude
     public void setImageFiles(List<String> imageFiles) {
         this.imageFiles = imageFiles;
     }
@@ -83,6 +81,10 @@ public class ContractorService implements Comparable<ContractorService> {
     @Exclude
     public String getDate() {
         return StringUtilities.getDateString(month, day, year);
+    }
+    @Exclude
+    public String getUrlFormattedString() {
+        return StringUtilities.getDateString(month, day, year, "");
     }
 
     @Override
@@ -100,5 +102,14 @@ public class ContractorService implements Comparable<ContractorService> {
         }
 
         return o.day - this.day;
+    }
+    @Override
+    public String toString() {
+        return " {\n" +
+                "\tdate:\"" + getDate() + "\",\n" +
+                "\tcontractor:\"" + getContractor() + "\",\n" +
+                "\tcomments:\"" + getComments() + "\",\n" +
+                "\timages:" + getImageFiles() + "\n" +
+                "}";
     }
 }

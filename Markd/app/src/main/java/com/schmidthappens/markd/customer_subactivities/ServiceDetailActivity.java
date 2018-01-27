@@ -14,9 +14,12 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -25,8 +28,14 @@ import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
+import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.DateUtitilities;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
+import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
+import com.schmidthappens.markd.view_initializers.ServiceListViewInitializer;
+
+import java.util.List;
 
 /**
  * Created by Josh on 8/5/2017.
@@ -41,6 +50,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
     //XML Objects
     EditText editContractor;
     EditText editServiceDescription;
+    FrameLayout fileList;
     Button saveButton;
     Button deleteButton;
 
@@ -57,12 +67,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
 
         setTitle("Edit Service");
-        try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch(NullPointerException e) {
-            sendErrorMessage("getSupportActionBar returned Null");
+        if(getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
         initializeXMLObjects();
     }
     @Override
@@ -130,6 +139,24 @@ public class ServiceDetailActivity extends AppCompatActivity {
             sendErrorMessage("Activity does not match");
         }
     }
+    private List<String> getFileList(int serviceId) {
+        if (originalActivity.equals(PlumbingActivity.class)) {
+            Log.d(TAG, "Plumbing Service:" + serviceId);
+            return customerData.getPlumbingServices().get(serviceId).getImageFiles();
+        } else if (originalActivity.equals(HvacActivity.class)) {
+            Log.d(TAG, "Hvac Service:" + serviceId);
+            if(customerData.getHvacServices().get(serviceId) != null) {
+                Log.d(TAG, "Service:" + customerData.getHvacServices().get(serviceId).toString());
+            }
+            return customerData.getHvacServices().get(serviceId).getImageFiles();
+        } else if (originalActivity.equals(ElectricalActivity.class)) {
+            Log.d(TAG, "Electrical Service:" + serviceId);
+            return customerData.getElectricalServices().get(serviceId).getImageFiles();
+        } else {
+            sendErrorMessage("Activity does not match");
+            return null;
+        }
+    }
     private void showRemoveServiceWarning() {
         alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Delete Service")
@@ -175,6 +202,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
         editServiceDescription.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editServiceDescription.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
+        fileList = (FrameLayout)findViewById(R.id.service_file_list);
+
         saveButton = (Button)findViewById(R.id.service_edit_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +235,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
             isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
             if(intent.hasExtra("customerId")) {
-                customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
+                customerData = new TempCustomerData(intent.getStringExtra("customerId"), new ServiceDetailGetDataListener());
             } else {
                 sendErrorMessage("customerId is null");
             }
@@ -241,8 +270,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
         return true;
     }
     private void goBackToActivity(Class<?> originalActivity){
-        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
         Log.d(TAG, "isContractor:" + isContractorEditingPage);
+        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
         originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
         originalActivityIntent.putExtra("customerId", customerData.getUid());
         hideKeyboard(this.getCurrentFocus());
@@ -272,5 +301,32 @@ public class ServiceDetailActivity extends AppCompatActivity {
         Log.e(TAG, message);
         Toast.makeText(getApplicationContext(), "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         goBackToActivity(MainActivity.class);
+    }
+
+    private class ServiceDetailGetDataListener implements OnGetDataListener {
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Getting Customer Data");
+        }
+
+        @Override
+        public void onSuccess(DataSnapshot data) {
+            Log.d(TAG, "Received Customer Data");
+            List<String> files = getFileList(serviceId);
+            if(files == null) {
+                Log.d(TAG, "Null filess");
+            }
+            fileList.addView(
+                ServiceFileListViewInitializer.createFileListView(
+                        ServiceDetailActivity.this, getFileList(serviceId), isContractorEditingPage, customerData.getUid()
+                )
+            );
+
+        }
+
+        @Override
+        public void onFailed(DatabaseError databaseError) {
+            Log.e(TAG, databaseError.toString());
+        }
     }
 }
