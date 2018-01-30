@@ -25,7 +25,6 @@ import com.schmidthappens.markd.data_objects.Compressor;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
@@ -167,9 +166,8 @@ public class HvacActivity extends AppCompatActivity {
             hvacContractor.addView(v);
         } else {
             ContractorDetails contractorDetails = hvacTechnician.getContractorDetails();
-            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this,
-                    contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl(),
-                    ContractorLogoStorageUtility.getLogoPath(customerData.getHvactechnicianReference(), hvacTechnician.getLogoFileName()));
+            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this, contractorDetails.getCompanyName(),
+                    contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl(), hvacTechnician.getLogoFileName());
             hvacContractor.addView(v);
         }
     }

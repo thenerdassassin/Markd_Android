@@ -102,13 +102,13 @@ public class TempContractorData {
         if(contractor == null) {
             return null;
         } else {
-            return contractor.getLogoFileName();
+            return "logos/" + uid + "/" + contractor.getLogoFileName();
         }
     }
     public String setLogoFileName() {
         contractor.setLogoFileName();
         putContractor(contractor);
-        return contractor.getLogoFileName();
+        return getLogoFileName();
     }
 
     //Mark:- Customers Page

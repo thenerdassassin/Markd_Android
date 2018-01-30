@@ -4,10 +4,10 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Josh on 4/19/2017.
@@ -20,18 +20,27 @@ public class ContractorService implements Comparable<ContractorService> {
     private int year;
     private String contractor;
     private String comments;
-    private List<String> imageFiles;
+    private List<String> files;
 
 
     public ContractorService() {
         // Default constructor required for calls to DataSnapshot.getValue(ContractorService.class)
     }
-    public ContractorService(int month, int day, int year, String contractor, String comments) {
+    public ContractorService(int month, int day, int year, String contractor, String comments, List<String> files) {
         this.month = month;
         this.day = day;
         this.year = year;
         this.contractor = contractor;
         this.comments = comments;
+        this.files = files;
+    }
+    public ContractorService(String contractor, String comments, List<String> files) {
+        this.month = DateUtitilities.getCurrentMonth();
+        this.day = DateUtitilities.getCurrentDay();
+        this.year = DateUtitilities.getCurrentYear();
+        this.contractor = contractor;
+        this.comments = comments;
+        this.files = files;
     }
 
     // Mark:- Getters/Setters
@@ -65,16 +74,18 @@ public class ContractorService implements Comparable<ContractorService> {
     public void setComments(String comments) {
         this.comments = comments;
     }
-    public List<String> getImageFiles() {
-        return imageFiles;
+    public List<String> getFiles() {
+        return files;
     }
-    public void setImageFiles(List<String> imageFiles) {
-        this.imageFiles = imageFiles;
+    public void setFiles(List<String> files) {
+        this.files = files;
     }
 
-    public void update(String contractor, String comments) {
+    public ContractorService update(String contractor, String comments, List<String> files) {
         this.contractor = contractor;
         this.comments = comments;
+        this.files = files;
+        return this;
     }
 
     // Mark:- Helper methods
@@ -109,7 +120,7 @@ public class ContractorService implements Comparable<ContractorService> {
                 "\tdate:\"" + getDate() + "\",\n" +
                 "\tcontractor:\"" + getContractor() + "\",\n" +
                 "\tcomments:\"" + getComments() + "\",\n" +
-                "\timages:" + getImageFiles() + "\n" +
+                "\timages:" + getFiles() + "\n" +
                 "}";
     }
 }

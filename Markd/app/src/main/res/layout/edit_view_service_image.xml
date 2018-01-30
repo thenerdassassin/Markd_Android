@@ -5,8 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_texture">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ProgressBar
+        android:id="@+id/service_file_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="70dp"
+        android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/service_file_edit_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -15,9 +28,9 @@
         android:layout_marginRight="30dp"
         android:orientation="vertical">
 
-        <!-- Edit Contractor Description -->
+        <!-- Edit File Name -->
         <EditText
-            android:id="@+id/service_edit_contractor"
+            android:id="@+id/service_file_edit_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_edit_text"
@@ -25,28 +38,9 @@
             android:inputType="text"
             android:maxLines="1"
             android:imeOptions="actionDone"
-            android:hint="Contractor"/>
+            android:hint="File Name"/>
 
-        <!-- Edit Service Description -->
-        <EditText
-            android:id="@+id/service_edit_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/rounded_edit_text"
-            android:gravity="top|start"
-            android:inputType="textCapSentences|textMultiLine"
-            android:scrollHorizontally="false"
-            android:lines="8"
-            android:maxLines="8"
-            android:hint="Description of Services"/>
-
-        <!-- Files List -->
-        <FrameLayout
-            android:id="@+id/service_file_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+        <!-- TODO: add Image File and Replace file button -->
 
         <LinearLayout
             android:layout_gravity="center_horizontal"
@@ -57,7 +51,7 @@
             android:layout_weight="1">
             <!-- Delete Button -->
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/service_edit_delete_button"
+                android:id="@+id/service_file_delete_button"
                 android:layout_height="wrap_content"
                 android:layout_width="130dp"
                 android:textColor="@android:color/white"
@@ -65,7 +59,7 @@
                 android:text="Delete"/>
             <!-- Save Button -->
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/service_edit_save_button"
+                android:id="@+id/service_file_save_button"
                 android:layout_height="wrap_content"
                 android:layout_width="130dp"
                 android:layout_marginStart="30dp"
@@ -73,5 +67,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    </FrameLayout>
 </ScrollView>

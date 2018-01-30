@@ -22,7 +22,6 @@ import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
@@ -140,7 +139,7 @@ public class PaintingActivity extends AppCompatActivity {
                             contractorDetails.getCompanyName(),
                             contractorDetails.getTelephoneNumber(),
                             contractorDetails.getWebsiteUrl(),
-                            ContractorLogoStorageUtility.getLogoPath(customerData.getPainterReference(), painter.getLogoFileName()));
+                            painter.getLogoFileName());
                     paintingContractor.addView(v);
                 }
             }

@@ -30,7 +30,6 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorData;
-import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
@@ -114,16 +113,13 @@ public class ContractorMainActivity extends AppCompatActivity {
         if (requestCode == IMAGE_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
                 String oldFileName = contractorData.getLogoFileName();
-                String oldPath = ContractorLogoStorageUtility.getLogoPath(authentication.getCurrentUser().getUid(), oldFileName);
-
                 String fileName = contractorData.setLogoFileName();
-                String path = ContractorLogoStorageUtility.getLogoPath(authentication.getCurrentUser().getUid(), fileName);
 
                 Uri photo = getPhotoUri(data);
 
                 if (photo != null) {
-                    MarkdFirebaseStorage.updateImage(this, path, photo, logoImage, new LogoLoadingListener());
-                    MarkdFirebaseStorage.deleteImage(oldPath);
+                    MarkdFirebaseStorage.updateImage(this, fileName, photo, logoImage, new LogoLoadingListener());
+                    MarkdFirebaseStorage.deleteImage(oldFileName);
                     Toast.makeText(this, "Updating Logo", Toast.LENGTH_LONG).show();
                 }
             } else {
@@ -293,7 +289,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
         MarkdFirebaseStorage.loadImage(this,
-                ContractorLogoStorageUtility.getLogoPath(authentication.getCurrentUser().getUid(), contractorData.getLogoFileName()),
+                contractorData.getLogoFileName(),
                 logoImage,
                 new LogoLoadingListener());
     }

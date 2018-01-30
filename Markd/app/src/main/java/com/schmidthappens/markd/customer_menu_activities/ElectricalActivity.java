@@ -27,7 +27,6 @@ import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_subactivities.PanelDetailActivity;
-import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
@@ -165,9 +164,8 @@ public class ElectricalActivity extends AppCompatActivity {
             electricalContractor.addView(v);
         } else {
             ContractorDetails electricianDetails = electrician.getContractorDetails();
-            View v = ContractorFooterViewInitializer.createFooterView(this,
-                    electricianDetails.getCompanyName(), electricianDetails.getTelephoneNumber(), electricianDetails.getWebsiteUrl(),
-                    ContractorLogoStorageUtility.getLogoPath(customerData.getElectricianReference(), electrician.getLogoFileName()));
+            View v = ContractorFooterViewInitializer.createFooterView(this, electricianDetails.getCompanyName(), electricianDetails.getTelephoneNumber(),
+                    electricianDetails.getWebsiteUrl(), electrician.getLogoFileName());
             electricalContractor.addView(v);
         }
     }

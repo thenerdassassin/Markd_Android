@@ -60,7 +60,7 @@ public class TempCustomerData {
         }
     };
 
-    private Customer customer;
+    private static Customer customer;
     private Customer getCustomer() {
         return customer;
     }
@@ -157,13 +157,13 @@ public class TempCustomerData {
         if(customer == null) {
             return null;
         } else {
-            return customer.getHomeImageFileName();
+            return "homes/" + uid + "/" + customer.getHomeImageFileName();
         }
     }
     public String setHomeImageFileName() {
         customer.setHomeImageFileName();
         putCustomer(customer);
-        return customer.getHomeImageFileName();
+        return getHomeImageFileName();
     }
 
     //Mark:- Plumbing
@@ -196,18 +196,6 @@ public class TempCustomerData {
     public List<ContractorService> getPlumbingServices() {
         return getCustomer().getPlumbingServices();
     }
-    public void addPlumbingService(ContractorService service) {
-        customer.addPlumbingService(service);
-        putCustomer(customer);
-    }
-    public void updatePlumbingService(int serviceId, String contractor, String description) {
-        customer.updatePlumbingService(serviceId, contractor, description);
-        putCustomer(customer);
-    }
-    public void removePlumbingService(int serviceId) {
-        customer.deletePlumbingService(serviceId);
-        putCustomer(customer);
-    }
 
     //Mark:- HVAC
     public AirHandler getAirHandler() {
@@ -239,18 +227,6 @@ public class TempCustomerData {
     public List<ContractorService> getHvacServices() {
         return getCustomer().getHvacServices();
     }
-    public void addHvacService(ContractorService service) {
-        customer.addHvacService(service);
-        putCustomer(customer);
-    }
-    public void updateHvacService(int serviceId, String contractor, String description) {
-        customer.updateHvacService(serviceId, contractor, description);
-        putCustomer(customer);
-    }
-    public void removeHvacService(int serviceId) {
-        customer.deleteHvacService(serviceId);
-        putCustomer(customer);
-    }
 
     //MarK:- Electrical
     public List<Panel> getPanels() {
@@ -266,18 +242,6 @@ public class TempCustomerData {
     }
     public List<ContractorService> getElectricalServices() {
         return getCustomer().getElectricalServices();
-    }
-    public void addElectricalService(ContractorService service) {
-        customer.addElectricalService(service);
-        putCustomer(customer);
-    }
-    public void updateElectricalService(int serviceId, String contractor, String description) {
-        customer.updateElectricalService(serviceId, contractor, description);
-        putCustomer(customer);
-    }
-    public void removeElectricalService(int serviceId) {
-        customer.deleteElectricalService(serviceId);
-        putCustomer(customer);
     }
     public boolean getElectrician(final OnGetDataListener electricianListener) {
         String electrician = customer.getElectricianReference();
@@ -326,6 +290,20 @@ public class TempCustomerData {
     }
     public String getPainterReference() {
         return customer.getPainterReference();
+    }
+
+    //Mark:- Services
+    public void addService(ContractorService service, String serviceType) {
+        customer.addService(service, serviceType);
+        putCustomer(customer);
+    }
+    public void updateService( int serviceId, String contractor, String comments, List<String> files, String serviceType) {
+        customer.updateService(serviceId, contractor, comments, files, serviceType);
+        putCustomer(customer);
+    }
+    public void removeService(int serviceId, String serviceType) {
+        customer.deleteService(serviceId, serviceType);
+        putCustomer(customer);
     }
 
     //Mark:- Settings

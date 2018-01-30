@@ -107,7 +107,16 @@
             android:name=".customer_menu_activities.NotificationsActivity"
             android:value=".customer_menu_activities.NotificationsActivity" />
 
-        <activity android:name=".customer_subactivities.ServiceDetailActivity" />
+        <activity android:name=".customer_subactivities.ServiceDetailActivity"
+            android:value=".customer_subactivities.ServiceDetailActivity"
+            android:launchMode="singleTop"/>
+        <activity android:name=".customer_subactivities.ServiceImageActivity"
+            android:value=".customer_subactivities.ServiceImageActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".customer_subactivities.ServiceDetailActivity"/>
+        </activity>
 
         <!-- Settings -->
         <activity android:name=".customer_menu_activities.SettingsActivity"
