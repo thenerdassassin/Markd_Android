@@ -238,16 +238,16 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     editServiceDescription.setText(intent.getStringExtra("description"));
                 }
             }
-            final int servicesLength = intent.getIntExtra("servicesLength", -1);
+
             customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
             customerData.attachListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     List<String> files = new ArrayList<>();
-                    if(isAddService && servicesLength >= 0) {
+                    if(isAddService) {
                         //Create New Service if new to be able to store information
                         saveServiceData();
-                        serviceId = servicesLength;
+                        serviceId = 0;
                     } else {
                         if(customerData.getServices(getServiceType()) != null) {
                             ContractorService service = customerData.getServices(getServiceType()).get(serviceId);

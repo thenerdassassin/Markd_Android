@@ -8,6 +8,7 @@ import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Josh on 4/19/2017.
@@ -15,6 +16,7 @@ import java.util.List;
 
 @IgnoreExtraProperties
 public class ContractorService implements Comparable<ContractorService> {
+    private String guid;
     private int month;
     private int day;
     private int year;
@@ -33,6 +35,7 @@ public class ContractorService implements Comparable<ContractorService> {
         this.contractor = contractor;
         this.comments = comments;
         this.files = files;
+        setGuid(null);
     }
     public ContractorService(String contractor, String comments, List<String> files) {
         this.month = DateUtitilities.getCurrentMonth();
@@ -79,6 +82,16 @@ public class ContractorService implements Comparable<ContractorService> {
     }
     public void setFiles(List<String> files) {
         this.files = files;
+    }
+    public String getGuid() {
+        return guid;
+    }
+    public void setGuid(String guid) {
+        if(guid == null) {
+            this.guid = UUID.randomUUID().toString();
+        } else {
+            this.guid = guid;
+        }
     }
 
     public ContractorService update(String contractor, String comments, List<String> files) {
