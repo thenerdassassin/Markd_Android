@@ -297,7 +297,7 @@ public class TempCustomerData {
         customer.addService(service, serviceType);
         putCustomer(customer);
     }
-    public void updateService( int serviceId, String contractor, String comments, List<String> files, String serviceType) {
+    public void updateService(int serviceId, String contractor, String comments, List<String> files, String serviceType) {
         customer.updateService(serviceId, contractor, comments, files, serviceType);
         putCustomer(customer);
     }
@@ -445,7 +445,7 @@ public class TempCustomerData {
         //Electrical
         newCustomer.setPanels(initialPanelList());
         newCustomer.setElectricianReference("defaultElectricianThree");
-        //newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
+        newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
 
         //Painting
         newCustomer.setInteriorPaintSurfaces(initialInteriorSurfaces());

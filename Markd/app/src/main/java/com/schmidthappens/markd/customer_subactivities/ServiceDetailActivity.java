@@ -257,7 +257,12 @@ public class ServiceDetailActivity extends AppCompatActivity {
                         }
 
                     }
-                    ServiceFileListViewInitializer.createFileListView(ServiceDetailActivity.this, files, isContractorEditingPage, customerData.getUid(), serviceId, originalActivity);
+                    fileList.removeAllViews();
+                    fileList.addView(
+                            ServiceFileListViewInitializer.createFileListView(
+                                    ServiceDetailActivity.this, files, customerData.getUid(), getServiceType(), serviceId
+                            )
+                    );
                     customerData.removeListeners();
                 }
 

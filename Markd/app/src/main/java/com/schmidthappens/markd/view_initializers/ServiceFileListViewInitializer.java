@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.customer_subactivities.ServiceImageActivity;
+import com.schmidthappens.markd.customer_subactivities.ServiceFileDetailActivity;
 
 import java.util.List;
 
@@ -22,8 +22,7 @@ import java.util.List;
 
 public class ServiceFileListViewInitializer {
     private static final String TAG = "ServiceFileListViewInit";
-    public static View createFileListView(final Context ctx, final List<String> files, final boolean isContractorViewing, final String uid, final int serviceId, final Class originalActivity) {
-        Log.d(TAG, "isContractor:" + isContractorViewing);
+    public static View createFileListView(final Context ctx, final List<String> files, final String uid,  final String serviceType, final int serviceId) {
         LayoutInflater viewInflater = LayoutInflater.from(ctx);
         View view = viewInflater.inflate(R.layout.view_file_list, null);
         LinearLayout listOfFiles = (LinearLayout)view.findViewById(R.id.file_list);
@@ -34,7 +33,7 @@ public class ServiceFileListViewInitializer {
             public void onClick(View v) {
                 Log.d(TAG, "Add file");
                 ctx.startActivity(
-                        createServiceImageIntent(ctx, isContractorViewing, uid, serviceId, originalActivity)
+                        createServiceFileIntent(ctx, uid, serviceType, serviceId)
                 );
             }
         });
@@ -45,23 +44,23 @@ public class ServiceFileListViewInitializer {
             contractorTextView.setTextColor(ContextCompat.getColor(ctx, R.color.black));
             listOfFiles.addView(v);
         } else {
-            for(int i = 0; i < files.size(); i++) {
-                final String file = files.get(i);
-                final int j = i;
+            for(int fileId = 0; fileId < files.size(); fileId++) {
+                final String fileName = files.get(fileId);
+                final int fileIdFinal = fileId;
                 View v = viewInflater.inflate(R.layout.list_row_file, null);
 
-                if (file != null) {
+                if (fileName != null) {
                     TextView fileNameTextView = (TextView) v.findViewById(R.id.file_name);
 
                     if (fileNameTextView != null) {
                         fileNameTextView.setPaintFlags(fileNameTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                        fileNameTextView.setText(file);
+                        fileNameTextView.setText(fileName);
                         fileNameTextView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Log.d(TAG, "View file:" + file);
+                                Log.d(TAG, "View file:" + fileName);
                                 ctx.startActivity(
-                                        createServiceImageIntent(ctx, isContractorViewing, uid, file, serviceId, originalActivity, j)
+                                        createServiceFileIntent(ctx, uid, serviceType, serviceId, fileIdFinal, fileName)
                                 );
                             }
                         });
@@ -74,27 +73,22 @@ public class ServiceFileListViewInitializer {
         return view;
     }
 
-    private static Intent createServiceImageIntent(Context context, boolean isContractorViewing, String uid, int serviceId, Class originalActivity) {
-        Intent intentToCreateServiceImage = new Intent(context, ServiceImageActivity.class);
-        intentToCreateServiceImage.putExtra("isContractor", isContractorViewing);
-        intentToCreateServiceImage.putExtra("isNew", true);
-        intentToCreateServiceImage.putExtra("customerId", uid);
-        intentToCreateServiceImage.putExtra("serviceId", serviceId);
-        intentToCreateServiceImage.putExtra("originalActivity", originalActivity);
-        //TODO: pass Contractor and Comments
-        return  intentToCreateServiceImage;
+    private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId) {
+        Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
+        intentToCreateServiceFile.putExtra("customerId", uid);
+        intentToCreateServiceFile.putExtra("serviceType", serviceType);
+        intentToCreateServiceFile.putExtra("serviceId", serviceId);
+        intentToCreateServiceFile.putExtra("fileId", -1);
+        return  intentToCreateServiceFile;
     }
 
-    private static Intent createServiceImageIntent(Context context, boolean isContractorViewing, String uid, String fileName, int serviceId, Class originalActivity, int fileId) {
-        Intent intentToCreateServiceImage = new Intent(context, ServiceImageActivity.class);
-        intentToCreateServiceImage.putExtra("isContractor", isContractorViewing);
-        intentToCreateServiceImage.putExtra("isNew", false);
-        intentToCreateServiceImage.putExtra("fileName", fileName);
-        intentToCreateServiceImage.putExtra("customerId", uid);
-        intentToCreateServiceImage.putExtra("serviceId", serviceId);
-        intentToCreateServiceImage.putExtra("originalActivity", originalActivity);
-        intentToCreateServiceImage.putExtra("fileId", fileId);
-        //TODO: pass Contractor and Comments
-        return  intentToCreateServiceImage;
+    private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId, int fileId, String fileName) {
+        Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
+        intentToCreateServiceFile.putExtra("customerId", uid);
+        intentToCreateServiceFile.putExtra("serviceType", serviceType);
+        intentToCreateServiceFile.putExtra("serviceId", serviceId);
+        intentToCreateServiceFile.putExtra("fileId", fileId);
+        intentToCreateServiceFile.putExtra("fileName", fileName);
+        return  intentToCreateServiceFile;
     }
 }

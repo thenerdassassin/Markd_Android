@@ -1,13 +1,8 @@
 package com.schmidthappens.markd.customer_subactivities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,22 +19,19 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
-import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
-import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by joshua.schmidtibm.com on 1/27/18.
  */
 
-public class ServiceImageActivity extends AppCompatActivity {
-    private final static String TAG = "ServiceImageActivity";
+public class ServiceFileDetailActivity extends AppCompatActivity {
+    private final static String TAG = "ServiceFileDetailActvty";
     FirebaseAuthentication authentication;
     TempCustomerData customerData;
     AlertDialog alertDialog;
@@ -48,15 +40,15 @@ public class ServiceImageActivity extends AppCompatActivity {
     ProgressBar progressView;
     LinearLayout serviceFileEditForm;
     EditText editFileName;
+    //TODO: Image
     Button saveButton;
     Button deleteButton;
 
-    boolean isNew;
-    boolean isContractorEditingPage;
-    String originalFileName;
+    String serviceType;
     int serviceId;
-    int fileId;
-    Class<?> originalActivity;
+    int fileId; // newFile == -1
+    String originalFileName;
+
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -108,7 +100,7 @@ public class ServiceImageActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hideKeyboard(ServiceImageActivity.this.getCurrentFocus());
+                hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
                 saveFile();
             }
         });
@@ -117,9 +109,9 @@ public class ServiceImageActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideKeyboard(ServiceImageActivity.this.getCurrentFocus());
-                if(isNew) {
-                    goBackToActivity(ServiceDetailActivity.class);
+                hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
+                if(fileId < 0) {
+                    goBackToActivity();
                 } else {
                     showRemoveFileWarning();
                 }
@@ -128,21 +120,17 @@ public class ServiceImageActivity extends AppCompatActivity {
     }
     private void processIntent(Intent intent) {
         if(intent != null) {
-            if(intent.hasExtra("originalActivity")) {
-                originalActivity = (Class<?>)intent.getSerializableExtra("originalActivity");
+            if(intent.hasExtra("customerId")) {
+                customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
             } else {
-                sendErrorMessage("No originalActivity");
+                sendErrorMessage("No customerId in intent");
             }
+            serviceType = intent.getStringExtra("serviceType");
             serviceId = intent.getIntExtra("serviceId", -1);
             fileId = intent.getIntExtra("fileId", -1);
-            isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
-            isNew = intent.getBooleanExtra("isNew", false);
-            if(isNew) {
+            if(fileId == -1) {
                 setTitle("Add File");
             } else {
-                if(fileId == -1) {
-                    sendErrorMessage("File Id not set");
-                }
                 setTitle("Edit File");
                 if(intent.hasExtra("fileName")) {
                     originalFileName = intent.getStringExtra("fileName");
@@ -150,37 +138,31 @@ public class ServiceImageActivity extends AppCompatActivity {
                     editFileName.setSelection(originalFileName.length());
                 }
             }
-            if(intent.hasExtra("customerId")) {
-                customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
-            } else {
-                sendErrorMessage("No customerId in intent");
-            }
         }
     }
 
     private void saveFile() {
-        //TODO: implement saveFile
+        //TODO: implement save file
         /*
         ProgressBarUtilities.showProgress(this, serviceFileEditForm, progressView, true);
-                ProgressBarUtilities.showProgress(ServiceImageActivity.this, serviceFileEditForm, progressView, false);
+                ProgressBarUtilities.showProgress(ServiceFileDetailActivity.this, serviceFileEditForm, progressView, false);
                 goBackToActivity(ServiceDetailActivity.class);
         */
 
-        Intent backToServiceDetailIntent = new Intent(ServiceImageActivity.this, ServiceDetailActivity.class);
-        backToServiceDetailIntent.putExtra("originalActivity", originalActivity);
-        backToServiceDetailIntent.putExtra("isContractor", isContractorEditingPage);
-        backToServiceDetailIntent.putExtra("customerId", customerData.getUid());
-        backToServiceDetailIntent.putExtra("serviceId", serviceId);
-        //Contractor
-        //isNew
-
-        if(isNew) {
-            backToServiceDetailIntent.putExtra("newFile", editFileName.getText().toString());
+        ContractorService service = customerData.getServices(serviceType).get(serviceId);
+        List<String> files = service.getFiles();
+        if(fileId < 0) {
+            if(files == null) {
+                files = new ArrayList<>();
+            }
+            //New
+            files.add(editFileName.getText().toString());
         } else {
-            backToServiceDetailIntent.putExtra("updateFileId", fileId);
-            backToServiceDetailIntent.putExtra("updatedFile", editFileName.getText().toString());
+            files.set(fileId, editFileName.getText().toString());
         }
-        startActivity(backToServiceDetailIntent);
+        service.setFiles(files);
+        customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
+        goBackToActivity();
     }
     private void showRemoveFileWarning() {
         //TODO: implement showRemoveFileWarning
@@ -189,20 +171,11 @@ public class ServiceImageActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
-        hideKeyboard(this.getCurrentFocus());
-        goBackToActivity(null);
+        goBackToActivity();
         return true;
     }
-    private void goBackToActivity(Class<?> originalActivity) {
-        /*
-        Log.d(TAG, "isContractor:" + isContractorEditingPage);
-        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
-        originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
-        originalActivityIntent.putExtra("customerId", customerData.getUid());
+    private void goBackToActivity() {
         hideKeyboard(this.getCurrentFocus());
-        startActivity(originalActivityIntent);
-        */
-        //TODO: test commented out with contractor logged in
         finish();
     }
     private void setEnterButtonToKeyboardDismissal(final EditText view) {
@@ -227,6 +200,6 @@ public class ServiceImageActivity extends AppCompatActivity {
     private void sendErrorMessage(String message) {
         Log.e(TAG, message);
         Toast.makeText(getApplicationContext(), "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
-        goBackToActivity(MainActivity.class);
+        goBackToActivity();
     }
 }

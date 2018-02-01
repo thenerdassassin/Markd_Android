@@ -110,7 +110,7 @@
         <activity android:name=".customer_subactivities.ServiceDetailActivity"
             android:value=".customer_subactivities.ServiceDetailActivity"
             android:launchMode="singleTop"/>
-        <activity android:name=".customer_subactivities.ServiceImageActivity"
+        <activity android:name=".customer_subactivities.ServiceFileDetailActivity"
             android:value=".customer_subactivities.ServiceImageActivity"
             android:launchMode="singleTop">
             <meta-data

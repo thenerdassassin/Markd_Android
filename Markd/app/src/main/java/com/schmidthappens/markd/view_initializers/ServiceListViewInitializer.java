@@ -38,6 +38,11 @@ public class ServiceListViewInitializer {
             }
         });
         if(services == null || services.size() == 0) {
+            if(services == null) {
+                Log.d(TAG, "Null services");
+            } else {
+                Log.d(TAG, "services size 0");
+            }
             View v = viewInflater.inflate(R.layout.list_row_service, null);
             TextView contractorTextView = v.findViewById(R.id.contractor_name);
             contractorTextView.setText("No services yet!");
