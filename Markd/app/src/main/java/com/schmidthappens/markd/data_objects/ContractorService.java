@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.storage.StorageException;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
@@ -92,6 +93,14 @@ public class ContractorService implements Comparable<ContractorService> {
         } else {
             this.guid = guid;
         }
+    }
+
+    @Exclude
+    public String getFilePath(String customerId, int fileId) {
+        if(StringUtilities.isNullOrEmpty(customerId) || StringUtilities.isNullOrEmpty(guid) || fileId < 0 || fileId >= files.size()) {
+            return "";
+        }
+        return "services/"+customerId+"/"+guid+"/"+files.get(fileId);
     }
 
     public ContractorService update(String contractor, String comments, List<String> files) {
