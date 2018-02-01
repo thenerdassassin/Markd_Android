@@ -88,8 +88,8 @@ public class TempCustomerData {
             }
         });
     }
-    public void attachListener() {
-        userReference.addValueEventListener(valueEventListener);
+    public void attachListener(ValueEventListener listener) {
+        userReference.addListenerForSingleValueEvent(listener);
     }
     public void removeListeners() {
         userReference.removeEventListener(valueEventListener);
@@ -304,6 +304,22 @@ public class TempCustomerData {
     public void removeService(int serviceId, String serviceType) {
         customer.deleteService(serviceId, serviceType);
         putCustomer(customer);
+    }
+    public List<ContractorService> getServices(String serviceType) {
+        if(customer == null) {
+            return new ArrayList<>();
+        } else {
+            if(serviceType.equalsIgnoreCase("Plumber")) {
+                return customer.getPlumbingServices();
+            } else if(serviceType.equalsIgnoreCase("Electrician")) {
+                return customer.getElectricalServices();
+            } else if(serviceType.equalsIgnoreCase("Hvac")) {
+                return customer.getHvacServices();
+            } else {
+                Log.e(TAG, "No matching ServiceType");
+                return new ArrayList<>();
+            }
+        }
     }
 
     //Mark:- Settings

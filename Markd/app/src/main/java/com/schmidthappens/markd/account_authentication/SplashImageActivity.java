@@ -29,6 +29,7 @@ public class SplashImageActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         setContentView(R.layout.view_splash_image);
         getSupportActionBar().hide();
         authentication = new FirebaseAuthentication(SplashImageActivity.this);

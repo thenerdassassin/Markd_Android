@@ -34,7 +34,11 @@ public class ServiceListViewInitializer {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ctx.startActivity(createServiceDetailIntent(ctx, contractor, isContractorViewing, uid));
+                if(services == null) {
+                    ctx.startActivity(createServiceDetailIntent(ctx, contractor, isContractorViewing, uid, 0));
+                } else {
+                    ctx.startActivity(createServiceDetailIntent(ctx, contractor, isContractorViewing, uid, services.size()));
+                }
             }
         });
         if(services == null || services.size() == 0) {
@@ -84,12 +88,13 @@ public class ServiceListViewInitializer {
         intentToReturn.putExtra("customerId", customerId);
         return intentToReturn;
     }
-    private static Intent createServiceDetailIntent(Context ctx, String contractor, boolean isContractor, String customerId) {
+    private static Intent createServiceDetailIntent(Context ctx, String contractor, boolean isContractor, String customerId, int servicesLength) {
         Intent intentToReturn = new Intent(ctx, ServiceDetailActivity.class);
         intentToReturn.putExtra("originalActivity", ctx.getClass());
         intentToReturn.putExtra("contractor", contractor);
         intentToReturn.putExtra("isContractor", isContractor);
         intentToReturn.putExtra("customerId", customerId);
+        intentToReturn.putExtra("servicesLength", servicesLength);
         return intentToReturn;
     }
 }

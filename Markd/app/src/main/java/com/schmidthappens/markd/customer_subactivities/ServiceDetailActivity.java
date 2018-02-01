@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -35,6 +36,7 @@ import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
 import com.schmidthappens.markd.view_initializers.ServiceListViewInitializer;
 
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,13 +57,10 @@ public class ServiceDetailActivity extends AppCompatActivity {
     Button saveButton;
     Button deleteButton;
 
-    //Service Context
     boolean isContractorEditingPage;
-    //customerId
-    //services
     Class<?> originalActivity;
     int serviceId;
-    //fileId
+    boolean isAddService;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -171,12 +170,12 @@ public class ServiceDetailActivity extends AppCompatActivity {
         alertDialog.show();
     }
     private void removeService() {
-        //TODO: remove files folder from Firebase Storage
         String serviceType = getServiceType();
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
         } else {
             Log.d(TAG, "Remove " + serviceType + "service-" + serviceId);
+            //TODO: remove files folder from Firebase Storage
             customerData.removeService(serviceId, serviceType);
         }
     }
@@ -225,38 +224,70 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
             isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
 
-            customerData = new TempCustomerData(intent.getStringExtra("customerId"), null); //TODO: initialize file list
-
             if(intent.hasExtra("contractor")) {
                 editContractor.setText(intent.getStringExtra("contractor"));
                 editContractor.setSelection(editContractor.getText().length());
             }
 
             serviceId = intent.getIntExtra("serviceId", -1);
-
-            //Editing Service
-            if(!(serviceId < 0)) {
+            if(serviceId < 0) {
+                isAddService = true;
+            } else {
+                //Editing Service
                 if(intent.hasExtra("description")) {
                     editServiceDescription.setText(intent.getStringExtra("description"));
                 }
             }
+            final int servicesLength = intent.getIntExtra("servicesLength", -1);
+            customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
+            customerData.attachListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<String> files = new ArrayList<>();
+                    if(isAddService && servicesLength >= 0) {
+                        //Create New Service if new to be able to store information
+                        saveServiceData();
+                        serviceId = servicesLength;
+                    } else {
+                        if(customerData.getServices(getServiceType()) != null) {
+                            ContractorService service = customerData.getServices(getServiceType()).get(serviceId);
+                            if(service != null) {
+                                files = service.getFiles();
+                            }
+                        }
+
+                    }
+                    ServiceFileListViewInitializer.createFileListView(ServiceDetailActivity.this, files, isContractorEditingPage, customerData.getUid(), serviceId, originalActivity);
+                    customerData.removeListeners();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, databaseError.toString());
+                }
+            });
         } else {
             sendErrorMessage("Intent is Null");
         }
     }
 
     @Override
+    public void onBackPressed() {
+        Log.i(TAG, "onBackPressed");
+        onSupportNavigateUp();
+    }
+    @Override
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
         hideKeyboard(this.getCurrentFocus());
         goBackToActivity(originalActivity);
-        /*
-            if serviceId == -1:
-                delete all files
-            else not new:
-                save new files array
-                saveServiceDate(false)
-         */
+        if(isAddService) {
+            //delete service and files
+            customerData.removeService(serviceId, getServiceType());
+            //TODO delete files from Storage
+        } else {
+            //Do nothing
+        }
         return true;
     }
     private void goBackToActivity(Class<?> originalActivity) {
