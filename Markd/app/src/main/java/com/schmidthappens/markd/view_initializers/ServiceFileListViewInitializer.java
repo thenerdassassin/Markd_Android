@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.ServiceFileDetailActivity;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class ServiceFileListViewInitializer {
     private static final String TAG = "ServiceFileListViewInit";
-    public static View createFileListView(final Context ctx, final List<String> files, final String uid,  final String serviceType, final int serviceId) {
+    public static View createFileListView(final Context ctx, final List<FirebaseFile> files, final String uid, final String serviceType, final int serviceId) {
         LayoutInflater viewInflater = LayoutInflater.from(ctx);
         View view = viewInflater.inflate(R.layout.view_file_list, null);
         LinearLayout listOfFiles = (LinearLayout)view.findViewById(R.id.file_list);
@@ -45,8 +46,9 @@ public class ServiceFileListViewInitializer {
             listOfFiles.addView(v);
         } else {
             for(int fileId = 0; fileId < files.size(); fileId++) {
-                final String fileName = files.get(fileId);
+                final String fileName = files.get(fileId).getFileName();
                 final int fileIdFinal = fileId;
+                final String fileGuid = files.get(fileId).getGuid();
                 View v = viewInflater.inflate(R.layout.list_row_file, null);
 
                 if (fileName != null) {
@@ -60,7 +62,7 @@ public class ServiceFileListViewInitializer {
                             public void onClick(View v) {
                                 Log.d(TAG, "View file:" + fileName);
                                 ctx.startActivity(
-                                        createServiceFileIntent(ctx, uid, serviceType, serviceId, fileIdFinal, fileName)
+                                        createServiceFileIntent(ctx, uid, serviceType, serviceId, fileIdFinal, fileName, fileGuid)
                                 );
                             }
                         });
@@ -82,13 +84,14 @@ public class ServiceFileListViewInitializer {
         return  intentToCreateServiceFile;
     }
 
-    private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId, int fileId, String fileName) {
+    private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId, int fileId, String fileName, String fileGuid) {
         Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
         intentToCreateServiceFile.putExtra("customerId", uid);
         intentToCreateServiceFile.putExtra("serviceType", serviceType);
         intentToCreateServiceFile.putExtra("serviceId", serviceId);
         intentToCreateServiceFile.putExtra("fileId", fileId);
         intentToCreateServiceFile.putExtra("fileName", fileName);
+        intentToCreateServiceFile.putExtra("fileGuid", fileGuid);
         return  intentToCreateServiceFile;
     }
 }

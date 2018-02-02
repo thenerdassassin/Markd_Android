@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import org.json.JSONArray;
@@ -238,7 +239,7 @@ public class Customer {
         insertService(service, serviceType);
     }
     @Exclude
-    public void updateService(int serviceId, String contractor, String comments, List<String> files, String serviceType) {
+    public void updateService(int serviceId, String contractor, String comments, List<FirebaseFile> files, String serviceType) {
         setService(serviceId, contractor, comments, files, serviceType);
     }
     @Exclude
@@ -267,7 +268,7 @@ public class Customer {
         }
     }
     @Exclude
-    private void setService(int serviceId, String contractor, String comments, List<String> files, String serviceType) {
+    private void setService(int serviceId, String contractor, String comments, List<FirebaseFile> files, String serviceType) {
         if(serviceType.equalsIgnoreCase("Plumber")) {
             List<ContractorService> services = getPlumbingServices();
             if(services == null || serviceId < 0 || serviceId > services.size()) {

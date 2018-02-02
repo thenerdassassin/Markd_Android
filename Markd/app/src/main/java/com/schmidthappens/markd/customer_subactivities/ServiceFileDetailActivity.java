@@ -1,6 +1,7 @@
 package com.schmidthappens.markd.customer_subactivities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -19,9 +20,9 @@ import android.widget.Toast;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     int serviceId;
     int fileId; // newFile == -1
     String originalFileName;
+    //TODO: saveGuid
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -150,22 +152,51 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         */
 
         ContractorService service = customerData.getServices(serviceType).get(serviceId);
-        List<String> files = service.getFiles();
+        List<FirebaseFile> files = service.getFiles();
         if(fileId < 0) {
             if(files == null) {
                 files = new ArrayList<>();
             }
+            FirebaseFile fileToAdd = new FirebaseFile(editFileName.getText().toString());
             //New
-            files.add(editFileName.getText().toString());
+            files.add(fileToAdd);
         } else {
-            files.set(fileId, editFileName.getText().toString());
+            FirebaseFile file = files.get(fileId);
+            file.setFileName(editFileName.getText().toString());
+            files.set(fileId, file);
         }
         service.setFiles(files);
         customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
         goBackToActivity();
     }
     private void showRemoveFileWarning() {
-        //TODO: implement showRemoveFileWarning
+        alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Delete File")
+                .setMessage("This action can not be reversed. Are you sure you want to delete this file?")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Cancel button
+                        Log.d(TAG, "Cancel the file deletion");
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked Delete button
+                        Log.d(TAG, "Confirm the file deletion");
+                        deleteFile();
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
+    private void deleteFile() {
+        //TODO: implement delete file
+        Toast.makeText(this, "File deleted", Toast.LENGTH_SHORT).show();
+        if(fileId == -1) {
+
+        }
     }
 
     @Override

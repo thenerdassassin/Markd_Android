@@ -31,6 +31,7 @@ import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
@@ -137,7 +138,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
             customerData.addService(service, serviceType);
         }
     }
-    private void updateService(int serviceId, String contractor, String description, List<String> files) {
+    private void updateService(int serviceId, String contractor, String description, List<FirebaseFile> files) {
         String serviceType = getServiceType();
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
@@ -243,7 +244,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
             customerData.attachListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    List<String> files = new ArrayList<>();
+                    List<FirebaseFile> files = new ArrayList<>();
                     if(isAddService) {
                         //Create New Service if new to be able to store information
                         saveServiceData();

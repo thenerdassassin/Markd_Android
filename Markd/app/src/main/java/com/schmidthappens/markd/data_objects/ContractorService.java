@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.storage.StorageException;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
@@ -23,13 +24,13 @@ public class ContractorService implements Comparable<ContractorService> {
     private int year;
     private String contractor;
     private String comments;
-    private List<String> files;
+    private List<FirebaseFile> files;
 
 
     public ContractorService() {
         // Default constructor required for calls to DataSnapshot.getValue(ContractorService.class)
     }
-    public ContractorService(int month, int day, int year, String contractor, String comments, List<String> files) {
+    public ContractorService(int month, int day, int year, String contractor, String comments, List<FirebaseFile> files) {
         this.month = month;
         this.day = day;
         this.year = year;
@@ -38,7 +39,7 @@ public class ContractorService implements Comparable<ContractorService> {
         this.files = files;
         setGuid(null);
     }
-    public ContractorService(String contractor, String comments, List<String> files) {
+    public ContractorService(String contractor, String comments, List<FirebaseFile> files) {
         this.month = DateUtitilities.getCurrentMonth();
         this.day = DateUtitilities.getCurrentDay();
         this.year = DateUtitilities.getCurrentYear();
@@ -78,10 +79,10 @@ public class ContractorService implements Comparable<ContractorService> {
     public void setComments(String comments) {
         this.comments = comments;
     }
-    public List<String> getFiles() {
+    public List<FirebaseFile> getFiles() {
         return files;
     }
-    public void setFiles(List<String> files) {
+    public void setFiles(List<FirebaseFile> files) {
         this.files = files;
     }
     public String getGuid() {
@@ -100,10 +101,10 @@ public class ContractorService implements Comparable<ContractorService> {
         if(StringUtilities.isNullOrEmpty(customerId) || StringUtilities.isNullOrEmpty(guid) || fileId < 0 || fileId >= files.size()) {
             return "";
         }
-        return "services/"+customerId+"/"+guid+"/"+files.get(fileId);
+        return "services/"+customerId+"/"+guid+"/"+files.get(fileId).getGuid();
     }
 
-    public ContractorService update(String contractor, String comments, List<String> files) {
+    public ContractorService update(String contractor, String comments, List<FirebaseFile> files) {
         this.contractor = contractor;
         this.comments = comments;
         this.files = files;

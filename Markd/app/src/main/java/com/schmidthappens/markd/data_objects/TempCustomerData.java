@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 
 import org.json.JSONArray;
@@ -297,7 +298,7 @@ public class TempCustomerData {
         customer.addService(service, serviceType);
         putCustomer(customer);
     }
-    public void updateService(int serviceId, String contractor, String comments, List<String> files, String serviceType) {
+    public void updateService(int serviceId, String contractor, String comments, List<FirebaseFile> files, String serviceType) {
         customer.updateService(serviceId, contractor, comments, files, serviceType);
         putCustomer(customer);
     }
