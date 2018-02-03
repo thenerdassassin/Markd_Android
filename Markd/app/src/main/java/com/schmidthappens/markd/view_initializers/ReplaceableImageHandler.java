@@ -354,7 +354,7 @@ public class ReplaceableImageHandler {
         return pdf.delete();
     }
 
-    public View.OnClickListener viewPdfClick = new View.OnClickListener() {
+    private View.OnClickListener viewPdfClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if(firebasePath == null) {
@@ -376,7 +376,7 @@ public class ReplaceableImageHandler {
                             context.startActivity(intent);
 
                         } catch (ActivityNotFoundException e) {
-                            Log.e(TAG, e.toString());
+                            Toast.makeText(context, "Download a pdf viewer from the app store.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new OnFailureListener() {
