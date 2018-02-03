@@ -363,7 +363,9 @@ public class ReplaceableImageHandler {
             File localFile = null;
             try {
                 localFile = createPdfFile(context);
-                final Uri pdfUri = Uri.fromFile(localFile);
+                final Uri pdfUri = FileProvider.getUriForFile(
+                        context, "com.schmidthappens.markd.provider", localFile
+                );
                 MarkdFirebaseStorage.getFile(firebasePath, localFile, new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
