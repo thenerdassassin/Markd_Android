@@ -89,9 +89,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         hasImage = false;
-        homeFrame.setBackgroundColor(View.GONE);
-        homeImage.setVisibility(View.GONE);
-        homeImagePlaceholder.setVisibility(View.GONE);
 
         customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new MainGetDataListener());
         homeFrame.setOnClickListener(photoClick);
@@ -120,6 +117,11 @@ public class MainActivity extends AppCompatActivity {
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
         homeImage = (ImageView)findViewById(R.id.home_image);
         homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
+
+        homeFrame.setBackgroundColor(View.GONE);
+        homeImage.setVisibility(View.GONE);
+        homeImagePlaceholder.setVisibility(View.GONE);
+
         preparedFor = (TextView)findViewById(R.id.prepared_for);
         homeAddress = (TextView)findViewById(R.id.home_address);
         roomInformation = (TextView)findViewById(R.id.home_information_rooms);
@@ -142,6 +144,11 @@ public class MainActivity extends AppCompatActivity {
                     homeImage,
                     new HomeImageLoadingListener());
             firstPass = false;
+        } else {
+            MarkdFirebaseStorage.loadImage(this,
+                    customerData.getHomeImageFileName(),
+                    homeImage,
+                    null);
         }
     }
     private void fillCustomerInformation() {
