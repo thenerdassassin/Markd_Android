@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
+import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,12 +43,16 @@ public class ReplaceableImageHandler {
     private String currentPhotoPath;
 
     private int imageRequestCode;
+    private ProgressBar progressBar;
+    private LinearLayout layoutToHide;
 
-    public View inititialize(Activity context, boolean hasImage, boolean cameraPermissionGranted, int imageRequestCode) {
+    public View inititialize(Activity context, boolean hasImage, boolean cameraPermissionGranted, int imageRequestCode, ProgressBar progressBar, LinearLayout layoutToHide) {
         this.context = context;
         this.hasImage = hasImage;
         this.cameraPermissionGranted = cameraPermissionGranted;
         this.imageRequestCode = imageRequestCode;
+        this.progressBar = progressBar;
+        this.layoutToHide = layoutToHide;
 
         LayoutInflater viewInflater = LayoutInflater.from(context);
         View view = viewInflater.inflate(R.layout.view_replaceable_image, null);
@@ -60,24 +67,30 @@ public class ReplaceableImageHandler {
     }
 
     public void loadImage(String fileName) {
-        Log.d(TAG, fileName);
+        Log.d(TAG, "Load:" + fileName);
         MarkdFirebaseStorage.loadImage(context,
                 fileName,
                 imageView,
                 null);
     }
-
+    public void removeImage(String fileName) {
+        Log.d(TAG, "Remove:" + fileName);
+        MarkdFirebaseStorage.deleteImage(fileName);
+    }
     public void updateImage(String oldFileName, String newFileName, Intent data, ImageLoadingListener listener) {
         Uri photo = getPhotoUri(data);
 
         if (photo != null) {
-            MarkdFirebaseStorage.updateImage(context, newFileName, photo, imageView, listener);
-            MarkdFirebaseStorage.deleteImage(oldFileName);
+            MarkdFirebaseStorage.updateImage(context, newFileName, photo, imageView, new ImageLoadListener());
+            if(hasImage) {
+                MarkdFirebaseStorage.deleteImage(oldFileName);
+            }
+            hasImage = true;
             Toast.makeText(context, "Loading Photo", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void setCameraPermission(boolean cameraPermissionGranted) {
+    public void grantCameraPermission() {
         this.cameraPermissionGranted = cameraPermissionGranted;
     }
     private Intent createPhotoOrGalleryChooserIntent() {
@@ -193,4 +206,26 @@ public class ReplaceableImageHandler {
             }
         }
     };
+
+    private class ImageLoadListener implements ImageLoadingListener {
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Loading image.");
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, true);
+        }
+
+        @Override
+        public void onSuccess() {
+            Log.d(TAG, "Image Loaded successfully");
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
+
+        }
+
+        @Override
+        public void onFailed(Exception e) {
+            Log.e(TAG, e.toString());
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
+            Toast.makeText(context, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

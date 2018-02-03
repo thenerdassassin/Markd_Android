@@ -29,6 +29,7 @@ import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
+import com.schmidthappens.markd.utilities.StringUtilities;
 import com.schmidthappens.markd.view_initializers.ReplaceableImageHandler;
 
 import java.util.ArrayList;
@@ -40,23 +41,22 @@ import java.util.List;
 
 public class ServiceFileDetailActivity extends AppCompatActivity {
     private final static String TAG = "ServiceFileDetailActvty";
-    FirebaseAuthentication authentication;
-    TempCustomerData customerData;
-    AlertDialog alertDialog;
+    private FirebaseAuthentication authentication;
+    private TempCustomerData customerData;
+    private AlertDialog alertDialog;
 
     //XML Objects
-    ProgressBar progressView;
-    LinearLayout serviceFileEditForm;
-    EditText editFileName;
-    //TODO: Image
-    Button saveButton;
-    Button deleteButton;
+    private ProgressBar progressView;
+    private LinearLayout serviceFileEditForm;
+    private EditText editFileName;
+    private Button saveButton;
+    private Button deleteButton;
 
-    String serviceType;
-    int serviceId;
-    int fileId; // newFile == -1
-    String originalFileName;
-    String fileGuid;
+    private String serviceType;
+    private int serviceId;
+    private int fileId; // newFile == -1
+    private String originalFileName;
+    private String fileGuid;
 
     private FirebaseFile file;
 
@@ -108,7 +108,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                imageHandler.setCameraPermission(true);
+                imageHandler.grantCameraPermission();
             }
         }
     }
@@ -117,7 +117,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult");
         if (requestCode == IMAGE_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
-                FirebaseFile file = getFile();
+                file = getFile();
                 String oldFileName = file.getFilePath(customerData.getUid());
                 Log.d(TAG, "oldFileName:" + oldFileName);
                 file.setGuid(null);
@@ -135,7 +135,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     }
 
     private void initializeXMLObjects() {
-
         serviceFileEditForm = (LinearLayout)findViewById(R.id.service_file_edit_form) ;
         progressView = (ProgressBar)findViewById(R.id.service_file_progress);
         editFileName = (EditText)findViewById(R.id.service_file_edit_name);
@@ -144,9 +143,8 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         imageHandler = new ReplaceableImageHandler();
 
         ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(imageHandler.inititialize(
-                this, false, checkForCameraPermission(), IMAGE_REQUEST_CODE
+                this, false, checkForCameraPermission(), IMAGE_REQUEST_CODE, progressView, serviceFileEditForm
         ));
-
         saveButton = (Button)findViewById(R.id.service_file_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,6 +160,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
                 if(fileId < 0) {
+                    imageHandler.removeImage(getFile().getFilePath(customerData.getUid()));
                     goBackToActivity();
                 } else {
                     showRemoveFileWarning();
@@ -192,6 +191,8 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                     fileGuid = intent.getStringExtra("fileGuid");
                 }
             }
+
+            imageHandler.loadImage(getFile().getFilePath(customerData.getUid()));
         }
     }
     private FirebaseFile getFile() {
@@ -199,6 +200,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             return file;
         } else {
             if(fileId < 0) {
+                Log.d(TAG, "Creating new file");
                 return new FirebaseFile(editFileName.getText().toString());
             } else {
                 ContractorService service = customerData.getServices(serviceType).get(serviceId);
@@ -209,12 +211,10 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         }
     }
     private void saveFile() {
-        //TODO: implement save actual image/file
-        /*
-        ProgressBarUtilities.showProgress(this, serviceFileEditForm, progressView, true);
-                ProgressBarUtilities.showProgress(ServiceFileDetailActivity.this, serviceFileEditForm, progressView, false);
-                goBackToActivity(ServiceDetailActivity.class);
-        */
+        if(StringUtilities.isNullOrEmpty(editFileName.getText().toString())) {
+            Toast.makeText(this, "File name can not be empty.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         FirebaseFile file = getFile();
         file.setFileName(editFileName.getText().toString());
         ContractorService service = customerData.getServices(serviceType).get(serviceId);
@@ -223,7 +223,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             if(files == null) {
                 files = new ArrayList<>();
             }
-            //New
             files.add(file);
         } else {
             files.set(fileId, file);
@@ -255,22 +254,21 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         alertDialog.show();
     }
     private void deleteFile() {
-        if(fileId < -1) {
-            //TODO: Only delete actual image/file
-        } else {
-            //TODO: implement delete file including image
-            ContractorService service = customerData.getServices(serviceType).get(serviceId);
-            List<FirebaseFile> files = service.getFiles();
-            files.remove(fileId);
-            service.setFiles(files);
-            customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
-            goBackToActivity();
-        }
+        imageHandler.removeImage(getFile().getFilePath(customerData.getUid()));
+        ContractorService service = customerData.getServices(serviceType).get(serviceId);
+        List<FirebaseFile> files = service.getFiles();
+        files.remove(fileId);
+        service.setFiles(files);
+        customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
+        goBackToActivity();
     }
 
     @Override
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
+        if(fileId < 0) {
+            imageHandler.removeImage(getFile().getFilePath(customerData.getUid())); //TODO: test
+        }
         goBackToActivity();
         return true;
     }
