@@ -142,7 +142,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
 
         imageHandler = new ReplaceableImageHandler();
 
-        ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(imageHandler.inititialize(
+        ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(imageHandler.initialize(
                 this, false, checkForCameraPermission(), IMAGE_REQUEST_CODE, progressView, serviceFileEditForm
         ));
         saveButton = (Button)findViewById(R.id.service_file_save_button);
