@@ -2,9 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/replaceable_image_frame"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorPanel">
-
+    android:layout_height="wrap_content">
+    <FrameLayout
+        android:id="@+id/image_capture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPanel">
     <ImageView
         android:id="@+id/replaceable_image_placeholder"
         android:layout_width="@dimen/square_icon"
@@ -15,4 +18,14 @@
         android:id="@+id/replaceable_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/view_pdf_file_button"
+        android:layout_height="wrap_content"
+        android:layout_width="130dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:text="View Pdf"/>
 </FrameLayout>

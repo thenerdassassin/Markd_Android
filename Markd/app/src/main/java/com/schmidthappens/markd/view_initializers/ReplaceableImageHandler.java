@@ -1,29 +1,39 @@
 package com.schmidthappens.markd.view_initializers;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
+import com.schmidthappens.markd.file_storage.StorageMetadataListener;
 import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -35,12 +45,15 @@ public class ReplaceableImageHandler {
 
     private Activity context;
     private FrameLayout imageFrame;
+    private FrameLayout imageCaptureFrame;
     private ImageView imageView;
     private ImageView imagePlaceholder;
+    private Button viewPdf;
 
     private boolean hasImage;
     private boolean cameraPermissionGranted;
     private String currentPhotoPath;
+    private String firebasePath;
 
     private int imageRequestCode;
     private ProgressBar progressBar;
@@ -58,40 +71,39 @@ public class ReplaceableImageHandler {
         View view = viewInflater.inflate(R.layout.view_replaceable_image, null);
 
         imageFrame = view.findViewById(R.id.replaceable_image_frame);
+        imageCaptureFrame = view.findViewById(R.id.image_capture);
         imageView = view.findViewById(R.id.replaceable_image);
         imagePlaceholder = view.findViewById(R.id.replaceable_image_placeholder);
         imageFrame.setOnClickListener(photoClick);
         imageFrame.setOnLongClickListener(photoLongClick);
+        viewPdf = view.findViewById(R.id.view_pdf_file_button);
+        viewPdf.setOnClickListener(viewPdfClick);
 
         return view;
     }
 
     public void loadImage(String fileName) {
         Log.d(TAG, "Load:" + fileName);
-        MarkdFirebaseStorage.loadImage(context,
-                fileName,
-                imageView,
-                null);
+        this.firebasePath = fileName;
+        MarkdFirebaseStorage.getFileType(fileName, new StorageMetadataGetter(fileName));
     }
     public void removeImage(String fileName) {
         Log.d(TAG, "Remove:" + fileName);
         MarkdFirebaseStorage.deleteImage(fileName);
     }
-    public void updateImage(String oldFileName, String newFileName, Intent data, ImageLoadingListener listener) {
+    public void updateImage(String oldFileName, String newFileName, Intent data) {
         Uri photo = getPhotoUri(data);
 
         if (photo != null) {
-            MarkdFirebaseStorage.updateImage(context, newFileName, photo, imageView, new ImageLoadListener());
-            if(hasImage) {
-                MarkdFirebaseStorage.deleteImage(oldFileName);
-            }
-            hasImage = true;
-            Toast.makeText(context, "Loading Photo", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Saving to - " + newFileName);
+            MarkdFirebaseStorage.saveImage(newFileName, photo, new SaveFileListener(oldFileName, newFileName));
+        } else {
+            Log.d(TAG, "photo is null");
         }
     }
 
     public void grantCameraPermission() {
-        this.cameraPermissionGranted = cameraPermissionGranted;
+        this.cameraPermissionGranted = true;
     }
     private Intent createPhotoOrGalleryChooserIntent() {
         Intent pickIntent = new Intent(Intent.ACTION_PICK);
@@ -99,14 +111,34 @@ public class ReplaceableImageHandler {
 
         String pickTitle = "Take or select a photo";
         Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+        List<Intent> extras = new ArrayList<>();
         if(cameraPermissionGranted) {
             Intent cameraIntent = getCameraIntent();
             if(cameraIntent != null) {
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
-                return chooserIntent;
+                Log.d(TAG, "camera intent added");
+                extras.add(cameraIntent);
             }
         }
-        return pickIntent;
+        Intent intentPDF = getPdfIntent();
+        if(intentPDF != null) {
+            Log.d(TAG, "intent pdf added");
+            extras.add(intentPDF);
+        }
+
+        if(extras.size() > 0) {
+            Intent[] intents = new Intent[extras.size()];
+            intents = extras.toArray(intents);
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents);
+            return chooserIntent;
+        } else {
+            return pickIntent;
+        }
+    }
+    private Intent getPdfIntent() {
+        Intent intentPDF = new Intent(Intent.ACTION_GET_CONTENT);
+        intentPDF.addCategory(Intent.CATEGORY_OPENABLE);
+        intentPDF.setType("application/pdf");
+        return intentPDF;
     }
     private Intent getCameraIntent() {
         //Check if Camera Feature Exists
@@ -160,12 +192,6 @@ public class ReplaceableImageHandler {
         } else {
             Log.d(TAG, "Parent File exists");
         }
-        if(image.exists()) {
-            Log.e(TAG, "Image exists");
-            Log.e(TAG, "Path:"+image.getAbsolutePath());
-        } else {
-            Log.e(TAG, "Image does not exist");
-        }
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
@@ -191,7 +217,7 @@ public class ReplaceableImageHandler {
             if (chooserIntent != null){
                 context.startActivityForResult(chooserIntent, imageRequestCode);
             }
-            return true;
+            return false;
         }
     };
     private View.OnClickListener photoClick = new View.OnClickListener() {
@@ -207,18 +233,87 @@ public class ReplaceableImageHandler {
         }
     };
 
+
+    private class StorageMetadataGetter implements StorageMetadataListener {
+        private String fileName;
+
+        StorageMetadataGetter(String fileName) {
+            this.fileName = fileName;
+        }
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Getting metadata");
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, true);
+        }
+
+        @Override
+        public void onSuccess(StorageMetadata metadata) {
+            String content = metadata.getContentType();
+            if(content.equalsIgnoreCase("application/pdf")) {
+                Log.d(TAG, "Type PDF");
+                //Show view pdf button
+                imageCaptureFrame.setVisibility(View.GONE);
+                viewPdf.setVisibility(View.VISIBLE);
+                ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
+            } else {
+                Log.d(TAG, "Type not PDF");
+                imageCaptureFrame.setVisibility(View.VISIBLE);
+                viewPdf.setVisibility(View.GONE);
+                MarkdFirebaseStorage.loadImage(context,
+                        fileName,
+                        imageView,
+                        new ImageLoadListener());
+            }
+        }
+
+        @Override
+        public void onFailed(Exception e) {
+            Log.e(TAG, e.toString());
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
+        }
+    }
+    private class SaveFileListener implements ImageLoadingListener {
+        private String fileName;
+        private String oldFileName;
+
+        SaveFileListener(String oldFileName, String fileName) {
+            this.fileName = fileName;
+            firebasePath = fileName;
+            this.oldFileName = oldFileName;
+        }
+        @Override
+        public void onStart() {
+            Log.d(TAG, "Saving image.");
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, true);
+        }
+
+        @Override
+        public void onSuccess() {
+            Log.d(TAG, "Image Saved successfully");
+            hasImage = true;
+            Log.d(TAG, "Deleting image from - " + oldFileName);
+            MarkdFirebaseStorage.deleteImage(oldFileName);
+            loadImage(fileName);
+        }
+
+        @Override
+        public void onFailed(Exception e) {
+            Log.e(TAG, e.toString());
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
+            Toast.makeText(context, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+
+        }
+    }
     private class ImageLoadListener implements ImageLoadingListener {
         @Override
         public void onStart() {
             Log.d(TAG, "Loading image.");
-            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, true);
         }
 
         @Override
         public void onSuccess() {
             Log.d(TAG, "Image Loaded successfully");
             ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
-
         }
 
         @Override
@@ -228,4 +323,75 @@ public class ReplaceableImageHandler {
             Toast.makeText(context, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private static File createPdfFile(Activity context) throws IOException {
+        File pdf = File.createTempFile(
+                "service_pdf_" + UUID.randomUUID().toString(),  /* prefix */
+                ".pdf",         /* suffix */
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)      /* directory */
+        );
+
+        if(!pdf.getParentFile().exists()) {
+            Log.d(TAG, "Parent File does not exist");
+            if(pdf.getParentFile().mkdirs()) {
+                Log.e(TAG, "mkdirs:true");
+            }else {
+                Log.e(TAG, "mkdirs:false");
+            }
+        } else {
+            Log.d(TAG, "Parent File exists");
+        }
+        if(pdf.exists()) {
+            Log.e(TAG, "Image exists");
+            Log.e(TAG, "Path:"+pdf.getAbsolutePath());
+        } else {
+            Log.e(TAG, "Image does not exist");
+        }
+
+        return pdf;
+    }
+    private static boolean deletePdfFile(File pdf) {
+        return pdf.delete();
+    }
+
+    public View.OnClickListener viewPdfClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(firebasePath == null) {
+                return;
+            }
+            File localFile = null;
+            try {
+                localFile = createPdfFile(context);
+                final Uri pdfUri = Uri.fromFile(localFile);
+                MarkdFirebaseStorage.getFile(firebasePath, localFile, new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        // Local temp file has been created
+                        Intent target = new Intent(Intent.ACTION_VIEW);
+                        target.setDataAndType(pdfUri, "application/pdf");
+                        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        try {
+                            Intent intent = Intent.createChooser(target, "Open File");
+                            context.startActivity(intent);
+
+                        } catch (ActivityNotFoundException e) {
+                            Log.e(TAG, e.toString());
+                        }
+                    }
+                }, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle any errors
+                        Log.e(TAG, e.toString());
+                    }
+                });
+            } catch (IOException e) {
+
+                Log.e(TAG, e.toString());
+            } finally {
+                deletePdfFile(localFile);
+            }
+        }
+    };
 }
