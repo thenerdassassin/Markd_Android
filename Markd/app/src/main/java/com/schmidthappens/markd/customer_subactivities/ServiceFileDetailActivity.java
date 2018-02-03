@@ -124,7 +124,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                 String newFileName = file.getFilePath(customerData.getUid());
                 Log.d(TAG, "newFileName:" + newFileName);
 
-                imageHandler.updateImage(oldFileName, newFileName, data, null); //TODO listener
+                imageHandler.updateImage(oldFileName, newFileName, data);
             } else {
                 Log.d(TAG, "Result not okay");
             }

@@ -109,9 +109,13 @@
 
         <activity android:name=".customer_subactivities.ServiceDetailActivity"
             android:value=".customer_subactivities.ServiceDetailActivity"
+            android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
         <activity android:name=".customer_subactivities.ServiceFileDetailActivity"
             android:value=".customer_subactivities.ServiceImageActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
