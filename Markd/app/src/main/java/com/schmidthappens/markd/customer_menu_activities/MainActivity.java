@@ -31,7 +31,6 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.file_storage.CustomerHomeImageStorageUtility;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
@@ -130,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initializeUI() {
         fillCustomerInformation();
-
+        Log.d(TAG, customerData.getHomeImageFileName());
         MarkdFirebaseStorage.loadImage(this,
-                CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), customerData.getHomeImageFileName()),
+                customerData.getHomeImageFileName(),
                 homeImage,
                 new HomeImageLoadingListener());
     }
@@ -170,16 +169,15 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == IMAGE_REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK) {
                 String oldFileName = customerData.getHomeImageFileName();
-                String oldPath = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), oldFileName);
-
+                Log.d(TAG, "oldFileName:" + oldFileName);
                 String fileName = customerData.setHomeImageFileName();
-                String path = CustomerHomeImageStorageUtility.getHomeImageFilePath(customerData.getUid(), fileName);
+                Log.d(TAG, "newFileName:" + fileName);
 
                 Uri photo = getPhotoUri(data);
 
                 if (photo != null) {
-                    MarkdFirebaseStorage.updateImage(this, path, photo, homeImage, new HomeImageLoadingListener());
-                    MarkdFirebaseStorage.deleteImage(oldPath);
+                    MarkdFirebaseStorage.updateImage(this, fileName, photo, homeImage, new HomeImageLoadingListener());
+                    MarkdFirebaseStorage.deleteImage(oldFileName);
                     Toast.makeText(this, "Loading Photo", Toast.LENGTH_LONG).show();
                 }
             } else {

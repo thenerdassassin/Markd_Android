@@ -11,6 +11,7 @@
     tools:context="com.schmidthappens.markd.account_authentication.LoginActivity">
 
     <!-- Login progress -->
+    <!-- TODO: add to Image Upload -->
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"

@@ -15,7 +15,6 @@ import android.widget.FrameLayout;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.Contractor;
-import com.schmidthappens.markd.file_storage.ContractorLogoStorageUtility;
 import com.schmidthappens.markd.utilities.ContractorUpdater;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 
@@ -83,7 +82,7 @@ public class ContractorListRecyclerViewAdapter extends RecyclerView.Adapter<Cont
                             contractor.getContractorDetails().getCompanyName(),
                             contractor.getContractorDetails().getTelephoneNumber(),
                             contractor.getContractorDetails().getWebsiteUrl(),
-                            ContractorLogoStorageUtility.getLogoPath(reference, contractor.getLogoFileName()),
+                            contractor.getLogoFileName(),
                             true));
         }
 

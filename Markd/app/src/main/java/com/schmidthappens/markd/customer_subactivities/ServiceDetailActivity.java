@@ -14,9 +14,13 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -25,15 +29,24 @@ import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
+import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.DateUtitilities;
+import com.schmidthappens.markd.utilities.OnGetDataListener;
+import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
+import com.schmidthappens.markd.view_initializers.ServiceListViewInitializer;
+
+import java.io.StringBufferInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Josh on 8/5/2017.
  */
 
 public class ServiceDetailActivity extends AppCompatActivity {
-    String TAG = "ServiceDetailActivity";
+    private final static String TAG = "ServiceDetailActivity";
     FirebaseAuthentication authentication;
     TempCustomerData customerData;
     AlertDialog alertDialog;
@@ -41,14 +54,14 @@ public class ServiceDetailActivity extends AppCompatActivity {
     //XML Objects
     EditText editContractor;
     EditText editServiceDescription;
+    FrameLayout fileList;
     Button saveButton;
     Button deleteButton;
 
-    int serviceId;
-    boolean isNew;
     boolean isContractorEditingPage;
-
     Class<?> originalActivity;
+    int serviceId;
+    boolean isAddService;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -57,12 +70,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
 
         setTitle("Edit Service");
-        try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch(NullPointerException e) {
-            sendErrorMessage("getSupportActionBar returned Null");
+        if(getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
         initializeXMLObjects();
     }
     @Override
@@ -92,42 +104,47 @@ public class ServiceDetailActivity extends AppCompatActivity {
         }
     }
 
+    private String getServiceType() {
+        String serviceType = null;
+        if (originalActivity.equals(PlumbingActivity.class)) {
+            Log.d(TAG, "Plumbing Service");
+            serviceType = "plumber";
+        } else if (originalActivity.equals(HvacActivity.class)) {
+            Log.d(TAG, "Hvac Service");
+            serviceType = "hvac";
+        } else if (originalActivity.equals(ElectricalActivity.class)) {
+            Log.d(TAG, "Electrical Service");
+            serviceType = "electrician";
+        }
+        return serviceType;
+    }
     private void saveServiceData() {
-        if(isNew) {
+        //TODO: add images to ContractorService when saving
+        if(serviceId < 0) {
+            //New Service
             ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth()+1, DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
-                    editContractor.getText().toString(), editServiceDescription.getText().toString());
+                    editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
             addService(serviceToAdd);
-
         } else {
-            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString());
+            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
         }
     }
     private void addService(ContractorService service) {
-        if (originalActivity.equals(PlumbingActivity.class)) {
-            Log.d(TAG, "Add Plumbing Service");
-            customerData.addPlumbingService(service);
-        } else if (originalActivity.equals(HvacActivity.class)) {
-            Log.d(TAG, "Add Hvac Service");
-            customerData.addHvacService(service);
-        } else if (originalActivity.equals(ElectricalActivity.class)) {
-            Log.d(TAG, "Add Electrical Service");
-            customerData.addElectricalService(service);
-        } else {
+        String serviceType = getServiceType();
+        if(serviceType == null) {
             sendErrorMessage("Activity does not match");
+        } else {
+            Log.d(TAG, "Add " + serviceType + "service");
+            customerData.addService(service, serviceType);
         }
     }
-    private void updateService(int serviceId, String contractor, String description) {
-        if (originalActivity.equals(PlumbingActivity.class)) {
-            Log.d(TAG, "Edit Plumbing Service");
-            customerData.updatePlumbingService(serviceId, contractor, description);
-        } else if (originalActivity.equals(HvacActivity.class)) {
-            Log.d(TAG, "Edit Hvac Service");
-            customerData.updateHvacService(serviceId, contractor, description);
-        } else if (originalActivity.equals(ElectricalActivity.class)) {
-            Log.d(TAG, "Edit Electrical Service");
-            customerData.updateElectricalService(serviceId, contractor, description);
-        } else {
+    private void updateService(int serviceId, String contractor, String description, List<FirebaseFile> files) {
+        String serviceType = getServiceType();
+        if(serviceType == null) {
             sendErrorMessage("Activity does not match");
+        } else {
+            Log.d(TAG, "Edit " + serviceType + "service-" + serviceId);
+            customerData.updateService(serviceId, contractor, description, files, serviceType);
         }
     }
     private void showRemoveServiceWarning() {
@@ -154,14 +171,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
         alertDialog.show();
     }
     private void removeService() {
-        if (originalActivity.equals(PlumbingActivity.class)) {
-            customerData.removePlumbingService(serviceId);
-        } else if (originalActivity.equals(HvacActivity.class)) {
-            customerData.removeHvacService(serviceId);
-        } else if (originalActivity.equals(ElectricalActivity.class)) {
-            customerData.removeElectricalService(serviceId);
-        } else {
+        String serviceType = getServiceType();
+        if(serviceType == null) {
             sendErrorMessage("Activity does not match");
+        } else {
+            Log.d(TAG, "Remove " + serviceType + "service-" + serviceId);
+            //TODO: remove files folder from Firebase Storage
+            customerData.removeService(serviceId, serviceType);
         }
     }
 
@@ -174,6 +190,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
         //Used to show done button but still allow multiple lines
         editServiceDescription.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editServiceDescription.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        fileList = (FrameLayout)findViewById(R.id.service_file_list);
 
         saveButton = (Button)findViewById(R.id.service_edit_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -190,10 +208,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
-                if(!isNew) {
-                    showRemoveServiceWarning();
-                } else {
+                if(serviceId < 0) {
                     goBackToActivity(originalActivity);
+
+                } else {
+                    showRemoveServiceWarning();
                 }
             }
         });
@@ -205,44 +224,81 @@ public class ServiceDetailActivity extends AppCompatActivity {
             }
 
             isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
-            if(intent.hasExtra("customerId")) {
-                customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
-            } else {
-                sendErrorMessage("customerId is null");
-            }
 
             if(intent.hasExtra("contractor")) {
                 editContractor.setText(intent.getStringExtra("contractor"));
+                editContractor.setSelection(editContractor.getText().length());
             }
 
-            //defaults to false if "isNew" does not exist
-            isNew = intent.getBooleanExtra("isNew", false);
-            if(!isNew) {
-                if(intent.hasExtra("serviceId")) {
-                    serviceId = Integer.parseInt(intent.getStringExtra("serviceId"));
-                } else {
-                    sendErrorMessage("Service Id doesn't exist");
-                }
+            serviceId = intent.getIntExtra("serviceId", -1);
+            if(serviceId < 0) {
+                isAddService = true;
+            } else {
+                //Editing Service
                 if(intent.hasExtra("description")) {
                     editServiceDescription.setText(intent.getStringExtra("description"));
                 }
             }
+
+            customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
+            customerData.attachListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<FirebaseFile> files = new ArrayList<>();
+                    if(isAddService) {
+                        //Create New Service if new to be able to store information
+                        saveServiceData();
+                        serviceId = 0;
+                    } else {
+                        if(customerData.getServices(getServiceType()) != null) {
+                            ContractorService service = customerData.getServices(getServiceType()).get(serviceId);
+                            if(service != null) {
+                                files = service.getFiles();
+                            }
+                        }
+
+                    }
+                    fileList.removeAllViews();
+                    fileList.addView(
+                            ServiceFileListViewInitializer.createFileListView(
+                                    ServiceDetailActivity.this, files, customerData.getUid(), getServiceType(), serviceId
+                            )
+                    );
+                    customerData.removeListeners();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG, databaseError.toString());
+                }
+            });
         } else {
             sendErrorMessage("Intent is Null");
         }
     }
 
     @Override
+    public void onBackPressed() {
+        Log.i(TAG, "onBackPressed");
+        onSupportNavigateUp();
+    }
+    @Override
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
         hideKeyboard(this.getCurrentFocus());
         goBackToActivity(originalActivity);
-        finish();
+        if(isAddService) {
+            //delete service and files
+            customerData.removeService(serviceId, getServiceType());
+            //TODO delete files from Storage
+        } else {
+            //Do nothing
+        }
         return true;
     }
-    private void goBackToActivity(Class<?> originalActivity){
-        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
+    private void goBackToActivity(Class<?> originalActivity) {
         Log.d(TAG, "isContractor:" + isContractorEditingPage);
+        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
         originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
         originalActivityIntent.putExtra("customerId", customerData.getUid());
         hideKeyboard(this.getCurrentFocus());
@@ -261,7 +317,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             }
         });
     }
-    //Hides Keyboard
     private void hideKeyboard(View v) {
         if (v != null) {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

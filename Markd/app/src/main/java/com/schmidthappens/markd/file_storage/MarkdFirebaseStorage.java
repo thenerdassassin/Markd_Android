@@ -46,6 +46,7 @@ public class MarkdFirebaseStorage {
             if(listener != null) {
                 listener.onFailed(new IllegalArgumentException("Path is null or empty"));
             }
+            return;
         }
 
         final StorageReference storageReference = storage.getReference().child("images/" + path);
@@ -61,12 +62,14 @@ public class MarkdFirebaseStorage {
             public void onSuccess(StorageMetadata storageMetadata) {
                 // Load the image using Glide
                 if(!context.isDestroyed()) {
+                    Log.d(TAG, storageReference.toString());
                     Glide.with(context)
                             .using(new FirebaseImageLoader())
                             .load(storageReference)
                             .into(imageView);
                     if (listener != null) {
                         listener.onSuccess();
+                        Log.d(TAG, "Success Listener");
                     }
                 }
             }
@@ -74,7 +77,9 @@ public class MarkdFirebaseStorage {
     }
 
     public static void updateImage(final Activity context, final String path, final Uri file, final ImageView imageView, final ImageLoadingListener listener) {
+        Log.d(TAG, path);
         if(listener != null) {
+            Log.d(TAG, "Started listener");
             listener.onStart();
         }
         UploadTask uploadTask = saveImage(path, file);
@@ -95,7 +100,11 @@ public class MarkdFirebaseStorage {
     }
 
     public static void deleteImage(String path) {
+        if(StringUtilities.isNullOrEmpty(path)) {
+            return;
+        }
         StorageReference reference = storage.getReference().child("images/" + path);
+        Log.d(TAG, "Removed:" + reference.toString());
         reference.delete();
     }
 }

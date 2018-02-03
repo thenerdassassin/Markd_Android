@@ -38,6 +38,11 @@ public class ServiceListViewInitializer {
             }
         });
         if(services == null || services.size() == 0) {
+            if(services == null) {
+                Log.d(TAG, "Null services");
+            } else {
+                Log.d(TAG, "services size 0");
+            }
             View v = viewInflater.inflate(R.layout.list_row_service, null);
             TextView contractorTextView = v.findViewById(R.id.contractor_name);
             contractorTextView.setText("No services yet!");
@@ -61,7 +66,7 @@ public class ServiceListViewInitializer {
                     v.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ctx.startActivity(getServiceDetailActivityIntent(ctx, service, ""+services.indexOf(service), isContractorViewing, uid));
+                            ctx.startActivity(getServiceDetailActivityIntent(ctx, service, services.indexOf(service), isContractorViewing, uid));
                         }
                     });
                 }
@@ -72,7 +77,7 @@ public class ServiceListViewInitializer {
         return view;
     }
 
-    private static Intent getServiceDetailActivityIntent(Context ctx,  ContractorService service, String serviceId, boolean isContractor, String customerId) {
+    private static Intent getServiceDetailActivityIntent(Context ctx,  ContractorService service, int serviceId, boolean isContractor, String customerId) {
         Intent intentToReturn = new Intent(ctx, ServiceDetailActivity.class);
         if(service != null) {
             intentToReturn.putExtra("originalActivity", ctx.getClass());
@@ -88,7 +93,6 @@ public class ServiceListViewInitializer {
         Intent intentToReturn = new Intent(ctx, ServiceDetailActivity.class);
         intentToReturn.putExtra("originalActivity", ctx.getClass());
         intentToReturn.putExtra("contractor", contractor);
-        intentToReturn.putExtra("isNew", true);
         intentToReturn.putExtra("isContractor", isContractor);
         intentToReturn.putExtra("customerId", customerId);
         return intentToReturn;

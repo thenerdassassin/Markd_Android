@@ -33,7 +33,9 @@ import com.schmidthappens.markd.utilities.CustomerSelectedInterface;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by joshua.schmidtibm.com on 9/30/17.
@@ -110,7 +112,10 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.v(TAG, dataSnapshot.toString());
-                    customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
+                    Map<String, Customer> customerMap = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
+                    //customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
+                    customers = new ArrayList<>(customerMap.values());
+                    customerReferences = new ArrayList<>(customerMap.keySet());
                     customerRecyclerView.setAdapter(
                             new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences)
                     );

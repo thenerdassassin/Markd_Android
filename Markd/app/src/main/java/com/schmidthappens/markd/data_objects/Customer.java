@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import org.json.JSONArray;
@@ -151,22 +152,6 @@ public class Customer {
         public void setPlumbingServices(List<ContractorService> plumbingServices) {
             this.plumbingServices = plumbingServices;
         }
-        @Exclude
-        public void addPlumbingService(ContractorService service) {
-            setPlumbingServices(setService(getPlumbingServices(), -1, service));
-        }
-        @Exclude
-        public void updatePlumbingService(int serviceId, String company, String description) {
-            List<ContractorService> services = getPlumbingServices();
-            ContractorService service = services.get(serviceId);
-            service.setContractor(company);
-            service.setComments(description);
-            setService(services, serviceId, service);
-        }
-        @Exclude
-        public void deletePlumbingService(int serviceId) {
-            setPlumbingServices(deleteService(getPlumbingServices(), serviceId));
-        }
 
         //:- HVAC Page
         public AirHandler getAirHandler() {
@@ -192,22 +177,6 @@ public class Customer {
         }
         public void setHvacServices(List<ContractorService> hvacServices) {
             this.hvacServices = hvacServices;
-        }
-        @Exclude
-        public void addHvacService(ContractorService service) {
-            setHvacServices(setService(getHvacServices(), -1, service));
-        }
-        @Exclude
-        public void updateHvacService(int serviceId, String company, String description) {
-            List<ContractorService> services = getHvacServices();
-            ContractorService service = services.get(serviceId);
-            service.setContractor(company);
-            service.setComments(description);
-            setService(services, serviceId, service);
-        }
-        @Exclude
-        public void deleteHvacService(int serviceId) {
-            setHvacServices(deleteService(getHvacServices(), serviceId));
         }
 
         //:- Painting Page
@@ -249,23 +218,6 @@ public class Customer {
         public void setElectricalServices(List<ContractorService> electricalServices) {
             this.electricalServices = electricalServices;
         }
-        @Exclude
-        public void addElectricalService(ContractorService service) {
-            setElectricalServices(setService(getElectricalServices(), -1, service));
-
-        }
-        @Exclude
-        public void updateElectricalService(int serviceId, String company, String description) {
-            List<ContractorService> services = getElectricalServices();
-            ContractorService service = services.get(serviceId);
-            service.setContractor(company);
-            service.setComments(description);
-            setService(services, serviceId, service);
-        }
-        @Exclude
-        public void deleteElectricalService(int serviceId) {
-            setElectricalServices(deleteService(getElectricalServices(), serviceId));
-        }
 
     //Mark:- Helper functions
     public void updateProfile(String namePrefix, String firstName, String lastName, String maritalStatus) {
@@ -281,6 +233,66 @@ public class Customer {
     @Exclude
     public String getName() {
         return StringUtilities.getFormattedName(namePrefix, firstName, lastName, maritalStatus);
+    }
+    @Exclude
+    public void addService(ContractorService service, String serviceType) {
+        insertService(service, serviceType);
+    }
+    @Exclude
+    public void updateService(int serviceId, String contractor, String comments, List<FirebaseFile> files, String serviceType) {
+        setService(serviceId, contractor, comments, files, serviceType);
+    }
+    @Exclude
+    public void deleteService(int serviceId, String serviceType) {
+        if(serviceType.equalsIgnoreCase("Plumber")) {
+            setPlumbingServices(deleteService(getPlumbingServices(), serviceId));
+        } else if(serviceType.equalsIgnoreCase("Electrician")) {
+            setElectricalServices(deleteService(getElectricalServices(), serviceId));
+        } else if(serviceType.equalsIgnoreCase("Hvac")) {
+            setHvacServices(deleteService(getHvacServices(), serviceId));
+        } else {
+            Log.e("CustomerDataObject", "No matching ServiceType");
+        }
+    }
+    @Exclude
+    private void insertService(ContractorService service, String serviceType) {
+        int serviceId = -1;
+        if(serviceType.equalsIgnoreCase("Plumber")) {
+            setPlumbingServices(setService(getPlumbingServices(), serviceId, service));
+        } else if(serviceType.equalsIgnoreCase("Electrician")) {
+            setElectricalServices(setService(getElectricalServices(), serviceId, service));
+        } else if(serviceType.equalsIgnoreCase("Hvac")) {
+            setHvacServices(setService(getHvacServices(), serviceId, service));
+        } else {
+            Log.e("CustomerDataObject", "No matching ServiceType");
+        }
+    }
+    @Exclude
+    private void setService(int serviceId, String contractor, String comments, List<FirebaseFile> files, String serviceType) {
+        if(serviceType.equalsIgnoreCase("Plumber")) {
+            List<ContractorService> services = getPlumbingServices();
+            if(services == null || serviceId < 0 || serviceId > services.size()) {
+                return;
+            }
+            ContractorService service = services.get(serviceId).update(contractor, comments, files);
+            setPlumbingServices(setService(services, serviceId, service));
+        } else if(serviceType.equalsIgnoreCase("Electrician")) {
+            List<ContractorService> services = getElectricalServices();
+            if(services == null || serviceId < 0 || serviceId > services.size()) {
+                return;
+            }
+            ContractorService service = services.get(serviceId).update(contractor, comments, files);
+            setElectricalServices(setService(services, serviceId, service));
+        } else if(serviceType.equalsIgnoreCase("Hvac")) {
+            List<ContractorService> services = getHvacServices();
+            if(services == null || serviceId < 0 || serviceId > services.size()) {
+                return;
+            }
+            ContractorService service = services.get(serviceId).update(contractor, comments, files);
+            setHvacServices(setService(services, serviceId, service));
+        } else {
+            Log.e("CustomerDataObject", "No matching ServiceType");
+        }
     }
     @Exclude
     private List<ContractorService> setService(List<ContractorService> services, int serviceId, ContractorService service) {

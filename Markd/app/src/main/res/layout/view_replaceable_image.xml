@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/replaceable_image_frame"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPanel">
+
+    <ImageView
+        android:id="@+id/replaceable_image_placeholder"
+        android:layout_width="@dimen/square_icon"
+        android:layout_height="@dimen/square_icon"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_action_camera" />
+    <ImageView
+        android:id="@+id/replaceable_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</FrameLayout>
