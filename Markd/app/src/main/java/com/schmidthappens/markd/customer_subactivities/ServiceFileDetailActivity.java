@@ -1,9 +1,14 @@
 package com.schmidthappens.markd.customer_subactivities;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +29,7 @@ import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
+import com.schmidthappens.markd.view_initializers.ReplaceableImageHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +56,13 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     int serviceId;
     int fileId; // newFile == -1
     String originalFileName;
-    //TODO: saveGuid
+    String fileGuid;
+
+    private FirebaseFile file;
+
+    private static final int IMAGE_REQUEST_CODE = 934;
+    private static final int CAMERA_PERMISSION_CODE = 997;
+    private ReplaceableImageHandler imageHandler;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -91,12 +104,48 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             alertDialog.dismiss();
         }
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                imageHandler.setCameraPermission(true);
+            }
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
+        if (requestCode == IMAGE_REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                FirebaseFile file = getFile();
+                String oldFileName = file.getFilePath(customerData.getUid());
+                Log.d(TAG, "oldFileName:" + oldFileName);
+                file.setGuid(null);
+                String newFileName = file.getFilePath(customerData.getUid());
+                Log.d(TAG, "newFileName:" + newFileName);
+
+                imageHandler.updateImage(oldFileName, newFileName, data, null); //TODO listener
+            } else {
+                Log.d(TAG, "Result not okay");
+            }
+        } else {
+            Log.e(TAG, "Unknown Request");
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void initializeXMLObjects() {
+
         serviceFileEditForm = (LinearLayout)findViewById(R.id.service_file_edit_form) ;
         progressView = (ProgressBar)findViewById(R.id.service_file_progress);
         editFileName = (EditText)findViewById(R.id.service_file_edit_name);
         setEnterButtonToKeyboardDismissal(editFileName);
+
+        imageHandler = new ReplaceableImageHandler();
+
+        ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(imageHandler.inititialize(
+                this, false, checkForCameraPermission(), IMAGE_REQUEST_CODE
+        ));
 
         saveButton = (Button)findViewById(R.id.service_file_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -139,30 +188,44 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                     editFileName.setText(originalFileName);
                     editFileName.setSelection(originalFileName.length());
                 }
+                if(intent.hasExtra("fileGuid")) {
+                    fileGuid = intent.getStringExtra("fileGuid");
+                }
             }
         }
     }
-
+    private FirebaseFile getFile() {
+        if(file != null) {
+            return file;
+        } else {
+            if(fileId < 0) {
+                return new FirebaseFile(editFileName.getText().toString());
+            } else {
+                ContractorService service = customerData.getServices(serviceType).get(serviceId);
+                List<FirebaseFile> files = service.getFiles();
+                file = files.get(fileId);
+                return file;
+            }
+        }
+    }
     private void saveFile() {
-        //TODO: implement save file
+        //TODO: implement save actual image/file
         /*
         ProgressBarUtilities.showProgress(this, serviceFileEditForm, progressView, true);
                 ProgressBarUtilities.showProgress(ServiceFileDetailActivity.this, serviceFileEditForm, progressView, false);
                 goBackToActivity(ServiceDetailActivity.class);
         */
-
+        FirebaseFile file = getFile();
+        file.setFileName(editFileName.getText().toString());
         ContractorService service = customerData.getServices(serviceType).get(serviceId);
         List<FirebaseFile> files = service.getFiles();
         if(fileId < 0) {
             if(files == null) {
                 files = new ArrayList<>();
             }
-            FirebaseFile fileToAdd = new FirebaseFile(editFileName.getText().toString());
             //New
-            files.add(fileToAdd);
+            files.add(file);
         } else {
-            FirebaseFile file = files.get(fileId);
-            file.setFileName(editFileName.getText().toString());
             files.set(fileId, file);
         }
         service.setFiles(files);
@@ -192,10 +255,16 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         alertDialog.show();
     }
     private void deleteFile() {
-        //TODO: implement delete file
-        Toast.makeText(this, "File deleted", Toast.LENGTH_SHORT).show();
-        if(fileId == -1) {
-
+        if(fileId < -1) {
+            //TODO: Only delete actual image/file
+        } else {
+            //TODO: implement delete file including image
+            ContractorService service = customerData.getServices(serviceType).get(serviceId);
+            List<FirebaseFile> files = service.getFiles();
+            files.remove(fileId);
+            service.setFiles(files);
+            customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
+            goBackToActivity();
         }
     }
 
@@ -204,6 +273,14 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         Log.i(TAG, "Navigate Up");
         goBackToActivity();
         return true;
+    }
+    private boolean checkForCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE }, CAMERA_PERMISSION_CODE);
+            return false;
+        } else {
+            return true;
+        }
     }
     private void goBackToActivity() {
         hideKeyboard(this.getCurrentFocus());

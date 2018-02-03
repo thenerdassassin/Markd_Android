@@ -1,5 +1,7 @@
 package com.schmidthappens.markd.file_storage;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.UUID;
 
 /**
@@ -30,6 +32,11 @@ public class FirebaseFile {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    @Exclude
+    public String getFilePath(String customerId) {
+        return "services/"+customerId+"/"+guid;
     }
 
     public String getGuid() {

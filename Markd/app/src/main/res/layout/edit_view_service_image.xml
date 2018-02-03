@@ -41,6 +41,11 @@
             android:hint="File Name"/>
 
         <!-- TODO: add Image File and Replace file button -->
+        <FrameLayout
+            android:id="@+id/service_file_replaceable_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp" />
 
         <LinearLayout
             android:layout_gravity="center_horizontal"

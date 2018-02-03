@@ -96,14 +96,6 @@ public class ContractorService implements Comparable<ContractorService> {
         }
     }
 
-    @Exclude
-    public String getFilePath(String customerId, int fileId) {
-        if(StringUtilities.isNullOrEmpty(customerId) || StringUtilities.isNullOrEmpty(guid) || fileId < 0 || fileId >= files.size()) {
-            return "";
-        }
-        return "services/"+customerId+"/"+guid+"/"+files.get(fileId).getGuid();
-    }
-
     public ContractorService update(String contractor, String comments, List<FirebaseFile> files) {
         this.contractor = contractor;
         this.comments = comments;

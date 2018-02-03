@@ -96,6 +96,9 @@ public class MarkdFirebaseStorage {
     }
 
     public static void deleteImage(String path) {
+        if(StringUtilities.isNullOrEmpty(path)) {
+            return;
+        }
         StorageReference reference = storage.getReference().child("images/" + path);
         reference.delete();
     }
