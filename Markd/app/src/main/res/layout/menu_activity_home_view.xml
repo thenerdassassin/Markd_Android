@@ -15,13 +15,26 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:orientation="vertical">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="30dp"
+                android:layout_weight="3">
+                <ProgressBar
+                    android:id="@+id/home_image_progress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="70dp"
+                    android:layout_marginBottom="70dp"
+                    android:visibility="gone" />
+
                 <!--Home Image -->
                 <FrameLayout
                     android:id="@+id/home_frame"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_weight="3"
+                    android:layout_height="match_parent"
                     android:background="@color/colorPanel">
 
                     <ImageView
@@ -35,6 +48,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </FrameLayout>
+            </FrameLayout>
                 <!-- Text Boxes -->
                 <LinearLayout
                     android:layout_width="match_parent"

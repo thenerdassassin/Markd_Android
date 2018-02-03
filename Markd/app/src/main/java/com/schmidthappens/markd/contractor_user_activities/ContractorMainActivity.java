@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
+import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
 import java.io.File;
@@ -48,6 +50,7 @@ public class ContractorMainActivity extends AppCompatActivity {
     FirebaseAuthentication authentication;
     TempContractorData contractorData;
 
+    private ProgressBar progressBar;
     private FrameLayout logoFrame;
     private ImageView logoImage;
     private ImageView logoImagePlaceholder;
@@ -62,6 +65,7 @@ public class ContractorMainActivity extends AppCompatActivity {
     private static final int IMAGE_REQUEST_CODE = 524;
     private static final int CAMERA_PERMISSION_CODE = 107;
     private String currentPhotoPath;
+    private boolean firstPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, false, "contractor", editCompanyOnClickListener);
         initializeXmlObjects();
+        firstPass = true;
         checkForCameraPermission();
     }
     @Override
@@ -82,9 +87,6 @@ public class ContractorMainActivity extends AppCompatActivity {
             return;
         }
         hasImage = false;
-        logoFrame.setBackgroundColor(View.GONE);
-        logoImage.setVisibility(View.GONE);
-        logoImagePlaceholder.setVisibility(View.GONE);
         contractorData = new TempContractorData((authentication.getCurrentUser().getUid()), new ContractorMainGetDataListener());
         logoFrame.setOnClickListener(photoClick);
         logoFrame.setOnLongClickListener(photoLongClick);
@@ -276,9 +278,14 @@ public class ContractorMainActivity extends AppCompatActivity {
 
     // Mark:- SetUp Functions
     private void initializeXmlObjects() {
+        progressBar = (ProgressBar)findViewById(R.id.logo_image_progress);
         logoFrame = (FrameLayout)findViewById(R.id.contractor_logo_frame);
         logoImage = (ImageView)findViewById(R.id.contractor_logo);
         logoImagePlaceholder = (ImageView)findViewById(R.id.contractor_logo_placeholder);
+
+        logoFrame.setBackgroundColor(View.GONE);
+        logoImage.setVisibility(View.GONE);
+        logoImagePlaceholder.setVisibility(View.GONE);
 
         companyNameTextView = (TextView)findViewById(R.id.contractor_company_name);
         companyTelephone = (TextView)findViewById(R.id.contractor_telephone_text);
@@ -288,10 +295,18 @@ public class ContractorMainActivity extends AppCompatActivity {
     private void initializeUI() {
         Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
-        MarkdFirebaseStorage.loadImage(this,
-                contractorData.getLogoFileName(),
-                logoImage,
-                new LogoLoadingListener());
+        if(firstPass) {
+            MarkdFirebaseStorage.loadImage(this,
+                    contractorData.getLogoFileName(),
+                    logoImage,
+                    new LogoLoadingListener());
+            firstPass = false;
+        } else {
+            MarkdFirebaseStorage.loadImage(this,
+                    contractorData.getLogoFileName(),
+                    logoImage,
+                    null);
+        }
     }
     private void initializeTextViews(ContractorDetails contractorDetails) {
         if(contractorDetails == null) {
@@ -329,6 +344,7 @@ public class ContractorMainActivity extends AppCompatActivity {
             logoFrame.setBackgroundColor(View.GONE);
             logoImage.setVisibility(View.GONE);
             logoImagePlaceholder.setVisibility(View.GONE);
+            ProgressBarUtilities.showProgress(ContractorMainActivity.this, logoFrame, progressBar, true);
         }
 
         @Override
@@ -344,6 +360,7 @@ public class ContractorMainActivity extends AppCompatActivity {
                     new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
             );
             logoImagePlaceholder.setVisibility(View.GONE);
+            ProgressBarUtilities.showProgress(ContractorMainActivity.this, logoFrame, progressBar, false);
         }
 
         @Override
@@ -356,6 +373,7 @@ public class ContractorMainActivity extends AppCompatActivity {
 
             logoFrame.setBackgroundColor(getResources().getColor(R.color.colorPanel));
             logoImagePlaceholder.setVisibility(View.VISIBLE);
+            ProgressBarUtilities.showProgress(ContractorMainActivity.this, logoFrame, progressBar, false);
         }
     }
 }

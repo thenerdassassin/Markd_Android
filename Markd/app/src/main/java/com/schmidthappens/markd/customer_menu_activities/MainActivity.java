@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
+import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
 import java.io.File;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private TempCustomerData customerData;
 
     //XML Objects
+    private ProgressBar progressBar;
     private FrameLayout homeFrame;
     private ImageView homeImage;
     private ImageView homeImagePlaceholder;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int IMAGE_REQUEST_CODE = 524;
     private static final int CAMERA_PERMISSION_CODE = 99;
     private String currentPhotoPath;
+    private boolean firstPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true, "customer");
         initializeViews();
+        firstPass = true;
         checkForCameraPermission();
     }
     @Override
@@ -84,9 +89,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         hasImage = false;
-        homeFrame.setBackgroundColor(View.GONE);
-        homeImage.setVisibility(View.GONE);
-        homeImagePlaceholder.setVisibility(View.GONE);
 
         customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new MainGetDataListener());
         homeFrame.setOnClickListener(photoClick);
@@ -111,9 +113,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Mark:- SetUp Functions
     private void initializeViews() {
+        progressBar = (ProgressBar)findViewById(R.id.home_image_progress);
         homeFrame = (FrameLayout)findViewById(R.id.home_frame);
         homeImage = (ImageView)findViewById(R.id.home_image);
         homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
+
+        homeFrame.setBackgroundColor(View.GONE);
+        homeImage.setVisibility(View.GONE);
+        homeImagePlaceholder.setVisibility(View.GONE);
+
         preparedFor = (TextView)findViewById(R.id.prepared_for);
         homeAddress = (TextView)findViewById(R.id.home_address);
         roomInformation = (TextView)findViewById(R.id.home_information_rooms);
@@ -130,10 +138,18 @@ public class MainActivity extends AppCompatActivity {
     private void initializeUI() {
         fillCustomerInformation();
         Log.d(TAG, customerData.getHomeImageFileName());
-        MarkdFirebaseStorage.loadImage(this,
-                customerData.getHomeImageFileName(),
-                homeImage,
-                new HomeImageLoadingListener());
+        if(firstPass) {
+            MarkdFirebaseStorage.loadImage(this,
+                    customerData.getHomeImageFileName(),
+                    homeImage,
+                    new HomeImageLoadingListener());
+            firstPass = false;
+        } else {
+            MarkdFirebaseStorage.loadImage(this,
+                    customerData.getHomeImageFileName(),
+                    homeImage,
+                    null);
+        }
     }
     private void fillCustomerInformation() {
         String preparedForString = "Prepared for " + customerData.getName();
@@ -178,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
                 if (photo != null) {
                     MarkdFirebaseStorage.updateImage(this, fileName, photo, homeImage, new HomeImageLoadingListener());
                     MarkdFirebaseStorage.deleteImage(oldFileName);
-                    Toast.makeText(this, "Loading Photo", Toast.LENGTH_LONG).show();
                 }
             } else {
                 Log.d(TAG, "Result not okay");
@@ -379,6 +394,7 @@ public class MainActivity extends AppCompatActivity {
             homeFrame.setBackgroundColor(View.GONE);
             homeImage.setVisibility(View.GONE);
             homeImagePlaceholder.setVisibility(View.GONE);
+            ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, true);
         }
 
         @Override
@@ -394,6 +410,7 @@ public class MainActivity extends AppCompatActivity {
                     new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
             );
             homeImagePlaceholder.setVisibility(View.GONE);
+            ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
         }
 
         @Override
@@ -406,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
             homeFrame.setBackgroundColor(getResources().getColor(R.color.colorPanel));
             homeImagePlaceholder.setVisibility(View.VISIBLE);
+            ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
         }
     }
 
