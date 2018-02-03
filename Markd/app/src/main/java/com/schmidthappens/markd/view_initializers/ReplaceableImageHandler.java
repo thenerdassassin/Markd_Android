@@ -46,7 +46,7 @@ public class ReplaceableImageHandler {
     private ProgressBar progressBar;
     private LinearLayout layoutToHide;
 
-    public View inititialize(Activity context, boolean hasImage, boolean cameraPermissionGranted, int imageRequestCode, ProgressBar progressBar, LinearLayout layoutToHide) {
+    public View initialize(Activity context, boolean hasImage, boolean cameraPermissionGranted, int imageRequestCode, ProgressBar progressBar, LinearLayout layoutToHide) {
         this.context = context;
         this.hasImage = hasImage;
         this.cameraPermissionGranted = cameraPermissionGranted;
