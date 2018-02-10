@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -32,6 +33,7 @@ import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
+import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
@@ -120,7 +122,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
         return serviceType;
     }
     private void saveServiceData() {
-        //TODO: add images to ContractorService when saving
         if(serviceId < 0) {
             //New Service
             ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth()+1, DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
@@ -177,7 +178,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
             sendErrorMessage("Activity does not match");
         } else {
             Log.d(TAG, "Remove " + serviceType + "service-" + serviceId);
-            //TODO: remove files folder from Firebase Storage
+            List<FirebaseFile> files = customerData.getServices(getServiceType()).get(serviceId).getFiles();
+            removeFiles(customerData.getUid(), files);
             customerData.removeService(serviceId, serviceType);
         }
     }
@@ -280,6 +282,12 @@ public class ServiceDetailActivity extends AppCompatActivity {
         }
     }
 
+    public void removeFiles(String customerId, List<FirebaseFile> files) {
+        for(FirebaseFile file: files) {
+            Log.d(TAG, "Deleting file:" + file.getFilePath(customerId));
+            MarkdFirebaseStorage.deleteImage(file.getFilePath(customerId));
+        }
+    }
     @Override
     public void onBackPressed() {
         Log.i(TAG, "onBackPressed");
@@ -292,8 +300,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
         goBackToActivity(originalActivity);
         if(isAddService) {
             //delete service and files
+            List<FirebaseFile> files = customerData.getServices(getServiceType()).get(serviceId).getFiles();
+            removeFiles(customerData.getUid(), files);
             customerData.removeService(serviceId, getServiceType());
-            //TODO delete files from Storage
         } else {
             //Do nothing
         }
