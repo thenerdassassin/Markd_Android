@@ -41,6 +41,8 @@ import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 /**
  * Created by Josh on 8/5/2017.
  */
@@ -85,7 +87,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
         processIntent(getIntent());
     }
     @Override
@@ -126,7 +127,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
             addService(serviceToAdd);
         } else {
-            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
+            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString(), customerData.getServices(getServiceType()).get(serviceId).getFiles());
         }
     }
     private void addService(ContractorService service) {
@@ -217,7 +218,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
             }
         });
     }
-    private void processIntent(Intent intent) {
+    private void processIntent(final Intent intent) {
+        Log.d(TAG, "Processing intent");
         if(intent != null) {
             if(intent.hasExtra("originalActivity")) {
                 originalActivity = (Class<?>)intent.getSerializableExtra("originalActivity");
@@ -249,6 +251,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
                         //Create New Service if new to be able to store information
                         saveServiceData();
                         serviceId = 0;
+                        intent.putExtra("serviceId", 0);
                     } else {
                         if(customerData.getServices(getServiceType()) != null) {
                             ContractorService service = customerData.getServices(getServiceType()).get(serviceId);
@@ -300,7 +303,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
         Log.d(TAG, "isContractor:" + isContractorEditingPage);
         Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
         originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
-        originalActivityIntent.putExtra("customerId", customerData.getUid());
+        if(customerData != null) {
+            originalActivityIntent.putExtra("customerId", customerData.getUid());
+        } else {
+            Log.e(TAG, "customerData was null");
+        }
         hideKeyboard(this.getCurrentFocus());
         startActivity(originalActivityIntent);
         finish();
