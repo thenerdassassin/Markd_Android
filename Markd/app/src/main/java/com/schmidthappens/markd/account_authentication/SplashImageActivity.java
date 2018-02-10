@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -16,6 +17,7 @@ import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivit
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseMessagingService;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by Josh on 8/9/2017.
@@ -29,6 +31,7 @@ public class SplashImageActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         setContentView(R.layout.view_splash_image);
         getSupportActionBar().hide();
