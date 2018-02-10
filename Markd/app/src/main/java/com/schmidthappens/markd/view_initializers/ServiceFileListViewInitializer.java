@@ -83,7 +83,6 @@ public class ServiceFileListViewInitializer {
         intentToCreateServiceFile.putExtra("fileId", -1);
         return  intentToCreateServiceFile;
     }
-
     private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId, int fileId, String fileName, String fileGuid) {
         Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
         intentToCreateServiceFile.putExtra("customerId", uid);

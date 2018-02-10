@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -32,6 +33,7 @@ import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
+import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
@@ -40,6 +42,8 @@ import com.schmidthappens.markd.view_initializers.ServiceListViewInitializer;
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by Josh on 8/5/2017.
@@ -85,7 +89,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
         processIntent(getIntent());
     }
     @Override
@@ -119,14 +122,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
         return serviceType;
     }
     private void saveServiceData() {
-        //TODO: add images to ContractorService when saving
         if(serviceId < 0) {
             //New Service
             ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth()+1, DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
                     editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
             addService(serviceToAdd);
         } else {
-            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
+            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString(), customerData.getServices(getServiceType()).get(serviceId).getFiles());
         }
     }
     private void addService(ContractorService service) {
@@ -176,7 +178,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
             sendErrorMessage("Activity does not match");
         } else {
             Log.d(TAG, "Remove " + serviceType + "service-" + serviceId);
-            //TODO: remove files folder from Firebase Storage
+            List<FirebaseFile> files = customerData.getServices(getServiceType()).get(serviceId).getFiles();
+            removeFiles(customerData.getUid(), files);
             customerData.removeService(serviceId, serviceType);
         }
     }
@@ -217,7 +220,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
             }
         });
     }
-    private void processIntent(Intent intent) {
+    private void processIntent(final Intent intent) {
+        Log.d(TAG, "Processing intent");
         if(intent != null) {
             if(intent.hasExtra("originalActivity")) {
                 originalActivity = (Class<?>)intent.getSerializableExtra("originalActivity");
@@ -249,6 +253,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
                         //Create New Service if new to be able to store information
                         saveServiceData();
                         serviceId = 0;
+                        intent.putExtra("serviceId", 0);
                     } else {
                         if(customerData.getServices(getServiceType()) != null) {
                             ContractorService service = customerData.getServices(getServiceType()).get(serviceId);
@@ -277,6 +282,12 @@ public class ServiceDetailActivity extends AppCompatActivity {
         }
     }
 
+    public void removeFiles(String customerId, List<FirebaseFile> files) {
+        for(FirebaseFile file: files) {
+            Log.d(TAG, "Deleting file:" + file.getFilePath(customerId));
+            MarkdFirebaseStorage.deleteImage(file.getFilePath(customerId));
+        }
+    }
     @Override
     public void onBackPressed() {
         Log.i(TAG, "onBackPressed");
@@ -289,8 +300,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
         goBackToActivity(originalActivity);
         if(isAddService) {
             //delete service and files
+            List<FirebaseFile> files = customerData.getServices(getServiceType()).get(serviceId).getFiles();
+            removeFiles(customerData.getUid(), files);
             customerData.removeService(serviceId, getServiceType());
-            //TODO delete files from Storage
         } else {
             //Do nothing
         }
@@ -300,7 +312,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
         Log.d(TAG, "isContractor:" + isContractorEditingPage);
         Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
         originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
-        originalActivityIntent.putExtra("customerId", customerData.getUid());
+        if(customerData != null) {
+            originalActivityIntent.putExtra("customerId", customerData.getUid());
+        } else {
+            Log.e(TAG, "customerData was null");
+        }
         hideKeyboard(this.getCurrentFocus());
         startActivity(originalActivityIntent);
         finish();

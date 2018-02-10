@@ -267,7 +267,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
         if(fileId < 0) {
-            imageHandler.removeImage(getFile().getFilePath(customerData.getUid())); //TODO: test
+            imageHandler.removeImage(getFile().getFilePath(customerData.getUid()));
         }
         goBackToActivity();
         return true;
