@@ -36,7 +36,7 @@ public class HelpActivity extends AppCompatActivity {
     private EditText userMessage;
     private Button sendButton;
 
-    private String helpString = "We are happy to hear from the the people who make Markd great, YOU! \n" +
+    private String helpString = "We are happy to hear from the people who make Markd great, YOU! \n" +
                                 "\n" +
                                 "Please don't be shy to ask for help or if there is something new you want us to add let us know!\n" +
                                 "\n" +
