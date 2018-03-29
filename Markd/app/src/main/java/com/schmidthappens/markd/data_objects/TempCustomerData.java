@@ -27,7 +27,7 @@ import java.util.List;
 
 public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
-    private static DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("users");
+    private static DatabaseReference database = FirebaseDatabaseInstance.getDatabase().getReference().child("users");
     private DatabaseReference userReference;
     private String uid;
     private OnGetDataListener listener;

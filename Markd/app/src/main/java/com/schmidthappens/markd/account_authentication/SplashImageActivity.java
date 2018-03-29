@@ -16,6 +16,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
+import com.schmidthappens.markd.data_objects.FirebaseDatabaseInstance;
 import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseMessagingService;
 import io.fabric.sdk.android.Fabric;
 
@@ -32,7 +33,7 @@ public class SplashImageActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabaseInstance.getDatabase();
         setContentView(R.layout.view_splash_image);
         getSupportActionBar().hide();
         authentication = new FirebaseAuthentication(SplashImageActivity.this);

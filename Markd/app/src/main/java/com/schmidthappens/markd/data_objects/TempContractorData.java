@@ -24,7 +24,7 @@ import java.util.List;
 
 public class TempContractorData {
     private static final String TAG = "FirebaseContractorData";
-    private static DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private static DatabaseReference database = FirebaseDatabaseInstance.getDatabase().getReference();
     private String uid;
     private DatabaseReference userReference;
     private OnGetDataListener listener;
