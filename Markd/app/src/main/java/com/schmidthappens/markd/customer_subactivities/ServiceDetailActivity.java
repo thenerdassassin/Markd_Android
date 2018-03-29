@@ -283,9 +283,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
     }
 
     public void removeFiles(String customerId, List<FirebaseFile> files) {
-        for(FirebaseFile file: files) {
-            Log.d(TAG, "Deleting file:" + file.getFilePath(customerId));
-            MarkdFirebaseStorage.deleteImage(file.getFilePath(customerId));
+        if(files != null) {
+            for (FirebaseFile file : files) {
+                Log.d(TAG, "Deleting file:" + file.getFilePath(customerId));
+                MarkdFirebaseStorage.deleteImage(file.getFilePath(customerId));
+            }
         }
     }
     @Override
