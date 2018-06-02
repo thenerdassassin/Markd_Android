@@ -39,6 +39,7 @@ public class TempContractorData {
         this.uid = uid;
         this.listener = listener;
         userReference = database.child("users").child(uid);
+        userReference.keepSynced(true);
         if(listener != null) {
             listener.onStart();
         }

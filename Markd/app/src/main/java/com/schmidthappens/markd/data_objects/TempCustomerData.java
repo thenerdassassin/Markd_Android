@@ -42,6 +42,7 @@ public class TempCustomerData {
         this.uid = uid;
         this.listener = listener;
         userReference = database.child(uid);
+        userReference.keepSynced(true);
         userReference.addValueEventListener(valueEventListener);
     }
     private ValueEventListener valueEventListener = new ValueEventListener() {
