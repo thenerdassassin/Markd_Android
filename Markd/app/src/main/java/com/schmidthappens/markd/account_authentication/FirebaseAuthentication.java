@@ -13,14 +13,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
-import com.schmidthappens.markd.data_objects.Contractor;
-import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseInstanceIDService;
 
 /**
