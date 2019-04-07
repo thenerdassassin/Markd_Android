@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -140,7 +141,7 @@ public class TempContractorData {
         customerListReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot customerListSnapshot) {
-                List<String> customers = Collections.emptyList();
+                List<String> customers = new ArrayList<>();
                 for(DataSnapshot customerSnapshot: customerListSnapshot.getChildren()) {
                     String customer = customerSnapshot.getValue(String.class);
                     if(customer != null && !customer.equals(customerReference)) {

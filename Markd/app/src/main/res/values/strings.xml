@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Markd</string>
-    <!-- &#8211; is dash symbol -->
-    <string name="aws_ec2">ec2&#8211;34&#8211;232&#8211;139&#8211;229.compute-1.amazonaws.com:8000/markd</string>
     <string-array name="menu_options">
         <item>Home</item>
         <item>Plumbing</item>
@@ -47,6 +45,9 @@
     <string name="contact"><u>Contact</u></string>
     <string name="add_panel"><u>Add Panel</u></string>
     <string name="title_activity_splash_page">Sign in</string>
+
+    <!-- Content Descriptions -->
+    <string name="footer_logo">Contractor Logo</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

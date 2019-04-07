@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,7 @@ public class ContractorFooterViewInitializer {
         return createFooterView(ctx, contractor, phone, websiteUrl, photoPath, false);
     }
 
-    public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath, boolean isLightTheme) {
+    public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath, boolean isRecyclerViewHolder) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
         View v = vi.inflate(R.layout.view_footer, null);
@@ -58,9 +59,16 @@ public class ContractorFooterViewInitializer {
             }
         });
 
-        if(isLightTheme) {
+        if(isRecyclerViewHolder) {
             v.setBackgroundColor(ContextCompat.getColor(ctx, R.color.colorLabel));
             contractorName.setTextColor(ContextCompat.getColor(ctx, R.color.black));
+            phoneNumber.setTextColor(ContextCompat.getColor(ctx, R.color.black));
+            website.setTextColor(ContextCompat.getColor(ctx, R.color.black));
+        } else {
+           Linkify.addLinks(phoneNumber, Linkify.PHONE_NUMBERS);
+           Linkify.addLinks(website, Linkify.WEB_URLS);
+           phoneNumber.setLinkTextColor(ContextCompat.getColor(ctx, R.color.hyperlink));
+           website.setLinkTextColor(ContextCompat.getColor(ctx, R.color.hyperlink));
         }
 
         return v;

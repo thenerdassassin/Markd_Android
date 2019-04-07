@@ -19,8 +19,9 @@
         android:maxHeight="60dp"
         android:layout_alignParentStart="true"
         android:scaleType="fitCenter"
-        android:contentDescription="Contractor Logo"
-        android:clickable="true"/>
+        android:contentDescription="@string/footer_logo"
+        android:clickable="true"
+        android:focusable="true"/>
     <LinearLayout
         android:layout_marginStart="30dp"
         android:layout_width="wrap_content"
@@ -43,10 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColorLink="@color/hyperlink"
             android:textStyle="normal"
-            android:autoLink="phone"
-            android:linksClickable="true"
             android:singleLine="true"
             android:ellipsize="end"
             android:maxLines="1"/>
@@ -55,9 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:textColorLink="@color/hyperlink"
             android:layout_marginBottom="10dp"
-            android:autoLink="web"
             android:textSize="12sp"
             android:singleLine="true"
             android:ellipsize="end"

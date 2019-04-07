@@ -136,12 +136,6 @@ public class MarkdFirebaseStorage {
             uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    File image = new File(file.getPath());
-                    if(image.delete()) {
-                        Log.d(TAG, "Image deleted from device");
-                    } else {
-                        Log.d(TAG, "Image not deleted");
-                    }
                     loadImage(context, path, imageView, listener);
                 }
             });
