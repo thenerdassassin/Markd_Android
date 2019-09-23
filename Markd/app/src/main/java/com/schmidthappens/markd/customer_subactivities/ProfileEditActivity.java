@@ -359,9 +359,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             "Plumber",
             "Hvac",
             "Electrician",
-            "Painter",
-            "Architect",
-            "Builder",
-            "Realtor"
+            "Painter"
     };
 }

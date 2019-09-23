@@ -187,13 +187,20 @@ public class ChangeContractorActivity extends AppCompatActivity {
     private ValueEventListener usersListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot usersSnapshot) {
-            List<Contractor> contractors = ContractorUtilities.getContractorsFromReferences(contractorReferences, usersSnapshot);
+            List<Contractor> contractors = ContractorUtilities
+                    .getContractorsFromReferences(contractorReferences, usersSnapshot);
             if(contractors.size() > 0) {
                 noContractorsFound.setVisibility(View.INVISIBLE);
             } else {
                 noContractorsFound.setVisibility(View.VISIBLE);
             }
-            contractorRecyclerView.setAdapter(new ContractorListRecyclerViewAdapter(ChangeContractorActivity.this, contractors, contractorReferences, new UpdateContractorListener()));
+            contractorRecyclerView.setAdapter(
+                    new ContractorListRecyclerViewAdapter(
+                            ChangeContractorActivity.this,
+                            contractors,
+                            contractorReferences,
+                            new UpdateContractorListener()
+                    ));
         }
 
         @Override
@@ -218,9 +225,6 @@ public class ChangeContractorActivity extends AppCompatActivity {
             "Plumber",
             "Hvac",
             "Electrician",
-            "Painter",
-            "Architect",
-            "Builder",
-            "Realtor"
+            "Painter"
     };
 }

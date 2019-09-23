@@ -135,11 +135,12 @@ public class PaintingActivity extends AppCompatActivity {
                     paintingContractor.addView(v);
                 } else {
                     ContractorDetails contractorDetails = painter.getContractorDetails();
+                    final String pathToLogoFile = "logos/" + data.getKey() + "/" + painter.getLogoFileName();
                     View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this,
                             contractorDetails.getCompanyName(),
                             contractorDetails.getTelephoneNumber(),
                             contractorDetails.getWebsiteUrl(),
-                            painter.getLogoFileName());
+                            pathToLogoFile);
                     paintingContractor.addView(v);
                 }
             }

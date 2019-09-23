@@ -104,6 +104,9 @@ public abstract class AbstractAppliance {
         this.year = StringUtilities.getYearFromDotFormmattedString(installDate);
     }
     public String lifeSpanAsString() {
+        if (lifeSpan == null) {
+            return "";
+        }
         return lifeSpan.toString() + " " + units;
     }
     public void updateLifeSpan(Integer lifeSpanInteger, String lifeSpanUnits) {

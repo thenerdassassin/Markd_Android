@@ -76,13 +76,14 @@ public class ContractorListRecyclerViewAdapter extends RecyclerView.Adapter<Cont
         void bindData(final Contractor contractor, final String reference) {
             this.contractor = contractor;
             this.contractorReference = reference;
+            final String logoFilePath = "logos/" + reference + "/" + contractor.getLogoFileName();
             footerFrame.addView(ContractorFooterViewInitializer
                     .createFooterView(
                             (Activity)ctx,
                             contractor.getContractorDetails().getCompanyName(),
                             contractor.getContractorDetails().getTelephoneNumber(),
                             contractor.getContractorDetails().getWebsiteUrl(),
-                            contractor.getLogoFileName(),
+                            logoFilePath,
                             true));
         }
 

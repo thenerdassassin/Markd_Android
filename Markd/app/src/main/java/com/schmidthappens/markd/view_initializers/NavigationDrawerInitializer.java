@@ -172,6 +172,8 @@ public class NavigationDrawerInitializer {
             case "Help":
                 intentToReturn = new Intent(context, HelpActivity.class);
                 break;
+            case "Sign Out":
+                break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);
         }

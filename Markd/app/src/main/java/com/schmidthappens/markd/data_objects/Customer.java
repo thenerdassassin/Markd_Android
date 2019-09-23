@@ -29,9 +29,6 @@ public class Customer {
     private String maritalStatus;
     private Address address;
     private Home home;
-    private String architectReference;
-    private String builderReference;
-    private String realtorReference;
     private String homeImageFileName;
 
     //For Plumbing Page
@@ -98,25 +95,6 @@ public class Customer {
         }
         public void setAddress(Address address) {
             this.address = address;
-        }
-
-        public String getArchitectReference() {
-            return architectReference;
-        }
-        public void setArchitect(String architect) {
-            this.architectReference = architect;
-        }
-        public String getBuilder() {
-            return builderReference;
-        }
-        public void setBuilder(String builder) {
-            this.builderReference = builder;
-        }
-        public String getRealtor() {
-            return realtorReference;
-        }
-        public void setRealtor(String realtor) {
-            this.realtorReference = realtor;
         }
 
         public String getHomeImageFileName() {

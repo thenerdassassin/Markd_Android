@@ -45,6 +45,7 @@ public class ContractorFooterViewInitializer {
         MarkdFirebaseStorage.loadImage(ctx, photoPath, footerLogo, null);
         contractorName.setText(contractor);
         phoneNumber.setText(phone);
+
         website.setText(websiteUrl);
 
         //Make Logo clickable to website
@@ -54,7 +55,11 @@ public class ContractorFooterViewInitializer {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setData(Uri.parse(websiteUrl));
+                if (!websiteUrl.contains("http://")) {
+                    intent.setData(Uri.parse("http://" + websiteUrl));
+                } else {
+                    intent.setData(Uri.parse(websiteUrl));
+                }
                 ctx.startActivity(intent);
             }
         });

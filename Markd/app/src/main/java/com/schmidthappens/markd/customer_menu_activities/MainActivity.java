@@ -58,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView roomInformation;
     private TextView squareFootage;
 
-    private TextView contactRealtor;
-    private TextView contactArchitect;
-    private TextView contactBuilder;
-
     private boolean hasImage;
     private boolean cameraPermissionGranted;
     private static final int IMAGE_REQUEST_CODE = 524;
@@ -127,13 +123,7 @@ public class MainActivity extends AppCompatActivity {
         roomInformation = (TextView)findViewById(R.id.home_information_rooms);
         squareFootage = (TextView)findViewById(R.id.home_information_square_footage);
 
-        // TODO: decide if Coming Soon!
-        contactRealtor = (TextView)findViewById(R.id.contact_realtor);
-        contactRealtor.setOnClickListener(showContactAlertDialog);
-        contactArchitect = (TextView)findViewById(R.id.contact_architect);
-        contactArchitect.setOnClickListener(showContactAlertDialog);
-        contactBuilder = (TextView)findViewById(R.id.contact_builder);
-        contactBuilder.setOnClickListener(showContactAlertDialog);
+
     }
     private void initializeUI() {
         fillCustomerInformation();
@@ -327,54 +317,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-    private View.OnClickListener showContactAlertDialog = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            final String[] options = getContactArray(view);
-            if(options != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Contact Realtor")
-                        .setItems(options, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // The 'which' argument contains the index position
-                                // of the selected item
-                                if (which == 0) {
-                                    Intent intent = new Intent()
-                                            .setAction(Intent.ACTION_VIEW)
-                                            .addCategory(Intent.CATEGORY_BROWSABLE)
-                                            .setData(Uri.parse(options[0]));
-                                    MainActivity.this.startActivity(intent);
-                                } else {
-                                    Intent intent = new Intent(Intent.ACTION_DIAL)
-                                            .setData(Uri.parse("tel:" + options[1]));
-                                    MainActivity.this.startActivity(intent);
-                                }
-                            }
-                        }).create().show();
-            }
-        }
-    };
-    private String[] getContactArray(View view) {
-        if(view.equals(contactRealtor)) {
-            Log.i(TAG, "Contact Realtor");
-            return realtor_contact_array;
-        } else if(view.equals(contactArchitect)) {
-            Log.i(TAG, "Contact Architect");
-            return architect_contact_array;
-        } else if(view.equals(contactBuilder)) {
-            Log.i(TAG, "Contact Builder");
-            return builder_contact_array;
-        } else {
-            Log.e(TAG, "Can't find match for contact");
-            return null;
-        }
-    }
 
     private class MainGetDataListener implements OnGetDataListener {
         @Override
-        public void onStart() {
-
-        }
+        public void onStart() { }
 
         @Override
         public void onSuccess(DataSnapshot data) {
@@ -382,9 +328,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailed(DatabaseError databaseError) {
-
-        }
+        public void onFailed(DatabaseError databaseError) { }
     }
     private class HomeImageLoadingListener implements ImageLoadingListener {
         @Override
@@ -426,20 +370,4 @@ public class MainActivity extends AppCompatActivity {
             ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
         }
     }
-
-    //TODO: change when realtor loads
-    private String[] realtor_contact_array = {
-            "http://www.realtorwebsite.com",
-            "(920)428-8454"
-    };
-    //TODO: change when builder loads
-    private String[] builder_contact_array = {
-            "http://www.builderwebsite.com",
-            "(920)428-8454"
-    };
-    //TODO: change when architect loads
-    private String[] architect_contact_array = {
-            "http://www.architectwebsite.com",
-            "(920)428-8454"
-    };
 }

@@ -81,6 +81,7 @@ public class MarkdFirebaseStorage {
         });
     }
     public static void loadImage(final Activity context, final String path, final ImageView imageView, final ImageLoadingListener listener) {
+        Log.v(TAG, path);
         if(listener != null) {
             listener.onStart();
         }

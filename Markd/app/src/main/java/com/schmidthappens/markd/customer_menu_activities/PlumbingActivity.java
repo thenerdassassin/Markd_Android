@@ -104,9 +104,9 @@ public class PlumbingActivity extends AppCompatActivity {
         initializeHotWater();
         initializeBoiler();
     }
-    private void initializeContractor(Contractor plumber) {
+    private void initializeContractor(Contractor plumber, String plumberId) {
         initializeContractorServices(plumber);
-        initializeFooter(plumber);
+        initializeFooter(plumber, plumberId);
     }
     private void initializeHotWater() {
         hotWater = customerData.getHotWater();
@@ -162,7 +162,7 @@ public class PlumbingActivity extends AppCompatActivity {
         View serviceListView = createServiceListView(PlumbingActivity.this, customerData.getPlumbingServices(), company, isContractorViewingPage, customerData.getUid());
         plumbingServiceList.addView(serviceListView);
     }
-    private void initializeFooter(Contractor plumber) {
+    private void initializeFooter(Contractor plumber, String plumberId) {
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
         if(plumber == null || plumber.getContractorDetails() == null) {
             Log.d(TAG, "No plumber data");
@@ -170,10 +170,13 @@ public class PlumbingActivity extends AppCompatActivity {
             plumbingContractor.addView(v);
         } else {
             ContractorDetails contractorDetails = plumber.getContractorDetails();
+            final String pathToLogoFile = "logos/" + plumberId + "/" + plumber.getLogoFileName();
             View v = ContractorFooterViewInitializer.createFooterView(
                     PlumbingActivity.this,
-                    contractorDetails.getCompanyName(), contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl(),
-                    plumber.getLogoFileName());
+                    contractorDetails.getCompanyName(),
+                    contractorDetails.getTelephoneNumber(),
+                    contractorDetails.getWebsiteUrl(),
+                    pathToLogoFile);
             plumbingContractor.addView(v);
         }
     }
@@ -229,7 +232,7 @@ public class PlumbingActivity extends AppCompatActivity {
             Log.d(TAG, "Received Plumbing Data");
             initializeAppliances();
             if(!customerData.getPlumber(new PlumberGetDataListener())) {
-                initializeContractor(null);
+                initializeContractor(null, "");
             }
         }
 
@@ -247,7 +250,7 @@ public class PlumbingActivity extends AppCompatActivity {
         @Override
         public void onSuccess(DataSnapshot data) {
             Log.d(TAG, "Received Plumber Data");
-            initializeContractor(data.getValue(Contractor.class));
+            initializeContractor(data.getValue(Contractor.class), data.getKey());
         }
 
         @Override

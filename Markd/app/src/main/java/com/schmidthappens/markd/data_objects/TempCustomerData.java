@@ -367,21 +367,6 @@ public class TempCustomerData {
                 TempContractorData.removeCustomerFromContractor(customer.getPainterReference(), uid);
             }
             customer.setPainter(contractorReference);
-        } else if(contractorType.equals("Architect")) {
-            if(customer.getArchitectReference() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getArchitectReference(), uid);
-            }
-            customer.setArchitect(contractorReference);
-        } else if(contractorType.equals("Builder")) {
-            if(customer.getBuilder() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getBuilder(), uid);
-            }
-            customer.setBuilder(contractorReference);
-        } else if(contractorType.equals("Realtor")) {
-            if(customer.getRealtor() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getRealtor(), uid);
-            }
-            customer.setRealtor(contractorReference);
         } else {
             Log.e(TAG, "contractorType(" + contractorType + ") not found!");
         }

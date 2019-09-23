@@ -150,10 +150,10 @@ public class ApplianceEditActivity extends AppCompatActivity {
             if(intent.hasExtra("model")) {
                 editModel.setText(intent.getStringExtra("model"));
             }
-            if(intent.hasExtra("installDate")) {
-                editInstallDate.setText(intent.getStringExtra("installDate"));
-            } else {
+            if(StringUtilities.isNullOrEmpty(intent.getStringExtra("installDate"))) {
                 editInstallDate.setText(StringUtilities.getCurrentDateString());
+            } else {
+                editInstallDate.setText(intent.getStringExtra("installDate"));
             }
             lifeSpanIntegerPicker.setValue(intent.getIntExtra("lifespanInteger", 0));
             if(intent.hasExtra("units")) {

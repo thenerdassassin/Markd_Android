@@ -62,4 +62,7 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+
+    <!-- Strings related to Main Page -->
+    <string name="coming_soon_message">Coming Soon! Add you personal Architects, Builders, and Realtors to this page.</string>
 </resources>

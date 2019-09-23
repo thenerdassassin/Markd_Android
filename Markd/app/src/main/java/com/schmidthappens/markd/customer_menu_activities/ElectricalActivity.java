@@ -157,15 +157,20 @@ public class ElectricalActivity extends AppCompatActivity {
         View electricalServiceListView = createServiceListView(this, customerData.getElectricalServices(), company, isContractorViewingPage, customerData.getUid());
         electricalServiceList.addView(electricalServiceListView);
     }
-    private void initializeFooter(Contractor electrician) {
+    private void initializeFooter(Contractor electrician, String electricianId) {
         if(electrician == null || electrician.getContractorDetails() == null) {
             Log.d(TAG, "No electrician data");
             View v = ContractorFooterViewInitializer.createFooterView(ElectricalActivity.this, "Electrician");
             electricalContractor.addView(v);
         } else {
             ContractorDetails electricianDetails = electrician.getContractorDetails();
-            View v = ContractorFooterViewInitializer.createFooterView(this, electricianDetails.getCompanyName(), electricianDetails.getTelephoneNumber(),
-                    electricianDetails.getWebsiteUrl(), electrician.getLogoFileName());
+            final String pathToLogoFile = "logos/" + electricianId + "/" + electrician.getLogoFileName();
+            View v = ContractorFooterViewInitializer.createFooterView(
+                    this,
+                    electricianDetails.getCompanyName(),
+                    electricianDetails.getTelephoneNumber(),
+                    electricianDetails.getWebsiteUrl(),
+                    pathToLogoFile);
             electricalContractor.addView(v);
         }
     }
@@ -182,7 +187,7 @@ public class ElectricalActivity extends AppCompatActivity {
             setUpPanelList();
             if(!customerData.getElectrician(new ElectricianGetDataListener())) {
                 setUpServiceList(null);
-                initializeFooter(null);
+                initializeFooter(null, "");
             }
         }
 
@@ -202,7 +207,7 @@ public class ElectricalActivity extends AppCompatActivity {
             Log.d(TAG, "Received Electrician Data");
             Contractor electrician = data.getValue(Contractor.class);
             setUpServiceList(electrician);
-            initializeFooter(electrician);
+            initializeFooter(electrician, data.getKey());
         }
         @Override
         public void onFailed(DatabaseError databaseError) {

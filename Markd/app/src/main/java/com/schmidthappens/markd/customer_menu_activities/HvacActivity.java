@@ -101,9 +101,9 @@ public class HvacActivity extends AppCompatActivity {
         initializeAirHandler();
         initializeCompressor();
     }
-    private void initializeContractor(Contractor hvacTechnician) {
+    private void initializeContractor(Contractor hvacTechnician, String hvacTechnicianId) {
         initializeServices(hvacTechnician);
-        initializeFooter(hvacTechnician);
+        initializeFooter(hvacTechnician, hvacTechnicianId);
     }
     private void initializeAirHandler() {
         AirHandler airHandler = customerData.getAirHandler();
@@ -158,7 +158,7 @@ public class HvacActivity extends AppCompatActivity {
         View serviceListView = createServiceListView(this, customerData.getHvacServices(), company, isContractorViewingPage, customerData.getUid());
         hvacServiceList.addView(serviceListView);
     }
-    private void initializeFooter(Contractor hvacTechnician) {
+    private void initializeFooter(Contractor hvacTechnician, String hvacTechnicianId) {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
         if(hvacTechnician == null || hvacTechnician.getContractorDetails() == null) {
             Log.d(TAG, "No plumber data");
@@ -166,8 +166,13 @@ public class HvacActivity extends AppCompatActivity {
             hvacContractor.addView(v);
         } else {
             ContractorDetails contractorDetails = hvacTechnician.getContractorDetails();
-            View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this, contractorDetails.getCompanyName(),
-                    contractorDetails.getTelephoneNumber(), contractorDetails.getWebsiteUrl(), hvacTechnician.getLogoFileName());
+            final String pathToLogoFile = "logos/" + hvacTechnicianId + "/" + hvacTechnician.getLogoFileName();
+            View v = ContractorFooterViewInitializer.createFooterView(
+                    HvacActivity.this,
+                    contractorDetails.getCompanyName(),
+                    contractorDetails.getTelephoneNumber(),
+                    contractorDetails.getWebsiteUrl(),
+                    hvacTechnician.getLogoFileName());
             hvacContractor.addView(v);
         }
     }
@@ -221,14 +226,14 @@ public class HvacActivity extends AppCompatActivity {
             Log.d(TAG, "Received Hvac Data");
             initializeAppliances();
             if(!customerData.getHvacTechnician(new HvacTechnicianGetDataListener())) {
-                initializeContractor(null);
+                initializeContractor(null, "");
             }
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.e(TAG, databaseError.toString());
-            initializeContractor(null);
+            initializeContractor(null, "");
             Toast.makeText(HvacActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -241,13 +246,13 @@ public class HvacActivity extends AppCompatActivity {
         @Override
         public void onSuccess(DataSnapshot data) {
             Log.d(TAG, "Received HvacTechnician Data");
-            initializeContractor(data.getValue(Contractor.class));
+            initializeContractor(data.getValue(Contractor.class), data.getKey());
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.e(TAG, databaseError.toString());
-            initializeContractor(null);
+            initializeContractor(null, "");
             Toast.makeText(HvacActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }

@@ -14,7 +14,7 @@ import java.util.Calendar;
 public class StringUtilities {
     private final static String TAG = "StringUtilities";
 
-    public static String getDateString(int month, int day, int year) {
+    public static String getDateString(Integer month, Integer day, Integer year) {
         return getDateString(month, day, year, ".");
     }
     /*
@@ -22,8 +22,12 @@ public class StringUtilities {
         If something is wrong returns null
      */
     @Nullable
-    public static String getDateString(int month, int day, int year, String separator) {
+    public static String getDateString(Integer month, Integer day, Integer year, String separator) {
         String dateString = "";
+
+        if (month == null || day == null || year == null) {
+            return dateString;
+        }
 
         if(month > 12) {
             Log.e(TAG, "Month was greater than 12 it was " + month);
