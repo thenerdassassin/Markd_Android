@@ -15,41 +15,38 @@
             android:showDividers="middle"
             android:layout_margin="40dp"
             android:dividerHeight="2dp">
-
-            <!-- Edit Profile -->
+            <!-- Change Contractors -->
             <RelativeLayout
+                android:id="@+id/edit_contractors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/edit_profile">
-
+                android:layout_marginTop="10dp">
                 <TextView
-                    android:id="@+id/edit_profile_main"
+                    android:id="@+id/edit_contractors_main"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:text="Edit Profile"/>
+                    android:text="Find Contractors"/>
                 <TextView
-                    android:id="@+id/edit_profile_sub"
+                    android:id="@+id/edit_contractors_sub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPanel"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:layout_below="@+id/edit_profile_main"
-                    android:text="Change email, name, password, etc."/>
+                    android:layout_below="@+id/edit_contractors_main"
+                    android:text="Set your personal contractors."/>
             </RelativeLayout>
-
             <!-- Edit Home -->
             <RelativeLayout
                 android:id="@+id/edit_home"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
-
                 <TextView
                     android:id="@+id/edit_home_main"
                     android:layout_width="match_parent"
@@ -68,44 +65,64 @@
                     android:textStyle="bold"
                     android:typeface="monospace"
                     android:layout_below="@+id/edit_home_main"
-                    android:text="Change address, bedrooms, bathrooms, etc."/>
+                    android:text="Change address, bedrooms, square footage, etc."/>
             </RelativeLayout>
-
-            <!-- Change Contractors -->
+            <!-- Edit Profile -->
             <RelativeLayout
-                android:id="@+id/edit_contractors"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-
+                android:id="@+id/edit_profile">
                 <TextView
-                    android:id="@+id/edit_contractors_main"
+                    android:id="@+id/edit_profile_main"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:text="Find Contractor"/>
+                    android:text="Edit Profile"/>
                 <TextView
-                    android:id="@+id/edit_contractors_sub"
+                    android:id="@+id/edit_profile_sub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPanel"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:layout_below="@+id/edit_contractors_main"
-                    android:text="Set your personal contractor."/>
+                    android:layout_below="@+id/edit_profile_main"
+                    android:text="Change email or name on account."/>
             </RelativeLayout>
-
+            <!-- Help Activity -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/contact_us">
+                <TextView
+                    android:id="@+id/contact_us_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="Contact Us"/>
+                <TextView
+                    android:id="@+id/contact_us_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPanel"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:layout_below="@+id/contact_us_main"
+                    android:text="Ask for help or tell us what you would like added."/>
+            </RelativeLayout>
             <!-- Reset Password -->
             <RelativeLayout
                 android:id="@+id/edit_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
-
                 <TextView
                     android:id="@+id/edit_password_main"
                     android:layout_width="match_parent"
@@ -126,11 +143,34 @@
                     android:layout_below="@+id/edit_password_main"
                     android:text="An email will be sent to change password."/>
             </RelativeLayout>
-
-
+            <!-- Sign Out -->
+            <RelativeLayout
+                android:id="@+id/sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:id="@+id/sign_out_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="Sign Out"/>
+                <TextView
+                    android:id="@+id/sign_out_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPanel"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:layout_below="@+id/sign_out_main"
+                    android:text="Log out of this account."/>
+            </RelativeLayout>
         </LinearLayout>
     </FrameLayout>
-
     <!-- Navigation Drawer-->
     <ListView
         android:id="@+id/left_drawer"

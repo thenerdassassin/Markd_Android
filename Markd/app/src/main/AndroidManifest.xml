@@ -144,11 +144,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
-
-        <!-- Help -->
         <activity android:name=".customer_menu_activities.HelpActivity"
             android:value=".customer_menu_activities.HelpActivity"
-            android:launchMode="singleTop" />
+            android:parentActivityName=".customer_menu_activities.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".customer_menu_activities.SettingsActivity"/>
+        </activity>
 
      <!-- Contractor Pages -->
         <activity
@@ -210,5 +212,4 @@
             android:name="io.fabric.ApiKey"
             android:value="96fb45cd181be03db1b6c44756eeb2d4d2bc35c5" />
     </application>
-
 </manifest>

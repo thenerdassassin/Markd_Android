@@ -4,21 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.utilities.StringUtilities;
-import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -54,6 +51,7 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_activity_help_view);
         authentication = new FirebaseAuthentication(this);
+        setTitle("Contact Us");
         initializeXmlObjects();
     }
     @Override
@@ -65,26 +63,6 @@ public class HelpActivity extends AppCompatActivity {
             finish();
         } else {
             userEmail = authentication.getCurrentUser().getEmail();
-            authentication.getUserType(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-                        String userType = dataSnapshot.getValue().toString();
-                        if (userType.equalsIgnoreCase("customer")) {
-                            new ActionBarInitializer(HelpActivity.this, true, "customer");
-                        } else {
-                            new ActionBarInitializer(HelpActivity.this, false, "contractor");
-                        }
-                    } else {
-                        somethingWentWrong("Null value from onDataChange");
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    somethingWentWrong(databaseError.toString());
-                }
-            });
         }
     }
     @Override

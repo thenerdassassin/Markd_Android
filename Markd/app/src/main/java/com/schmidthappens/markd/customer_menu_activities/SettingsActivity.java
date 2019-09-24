@@ -36,10 +36,12 @@ public class SettingsActivity extends AppCompatActivity {
     FirebaseAuthentication authentication;
     TempCustomerData customerData;
 
-    RelativeLayout edit_profile;
+    RelativeLayout edit_contractors;
     RelativeLayout edit_home;
-    RelativeLayout edit_contractor;
+    RelativeLayout edit_profile;
+    RelativeLayout contact_us;
     RelativeLayout edit_password;
+    RelativeLayout sign_out;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -70,16 +72,15 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        edit_profile = (RelativeLayout)findViewById(R.id.edit_profile);
-        edit_profile.setOnClickListener(new View.OnClickListener() {
+        edit_contractors = findViewById(R.id.edit_contractors);
+        edit_contractors.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Start ProfileEditActivity");
-                startActivity(createEditProfileIntent());
+                Log.i(TAG, "Start ChangeContractorActivity");
+                startActivity(createChangeContractorActivity());
             }
         });
-
-        edit_home = (RelativeLayout)findViewById(R.id.edit_home);
+        edit_home = findViewById(R.id.edit_home);
         edit_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,18 +88,35 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(createEditHomeIntent());
             }
         });
-
-        edit_contractor = (RelativeLayout)findViewById(R.id.edit_contractors);
-        edit_contractor.setOnClickListener(new View.OnClickListener() {
+        edit_profile = findViewById(R.id.edit_profile);
+        edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "Start ChangeContractorActivity");
-                startActivity(createChangeContractorActivity());
+                Log.i(TAG, "Start ProfileEditActivity");
+                startActivity(createEditProfileIntent());
             }
         });
-
-        edit_password = (RelativeLayout)findViewById(R.id.edit_password);
+        //helpActivity
+        contact_us = findViewById(R.id.contact_us);
+        contact_us.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Start HelpActivity");
+                startActivity(new Intent(
+                        SettingsActivity.this,
+                        HelpActivity.class));
+            }
+        });
+        edit_password = findViewById(R.id.edit_password);
         edit_password.setOnClickListener(editPasswordClickListener);
+        sign_out = findViewById(R.id.sign_out);
+        sign_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Sign Out");
+                new FirebaseAuthentication(SettingsActivity.this).signOut();
+            }
+        });
     }
 
     private Intent createEditProfileIntent() {
@@ -130,9 +148,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Intent createChangeContractorActivity() {
         Context context = SettingsActivity.this;
         Class destinationClass = ChangeContractorActivity.class;
-        Intent intentToStartChangeContractorActivity = new Intent(context, destinationClass);
-
-        return intentToStartChangeContractorActivity;
+        return new Intent(context, destinationClass);
     }
     private View.OnClickListener editPasswordClickListener = new View.OnClickListener() {
         @Override

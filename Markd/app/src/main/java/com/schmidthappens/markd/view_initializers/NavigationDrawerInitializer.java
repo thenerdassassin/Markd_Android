@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.schmidthappens.markd.AdapterClasses.MenuDrawerListAdapter;
 import com.schmidthappens.markd.R;
@@ -53,7 +54,7 @@ public class NavigationDrawerInitializer {
 
     private void setUp() {
         setUpDrawerToggle();
-        List<MenuItem> menuItemList = new ArrayList<MenuItem>();
+        List<MenuItem> menuItemList = new ArrayList<>();
         Resources resources = context.getResources();
         if(userType == null) {
             new FirebaseAuthentication(context).signOut();
@@ -118,7 +119,8 @@ public class NavigationDrawerInitializer {
         if(customerIntent != null) {
             context.startActivity(customerIntent);
         } else {
-            new FirebaseAuthentication(context).signOut();
+            Log.e(TAG, "getCustomerIntent returned null");
+            Toast.makeText(context, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
 
         drawerLayout.closeDrawer(drawerList);
@@ -147,9 +149,6 @@ public class NavigationDrawerInitializer {
                 break;
             case "Settings":
                 intentToReturn = new Intent(context, SettingsActivity.class);
-                break;
-            case "Help":
-                intentToReturn = new Intent(context, HelpActivity.class);
                 break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);
