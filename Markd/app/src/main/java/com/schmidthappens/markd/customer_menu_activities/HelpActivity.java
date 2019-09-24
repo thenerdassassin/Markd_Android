@@ -10,18 +10,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
-import com.schmidthappens.markd.utilities.SendEmail;
 import com.schmidthappens.markd.utilities.StringUtilities;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
-import org.json.JSONObject;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by joshua.schmidtibm.com on 1/9/18.
@@ -30,6 +31,9 @@ import org.json.JSONObject;
 public class HelpActivity extends AppCompatActivity {
     private final static String TAG = "HelpActivity";
     private FirebaseAuthentication authentication;
+
+    final static DatabaseReference SUPPORT_DATABASE_REFERENCE = FirebaseDatabase.getInstance().getReference("support");
+
     private String userEmail;
 
     private TextView helpText;
@@ -110,30 +114,32 @@ public class HelpActivity extends AppCompatActivity {
                 Toast.makeText(HelpActivity.this, "Message is empty", Toast.LENGTH_SHORT).show();
             } else {
                 sendMessage();
+                Toast.makeText(HelpActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
+                HelpActivity.this.finish();
             }
         }
     };
     private void sendMessage() {
-        SendEmail.sendMessage(this, userEmail, userMessage.getText().toString(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                // Display response
-                Log.d(TAG, response.toString());
-                Toast.makeText(HelpActivity.this, "Message sent.", Toast.LENGTH_SHORT).show();
-                HelpActivity.this.finish();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                HelpActivity.this.somethingWentWrong(error.toString());
-                error.printStackTrace();
-            }
-        });
+        final Calendar calendar = Calendar.getInstance();
+        final DatabaseReference referenceToMessage = SUPPORT_DATABASE_REFERENCE
+                .child(Integer.toString(calendar.get(Calendar.YEAR)))
+                .child(Integer.toString(calendar.get(Calendar.MONTH) + 1))
+                .child(Integer.toString(calendar.get(Calendar.DAY_OF_MONTH))).push();
+        referenceToMessage.setValue(generateMessage());
+    }
 
+    private Map<String, Object> generateMessage() {
+        final Map<String, Object> message = new HashMap<>();
+        message.put("date", StringUtilities.getCurrentDateString());
+        message.put("from", userEmail);
+        message.put("message", userMessage.getText().toString());
+        return message;
     }
     private void somethingWentWrong(String logMessage) {
         Log.d(TAG, logMessage);
         Toast.makeText(HelpActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         HelpActivity.this.finish();
     }
+
+
 }
