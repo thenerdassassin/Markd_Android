@@ -14,8 +14,6 @@
         <item>Home</item>
         <item>Customers</item>
         <item>Settings</item>
-        <item>Sign Out</item>
-        <item>Help</item>
     </string-array>
 
     <string-array name="menu_icons">
@@ -26,16 +24,12 @@
         <item>ic_action_painter</item>
         <item>ic_action_notifications</item>
         <item>ic_action_settings</item>
-        <item>ic_action_sign_out</item>
-        <item>ic_action_help</item>
     </string-array>
 
     <string-array name="contractor_menu_icons">
         <item>ic_action_home</item>
         <item>ic_action_customers</item>
         <item>ic_action_settings</item>
-        <item>ic_action_sign_out</item>
-        <item>ic_action_help</item>
     </string-array>
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer closed</string>

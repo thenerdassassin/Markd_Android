@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_menu_activities.HelpActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
@@ -31,7 +32,9 @@ public class ContractorSettingsActivity extends AppCompatActivity {
     TempContractorData contractorData;
 
     RelativeLayout edit_profile;
+    RelativeLayout contact_us;
     RelativeLayout edit_password;
+    RelativeLayout sign_out;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -47,7 +50,7 @@ public class ContractorSettingsActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         if(!authentication.checkLogin()) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            final Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
@@ -60,7 +63,13 @@ public class ContractorSettingsActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        edit_profile = (RelativeLayout)findViewById(R.id.edit_profile);
+        //Hide Customer only Settings
+        final RelativeLayout edit_home = findViewById(R.id.edit_home);
+        edit_home.setVisibility(View.GONE);
+        final RelativeLayout edit_contractor = findViewById(R.id.edit_contractors);
+        edit_contractor.setVisibility(View.GONE);
+
+        edit_profile = findViewById(R.id.edit_profile);
         edit_profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,21 +77,32 @@ public class ContractorSettingsActivity extends AppCompatActivity {
                 startActivity(createEditProfileIntent());
             }
         });
-
-        RelativeLayout edit_home = (RelativeLayout)findViewById(R.id.edit_home);
-        edit_home.setVisibility(View.GONE);
-
-        RelativeLayout edit_contractor = (RelativeLayout)findViewById(R.id.edit_contractors);
-        edit_contractor.setVisibility(View.GONE);
-
-        edit_password = (RelativeLayout)findViewById(R.id.edit_password);
+        contact_us = findViewById(R.id.contact_us);
+        contact_us.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Start HelpActivity");
+                startActivity(new Intent(
+                        ContractorSettingsActivity.this,
+                        HelpActivity.class));
+            }
+        });
+        edit_password = findViewById(R.id.edit_password);
         edit_password.setOnClickListener(editPasswordClickListener);
+        sign_out = findViewById(R.id.sign_out);
+        sign_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Sign Out");
+                new FirebaseAuthentication(ContractorSettingsActivity.this).signOut();
+            }
+        });
     }
 
     private Intent createEditProfileIntent() {
-        Context context = ContractorSettingsActivity.this;
-        Class destinationClass = ProfileEditActivity.class;
-        Intent intentToStartProfileEditActivity = new Intent(context, destinationClass);
+        final Context context = ContractorSettingsActivity.this;
+        final Class destinationClass = ProfileEditActivity.class;
+        final Intent intentToStartProfileEditActivity = new Intent(context, destinationClass);
 
         intentToStartProfileEditActivity.putExtra("email", authentication.getCurrentUser().getEmail());
         intentToStartProfileEditActivity.putExtra("namePrefix", contractorData.getNamePrefix());

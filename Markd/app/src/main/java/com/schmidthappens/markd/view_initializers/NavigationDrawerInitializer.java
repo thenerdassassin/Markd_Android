@@ -18,7 +18,6 @@ import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersAc
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.contractor_user_activities.ContractorSettingsActivity;
 import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
-import com.schmidthappens.markd.customer_menu_activities.HelpActivity;
 import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
@@ -166,11 +165,6 @@ public class NavigationDrawerInitializer {
                 break;
             case"Settings":
                 intentToReturn = new Intent(context, ContractorSettingsActivity.class);
-                break;
-            case "Help":
-                intentToReturn = new Intent(context, HelpActivity.class);
-                break;
-            case "Sign Out":
                 break;
             default:
                 Log.e(TAG, "Contractor selectedMenuItem not found-" + selectedMenuItem);

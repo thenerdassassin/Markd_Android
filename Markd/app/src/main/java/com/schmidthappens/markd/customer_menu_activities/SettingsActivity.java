@@ -96,7 +96,6 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(createEditProfileIntent());
             }
         });
-        //helpActivity
         contact_us = findViewById(R.id.contact_us);
         contact_us.setOnClickListener(new View.OnClickListener() {
             @Override
