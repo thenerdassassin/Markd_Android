@@ -72,7 +72,7 @@ public class ContractorMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contractor_main_view);
         authentication = new FirebaseAuthentication(this);
-        new ActionBarInitializer(this, false, "contractor", editCompanyOnClickListener);
+        new ActionBarInitializer(this, false, "contractor");
         initializeXmlObjects();
         firstPass = true;
         checkForCameraPermission();
@@ -249,12 +249,6 @@ public class ContractorMainActivity extends AppCompatActivity {
             if(!hasImage) {
                 startActivityForResult(createPhotoOrGalleryChooserIntent(), IMAGE_REQUEST_CODE);
             }
-        }
-    };
-    private View.OnClickListener editCompanyOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            startContractorEditActivity();
         }
     };
     private void startContractorEditActivity() {

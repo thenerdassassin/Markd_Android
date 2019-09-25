@@ -30,7 +30,7 @@ public class ActionBarInitializer {
     public ActionBarInitializer(AppCompatActivity ctx, Boolean isCustomerPage, String userType, View.OnClickListener onEditButtonClick) {
         this.context = ctx;
         this.actionBar = context.getSupportActionBar();
-        this.drawerLayout = (DrawerLayout)context.findViewById(R.id.main_drawer_layout);
+        this.drawerLayout = context.findViewById(R.id.main_drawer_layout);
         this.userType = userType;
         this.isCustomerPage = isCustomerPage;
         this.onEditButtonClick = onEditButtonClick;

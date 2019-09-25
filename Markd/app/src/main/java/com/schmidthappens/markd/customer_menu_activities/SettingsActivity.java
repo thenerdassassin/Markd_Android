@@ -72,6 +72,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
+        //Hide Contractor only Settings
+        final RelativeLayout edit_company = findViewById(R.id.edit_company);
+        edit_company.setVisibility(View.GONE);
+
         edit_contractors = findViewById(R.id.edit_contractors);
         edit_contractors.setOnClickListener(new View.OnClickListener() {
             @Override

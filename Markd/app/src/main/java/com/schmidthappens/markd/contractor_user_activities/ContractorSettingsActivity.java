@@ -18,6 +18,7 @@ import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
+import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
@@ -32,6 +33,7 @@ public class ContractorSettingsActivity extends AppCompatActivity {
     TempContractorData contractorData;
 
     RelativeLayout edit_profile;
+    RelativeLayout edit_company;
     RelativeLayout contact_us;
     RelativeLayout edit_password;
     RelativeLayout sign_out;
@@ -75,6 +77,14 @@ public class ContractorSettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(TAG, "Start ProfileEditActivity");
                 startActivity(createEditProfileIntent());
+            }
+        });
+        edit_company = findViewById(R.id.edit_company);
+        edit_company.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Start ProfileEditCompany");
+                startActivity(createContractorEditActivity());
             }
         });
         contact_us = findViewById(R.id.contact_us);
@@ -133,4 +143,23 @@ public class ContractorSettingsActivity extends AppCompatActivity {
                     .show();
         }
     };
+
+    private Intent createContractorEditActivity() {
+        final Context activityContext = ContractorSettingsActivity.this;
+        final Class destinationClass = ContractorEditActivity.class;
+        final Intent gotToContractorEditActivityIntent = new Intent(activityContext, destinationClass);
+        addContractorDataToIntent(gotToContractorEditActivityIntent);
+        return gotToContractorEditActivityIntent;
+    }
+    private void addContractorDataToIntent(Intent intent) {
+        if(contractorData != null) {
+            final ContractorDetails contractorDetails = contractorData.getContractorDetails();
+            if(contractorDetails != null) {
+                intent.putExtra("companyName", contractorDetails.getCompanyName());
+                intent.putExtra("telephoneNumber", contractorDetails.getTelephoneNumber());
+                intent.putExtra("websiteUrl", contractorDetails.getWebsiteUrl());
+                intent.putExtra("zipCode", contractorDetails.getZipCode());
+            }
+        }
+    }
 }

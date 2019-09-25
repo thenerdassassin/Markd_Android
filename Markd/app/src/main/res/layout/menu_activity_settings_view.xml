@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_texture">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,6 +43,31 @@
                     android:layout_below="@+id/edit_contractors_main"
                     android:text="Set your personal contractors."/>
             </RelativeLayout>
+            <!-- Edit Profile -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_profile">
+                <TextView
+                    android:id="@+id/edit_profile_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:text="Edit Profile"/>
+                <TextView
+                    android:id="@+id/edit_profile_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPanel"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace"
+                    android:layout_below="@+id/edit_profile_main"
+                    android:text="Change email or name on account."/>
+            </RelativeLayout>
             <!-- Edit Home -->
             <RelativeLayout
                 android:id="@+id/edit_home"
@@ -67,30 +94,31 @@
                     android:layout_below="@+id/edit_home_main"
                     android:text="Change address, bedrooms, square footage, etc."/>
             </RelativeLayout>
-            <!-- Edit Profile -->
+            <!-- Edit Company -->
             <RelativeLayout
+                android:id="@+id/edit_company"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/edit_profile">
+                android:layout_marginTop="10dp">
                 <TextView
-                    android:id="@+id/edit_profile_main"
+                    android:id="@+id/edit_company_main"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:text="Edit Profile"/>
+                    android:text="Edit Company"/>
                 <TextView
-                    android:id="@+id/edit_profile_sub"
+                    android:id="@+id/edit_company_sub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorPanel"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:typeface="monospace"
-                    android:layout_below="@+id/edit_profile_main"
-                    android:text="Change email or name on account."/>
+                    android:layout_below="@+id/edit_company_main"
+                    android:text="Change company website, phone number, etc."/>
             </RelativeLayout>
             <!-- Help Activity -->
             <RelativeLayout
