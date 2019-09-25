@@ -1,7 +1,11 @@
 package com.schmidthappens.markd.file_storage;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
@@ -19,7 +23,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by joshua.schmidtibm.com on 12/19/17.
@@ -49,36 +57,50 @@ public class MarkdFirebaseStorage {
         });
     }
 
-    private static UploadTask saveImage(String path, Uri file) {
-        if(StringUtilities.isNullOrEmpty(path)) {
-            return null;
-        }
-        StorageReference reference = storage.getReference().child("images/" + path);
-        return reference.putFile(file);
-    }
-    public static void saveImage(String path, Uri file, final ImageLoadingListener listener) {
+    public static void saveImage(String path, Uri file, ContentResolver resolver, final ImageLoadingListener listener) {
         if(StringUtilities.isNullOrEmpty(path)) {
             return;
         }
         if(listener != null) {
             listener.onStart();
         }
-        StorageReference reference = storage.getReference().child("images/" + path);
-        reference.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                if(listener != null) {
-                    listener.onSuccess();
+
+        final byte[] compressedBytes = compress(file, resolver);
+
+        final StorageReference reference = storage.getReference().child("images/" + path);
+        if(compressedBytes == null) {
+            reference.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    if(listener != null) {
+                        listener.onSuccess();
+                    }
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if(listener != null) {
-                    listener.onFailed(e);
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    if(listener != null) {
+                        listener.onFailed(e);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            reference.putBytes(compressedBytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    if (listener != null) {
+                        listener.onSuccess();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    if (listener != null) {
+                        listener.onFailed(e);
+                    }
+                }
+            });
+        }
     }
     public static void loadImage(final Activity context, final String path, final ImageView imageView, final ImageLoadingListener listener) {
         if(listener != null) {
@@ -125,13 +147,18 @@ public class MarkdFirebaseStorage {
             }
         });
     }
-    public static void updateImage(final Activity context, final String path, final Uri file, final ImageView imageView, final ImageLoadingListener listener) {
+    public static void updateImage(
+            final Activity context,
+            final String path,
+            final Uri file,
+            final ImageView imageView,
+            final ImageLoadingListener listener) {
         Log.d(TAG, path);
         if(listener != null) {
             Log.d(TAG, "Started listener");
             listener.onStart();
         }
-        UploadTask uploadTask = saveImage(path, file);
+        final UploadTask uploadTask = saveImage(path, file, context.getContentResolver());
         if(uploadTask != null) {
             uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -153,5 +180,28 @@ public class MarkdFirebaseStorage {
     public static void getFile(String path, File localFile, OnSuccessListener<FileDownloadTask.TaskSnapshot> onSuccess, OnFailureListener onFailure) {
         StorageReference storageReference = storage.getReference().child("images/" + path);
         storageReference.getFile(localFile).addOnSuccessListener(onSuccess).addOnFailureListener(onFailure);
+    }
+
+    private static UploadTask saveImage(String path, Uri file, ContentResolver resolver) {
+        if(StringUtilities.isNullOrEmpty(path)) {
+            return null;
+        }
+
+        final byte[] compressedBytes = compress(file, resolver);
+        final StorageReference reference = storage.getReference().child("images/" + path);
+        if(compressedBytes == null) {
+            return reference.putFile(file);
+        }
+        return reference.putBytes(compressedBytes);
+    }
+    private static byte[] compress(Uri file, ContentResolver resolver) {
+        try {
+            Bitmap original = MediaStore.Images.Media.getBitmap(resolver, file);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            original.compress(Bitmap.CompressFormat.JPEG, 50, out);
+            return out.toByteArray();
+        } catch (IOException | NullPointerException e) {
+            return null;
+        }
     }
 }

@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (photo != null) {
                     MarkdFirebaseStorage.updateImage(this, fileName, photo, homeImage, new HomeImageLoadingListener());
-                    MarkdFirebaseStorage.deleteImage(oldFileName);
+                    Toast.makeText(this, "Updating Photo", Toast.LENGTH_LONG).show();
                 }
             } else {
                 Log.d(TAG, "Result not okay");

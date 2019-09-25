@@ -120,8 +120,8 @@ public class ContractorMainActivity extends AppCompatActivity {
                 Uri photo = getPhotoUri(data);
 
                 if (photo != null) {
+                    Log.d(TAG, "PHOTO PATH " + photo.getPathSegments().toString());
                     MarkdFirebaseStorage.updateImage(this, fileName, photo, logoImage, new LogoLoadingListener());
-                    MarkdFirebaseStorage.deleteImage(oldFileName);
                     Toast.makeText(this, "Updating Logo", Toast.LENGTH_LONG).show();
                 }
             } else {

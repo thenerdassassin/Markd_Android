@@ -2,6 +2,7 @@ package com.schmidthappens.markd.view_initializers;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -96,7 +97,11 @@ public class ReplaceableImageHandler {
 
         if (photo != null) {
             Log.d(TAG, "Saving to - " + newFileName);
-            MarkdFirebaseStorage.saveImage(newFileName, photo, new SaveFileListener(oldFileName, newFileName));
+            MarkdFirebaseStorage.saveImage(
+                    newFileName,
+                    photo,
+                    context.getContentResolver(),
+                    new SaveFileListener(oldFileName, newFileName));
         } else {
             Log.d(TAG, "photo is null");
         }
@@ -292,7 +297,7 @@ public class ReplaceableImageHandler {
             Log.d(TAG, "Image Saved successfully");
             hasImage = true;
             Log.d(TAG, "Deleting image from - " + oldFileName);
-            MarkdFirebaseStorage.deleteImage(oldFileName);
+            //MarkdFirebaseStorage.deleteImage(oldFileName);
             loadImage(fileName);
         }
 
@@ -376,7 +381,6 @@ public class ReplaceableImageHandler {
                         try {
                             Intent intent = Intent.createChooser(target, "Open File");
                             context.startActivity(intent);
-
                         } catch (ActivityNotFoundException e) {
                             Toast.makeText(context, "Download a pdf viewer from the app store.", Toast.LENGTH_SHORT).show();
                         }
@@ -389,7 +393,6 @@ public class ReplaceableImageHandler {
                     }
                 });
             } catch (IOException e) {
-
                 Log.e(TAG, e.toString());
             } finally {
                 deletePdfFile(localFile);
