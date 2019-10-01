@@ -16,8 +16,7 @@
         android:gravity="start"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:typeface="monospace" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/service_date"

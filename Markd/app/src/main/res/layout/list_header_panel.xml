@@ -15,8 +15,7 @@
         android:text="Panel Name"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:typeface="monospace" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/panel_amperage"

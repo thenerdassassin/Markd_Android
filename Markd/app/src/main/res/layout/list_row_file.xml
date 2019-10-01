@@ -17,7 +17,6 @@
         android:textColor="@color/hyperlink"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:typeface="monospace"
         android:clickable="true"
         android:focusable="true"/>
 </TableRow>
