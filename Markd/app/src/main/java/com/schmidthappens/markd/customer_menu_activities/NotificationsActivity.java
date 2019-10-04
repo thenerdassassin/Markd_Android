@@ -8,15 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.schmidthappens.markd.AdapterClasses.NotificationRecyclerViewAdapter;
+import com.schmidthappens.markd.AdapterClasses.NotificationRecyclerSwipeViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -66,19 +64,28 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        notificationRecyclerView = (RecyclerView)findViewById(R.id.notifications_list_view);
-        noNotificationsTextView = (TextView)findViewById(R.id.notifications_empty_list);
+        notificationRecyclerView = findViewById(R.id.notifications_list_view);
+        noNotificationsTextView = findViewById(R.id.notifications_empty_list);
     }
     private void setUpRecyclerView(List<CustomerNotificationMessage> notifications) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         notificationRecyclerView.setLayoutManager(layoutManager);
         notificationRecyclerView.setHasFixedSize(false);
-        notificationRecyclerView.addItemDecoration(new DividerItemDecoration(NotificationsActivity.this, DividerItemDecoration.VERTICAL));
-        notificationRecyclerView.setAdapter(new NotificationRecyclerViewAdapter(notifications));
+        notificationRecyclerView
+                .addItemDecoration(
+                        new DividerItemDecoration(
+                                NotificationsActivity.this,
+                                DividerItemDecoration.VERTICAL));
+        notificationRecyclerView.setAdapter(
+                new NotificationRecyclerSwipeViewAdapter(
+                        this,
+                        authentication.getCurrentUser().getUid(),
+                        notifications));
     }
     private void getNotifications(String customerId) {
-        if(customerId == null || !NotificationHandler.getNotifications(customerId, notificationValueListener)) {
+        if(customerId == null
+                || !NotificationHandler.getNotifications(customerId, notificationValueListener)) {
             noNotificationsTextView.setVisibility(View.VISIBLE);
         } else {
             noNotificationsTextView.setVisibility(View.GONE);
@@ -104,7 +111,10 @@ public class NotificationsActivity extends AppCompatActivity {
         @Override
         public void onCancelled(DatabaseError databaseError) {
             Log.e(TAG, databaseError.toString());
-            Toast.makeText(NotificationsActivity.this, "Oops..something went wrong.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    NotificationsActivity.this,
+                    "Oops..something went wrong.",
+                    Toast.LENGTH_SHORT).show();
         }
     };
 }

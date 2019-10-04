@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.utilities;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -59,5 +60,16 @@ public class NotificationHandler {
         DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("notifications").child(customerId);
         userReference.addValueEventListener(listener);
         return true;
+    }
+
+    public static void removeNotification(
+            final String customerId,
+            final int index) {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child("notifications")
+                .child(customerId)
+                .child(Integer.toString(index))
+                .removeValue();
     }
 }
