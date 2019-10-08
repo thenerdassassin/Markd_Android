@@ -21,6 +21,7 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
+import com.schmidthappens.markd.customer_subactivities.HomeEditActivityV2;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
@@ -136,7 +137,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
     private Intent createEditHomeIntent() {
         Context context = SettingsActivity.this;
-        Class destinationClass = HomeEditActivity.class;
+        Class destinationClass = HomeEditActivityV2.class;
         Intent intentToStartHomeEditActivity = new Intent(context, destinationClass);
 
         intentToStartHomeEditActivity.putExtra("street", customerData.getStreet());
