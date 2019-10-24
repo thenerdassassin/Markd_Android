@@ -7,19 +7,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -351,7 +349,7 @@ public class PanelDetailActivity extends AppCompatActivity {
 
     }
     public void showDeletePanelWarning(final int position) {
-        alertDialog = new android.support.v7.app.AlertDialog.Builder(this)
+        alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Delete Panel")
                 .setMessage("This action can not be reversed. Are you sure you want to delete this panel?")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

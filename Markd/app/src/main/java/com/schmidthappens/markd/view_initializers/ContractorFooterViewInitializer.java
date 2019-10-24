@@ -3,19 +3,16 @@ package com.schmidthappens.markd.view_initializers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 

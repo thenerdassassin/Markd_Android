@@ -1,6 +1,6 @@
 package com.schmidthappens.markd.data_objects;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 import android.util.Log;
 
 import com.google.firebase.database.Exclude;
@@ -9,7 +9,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

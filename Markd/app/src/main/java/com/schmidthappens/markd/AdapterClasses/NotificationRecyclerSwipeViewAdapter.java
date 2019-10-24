@@ -1,9 +1,7 @@
 package com.schmidthappens.markd.AdapterClasses;
 
-import android.app.Notification;
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +12,6 @@ import android.widget.Toast;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.daimajia.swipe.util.Attributes;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 import com.schmidthappens.markd.data_objects.CustomerNotificationMessage;

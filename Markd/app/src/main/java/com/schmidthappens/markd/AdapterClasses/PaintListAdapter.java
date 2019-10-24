@@ -2,7 +2,7 @@ package com.schmidthappens.markd.AdapterClasses;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.data_objects.PaintSurface;
@@ -19,7 +18,6 @@ import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
 import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

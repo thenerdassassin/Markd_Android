@@ -55,7 +55,7 @@
         android:layout_marginTop="40dp"
         android:layout_weight="1">
 
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/electrical_delete_breaker_button"
             android:layout_height="wrap_content"
             android:layout_width="130dp"
@@ -63,7 +63,7 @@
             app:backgroundTint="@color/delete"
             android:text="Delete" />
 
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/electrical_save_breaker_button"
             android:layout_height="wrap_content"
             android:layout_width="130dp"

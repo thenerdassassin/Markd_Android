@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -30,20 +29,14 @@ import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
-import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.DateUtitilities;
-import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
-import com.schmidthappens.markd.view_initializers.ServiceListViewInitializer;
 
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * Created by Josh on 8/5/2017.

@@ -1,6 +1,6 @@
 package com.schmidthappens.markd.utilities;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by joshua.schmidtibm.com on 11/24/17.

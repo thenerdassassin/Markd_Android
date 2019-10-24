@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -194,7 +194,7 @@ public class PaintEditActivity extends AppCompatActivity {
         }
     }
     private void showDeletePaintWarning() {
-        alertDialog = new android.support.v7.app.AlertDialog.Builder(this)
+        alertDialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Delete Paint Surface")
                 .setMessage("This action can not be reversed. Are you sure you want to delete this paint surface?")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

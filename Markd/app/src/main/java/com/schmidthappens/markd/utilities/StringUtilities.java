@@ -1,9 +1,7 @@
 package com.schmidthappens.markd.utilities;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
-
-import com.schmidthappens.markd.data_objects.Customer;
 
 import java.util.Calendar;
 

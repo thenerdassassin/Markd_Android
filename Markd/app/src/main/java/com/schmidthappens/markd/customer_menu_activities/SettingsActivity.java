@@ -5,28 +5,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
-import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivityV2;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
-
-import java.util.Set;
 
 /**
  * Created by joshua.schmidtibm.com on 10/21/17.

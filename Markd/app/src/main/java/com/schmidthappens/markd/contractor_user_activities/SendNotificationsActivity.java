@@ -2,7 +2,7 @@ package com.schmidthappens.markd.contractor_user_activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,8 +15,6 @@ import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.utilities.NotificationHandler;
 import com.schmidthappens.markd.utilities.StringUtilities;
-
-import java.util.List;
 
 /**
  * Created by joshua.schmidtibm.com on 11/24/17.

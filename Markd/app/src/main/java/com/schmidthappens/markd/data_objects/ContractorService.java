@@ -1,10 +1,9 @@
 package com.schmidthappens.markd.data_objects;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.google.firebase.storage.StorageException;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.utilities.StringUtilities;
