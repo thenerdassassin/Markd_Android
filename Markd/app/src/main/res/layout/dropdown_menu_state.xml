@@ -1,0 +1,16 @@
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:boxStrokeColor="@android:color/transparent"
+    app:boxBackgroundColor="@android:color/transparent"
+    app:boxStrokeWidth="0dp"
+    android:hint="State">
+    <AutoCompleteTextView
+        android:id="@+id/state_dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:editable="false"/>
+</com.google.android.material.textfield.TextInputLayout>

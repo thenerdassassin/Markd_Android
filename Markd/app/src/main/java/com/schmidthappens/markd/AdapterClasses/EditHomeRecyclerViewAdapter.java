@@ -1,7 +1,5 @@
 package com.schmidthappens.markd.AdapterClasses;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -9,10 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivityV2;
@@ -41,7 +45,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (viewType) {
             case R.layout.view_holder_edit_text:
                 return new EditTextViewHolder(view);
-            case R.layout.view_holder_detail_disclosure:
+            case R.layout.dropdown_menu_state:
                 return new DetailDisclosureViewHolder(view);
             case R.layout.view_holder_number_picker:
                 return new DoubleStepperViewHolder(view);
@@ -60,7 +64,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 ((EditTextViewHolder)viewHolder).bindData(position, "City", context.city);
                 break;
             case 2:
-                ((DetailDisclosureViewHolder)viewHolder).bindData(context.state);
+                ((DetailDisclosureViewHolder)viewHolder).bindData(position, context.state);
                 break;
             case 3:
                 ((EditTextViewHolder)viewHolder).bindData(position, "Zip Code", context.zipCode);
@@ -93,7 +97,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             position == 3) {
             return R.layout.view_holder_edit_text;
         } else if (position == 2) {
-            return R.layout.view_holder_detail_disclosure;
+            return R.layout.dropdown_menu_state;
         } else if (position == 6) {
             return 0; //Used to differentiate Integer Picker from Double
         }
@@ -174,11 +178,12 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                     Log.v(TAG, "EditTextViewHolder afterTextChanged");
                     if(fieldNumber == ZIP_CODE_POSITION
                             && textView.getText().toString().length() != 5) {
+                        /*
                         Toast.makeText(context,
                                 "Zip Code is not valid",
                                 Toast.LENGTH_SHORT)
                                 .show();
-                        textView.setText(originalValue);
+                         */
                     }
                 }
             });
@@ -186,17 +191,37 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     class DetailDisclosureViewHolder extends RecyclerView.ViewHolder {
-        //TODO: OnClickListener to go to child Activity?
-        private TextView detailText;
+        private AutoCompleteTextView textView;
+        private int fieldNumber;
 
         DetailDisclosureViewHolder(final View v) {
             super(v);
-            detailText = v.findViewById(R.id.text_view);
+            textView = v.findViewById(R.id.state_dropdown);
+            textView.setAdapter(adapter);
+            textView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d(TAG, "Item Clicked: " + adapter.getItem(position));
+                    updateField(fieldNumber, adapter.getItem(position));
+                }
+            });
         }
 
-        void bindData(final String currentText) {
-            detailText.setText(currentText);
+        void bindData(final int position, final String currentText) {
+            fieldNumber = position;
+            textView.setText(currentText, false);
         }
+
+        private final ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                context,
+                R.layout.dropdown_menu_popup_item,
+                new String[] {
+                        "AK", "AL", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
+                        "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+                        "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+                        "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+                        "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+                });
     }
 
     class IntegerStepperViewHolder extends StepperViewHolder {

@@ -4,12 +4,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 
 import java.io.IOException;
@@ -19,14 +21,14 @@ import java.io.IOException;
  */
 
 //https://github.com/firebase/quickstart-android/blob/master/messaging/app/src/main/java/com/google/firebase/quickstart/fcm/MyFirebaseInstanceIDService.java
-public class MarkdFirebaseInstanceIDService extends FirebaseInstanceIdService {
+//https://stackoverflow.com/questions/56231223/cannot-find-symbol-import-com-google-firebase-iid-firebaseinstanceidservice-erro
+public class MarkdFirebaseInstanceIDService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseInstanceIDSvc";
     private static String currentToken;
 
     @Override
-    public void onTokenRefresh() {
+    public void onNewToken(@NonNull final String refreshedToken) {
         // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "Refreshed token: " + refreshedToken);
         currentToken = refreshedToken;
         sendRegistrationToServer();
