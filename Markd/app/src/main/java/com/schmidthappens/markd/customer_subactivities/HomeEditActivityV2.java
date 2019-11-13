@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.customer_subactivities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
@@ -8,7 +9,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.schmidthappens.markd.AdapterClasses.EditHomeRecyclerViewAdapter;
@@ -136,11 +139,5 @@ public class HomeEditActivityV2 extends AppCompatActivity {
                 bathrooms,
                 squareFootage
         );
-    }
-    private void closeActivity() {
-        startActivity(new Intent(
-                HomeEditActivityV2.this,
-                MainActivity.class));
-        finish();
     }
 }

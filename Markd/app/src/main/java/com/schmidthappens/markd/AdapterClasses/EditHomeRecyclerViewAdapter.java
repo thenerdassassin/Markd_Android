@@ -7,13 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,12 +23,17 @@ import com.schmidthappens.markd.customer_subactivities.HomeEditActivityV2;
 
 import java.util.Locale;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "EditHomeRecyclerAdapter";
+
+    private final InputMethodManager IMM;
     private HomeEditActivityV2 context;
 
     public EditHomeRecyclerViewAdapter(final HomeEditActivityV2 context) {
         this.context = context;
+        IMM = (InputMethodManager)context.getSystemService(INPUT_METHOD_SERVICE);
     }
 
     @Override @NonNull
@@ -132,6 +137,11 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
+    private void hideKeyboard(View view) {
+        IMM.hideSoftInputFromWindow(view.getWindowToken(),
+                InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+
     class EditTextViewHolder extends RecyclerView.ViewHolder {
         private static final int ZIP_CODE_POSITION = 3;
         private EditText textView;
@@ -154,36 +164,19 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 textView.setInputType(InputType.TYPE_CLASS_NUMBER);
             }
 
-            textView.addTextChangedListener(new TextWatcher() {
+            textView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    Log.v(TAG, "EditTextViewHolder beforeTextChanged");
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    Log.v(TAG, "EditTextViewHolder onTextChanged");
-
-                    //Validation on Zip Code
-                    if(fieldNumber == ZIP_CODE_POSITION
-                            && charSequence.toString().length() == 5) {
-                        updateField(fieldNumber, charSequence.toString());
-                    } else if (fieldNumber != ZIP_CODE_POSITION) {
-                        updateField(fieldNumber, charSequence.toString());
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    Log.v(TAG, "EditTextViewHolder afterTextChanged");
-                    if(fieldNumber == ZIP_CODE_POSITION
-                            && textView.getText().toString().length() != 5) {
-                        /*
-                        Toast.makeText(context,
-                                "Zip Code is not valid",
-                                Toast.LENGTH_SHORT)
-                                .show();
-                         */
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        if(fieldNumber == ZIP_CODE_POSITION
+                                && textView.getText().toString().length() != 5) {
+                            textView.setError("Invalid Zip Code");
+                        } else {
+                            updateField(
+                                    fieldNumber,
+                                    ((EditText)v).getText().toString());
+                        }
+                        hideKeyboard(v);
                     }
                 }
             });
