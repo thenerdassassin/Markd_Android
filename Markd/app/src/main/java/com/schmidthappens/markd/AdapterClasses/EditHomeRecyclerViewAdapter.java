@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.schmidthappens.markd.R;
-import com.schmidthappens.markd.customer_subactivities.HomeEditActivityV2;
+import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 
 import java.util.Locale;
 
@@ -29,9 +29,9 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private static final String TAG = "EditHomeRecyclerAdapter";
 
     private final InputMethodManager IMM;
-    private HomeEditActivityV2 context;
+    private HomeEditActivity context;
 
-    public EditHomeRecyclerViewAdapter(final HomeEditActivityV2 context) {
+    public EditHomeRecyclerViewAdapter(final HomeEditActivity context) {
         this.context = context;
         IMM = (InputMethodManager)context.getSystemService(INPUT_METHOD_SERVICE);
     }

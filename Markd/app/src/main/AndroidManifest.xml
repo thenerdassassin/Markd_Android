@@ -132,7 +132,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
-        <activity android:name=".customer_subactivities.HomeEditActivityV2"
+        <activity android:name=".customer_subactivities.HomeEditActivity"
             android:value=".customer_subactivities.HomeEditActivityV2">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
