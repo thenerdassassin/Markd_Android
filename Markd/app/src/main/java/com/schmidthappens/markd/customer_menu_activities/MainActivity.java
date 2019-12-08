@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
         setContentView(R.layout.menu_activity_home_view);
 
         authentication = new FirebaseAuthentication(this);
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        Log.i(TAG, "onStart");
         if(!authentication.checkLogin()) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
@@ -84,20 +88,26 @@ public class MainActivity extends AppCompatActivity {
         }
         hasImage = false;
 
-        customerData = new TempCustomerData((authentication.getCurrentUser().getUid()), new MainGetDataListener());
+        customerData = new TempCustomerData(
+                authentication.getCurrentUser().getUid(),
+                new MainGetDataListener());
         homeFrame.setOnClickListener(photoClick);
         homeFrame.setOnLongClickListener(photoLongClick);
     }
     @Override
     public void onStop() {
         super.onStop();
+        Log.i(TAG, "onStop");
         authentication.detachListener();
         if(customerData != null) {
             customerData.removeListeners();
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 cameraPermissionGranted = true;
@@ -107,25 +117,28 @@ public class MainActivity extends AppCompatActivity {
 
     // Mark:- SetUp Functions
     private void initializeViews() {
-        progressBar = (ProgressBar)findViewById(R.id.home_image_progress);
-        homeFrame = (FrameLayout)findViewById(R.id.home_frame);
-        homeImage = (ImageView)findViewById(R.id.home_image);
-        homeImagePlaceholder = (ImageView)findViewById(R.id.home_image_placeholder);
+        progressBar = findViewById(R.id.home_image_progress);
+        homeFrame = findViewById(R.id.home_frame);
+        homeImage = findViewById(R.id.home_image);
+        homeImagePlaceholder = findViewById(R.id.home_image_placeholder);
 
         homeFrame.setBackgroundColor(View.GONE);
         homeImage.setVisibility(View.GONE);
         homeImagePlaceholder.setVisibility(View.GONE);
 
-        preparedFor = (TextView)findViewById(R.id.prepared_for);
-        homeAddress = (TextView)findViewById(R.id.home_address);
-        roomInformation = (TextView)findViewById(R.id.home_information_rooms);
-        squareFootage = (TextView)findViewById(R.id.home_information_square_footage);
+        preparedFor = findViewById(R.id.prepared_for);
+        homeAddress = findViewById(R.id.home_address);
+        roomInformation = findViewById(R.id.home_information_rooms);
+        squareFootage = findViewById(R.id.home_information_square_footage);
 
 
     }
     private void initializeUI() {
         fillCustomerInformation();
-        Log.d(TAG, customerData.getHomeImageFileName());
+        Log.d(TAG, "Current FileName: " + customerData.getHomeImageFileName());
+        if(customerData.getHomeImageFileName() == null) {
+            return;
+        }
         if(firstPass) {
             MarkdFirebaseStorage.loadImage(this,
                     customerData.getHomeImageFileName(),
@@ -142,7 +155,8 @@ public class MainActivity extends AppCompatActivity {
     private void fillCustomerInformation() {
         String preparedForString = "Prepared for " + customerData.getName();
         preparedFor.setText(preparedForString);
-        String address = customerData.getFormattedAddress();
+
+        final String address = customerData.getFormattedAddress();
         if(address == null) {
             Log.d(TAG, "Home information was null");
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
@@ -150,14 +164,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             homeAddress.setText(address);
         }
-        String homeInformationString = customerData.getRoomInformation();
+
+        final String homeInformationString = customerData.getRoomInformation();
         if(homeInformationString == null) {
             Log.d(TAG, "Home information was null");
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));
+            return;
         } else {
             roomInformation.setText(homeInformationString);
         }
-        String squareFootageString = customerData.getSquareFootageString();
+
+        final String squareFootageString = customerData.getSquareFootageString();
         if(squareFootageString == null) {
             Log.d(TAG, "Square Footage was null");
             startActivity(new Intent(MainActivity.this, HomeEditActivity.class));

@@ -3,17 +3,16 @@ package com.schmidthappens.markd.customer_subactivities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,16 +20,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import com.schmidthappens.markd.AdapterClasses.CreateProfileRecyclerViewAdapter;
+import com.schmidthappens.markd.AdapterClasses.EditProfileRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.utilities.NumberPickerUtilities;
 
 /**
  * Created by joshua.schmidtibm.com on 10/14/17.
@@ -40,25 +37,19 @@ public class ProfileEditActivity extends AppCompatActivity {
     private static final String TAG = "ProfileEditActivity";
     private FirebaseAuthentication authentication;
 
-    //XML Objects
-    NumberPicker userTypePicker;
-    EditText email;
-    EditText password;
-    EditText confirmPassword;
-    NumberPicker namePrefixPicker;
-    EditText firstName;
-    EditText lastName;
-    NumberPicker maritalStatusPicker;
-    NumberPicker contractorTypePicker;
-    Button saveButton;
-
-    private Boolean isNewAccount;
-    private String userType;
+    public Boolean isNewAccount;
+    public String userType;
+    public String email;
+    public String namePrefix;
+    public String firstName;
+    public String lastName;
+    public String maritalStatus;
+    public String contractorType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_view_profile);
+        setContentView(R.layout.edit_view_recycler);
         authentication = new FirebaseAuthentication(this);
     }
     @Override
@@ -71,9 +62,8 @@ public class ProfileEditActivity extends AppCompatActivity {
             setUpActionBar();
         }
 
-        initializeXMLObjects();
         processIntent(getIntent());
-        email.requestFocus();
+        initializeXMLObjects();
     }
     @Override
     public void onStop() {
@@ -88,169 +78,70 @@ public class ProfileEditActivity extends AppCompatActivity {
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.view_action_bar);
         //Set up actionBarButtons
-        ImageView menuButton = (ImageView)findViewById(R.id.burger_menu);
+        ImageView menuButton = findViewById(R.id.burger_menu);
         menuButton.setClickable(false);
         menuButton.setVisibility(View.GONE);
-        ImageView nextButton = (ImageView)findViewById(R.id.edit_mode);
-        if(isNewAccount) {
-            nextButton.setVisibility(View.VISIBLE);
-            nextButton.setClickable(true);
-            nextButton.setImageDrawable(ContextCompat.getDrawable(ProfileEditActivity.this, R.drawable.ic_action_next));
-            nextButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(password.getText().toString().equals(confirmPassword.getText().toString())) {
-                        attemptCreateAccount(ProfileEditActivity.this, email.getText().toString(), password.getText().toString());
-                    } else {
-                        Toast.makeText(ProfileEditActivity.this, "Passwords don't match", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        } else {
-            nextButton.setClickable(false);
-            nextButton.setVisibility(View.GONE);
-        }
+
+        final ImageView nextButton = findViewById(R.id.edit_mode);
+        nextButton.setClickable(false);
+        nextButton.setVisibility(View.GONE);
     }
-    private void initializeXMLObjects() {
-        userTypePicker = (NumberPicker)findViewById(R.id.profile_edit_user_type);
-        email = (EditText)findViewById(R.id.profile_edit_email);
-        password = (EditText)findViewById(R.id.profile_edit_password);
-        confirmPassword = (EditText)findViewById(R.id.profile_confirm_password);
-
+    private void initializeXMLObjects()  {
+        Log.d(TAG, "initializeXMLObjects");
+        final RecyclerView recyclerView = findViewById(R.id.edit_recycler);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(false);
         if(isNewAccount) {
-            userTypePicker.setMinValue(0);
-            userTypePicker.setMaxValue(userTypeArray.length-1);
-            userTypePicker.setDisplayedValues(userTypeArray);
-            userTypePicker.setVisibility(View.VISIBLE);
-            userTypePicker.setOnValueChangedListener(userTypeValueChangedListener);
-
-            password.setVisibility(View.VISIBLE);
-        } else {
-            userTypePicker.setVisibility(View.GONE);
-            password.setVisibility(View.GONE);
-        }
-
-        namePrefixPicker = (NumberPicker)findViewById(R.id.profile_edit_name_prefix);
-        namePrefixPicker.setMinValue(0);
-        namePrefixPicker.setMaxValue(namePrefixArray.length-1);
-        namePrefixPicker.setDisplayedValues(namePrefixArray);
-
-        firstName = (EditText)findViewById(R.id.profile_edit_first_name);
-        lastName = (EditText)findViewById(R.id.profile_edit_last_name);
-
-        maritalStatusPicker = (NumberPicker)findViewById(R.id.profile_edit_marital_status);
-        maritalStatusPicker.setMinValue(0);
-        maritalStatusPicker.setMaxValue(maritalStatusArray.length-1);
-        maritalStatusPicker.setDisplayedValues(maritalStatusArray);
-
-        contractorTypePicker = (NumberPicker)findViewById(R.id.profile_edit_contractor_type);
-        contractorTypePicker.setMinValue(0);
-        contractorTypePicker.setMaxValue(contractorTypeArray.length-1);
-        contractorTypePicker.setDisplayedValues(contractorTypeArray);
-
-        if(isNewAccount) {
-            contractorTypePicker.setVisibility(View.GONE);
-        }
-
-        saveButton = (Button)findViewById(R.id.profile_edit_save_button);
-        if(isNewAccount) {
-            saveButton.setVisibility(View.GONE);
-        } else {
-            saveButton.setVisibility(View.VISIBLE);
-            saveButton.setOnClickListener(saveButtonClickListener);
+            recyclerView.setAdapter(new CreateProfileRecyclerViewAdapter(this));
+        } else if(maritalStatus != null) {
+            userType = "customer";
+            recyclerView.setAdapter(new EditProfileRecyclerViewAdapter(this));
+        } else if(contractorType != null) {
+            userType = "contractor";
+            recyclerView.setAdapter(new EditProfileRecyclerViewAdapter(this));
         }
     }
     private void processIntent(Intent intent) {
         if(intent != null) {
-            if (intent.hasExtra("email")) {
-                email.setText(intent.getStringExtra("email"));
+            if(intent.getBooleanExtra("isNew", false)) {
+                isNewAccount = true;
+                userType = intent.getStringExtra("accountType");
+                return;
             }
-
-            if(!isNewAccount) {
-                if(intent.hasExtra("namePrefix")) {
-                    NumberPickerUtilities.setPicker(namePrefixPicker, intent.getStringExtra("namePrefix"), namePrefixArray);
-                }
-                if(intent.hasExtra("firstName")) {
-                    firstName.setText(intent.getStringExtra("firstName"));
-                }
-                if(intent.hasExtra("lastName")) {
-                    lastName.setText(intent.getStringExtra("lastName"));
-                }
-                if(intent.hasExtra("maritalStatus")) {
-                    //Customer
-                    maritalStatusPicker.setVisibility(View.VISIBLE);
-                    NumberPickerUtilities.setPicker(maritalStatusPicker, intent.getStringExtra("maritalStatus"), maritalStatusArray);
-                } else {
-                    //Contractor
-                    maritalStatusPicker.setVisibility(View.GONE);
-                }
-                if(intent.hasExtra("contractorType")) {
-                    //Contractor
-                    contractorTypePicker.setVisibility(View.VISIBLE);
-                    NumberPickerUtilities.setPicker(contractorTypePicker, intent.getStringExtra("contractorType"), contractorTypeArray);
-                } else {
-                    //Customer
-                    contractorTypePicker.setVisibility(View.GONE);
-                }
-                authentication.getUserType(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        userType = dataSnapshot.getValue(String.class);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e(TAG, databaseError.toString());
-                        Toast.makeText(ProfileEditActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                });
-            } else {
-                if(intent.hasExtra("userType")) {
-                    userType = intent.getStringExtra("userType");
-                }
-                if(intent.hasExtra("password")) {
-                    password.setText(intent.getStringExtra("password"));
-                }
+            if (intent.hasExtra("email")) {
+                email = intent.getStringExtra("email");
+            }
+            if(intent.hasExtra("namePrefix")) {
+                namePrefix = intent.getStringExtra("namePrefix");
+            }
+            if(intent.hasExtra("firstName")) {
+                firstName = intent.getStringExtra("firstName");
+            }
+            if(intent.hasExtra("lastName")) {
+                lastName = intent.getStringExtra("lastName");
+            }
+            if(intent.hasExtra("maritalStatus")) {
+                maritalStatus = intent.getStringExtra("maritalStatus");
+            }
+            if(intent.hasExtra("contractorType")) {
+                contractorType = intent.getStringExtra("contractorType");
             }
         }
     }
 
+    public void updateUser(final String password)  {
+        final FirebaseUser user = authentication.getCurrentUser();
+        final AuthCredential credential = authentication
+                .getAuthCredential(user.getEmail(), password);
+        authenticateUser(user, credential);
+    }
+    public void createUser(final String password) {
+        attemptCreateAccount(this, email, password);
+    }
+
     //Mark:- Listeners
-    private View.OnClickListener saveButtonClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            FirebaseUser user = authentication.getCurrentUser();
-            String password = confirmPassword.getText().toString();
-            if(password.isEmpty()) {
-                Toast.makeText(ProfileEditActivity.this, "Must enter password.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            AuthCredential credential = authentication.getAuthCredential(user.getEmail(), password);
-            checkCredential(user, credential);
-        }
-    };
-
-    private NumberPicker.OnValueChangeListener userTypeValueChangedListener = new NumberPicker.OnValueChangeListener() {
-        @Override
-        public void onValueChange(NumberPicker numberPicker, int oldValue, int newValue) {
-            //Need to make changes
-            if(oldValue != newValue) {
-                //From Home Owner to Contractor
-                if(oldValue == 0 && newValue == 1) {
-                    maritalStatusPicker.setVisibility(View.GONE);
-                    contractorTypePicker.setVisibility(View.VISIBLE);
-                }
-                //From Contractor to Home Owner
-                if(oldValue == 1 && newValue == 0) {
-                    contractorTypePicker.setVisibility(View.GONE);
-                    maritalStatusPicker.setVisibility(View.VISIBLE);
-                }
-            }
-            userType = userTypeArray[newValue];
-        }
-    };
-
     private void attemptCreateAccount(final Activity activity, String email, String password) {
         authentication.createAccount(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -267,15 +158,13 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         });
     }
-    private void checkCredential(final FirebaseUser user, AuthCredential credential) {
+    private void authenticateUser(final FirebaseUser user, final AuthCredential credential) {
         user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
                     Log.i(TAG, "reauthenticate:success");
-                    updateEmail(user);
-                    saveProfile();
-                    closeActivity();
+                    updateProfile(user);
                 } else {
                     if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                         Toast.makeText(ProfileEditActivity.this, "Wrong password.", Toast.LENGTH_SHORT).show();
@@ -289,13 +178,15 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
         });
     }
-    private void updateEmail(FirebaseUser user) {
-        user.updateEmail(email.getText().toString())
+    private void updateProfile(final FirebaseUser user) {
+        saveProfile();
+        user.updateEmail(email)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "User email address updated.");
+                            Log.d(TAG, "User email updated.");
+                            closeActivity();
                         }
                     }
                 });
@@ -305,21 +196,12 @@ public class ProfileEditActivity extends AppCompatActivity {
             userType = "Home Owner";
         }
         if(userType.equalsIgnoreCase("Home Owner") || userType.equalsIgnoreCase("customer")) {
-            TempCustomerData customerData = new TempCustomerData(authentication, null);
-            customerData.updateProfile(
-                    namePrefixArray[namePrefixPicker.getValue()],
-                    firstName.getText().toString(),
-                    lastName.getText().toString(),
-                    maritalStatusArray[maritalStatusPicker.getValue()]
-            );
+            final TempCustomerData customerData = new TempCustomerData(authentication, null);
+            customerData.updateProfile(namePrefix, firstName, lastName, maritalStatus);
         } else {
-            TempContractorData contractorData = new TempContractorData(authentication.getCurrentUser().getUid(), null);
-            contractorData.updateProfile(
-                    namePrefixArray[namePrefixPicker.getValue()],
-                    firstName.getText().toString(),
-                    lastName.getText().toString(),
-                    contractorTypeArray[contractorTypePicker.getValue()]
-            );
+            final TempContractorData contractorData = new TempContractorData(
+                    authentication.getCurrentUser().getUid(), null);
+            contractorData.updateProfile(namePrefix, firstName, lastName, contractorType);
         }
     }
     private void closeActivity() {
@@ -327,38 +209,9 @@ public class ProfileEditActivity extends AppCompatActivity {
         if(userType != null && userType.equalsIgnoreCase("Contractor")) {
             goToNextActivity = new Intent(ProfileEditActivity.this, ContractorMainActivity.class);
         } else {
-            if(isNewAccount) {
-                goToNextActivity = new Intent(ProfileEditActivity.this, HomeEditActivity.class);
-            } else {
-                goToNextActivity = new Intent(ProfileEditActivity.this, MainActivity.class);
-            }
+            goToNextActivity = new Intent(ProfileEditActivity.this, MainActivity.class);
         }
         startActivity(goToNextActivity);
         finish();
     }
-
-    //Mark:- NumberPicker Arrays
-    private static final String[] userTypeArray = {
-            "Home Owner",
-            "Contractor"
-    };
-    private static final String[] namePrefixArray = {
-            "Mr.",
-            "Mrs.",
-            "Ms.",
-            "Dr.",
-            "Rev."
-    };
-
-    private static final String[] maritalStatusArray = {
-            "Single",
-            "Married"
-    };
-
-    private static final String[] contractorTypeArray = {
-            "Plumber",
-            "Hvac",
-            "Electrician",
-            "Painter"
-    };
 }

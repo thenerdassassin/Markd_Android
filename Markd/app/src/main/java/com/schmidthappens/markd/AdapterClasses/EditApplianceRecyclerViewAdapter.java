@@ -18,8 +18,11 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.ApplianceEditActivity;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -113,17 +116,19 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     }
 
     class EditTextViewHolder extends RecyclerView.ViewHolder {
-        private EditText textView;
+        private TextInputLayout inputLayout;
+        private TextInputEditText textView;
         private int fieldNumber;
 
         EditTextViewHolder(final View v) {
             super(v);
-            textView = v.findViewById(R.id.edit_text_box);
+            inputLayout = v.findViewById(R.id.input_layout);
+            textView = v.findViewById(R.id.edit_text);
         }
 
         void bindData(final int position, final String hint, final String currentText) {
             fieldNumber = position;
-            textView.setHint(hint);
+            inputLayout.setHint(hint);
             textView.setText(currentText);
 
             textView.addTextChangedListener(new TextWatcher() {
@@ -142,14 +147,14 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     }
 
     class LifespanViewHolder extends RecyclerView.ViewHolder {
-        private EditText lifespanTextView;
+        private TextInputEditText lifespanTextView;
         private AutoCompleteTextView unitTextView;
         private int fieldNumber;
         private String timeUnitsSelected;
 
         LifespanViewHolder(final View v) {
             super(v);
-            lifespanTextView = v.findViewById(R.id.edit_text_box);
+            lifespanTextView = v.findViewById(R.id.edit_text);
             unitTextView = v.findViewById(R.id.units_dropdown);
             unitTextView.setInputType(InputType.TYPE_NULL);
             unitTextView.setAdapter(adapter);
@@ -181,8 +186,13 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
         void bindData(final int position, final int lifespan, final String timeUnits) {
             fieldNumber = position;
             lifespanTextView.setText(String.valueOf(lifespan));
-            unitTextView.setText(timeUnits, false);
-            timeUnitsSelected = timeUnits;
+            if(StringUtilities.isNullOrEmpty(timeUnits)) {
+                unitTextView.setText("years", false);
+                timeUnitsSelected = "years";
+            } else {
+                unitTextView.setText(timeUnits, false);
+                timeUnitsSelected = timeUnits;
+            }
 
             lifespanTextView.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -246,16 +256,17 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             lifespanTextView.setError(null);
         }
     }
-
     class DateTextViewHolder extends RecyclerView.ViewHolder {
-        private EditText textView;
+        private TextInputLayout inputLayout;
+        private TextInputEditText textView;
         private int fieldNumber;
         private final Calendar myCalendar = Calendar.getInstance();
         private DatePickerDialog.OnDateSetListener date;
 
         DateTextViewHolder(final View v) {
             super(v);
-            textView = v.findViewById(R.id.edit_text_box);
+            inputLayout = v.findViewById(R.id.input_layout);
+            textView = v.findViewById(R.id.edit_text);
             textView.setClickable(true);
             textView.setLongClickable(false);
             textView.setFocusable(false);
@@ -274,15 +285,17 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
 
         void bindData(final int position, final String currentText) {
             fieldNumber = position;
-            textView.setHint("mm/dd/yyyy");
+            inputLayout.setHint("Install Date");
             textView.setText(currentText);
 
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new DatePickerDialog(context, date, myCalendar
-                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    new DatePickerDialog(context, date,
+                            myCalendar.get(Calendar.YEAR),
+                            myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)
+                    ).show();
                 }
             });
         }

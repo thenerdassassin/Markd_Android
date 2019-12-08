@@ -18,8 +18,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.Locale;
 
@@ -50,8 +53,8 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (viewType) {
             case R.layout.view_holder_edit_text:
                 return new EditTextViewHolder(view);
-            case R.layout.dropdown_menu_state:
-                return new DetailDisclosureViewHolder(view);
+            case R.layout.dropdown_menu:
+                return new ExposedDropdownMenuViewHolder(view);
             case R.layout.view_holder_number_picker:
                 return new DoubleStepperViewHolder(view);
             default:
@@ -69,7 +72,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 ((EditTextViewHolder)viewHolder).bindData(position, "City", context.city);
                 break;
             case 2:
-                ((DetailDisclosureViewHolder)viewHolder).bindData(position, context.state);
+                ((ExposedDropdownMenuViewHolder)viewHolder).bindData(position, context.state);
                 break;
             case 3:
                 ((EditTextViewHolder)viewHolder).bindData(position, "Zip Code", context.zipCode);
@@ -102,7 +105,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             position == 3) {
             return R.layout.view_holder_edit_text;
         } else if (position == 2) {
-            return R.layout.dropdown_menu_state;
+            return R.layout.dropdown_menu;
         } else if (position == 6) {
             return 0; //Used to differentiate Integer Picker from Double
         }
@@ -135,6 +138,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             default:
                 Log.e(TAG, String.format("No field for fieldNumber %d", fieldNumber));
         }
+        context.update();
     }
 
     private void hideKeyboard(View view) {
@@ -143,19 +147,22 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     class EditTextViewHolder extends RecyclerView.ViewHolder {
-        private static final int ZIP_CODE_POSITION = 3;
-        private EditText textView;
-        private String originalValue;
+        private TextInputLayout inputLayout;
+        private TextInputEditText textView;
         private int fieldNumber;
+
+        private static final int ZIP_CODE_POSITION = 3;
+        private String originalValue;
 
         EditTextViewHolder(final View v) {
             super(v);
-            textView = v.findViewById(R.id.edit_text_box);
+            inputLayout = v.findViewById(R.id.input_layout);
+            textView = v.findViewById(R.id.edit_text);
         }
 
         void bindData(final int position, final String hint, final String currentText) {
             fieldNumber = position;
-            textView.setHint(hint);
+            inputLayout.setHint(hint);
             originalValue = currentText;
             textView.setText(currentText);
 
@@ -183,26 +190,28 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    class DetailDisclosureViewHolder extends RecyclerView.ViewHolder {
-        private AutoCompleteTextView textView;
+    class ExposedDropdownMenuViewHolder extends RecyclerView.ViewHolder {
+        private TextInputLayout inputLayout;
+        private AutoCompleteTextView dropdown;
         private int fieldNumber;
 
-        DetailDisclosureViewHolder(final View v) {
+        ExposedDropdownMenuViewHolder(final View v) {
             super(v);
-            textView = v.findViewById(R.id.state_dropdown);
-            textView.setAdapter(adapter);
-            textView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            inputLayout = v.findViewById(R.id.dropdown_menu);
+            dropdown = v.findViewById(R.id.dropdown);
+        }
+
+        void bindData(final int position, final String currentText) {
+            fieldNumber = position;
+            dropdown.setAdapter(adapter);
+            dropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Log.d(TAG, "Item Clicked: " + adapter.getItem(position));
                     updateField(fieldNumber, adapter.getItem(position));
                 }
             });
-        }
-
-        void bindData(final int position, final String currentText) {
-            fieldNumber = position;
-            textView.setText(currentText, false);
+            dropdown.setText(currentText, false);
         }
 
         private final ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -216,7 +225,6 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                         "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
                 });
     }
-
     class IntegerStepperViewHolder extends StepperViewHolder {
         private int fieldNumber;
         private Integer currentIntegerValue;
@@ -254,10 +262,11 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         void bindData(final int position, final Integer currentValue, final String detail) {
             if(currentValue == null) {
                 currentIntegerValue = 1250;
+            } else {
+                currentIntegerValue = currentValue;
             }
 
             fieldNumber = position;
-            currentIntegerValue = currentValue;
             detailText.setText(detail);
             setValue(currentIntegerValue);
             minus.setOnClickListener(clickListener);
@@ -288,6 +297,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             } else if (value > 40000) {
                 stepValue.setError("40,000 is the maximum " + detailText.getText());
             } else {
+                stepValue.setError(null);
                 return true;
             }
             return false;
@@ -295,11 +305,11 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         private void setValue(int value) {
             final String currentValue = String.format(Locale.ENGLISH, "%d", value);
+            Log.d(TAG, currentValue);
             stepValue.setText(currentValue);
             updateField(fieldNumber, currentValue);
         }
     }
-
     class DoubleStepperViewHolder extends StepperViewHolder {
         private int fieldNumber;
         private Double currentDoubleValue;
@@ -335,14 +345,15 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         void bindData(final int position, final Double currentValue, final String detail) {
+            fieldNumber = position;
             if(currentValue == null) {
                 currentDoubleValue = 2.0;
+            } else {
+                currentDoubleValue = currentValue;
             }
-            fieldNumber = position;
-            currentDoubleValue = currentValue;
+
             detailText.setText(detail);
             setValue(currentDoubleValue);
-            stepValue.setText(String.format(Locale.ENGLISH, "%.1f", currentValue));
             minus.setOnClickListener(clickListener);
             plus.setOnClickListener(clickListener);
         }
@@ -372,6 +383,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             } else if (value > 20.0) {
                 stepValue.setError("20.0 is the maxium " + detailText.getText());
             } else {
+                stepValue.setError(null);
                 return true;
             }
             return false;
@@ -379,6 +391,7 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         private void setValue(double value) {
             final String currentValue = String.format(Locale.ENGLISH, "%.1f", value);
+            Log.d(TAG, currentValue);
             stepValue.setText(currentValue);
             updateField(fieldNumber, currentValue);
         }
@@ -401,6 +414,9 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (context.getCurrentFocus() != null) {
+                    context.getCurrentFocus().clearFocus();
+                }
                 if(view instanceof Button) {
                     final Button button = (Button)view;
                     if (button.getText().equals("+")) {

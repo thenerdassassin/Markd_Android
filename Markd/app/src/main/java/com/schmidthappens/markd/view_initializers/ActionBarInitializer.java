@@ -7,6 +7,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +21,7 @@ import com.schmidthappens.markd.contractor_user_activities.ContractorCustomersAc
  */
 
 public class ActionBarInitializer {
+    private final String TAG = "ActionBarInitializer";
     private AppCompatActivity context;
     private ActionBar actionBar;
     private DrawerLayout drawerLayout;
@@ -58,9 +61,9 @@ public class ActionBarInitializer {
             @Override
             public void onClick(View v) {
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(Gravity.START);
+                    drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    drawerLayout.openDrawer(Gravity.START);
+                    drawerLayout.openDrawer(GravityCompat.START);
                 }
             }
         });

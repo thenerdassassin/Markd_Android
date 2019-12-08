@@ -88,7 +88,6 @@ public class FirebaseAuthentication {
 
     public AuthCredential getAuthCredential(String email, String password) {
         return EmailAuthProvider.getCredential(email, password);
-
     }
 
     @NonNull
@@ -145,6 +144,7 @@ public class FirebaseAuthentication {
         }
     }
     public void getUserType(ValueEventListener listener) {
+        Log.d(TAG, "USERID: " + getCurrentUser().getUid());
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
                 .child("users").child(getCurrentUser().getUid()).child("userType");
         reference.addListenerForSingleValueEvent(listener);

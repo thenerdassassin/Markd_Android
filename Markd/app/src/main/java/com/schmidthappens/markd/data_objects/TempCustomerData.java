@@ -27,7 +27,8 @@ import java.util.List;
 
 public class TempCustomerData {
     private static final String TAG = "FirebaseCustomerData";
-    private static DatabaseReference database = FirebaseDatabaseInstance.getDatabase().getReference().child("users");
+    private static DatabaseReference database = FirebaseDatabaseInstance
+            .getDatabase().getReference().child("users");
     private DatabaseReference userReference;
     private String uid;
     private OnGetDataListener listener;
@@ -108,7 +109,7 @@ public class TempCustomerData {
         return customer.getName();
     }
     public String getFormattedAddress() {
-        if(customer == null || customer.getHome() == null) {
+        if(customer == null || customer.getAddress() == null) {
             return null;
         }
         return getStreet() + "\n" + getCity() + ", " + getState() + " " + getZipcode();
@@ -156,7 +157,7 @@ public class TempCustomerData {
         }
     }
     public String getHomeImageFileName() {
-        if(customer == null) {
+        if(customer == null || customer.getHomeImageFileName() == null) {
             return null;
         } else {
             return "homes/" + uid + "/" + customer.getHomeImageFileName();

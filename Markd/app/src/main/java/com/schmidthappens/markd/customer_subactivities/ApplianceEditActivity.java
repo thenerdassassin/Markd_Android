@@ -33,7 +33,6 @@ public class ApplianceEditActivity extends AppCompatActivity {
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
     private boolean isContractorEditingPage;
-
     private InputMethodManager IMM;
 
     public String manufacturer;
@@ -49,7 +48,6 @@ public class ApplianceEditActivity extends AppCompatActivity {
         IMM = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         authentication = new FirebaseAuthentication(this);
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -62,7 +60,6 @@ public class ApplianceEditActivity extends AppCompatActivity {
         processIntent(getIntent());
         initializeXMLObjects();
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -76,7 +73,6 @@ public class ApplianceEditActivity extends AppCompatActivity {
             customerData.removeListeners();
         }
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -84,11 +80,6 @@ public class ApplianceEditActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
-
-    public void hideKeyboard(View view) {
-        IMM.hideSoftInputFromWindow(view.getWindowToken(),
-                InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
 
     //Mark:- Helper Functions
@@ -99,14 +90,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(false);
-        recyclerView
-                .addItemDecoration(
-                        new DividerItemDecoration(
-                                ApplianceEditActivity.this,
-                                DividerItemDecoration.VERTICAL));
-        recyclerView.setAdapter(
-                new EditApplianceRecyclerViewAdapter(this)
-        );
+        recyclerView.setAdapter(new EditApplianceRecyclerViewAdapter(this));
     }
     private void processIntent(Intent intent) {
         if(intent != null) {
@@ -134,7 +118,10 @@ public class ApplianceEditActivity extends AppCompatActivity {
             }
         }
     }
-
+    public void hideKeyboard(View view) {
+        IMM.hideSoftInputFromWindow(view.getWindowToken(),
+                InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
     private void saveAppliance() {
         Class activityToGoTo = null;
         if(getTitle().equals("Domestic Hot Water")) {
@@ -164,7 +151,6 @@ public class ApplianceEditActivity extends AppCompatActivity {
         }
         goBackToActivity(activityToGoTo);
     }
-
     private void goBackToActivity(Class destinationClass){
         Intent activityIntent = new Intent(this, destinationClass);
         if(isContractorEditingPage) {

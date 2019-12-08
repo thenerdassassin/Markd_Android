@@ -17,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import androidx.annotation.NonNull;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -106,7 +108,23 @@ public class LoginActivity extends AppCompatActivity {
         mCreateAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAccount();
+                new MaterialAlertDialogBuilder(
+                        LoginActivity.this,
+                        R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                        .setItems(
+                                new String[]{"Home Owner", "Contractor"},
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        if (which == 0) {
+                                            createAccount("Home Owner");
+                                        } else {
+                                            createAccount("Contractor");
+                                        }
+                                    }
+                                }
+                        ).create().show();
             }
         });
 
@@ -154,7 +172,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
         authentication.detachListener();
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -210,9 +227,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void createAccount() {
-        Intent createAccountActivity = new Intent(this, ProfileEditActivity.class);
+    private void createAccount(final String accountType) {
+        final Intent createAccountActivity = new Intent(this, ProfileEditActivity.class);
+        createAccountActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        createAccountActivity.putExtra("isNew", true);
+        createAccountActivity.putExtra("accountType", accountType);
         startActivity(createAccountActivity);
+        finish();
     }
 
     //Mark:- Firebase Authentication methods
@@ -220,22 +241,27 @@ public class LoginActivity extends AppCompatActivity {
         authentication.signIn(activity, email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                Log.d(TAG, "signIn:onComplete");
                 if(task.isSuccessful()) {
                     authentication.getUserType(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d(TAG, "signIn:getUserType");
                             showProgress(false);
                             if (dataSnapshot.getValue() != null) {
                                 String userType = dataSnapshot.getValue().toString();
+                                Log.d(TAG, userType);
                                 if(userType.equalsIgnoreCase("customer")) {
-                                    Intent goToMainActivity = new Intent(activity, MainActivity.class);
+                                    final Intent goToMainActivity = new Intent(activity, MainActivity.class);
                                     startActivity(goToMainActivity);
                                     finish();
                                 } else {
-                                    Intent goToMainActivity = new Intent(activity, ContractorMainActivity.class);
+                                    final Intent goToMainActivity = new Intent(activity, ContractorMainActivity.class);
                                     startActivity(goToMainActivity);
                                     finish();
                                 }
+                            } else {
+                                Log.e(TAG, "UserType is null");
                             }
                         }
 

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.schmidthappens.markd.AdapterClasses.EditHomeRecyclerViewAdapter;
@@ -20,6 +21,7 @@ public class HomeEditActivity extends AppCompatActivity {
     private static final String TAG = "HomeEditActivity";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
+    private InputMethodManager IMM;
 
     private Boolean isNewAccount;
     public String street;
@@ -33,13 +35,13 @@ public class HomeEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.edit_view_home);
+        IMM = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        setContentView(R.layout.edit_view_recycler);
         authentication = new FirebaseAuthentication(this);
     }
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart");
         isNewAccount = !authentication.checkLogin();
         if(!isNewAccount) {
             customerData = new TempCustomerData(authentication, null);
@@ -80,7 +82,7 @@ public class HomeEditActivity extends AppCompatActivity {
     }
     private void initializeXMLObjects() {
         Log.d(TAG, "initializeXMLObjects");
-        final RecyclerView recyclerView = findViewById(R.id.edit_home_recycler);
+        final RecyclerView recyclerView = findViewById(R.id.edit_recycler);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -122,6 +124,27 @@ public class HomeEditActivity extends AppCompatActivity {
                 squareFootage = Integer.valueOf(squareFootageString);
             }
         }
+    }
+
+    public void hideKeyboard(View view) {
+        IMM.hideSoftInputFromWindow(view.getWindowToken(),
+                InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+
+    public void update() {
+        if(isValidHome()) {
+            saveHome();
+        }
+    }
+
+    private boolean isValidHome() {
+        return !(street == null ||
+                city == null ||
+                state == null || state.length() != 2 ||
+                zipCode == null || zipCode.length() != 5 ||
+                bedrooms == null ||
+                bathrooms == null ||
+                squareFootage == null);
     }
 
     //Mark:- Helper functions
