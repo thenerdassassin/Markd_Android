@@ -8,103 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background_texture">
-        <ScrollView
-            android:id="@+id/painting_scroll_view"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/painting_recycler"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="80dp">
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <!-- Main View -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <!-- Exterior Title -->
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="35dp"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginRight="25dp"
-                        android:layout_marginTop="25dp"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:text="Exterior"
-                            android:textSize="30sp" />
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1.5dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="@android:color/darker_gray" />
-                        <ImageView
-                            android:id="@+id/painting_exterior_add_button"
-                            android:layout_width="@dimen/square_icon"
-                            android:layout_height="@dimen/square_icon"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginEnd="-16dp"
-                            android:layout_marginRight="-16dp"
-                            android:src="@drawable/add_button_round_black" />
-                    </RelativeLayout>
-                    <!-- Exterior List -->
-                    <FrameLayout
-                        android:id="@+id/painting_exterior_paint_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="0dp"
-                        android:orientation="vertical" />
-                    <!-- Interior Title -->
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="35dp"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginRight="25dp"
-                        android:layout_marginTop="50dp"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:text="Interior"
-                            android:textSize="30sp" />
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1.5dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="@android:color/darker_gray" />
-                        <ImageView
-                            android:id="@+id/painting_interior_add_button"
-                            android:layout_width="@dimen/square_icon"
-                            android:layout_height="@dimen/square_icon"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginEnd="-16dp"
-                            android:layout_marginRight="-16dp"
-                            android:src="@drawable/add_button_round_black" />
-                    </RelativeLayout>
-                    <!-- Interior List -->
-                    <FrameLayout
-                        android:id="@+id/painting_interior_paint_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="0dp"
-                        android:orientation="vertical" />
-                </LinearLayout>
-            </FrameLayout>
-        </ScrollView>
+            android:layout_marginBottom="80dp"/>
         <!-- Footer -->
         <FrameLayout
             android:id="@+id/painting_footer"
@@ -125,3 +34,4 @@
         android:dividerHeight="1dp"
         android:paddingTop="@dimen/activity_vertical_margin" />
 </androidx.drawerlayout.widget.DrawerLayout>
+

@@ -61,7 +61,6 @@ public class EditHomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 throw new IllegalArgumentException(String.format("No view type for %d", viewType));
         }
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         switch (position) {

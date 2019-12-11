@@ -2,44 +2,42 @@ package com.schmidthappens.markd.customer_menu_activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.schmidthappens.markd.AdapterClasses.PaintListAdapter;
+import com.schmidthappens.markd.AdapterClasses.PaintingRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.PaintEditActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
+import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Josh on 5/29/2017.
  */
 
 public class PaintingActivity extends AppCompatActivity {
-    //XML Objects
-    ImageView addExteriorPaintButton;
-    FrameLayout exteriorPaintList;
-
-    ImageView addInteriorPaintButton;
-    FrameLayout interiorPaintList;
-    private FrameLayout paintingContractor;
-
     private final static String TAG = "PaintingActivity";
+
+    private FrameLayout paintingContractor;
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
     private boolean isContractorViewingPage;
@@ -50,8 +48,6 @@ public class PaintingActivity extends AppCompatActivity {
         setContentView(R.layout.menu_activity_painting_view);
         authentication = new FirebaseAuthentication(this);
     }
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -63,7 +59,6 @@ public class PaintingActivity extends AppCompatActivity {
         processIntent(getIntent());
 
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -79,7 +74,9 @@ public class PaintingActivity extends AppCompatActivity {
             isContractorViewingPage = true;
             new ActionBarInitializer(this, true, "contractor");
             if(intentToProcess.hasExtra("customerId")) {
-                customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new PaintingGetDataListener());
+                customerData = new TempCustomerData(
+                        intentToProcess.getStringExtra("customerId"),
+                        new PaintingGetDataListener());
             } else {
                 Log.e(TAG, "No customer id");
                 Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
@@ -91,12 +88,35 @@ public class PaintingActivity extends AppCompatActivity {
         }
     }
     public void initializeUI() {
-        initializeButtons();
-        initializePaintLists();
+        initializePaintingRecycler();
         initializeFooter();
 
     }
+    public void initializePaintingRecycler() {
+        final RecyclerView paintingRecycler = findViewById(R.id.painting_recycler);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        paintingRecycler.setLayoutManager(layoutManager);
+        paintingRecycler.setHasFixedSize(false);
+
+        final List<PaintSurface> exteriorSurfaces =
+                customerData.getExteriorSurfaces() == null ?
+                        new ArrayList<PaintSurface>() :
+                        customerData.getExteriorSurfaces();
+        final List<PaintSurface> interiorSurfaces =
+                customerData.getInteriorSurfaces() == null ?
+                        new ArrayList<PaintSurface>() :
+                        customerData.getInteriorSurfaces();
+
+        paintingRecycler.setAdapter(
+                new PaintingRecyclerViewAdapter(
+                        this,
+                        exteriorSurfaces,
+                        interiorSurfaces));
+    }
     public void initializeButtons() {
+        /*
+        //TODO: Move to RecyclerViewAdapter
         //Initialize Exterior Add Button
         addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
         addExteriorPaintButton.setOnClickListener(addExteriorPaintOnClickListener);
@@ -104,8 +124,11 @@ public class PaintingActivity extends AppCompatActivity {
         //Initialize Interior Add Button
         addInteriorPaintButton = (ImageView)findViewById(R.id.painting_interior_add_button);
         addInteriorPaintButton.setOnClickListener(addInteriorPaintOnClickListener);
+         */
     }
     public void initializePaintLists() {
+        /*
+        //TODO: Create RecyclerViewAdapter
         //Set Up Exterior PaintList
         exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
         View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true, customerData.getUid());
@@ -115,10 +138,10 @@ public class PaintingActivity extends AppCompatActivity {
         interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
         View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false, customerData.getUid());
         interiorPaintList.addView(listOfInteriorPaints);
+         */
     }
     public void initializeFooter() {
-        paintingContractor = (FrameLayout)findViewById(R.id.painting_footer);
-        Drawable logo = ContextCompat.getDrawable(this, R.drawable.mdf_logo);
+        paintingContractor = findViewById(R.id.painting_footer);
         if(!customerData.getPainter(new OnGetDataListener() {
             @Override
             public void onStart() {
@@ -126,22 +149,25 @@ public class PaintingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSuccess(DataSnapshot data) {
-                Contractor painter = data.getValue(Contractor.class);
+            public void onSuccess(final DataSnapshot data) {
+                final Contractor painter = data.getValue(Contractor.class);
                 Log.d(TAG, "data:" + data.toString());
                 if(painter == null || painter.getContractorDetails() == null) {
                     Log.d(TAG, "No painter data");
-                    View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this, "Painter");
-                    paintingContractor.addView(v);
+                    paintingContractor
+                            .addView(ContractorFooterViewInitializer
+                                    .createFooterView(
+                                            PaintingActivity.this, "Painter"));
                 } else {
-                    ContractorDetails contractorDetails = painter.getContractorDetails();
+                    final ContractorDetails contractorDetails = painter.getContractorDetails();
                     final String pathToLogoFile = "logos/" + data.getKey() + "/" + painter.getLogoFileName();
-                    View v = ContractorFooterViewInitializer.createFooterView(PaintingActivity.this,
-                            contractorDetails.getCompanyName(),
-                            contractorDetails.getTelephoneNumber(),
-                            contractorDetails.getWebsiteUrl(),
-                            pathToLogoFile);
-                    paintingContractor.addView(v);
+                    paintingContractor
+                            .addView(ContractorFooterViewInitializer
+                                    .createFooterView(PaintingActivity.this,
+                                            contractorDetails.getCompanyName(),
+                                            contractorDetails.getTelephoneNumber(),
+                                            contractorDetails.getWebsiteUrl(),
+                                            pathToLogoFile));
                 }
             }
 
@@ -159,45 +185,30 @@ public class PaintingActivity extends AppCompatActivity {
     }
 
     // Mark: OnClickListeners
-    private View.OnClickListener addExteriorPaintOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Context activityContext = PaintingActivity.this;
-            Class destinationClass = PaintEditActivity.class;
-
-            Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
-            intentToStartPaintEditActivity.putExtra("isNew", true);
-            intentToStartPaintEditActivity.putExtra("isExterior", true);
-            intentToStartPaintEditActivity.putExtra("customerId", customerData.getUid());
-            intentToStartPaintEditActivity.putExtra("isContractor", isContractorViewingPage);
-            activityContext.startActivity(intentToStartPaintEditActivity);
-        }
-    };
-
-    private View.OnClickListener addInteriorPaintOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Context activityContext = PaintingActivity.this;
-            Class destinationClass = PaintEditActivity.class;
-
-            Intent intentToStartPaintEditActivity = new Intent(activityContext, destinationClass);
-            intentToStartPaintEditActivity.putExtra("isNew", true);
-            intentToStartPaintEditActivity.putExtra("customerId", customerData.getUid());
-            intentToStartPaintEditActivity.putExtra("isContractor", isContractorViewingPage);
-            activityContext.startActivity(intentToStartPaintEditActivity);
-        }
-    };
-
-    public void deletePaintSurface(int position, boolean isExterior) {
-        Log.i(TAG, "{Delete Paint Item:" + position + " isExterior:" + isExterior + "}");
-        //Used to reset the adapter
-        if(isExterior) {
-            exteriorPaintList.removeAllViews();
-            exteriorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true, customerData.getUid()));
-        } else {
-            interiorPaintList.removeAllViews();
-            interiorPaintList.addView(new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false, customerData.getUid()));
-        }
+    public void editPaintSurface(
+            final PaintSurface surfaceToEdit, boolean isExterior, int index) {
+        final Intent intentToStartPaintEditActivity =
+                new Intent(this, PaintEditActivity.class);
+        putPaintObjectInIntent(surfaceToEdit, intentToStartPaintEditActivity, index);
+        intentToStartPaintEditActivity.putExtra("isExterior", isExterior);
+        startActivity(intentToStartPaintEditActivity);
+    }
+    private void putPaintObjectInIntent(
+            final PaintSurface paintSurface, final Intent intent, int position) {
+        intent.putExtra("id", position);
+        intent.putExtra("location", paintSurface.getLocation());
+        intent.putExtra("paintDate", paintSurface.getDateString());
+        intent.putExtra("brand", paintSurface.getBrand());
+        intent.putExtra("color", paintSurface.getColor());
+        intent.putExtra("customerId", customerData.getUid());
+    }
+    public void addPaintSurface(boolean isExterior) {
+        final Intent intentToStartPaintEditActivity = new Intent(this, PaintEditActivity.class);
+        intentToStartPaintEditActivity.putExtra("isNew", true);
+        intentToStartPaintEditActivity.putExtra("isExterior", isExterior);
+        intentToStartPaintEditActivity.putExtra("customerId", customerData.getUid());
+        intentToStartPaintEditActivity.putExtra("isContractor", isContractorViewingPage);
+        startActivity(intentToStartPaintEditActivity);
     }
 
     private class PaintingGetDataListener implements OnGetDataListener {
@@ -206,11 +217,11 @@ public class PaintingActivity extends AppCompatActivity {
 
         }
         @Override
-        public void onSuccess(DataSnapshot data) {
+        public void onSuccess(final DataSnapshot data) {
             initializeUI();
         }
         @Override
-        public void onFailed(DatabaseError databaseError) {
+        public void onFailed(final DatabaseError databaseError) {
 
         }
     }

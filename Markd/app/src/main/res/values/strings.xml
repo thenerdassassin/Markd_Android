@@ -57,4 +57,7 @@
 
     <!-- Strings related to Main Page -->
     <string name="coming_soon_message">Coming Soon! Add you personal Architects, Builders, and Realtors to this page.</string>
+
+    <!-- String related to Painting Page -->
+    <string name="add_paint">Add some paint!</string>
 </resources>

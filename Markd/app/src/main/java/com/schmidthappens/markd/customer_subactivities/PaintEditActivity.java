@@ -127,7 +127,7 @@ public class PaintEditActivity extends AppCompatActivity {
     private void processIntentExtras(Intent intent){
         paintId = intent.getIntExtra("id", -1);
         Log.d("TAG", "paintId:"+paintId);
-        isExterior = intent.hasExtra("isExterior");
+        isExterior = intent.getBooleanExtra("isExterior", false);
 
         if(intent.hasExtra("location")) {
             editLocation.setText(intent.getStringExtra("location"));
@@ -224,7 +224,7 @@ public class PaintEditActivity extends AppCompatActivity {
         }
     }
     private void goBackToPaintingActivity(){
-        Intent paintingActivityIntent = new Intent(getApplicationContext(), PaintingActivity.class);
+        Intent paintingActivityIntent = new Intent(this, PaintingActivity.class);
         if(customerId != null && !customerId.equals(authentication.getCurrentUser().getUid())) {
             paintingActivityIntent.putExtra("isContractor", true);
             paintingActivityIntent.putExtra("customerId", customerId);
