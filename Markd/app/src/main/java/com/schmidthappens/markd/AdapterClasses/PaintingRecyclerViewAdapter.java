@@ -1,14 +1,10 @@
 package com.schmidthappens.markd.AdapterClasses;
 
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,8 +15,6 @@ import com.schmidthappens.markd.data_objects.PaintSurface;
 import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.util.List;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "EditHomeRecyclerAdapter";
@@ -44,14 +38,14 @@ public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         if (exteriorPaintSurfaces.size() == 0) {
             INTERIOR_TITLE_INDEX = 2;
         } else {
-            INTERIOR_TITLE_INDEX = 1 + exteriorPaintSurfaces.size(); // 1+2 = 3
+            INTERIOR_TITLE_INDEX = 1 + exteriorPaintSurfaces.size();
         }
 
         this.interiorPaintSurfaces = interiorPaintSurfaces;
         if (interiorPaintSurfaces.size() == 0) {
             itemCount = 1 + INTERIOR_TITLE_INDEX;
         } else {
-            itemCount = 1 + INTERIOR_TITLE_INDEX + interiorPaintSurfaces.size(); //1+3+5 = 9
+            itemCount = 1 + INTERIOR_TITLE_INDEX + interiorPaintSurfaces.size();
         }
     }
 
@@ -137,7 +131,6 @@ public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             });
         }
-
     }
     class PaintSurfaceViewHolder extends RecyclerView.ViewHolder {
         final View view;

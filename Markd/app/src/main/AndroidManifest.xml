@@ -107,6 +107,10 @@
             android:name=".customer_menu_activities.NotificationsActivity"
             android:value=".customer_menu_activities.NotificationsActivity" />
 
+        <!-- Service History -->
+        <activity
+            android:name=".customer_menu_activities.ServiceHistoryActivity"
+            android:value=".customer_menu_activities.ServiceHistoryActivity" />
         <activity android:name=".customer_subactivities.ServiceDetailActivity"
             android:value=".customer_subactivities.ServiceDetailActivity"
             android:windowSoftInputMode="stateHidden"
@@ -121,6 +125,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_subactivities.ServiceDetailActivity"/>
         </activity>
+
 
         <!-- Settings -->
         <activity android:name=".customer_menu_activities.SettingsActivity"
@@ -144,7 +149,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
-        <activity android:name=".customer_menu_activities.HelpActivity"
+        <activity android:name=".customer_subactivities.HelpActivity"
             android:value=".customer_menu_activities.HelpActivity"
             android:parentActivityName=".customer_menu_activities.SettingsActivity">
             <meta-data

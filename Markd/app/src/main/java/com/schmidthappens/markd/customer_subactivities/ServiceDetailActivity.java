@@ -28,6 +28,7 @@ import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
 import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
+import com.schmidthappens.markd.customer_menu_activities.ServiceHistoryActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
@@ -56,7 +57,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
     Button deleteButton;
 
     boolean isContractorEditingPage;
-    Class<?> originalActivity;
+    String serviceType;
     int serviceId;
     boolean isAddService;
 
@@ -99,21 +100,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             alertDialog.dismiss();
         }
     }
-
-    private String getServiceType() {
-        String serviceType = null;
-        if (originalActivity.equals(PlumbingActivity.class)) {
-            Log.d(TAG, "Plumbing Service");
-            serviceType = "plumber";
-        } else if (originalActivity.equals(HvacActivity.class)) {
-            Log.d(TAG, "Hvac Service");
-            serviceType = "hvac";
-        } else if (originalActivity.equals(ElectricalActivity.class)) {
-            Log.d(TAG, "Electrical Service");
-            serviceType = "electrician";
-        }
-        return serviceType;
-    }
     private void saveServiceData() {
         if(serviceId < 0) {
             //New Service
@@ -121,11 +107,14 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
             addService(serviceToAdd);
         } else {
-            updateService(serviceId, editContractor.getText().toString(), editServiceDescription.getText().toString(), customerData.getServices(getServiceType()).get(serviceId).getFiles());
+            updateService(
+                    serviceId,
+                    editContractor.getText().toString(),
+                    editServiceDescription.getText().toString(),
+                    customerData.getServices(serviceType).get(serviceId).getFiles());
         }
     }
     private void addService(ContractorService service) {
-        String serviceType = getServiceType();
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
         } else {
@@ -134,7 +123,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
         }
     }
     private void updateService(int serviceId, String contractor, String description, List<FirebaseFile> files) {
-        String serviceType = getServiceType();
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
         } else {
@@ -159,19 +147,18 @@ public class ServiceDetailActivity extends AppCompatActivity {
                         Log.d(TAG, "Confirm service deletion");
                         removeService();
                         dialog.dismiss();
-                        goBackToActivity(originalActivity);
+                        goBackToActivity();
                     }
                 })
                 .create();
         alertDialog.show();
     }
     private void removeService() {
-        String serviceType = getServiceType();
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
         } else {
             Log.d(TAG, "Remove " + serviceType + "service-" + serviceId);
-            List<FirebaseFile> files = customerData.getServices(getServiceType()).get(serviceId).getFiles();
+            List<FirebaseFile> files = customerData.getServices(serviceType).get(serviceId).getFiles();
             removeFiles(customerData.getUid(), files);
             customerData.removeService(serviceId, serviceType);
         }
@@ -195,7 +182,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
                 saveServiceData();
-                goBackToActivity(originalActivity);
+                goBackToActivity();
             }
         });
 
@@ -205,7 +192,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
                 if(serviceId < 0) {
-                    goBackToActivity(originalActivity);
+                    goBackToActivity();
 
                 } else {
                     showRemoveServiceWarning();
@@ -216,8 +203,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
     private void processIntent(final Intent intent) {
         Log.d(TAG, "Processing intent");
         if(intent != null) {
-            if(intent.hasExtra("originalActivity")) {
-                originalActivity = (Class<?>)intent.getSerializableExtra("originalActivity");
+            if(intent.hasExtra("serviceType")) {
+                serviceType = intent.getStringExtra("serviceType");
             }
 
             isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
@@ -248,8 +235,8 @@ public class ServiceDetailActivity extends AppCompatActivity {
                         serviceId = 0;
                         intent.putExtra("serviceId", 0);
                     } else {
-                        if(customerData.getServices(getServiceType()) != null) {
-                            ContractorService service = customerData.getServices(getServiceType()).get(serviceId);
+                        if(customerData.getServices(serviceType) != null) {
+                            ContractorService service = customerData.getServices(serviceType).get(serviceId);
                             if(service != null) {
                                 files = service.getFiles();
                             }
@@ -259,9 +246,11 @@ public class ServiceDetailActivity extends AppCompatActivity {
                     fileList.removeAllViews();
                     fileList.addView(
                             ServiceFileListViewInitializer.createFileListView(
-                                    ServiceDetailActivity.this, files, customerData.getUid(), getServiceType(), serviceId
-                            )
-                    );
+                                    ServiceDetailActivity.this,
+                                    files,
+                                    customerData.getUid(),
+                                    serviceType,
+                                    serviceId));
                     customerData.removeListeners();
                 }
 
@@ -292,20 +281,20 @@ public class ServiceDetailActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
         hideKeyboard(this.getCurrentFocus());
-        goBackToActivity(originalActivity);
+        goBackToActivity();
         if(isAddService) {
             //delete service and files
-            List<FirebaseFile> files = customerData.getServices(getServiceType()).get(serviceId).getFiles();
+            List<FirebaseFile> files = customerData.getServices(serviceType).get(serviceId).getFiles();
             removeFiles(customerData.getUid(), files);
-            customerData.removeService(serviceId, getServiceType());
+            customerData.removeService(serviceId, serviceType);
         } else {
             //Do nothing
         }
         return true;
     }
-    private void goBackToActivity(Class<?> originalActivity) {
+    private void goBackToActivity() {
         Log.d(TAG, "isContractor:" + isContractorEditingPage);
-        Intent originalActivityIntent = new Intent(getApplicationContext(), originalActivity);
+        Intent originalActivityIntent = new Intent(this, ServiceHistoryActivity.class);
         originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
         if(customerData != null) {
             originalActivityIntent.putExtra("customerId", customerData.getUid());
@@ -337,6 +326,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
     private void sendErrorMessage(String message) {
         Log.e(TAG, message);
         Toast.makeText(getApplicationContext(), "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
-        goBackToActivity(MainActivity.class);
+        goBackToActivity();
     }
 }

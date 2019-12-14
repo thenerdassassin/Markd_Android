@@ -60,15 +60,7 @@
                     android:textColor="@color/hyperlink"
                     android:textSize="12sp"
                     android:text="@string/add_panel"/>
-
             </LinearLayout>
-
-            <!-- Service List -->
-            <FrameLayout
-                android:id="@+id/electrical_service_list"
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <!-- Contractor Footer -->
@@ -76,9 +68,7 @@
             android:id="@+id/electrical_footer"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_gravity="bottom">
-
-        </FrameLayout>
+            android:layout_gravity="bottom" />
     </FrameLayout>
 
     <!-- Navigation Menu -->

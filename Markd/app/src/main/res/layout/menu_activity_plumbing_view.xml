@@ -4,7 +4,6 @@
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -314,13 +313,6 @@
                             android:textSize="16sp" />
                     </RelativeLayout>
                 </LinearLayout>
-
-                <!-- Service History -->
-                <FrameLayout
-                    android:id="@+id/plumbing_service_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/plumbing_boiler" />
             </RelativeLayout>
         </ScrollView>
 

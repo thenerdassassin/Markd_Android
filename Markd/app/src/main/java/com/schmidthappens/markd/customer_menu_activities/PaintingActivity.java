@@ -114,32 +114,6 @@ public class PaintingActivity extends AppCompatActivity {
                         exteriorSurfaces,
                         interiorSurfaces));
     }
-    public void initializeButtons() {
-        /*
-        //TODO: Move to RecyclerViewAdapter
-        //Initialize Exterior Add Button
-        addExteriorPaintButton = (ImageView)findViewById(R.id.painting_exterior_add_button);
-        addExteriorPaintButton.setOnClickListener(addExteriorPaintOnClickListener);
-
-        //Initialize Interior Add Button
-        addInteriorPaintButton = (ImageView)findViewById(R.id.painting_interior_add_button);
-        addInteriorPaintButton.setOnClickListener(addInteriorPaintOnClickListener);
-         */
-    }
-    public void initializePaintLists() {
-        /*
-        //TODO: Create RecyclerViewAdapter
-        //Set Up Exterior PaintList
-        exteriorPaintList = (FrameLayout)findViewById(R.id.painting_exterior_paint_list);
-        View listOfExteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getExteriorSurfaces(), true, customerData.getUid());
-        exteriorPaintList.addView(listOfExteriorPaints);
-
-        //Set Up Interior PaintList
-        interiorPaintList = (FrameLayout)findViewById(R.id.painting_interior_paint_list);
-        View listOfInteriorPaints = new PaintListAdapter().createPaintListView(this, customerData.getInteriorSurfaces(), false, customerData.getUid());
-        interiorPaintList.addView(listOfInteriorPaints);
-         */
-    }
     public void initializeFooter() {
         paintingContractor = findViewById(R.id.painting_footer);
         if(!customerData.getPainter(new OnGetDataListener() {

@@ -15,6 +15,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
+import com.schmidthappens.markd.customer_subactivities.HelpActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;

@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.customer_menu_activities.HelpActivity;
+import com.schmidthappens.markd.customer_subactivities.HelpActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorData;

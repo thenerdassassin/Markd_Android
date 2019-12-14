@@ -3,14 +3,14 @@ package com.schmidthappens.markd.customer_menu_activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,8 +27,6 @@ import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-
-import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
 /**
  * Created by Josh on 4/18/2017.
@@ -53,7 +51,6 @@ public class PlumbingActivity extends AppCompatActivity {
     TextView boilerInstallDateView;
     TextView boilerLifeSpanView;
 
-    FrameLayout plumbingServiceList;
     FrameLayout plumbingContractor;
 
     private HotWater hotWater;
@@ -103,10 +100,6 @@ public class PlumbingActivity extends AppCompatActivity {
         initializeHotWater();
         initializeBoiler();
     }
-    private void initializeContractor(Contractor plumber, String plumberId) {
-        initializeContractorServices(plumber);
-        initializeFooter(plumber, plumberId);
-    }
     private void initializeHotWater() {
         hotWater = customerData.getHotWater();
         hotWaterEditButton = (ImageView)findViewById(R.id.plumbing_hot_water_edit);
@@ -148,18 +141,6 @@ public class PlumbingActivity extends AppCompatActivity {
 
         boilerLifeSpanView = (TextView)findViewById(R.id.plumbing_boiler_life_span);
         boilerLifeSpanView.setText(boiler.lifeSpanAsString());
-    }
-    private void initializeContractorServices(Contractor plumber) {
-        plumbingServiceList = (FrameLayout)findViewById(R.id.plumbing_service_list);
-        String company;
-        if(plumber != null && plumber.getContractorDetails() != null && plumber.getContractorDetails().getCompanyName() != null) {
-            company = plumber.getContractorDetails().getCompanyName();
-        } else {
-            company = "";
-        }
-
-        View serviceListView = createServiceListView(PlumbingActivity.this, customerData.getPlumbingServices(), company, isContractorViewingPage, customerData.getUid());
-        plumbingServiceList.addView(serviceListView);
     }
     private void initializeFooter(Contractor plumber, String plumberId) {
         plumbingContractor = (FrameLayout)findViewById(R.id.plumbing_footer);
@@ -231,7 +212,7 @@ public class PlumbingActivity extends AppCompatActivity {
             Log.d(TAG, "Received Plumbing Data");
             initializeAppliances();
             if(!customerData.getPlumber(new PlumberGetDataListener())) {
-                initializeContractor(null, "");
+                initializeFooter(null, "");
             }
         }
 
@@ -249,7 +230,7 @@ public class PlumbingActivity extends AppCompatActivity {
         @Override
         public void onSuccess(DataSnapshot data) {
             Log.d(TAG, "Received Plumber Data");
-            initializeContractor(data.getValue(Contractor.class), data.getKey());
+            initializeFooter(data.getValue(Contractor.class), data.getKey());
         }
 
         @Override

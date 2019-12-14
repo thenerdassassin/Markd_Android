@@ -3,9 +3,6 @@ package com.schmidthappens.markd.customer_menu_activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,25 +11,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.schmidthappens.markd.AdapterClasses.PanelListAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_subactivities.PanelDetailActivity;
 import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.Panel;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
-import com.schmidthappens.markd.customer_subactivities.PanelDetailActivity;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
 
 import java.util.Collections;
 import java.util.List;
-
-import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
 /**
  * Created by Josh on 3/24/2017.
@@ -48,7 +46,6 @@ public class ElectricalActivity extends AppCompatActivity {
     //XML Objects
     ListView panelList;
     TextView addPanelHyperlink;
-    FrameLayout electricalServiceList;
     FrameLayout electricalContractor;
     ArrayAdapter<Panel> adapter;
 
@@ -120,7 +117,6 @@ public class ElectricalActivity extends AppCompatActivity {
 
     private void initializeXMLObjects() {
         electricalContractor = (FrameLayout)findViewById(R.id.electrical_footer);
-        electricalServiceList = (FrameLayout)findViewById(R.id.electrical_service_list);
         panelList = (ListView)findViewById(R.id.electrical_panel_list);
         addPanelHyperlink = (TextView)findViewById(R.id.electrical_add_panel_hyperlink);
     }
@@ -144,16 +140,6 @@ public class ElectricalActivity extends AppCompatActivity {
         panelList.setAdapter(adapter);
         //Set Up Add Panel Hyperlink
         addPanelHyperlink.setOnClickListener(addPanelOnClickListener);
-    }
-    private void setUpServiceList(Contractor electrician) {
-        String company;
-        if(electrician != null && electrician.getContractorDetails() != null && electrician.getContractorDetails().getCompanyName() != null) {
-            company = electrician.getContractorDetails().getCompanyName();
-        } else {
-            company = "";
-        }
-        View electricalServiceListView = createServiceListView(this, customerData.getElectricalServices(), company, isContractorViewingPage, customerData.getUid());
-        electricalServiceList.addView(electricalServiceListView);
     }
     private void initializeFooter(Contractor electrician, String electricianId) {
         if(electrician == null || electrician.getContractorDetails() == null) {
@@ -184,7 +170,6 @@ public class ElectricalActivity extends AppCompatActivity {
             Log.d(TAG, "Received Electrical Data");
             setUpPanelList();
             if(!customerData.getElectrician(new ElectricianGetDataListener())) {
-                setUpServiceList(null);
                 initializeFooter(null, "");
             }
         }
@@ -204,7 +189,6 @@ public class ElectricalActivity extends AppCompatActivity {
             Log.v(TAG, data.toString());
             Log.d(TAG, "Received Electrician Data");
             Contractor electrician = data.getValue(Contractor.class);
-            setUpServiceList(electrician);
             initializeFooter(electrician, data.getKey());
         }
         @Override

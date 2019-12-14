@@ -282,6 +282,9 @@ public class TempCustomerData {
         customer.deleteInteriorPaintSurface(paintId);
         putCustomer(customer);
     }
+    public List<ContractorService> getPaintingServices() {
+        return getCustomer().getPaintingServices();
+    }
     public boolean getPainter(final OnGetDataListener painterListener) {
         String painter = customer.getPainterReference();
         if(painter == null) {
@@ -312,12 +315,14 @@ public class TempCustomerData {
         if(customer == null) {
             return new ArrayList<>();
         } else {
-            if(serviceType.equalsIgnoreCase("Plumber")) {
+            if (serviceType.equalsIgnoreCase("Plumber")) {
                 return customer.getPlumbingServices();
-            } else if(serviceType.equalsIgnoreCase("Electrician")) {
+            } else if (serviceType.equalsIgnoreCase("Electrician")) {
                 return customer.getElectricalServices();
-            } else if(serviceType.equalsIgnoreCase("Hvac")) {
+            } else if (serviceType.equalsIgnoreCase("Hvac")) {
                 return customer.getHvacServices();
+            } else if (serviceType.equalsIgnoreCase("painter")) {
+                return customer.getPaintingServices();
             } else {
                 Log.e(TAG, "No matching ServiceType");
                 return new ArrayList<>();
@@ -559,7 +564,6 @@ public class TempCustomerData {
 
         return interiorSurfaces;
     }
-
     private static List<Panel> initialPanelList() {
         List<Panel> panels = new ArrayList<>();
 

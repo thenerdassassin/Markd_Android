@@ -6,6 +6,7 @@
         <item>HVAC</item>
         <item>Electrical</item>
         <item>Painting</item>
+        <item>Service History</item>
         <item>Notifications</item>
         <item>Settings</item>
     </string-array>
@@ -22,6 +23,7 @@
         <item>ic_action_hvac</item>
         <item>ic_action_electrical</item>
         <item>ic_action_painter</item>
+        <item>ic_contractor_notification</item>
         <item>ic_action_notifications</item>
         <item>ic_action_settings</item>
     </string-array>
@@ -57,6 +59,9 @@
 
     <!-- Strings related to Main Page -->
     <string name="coming_soon_message">Coming Soon! Add you personal Architects, Builders, and Realtors to this page.</string>
+
+    <!-- Strings related to Service History Page -->
+    <string name="no_services">No services yet!</string>
 
     <!-- String related to Painting Page -->
     <string name="add_paint">Add some paint!</string>

@@ -52,6 +52,7 @@ public class Customer {
     private List<PaintSurface> interiorPaintSurfaces;
     private List<PaintSurface> exteriorPaintSurfaces;
     private String painterReference;
+    private List<ContractorService> paintingServices;
 
     public Customer() {
         // Default constructor required for calls to DataSnapshot.getValue(Customer.class)
@@ -176,6 +177,12 @@ public class Customer {
         public void setPainter(String painter) {
             this.painterReference = painter;
         }
+        public List<ContractorService> getPaintingServices() {
+            return paintingServices;
+        }
+        public void setPaintingServices(final List<ContractorService> paintingServices) {
+            this.paintingServices = paintingServices;
+        }
 
         //:- Electrical Page
         public List<Panel> getPanels() {
@@ -228,6 +235,8 @@ public class Customer {
             setElectricalServices(deleteService(getElectricalServices(), serviceId));
         } else if(serviceType.equalsIgnoreCase("Hvac")) {
             setHvacServices(deleteService(getHvacServices(), serviceId));
+        } else if (serviceType.equalsIgnoreCase("painter")) {
+            setPaintingServices(deleteService(getPaintingServices(), serviceId));
         } else {
             Log.e("CustomerDataObject", "No matching ServiceType");
         }
@@ -241,6 +250,8 @@ public class Customer {
             setElectricalServices(setService(getElectricalServices(), serviceId, service));
         } else if(serviceType.equalsIgnoreCase("Hvac")) {
             setHvacServices(setService(getHvacServices(), serviceId, service));
+        } else if (serviceType.equalsIgnoreCase("painter")) {
+            setPaintingServices(setService(getPaintingServices(), serviceId, service));
         } else {
             Log.e("CustomerDataObject", "No matching ServiceType");
         }
@@ -268,6 +279,13 @@ public class Customer {
             }
             ContractorService service = services.get(serviceId).update(contractor, comments, files);
             setHvacServices(setService(services, serviceId, service));
+        } else if (serviceType.equalsIgnoreCase("painter")) {
+            List<ContractorService> services = getPaintingServices();
+            if(services == null || serviceId < 0 || serviceId > services.size()) {
+                return;
+            }
+            ContractorService service = services.get(serviceId).update(contractor, comments, files);
+            setPaintingServices(setService(services, serviceId, service));
         } else {
             Log.e("CustomerDataObject", "No matching ServiceType");
         }

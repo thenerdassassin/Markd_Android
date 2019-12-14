@@ -23,6 +23,7 @@ import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_menu_activities.NotificationsActivity;
 import com.schmidthappens.markd.customer_menu_activities.PaintingActivity;
 import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
+import com.schmidthappens.markd.customer_menu_activities.ServiceHistoryActivity;
 import com.schmidthappens.markd.customer_menu_activities.SettingsActivity;
 import com.schmidthappens.markd.data_objects.MenuItem;
 
@@ -103,20 +104,22 @@ public class NavigationDrawerInitializer {
         String selectedMenuItem = menuOptions[position];
         Log.i(TAG, "Selected Item-" + selectedMenuItem);
 
-        Intent customerIntent;
+        Intent userIntent;
         if(userType == null) {
             new FirebaseAuthentication(context).signOut();
             return;
         }
 
         if(userType.equals("customer")) {
-            customerIntent = getCustomerIntent(selectedMenuItem);
+            userIntent = getCustomerIntent(selectedMenuItem);
         } else {
-            customerIntent = getContractorIntent(selectedMenuItem);
+            userIntent = getContractorIntent(selectedMenuItem);
         }
 
-        if(customerIntent != null) {
-            context.startActivity(customerIntent);
+        userIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        if(userIntent != null) {
+            context.startActivity(userIntent);
         } else {
             Log.e(TAG, "getCustomerIntent returned null");
             Toast.makeText(context, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
@@ -142,6 +145,9 @@ public class NavigationDrawerInitializer {
                 break;
             case "Painting":
                 intentToReturn = new Intent(context, PaintingActivity.class);
+                break;
+            case "Service History":
+                intentToReturn = new Intent(context, ServiceHistoryActivity.class);
                 break;
             case "Notifications":
                 intentToReturn = new Intent(context, NotificationsActivity.class);

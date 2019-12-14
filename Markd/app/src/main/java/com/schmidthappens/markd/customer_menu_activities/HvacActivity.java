@@ -3,14 +3,14 @@ package com.schmidthappens.markd.customer_menu_activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,8 +27,6 @@ import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 import com.schmidthappens.markd.view_initializers.ContractorFooterViewInitializer;
-
-import static com.schmidthappens.markd.view_initializers.ServiceListViewInitializer.createServiceListView;
 
 /**
  * Created by Josh on 4/18/2017.
@@ -48,7 +46,6 @@ public class HvacActivity extends AppCompatActivity {
     TextView compressorInstallDateView;
     TextView compressorLifeSpanView;
 
-    FrameLayout hvacServiceList;
     FrameLayout hvacContractor;
 
     private static String TAG = "HvacActivity";
@@ -100,10 +97,6 @@ public class HvacActivity extends AppCompatActivity {
         initializeAirHandler();
         initializeCompressor();
     }
-    private void initializeContractor(Contractor hvacTechnician, String hvacTechnicianId) {
-        initializeServices(hvacTechnician);
-        initializeFooter(hvacTechnician, hvacTechnicianId);
-    }
     private void initializeAirHandler() {
         AirHandler airHandler = customerData.getAirHandler();
 
@@ -144,18 +137,6 @@ public class HvacActivity extends AppCompatActivity {
 
         compressorLifeSpanView = (TextView)findViewById(R.id.hvac_compressor_life_span);
         compressorLifeSpanView.setText(compressor.lifeSpanAsString());
-    }
-    private void initializeServices(Contractor hvacTechnician) {
-        hvacServiceList = (FrameLayout)findViewById(R.id.hvac_service_list);
-        String company;
-        if(hvacTechnician != null && hvacTechnician.getContractorDetails() != null && hvacTechnician.getContractorDetails().getCompanyName() != null) {
-            company = hvacTechnician.getContractorDetails().getCompanyName();
-        } else {
-            company = "";
-        }
-
-        View serviceListView = createServiceListView(this, customerData.getHvacServices(), company, isContractorViewingPage, customerData.getUid());
-        hvacServiceList.addView(serviceListView);
     }
     private void initializeFooter(Contractor hvacTechnician, String hvacTechnicianId) {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
@@ -225,14 +206,14 @@ public class HvacActivity extends AppCompatActivity {
             Log.d(TAG, "Received Hvac Data");
             initializeAppliances();
             if(!customerData.getHvacTechnician(new HvacTechnicianGetDataListener())) {
-                initializeContractor(null, "");
+                initializeFooter(null, "");
             }
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.e(TAG, databaseError.toString());
-            initializeContractor(null, "");
+            initializeFooter(null, "");
             Toast.makeText(HvacActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -245,13 +226,13 @@ public class HvacActivity extends AppCompatActivity {
         @Override
         public void onSuccess(DataSnapshot data) {
             Log.d(TAG, "Received HvacTechnician Data");
-            initializeContractor(data.getValue(Contractor.class), data.getKey());
+            initializeFooter(data.getValue(Contractor.class), data.getKey());
         }
 
         @Override
         public void onFailed(DatabaseError databaseError) {
             Log.e(TAG, databaseError.toString());
-            initializeContractor(null, "");
+            initializeFooter(null, "");
             Toast.makeText(HvacActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }
