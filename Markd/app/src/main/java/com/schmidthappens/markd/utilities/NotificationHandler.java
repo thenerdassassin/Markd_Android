@@ -22,7 +22,8 @@ public class NotificationHandler {
 
     //Mark:- Static methods
     public static void sendNotification(String customerId, final String message, final String companyFrom) {
-        final DatabaseReference notificationMessages = FirebaseDatabase.getInstance().getReference("notifications/"+customerId);
+        final DatabaseReference notificationMessages = FirebaseDatabase.getInstance()
+                .getReference("notifications/"+customerId);
         notificationMessages.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -42,7 +43,9 @@ public class NotificationHandler {
     }
 
     public static void sendNotifications(List<String> customers, final String message, final String companyFrom) {
-        if(!StringUtilities.isNullOrEmpty(message) && !StringUtilities.isNullOrEmpty(companyFrom) && customers != null) {
+        if(!StringUtilities.isNullOrEmpty(message) &&
+                !StringUtilities.isNullOrEmpty(companyFrom) &&
+                customers != null) {
             for (String customer : customers) {
                 if (!StringUtilities.isNullOrEmpty(customer)) {
                     sendNotification(customer, message, companyFrom);
@@ -56,7 +59,8 @@ public class NotificationHandler {
             return false;
         }
 
-        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference().child("notifications").child(customerId);
+        DatabaseReference userReference = FirebaseDatabase.getInstance()
+                .getReference().child("notifications").child(customerId);
         userReference.addValueEventListener(listener);
         return true;
     }

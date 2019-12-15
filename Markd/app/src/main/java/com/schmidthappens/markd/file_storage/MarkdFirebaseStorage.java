@@ -165,14 +165,6 @@ public class MarkdFirebaseStorage {
             });
         }
     }
-    public static void deleteImage(String path) {
-        if(StringUtilities.isNullOrEmpty(path)) {
-            return;
-        }
-        StorageReference reference = storage.getReference().child("images/" + path);
-        Log.d(TAG, "Removed:" + reference.toString());
-        reference.delete();
-    }
 
     public static void getFile(String path, File localFile, OnSuccessListener<FileDownloadTask.TaskSnapshot> onSuccess, OnFailureListener onFailure) {
         StorageReference storageReference = storage.getReference().child("images/" + path);

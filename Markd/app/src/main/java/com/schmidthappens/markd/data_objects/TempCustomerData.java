@@ -351,32 +351,18 @@ public class TempCustomerData {
         customer.updateProfile(namePrefix, firstName, lastName, maritalStatus);
         putCustomer(customer);
     }
-    public void updateContractor(String contractorType, String contractorReference) {
+    public void updateContractor(final String contractorType, final String contractorReference) {
         if(contractorType.equals("Plumber")) {
-            if(customer.getPlumberReference() != null) {
-                Log.d(TAG, "Deleting plumber:" + customer.getPlumberReference());
-                TempContractorData.removeCustomerFromContractor(customer.getPlumberReference(), uid);
-            }
             customer.setPlumber(contractorReference);
         } else if(contractorType.equals("Hvac")) {
-            if(customer.getHvactechnicianReference() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getHvactechnicianReference(), uid);
-            }
             customer.setHvactechnician(contractorReference);
         } else if(contractorType.equals("Electrician")) {
-            if(customer.getElectricianReference() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getElectricianReference(), uid);
-            }
             customer.setElectricianReference(contractorReference);
         } else if(contractorType.equals("Painter")) {
-            if(customer.getPainterReference() != null) {
-                TempContractorData.removeCustomerFromContractor(customer.getPainterReference(), uid);
-            }
             customer.setPainter(contractorReference);
         } else {
             Log.e(TAG, "contractorType(" + contractorType + ") not found!");
         }
-        TempContractorData.addCustomerToContractor(contractorReference, uid);
         putCustomer(customer);
     }
 

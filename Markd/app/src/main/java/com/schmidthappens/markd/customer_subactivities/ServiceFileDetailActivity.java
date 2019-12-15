@@ -159,7 +159,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
                 if(fileId < 0) {
-                    imageHandler.removeImage(getFile().getFilePath(customerData.getUid()));
                     goBackToActivity();
                 } else {
                     showRemoveFileWarning();
@@ -253,7 +252,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         alertDialog.show();
     }
     private void deleteFile() {
-        imageHandler.removeImage(getFile().getFilePath(customerData.getUid()));
         ContractorService service = customerData.getServices(serviceType).get(serviceId);
         List<FirebaseFile> files = service.getFiles();
         files.remove(fileId);
@@ -265,9 +263,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
-        if(fileId < 0) {
-            imageHandler.removeImage(getFile().getFilePath(customerData.getUid()));
-        }
         goBackToActivity();
         return true;
     }

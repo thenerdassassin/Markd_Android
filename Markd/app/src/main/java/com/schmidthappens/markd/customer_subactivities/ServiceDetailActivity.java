@@ -158,8 +158,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             sendErrorMessage("Activity does not match");
         } else {
             Log.d(TAG, "Remove " + serviceType + "service-" + serviceId);
-            List<FirebaseFile> files = customerData.getServices(serviceType).get(serviceId).getFiles();
-            removeFiles(customerData.getUid(), files);
             customerData.removeService(serviceId, serviceType);
         }
     }
@@ -263,15 +261,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             sendErrorMessage("Intent is Null");
         }
     }
-
-    public void removeFiles(String customerId, List<FirebaseFile> files) {
-        if(files != null) {
-            for (FirebaseFile file : files) {
-                Log.d(TAG, "Deleting file:" + file.getFilePath(customerId));
-                MarkdFirebaseStorage.deleteImage(file.getFilePath(customerId));
-            }
-        }
-    }
     @Override
     public void onBackPressed() {
         Log.i(TAG, "onBackPressed");
@@ -283,9 +272,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         hideKeyboard(this.getCurrentFocus());
         goBackToActivity();
         if(isAddService) {
-            //delete service and files
-            List<FirebaseFile> files = customerData.getServices(serviceType).get(serviceId).getFiles();
-            removeFiles(customerData.getUid(), files);
+            //delete service
             customerData.removeService(serviceId, serviceType);
         } else {
             //Do nothing

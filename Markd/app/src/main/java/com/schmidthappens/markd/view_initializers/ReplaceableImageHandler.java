@@ -86,10 +86,6 @@ public class ReplaceableImageHandler {
         this.firebasePath = fileName;
         MarkdFirebaseStorage.getFileType(fileName, new StorageMetadataGetter(fileName));
     }
-    public void removeImage(String fileName) {
-        Log.d(TAG, "Remove:" + fileName);
-        MarkdFirebaseStorage.deleteImage(fileName);
-    }
     public void updateImage(String oldFileName, String newFileName, Intent data) {
         Uri photo = getPhotoUri(data);
 

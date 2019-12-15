@@ -43,16 +43,16 @@ public class ContractorEditActivity extends AppCompatActivity {
         authentication = new FirebaseAuthentication(this);
         contractorData = new TempContractorData(authentication, null);
 
-        companyNameEditText = (EditText)findViewById(R.id.contractor_edit_company_name);
+        companyNameEditText = findViewById(R.id.contractor_edit_company_name);
         setEnterButtonToKeyboardDismissal(companyNameEditText);
-        telephoneEditText = (EditText)findViewById(R.id.contractor_edit_telephone);
+        telephoneEditText = findViewById(R.id.contractor_edit_telephone);
         setEnterButtonToKeyboardDismissal(telephoneEditText);
         telephoneEditText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        webisteEditText = (EditText)findViewById(R.id.contractor_edit_website);
+        webisteEditText = findViewById(R.id.contractor_edit_website);
         setEnterButtonToKeyboardDismissal(webisteEditText);
-        zipcodeEditText = (EditText)findViewById(R.id.contractor_edit_zipcode);
+        zipcodeEditText = findViewById(R.id.contractor_edit_zipcode);
         setEnterButtonToKeyboardDismissal(zipcodeEditText);
-        saveContractorButton = (Button)findViewById(R.id.contractor_edit_save_button);
+        saveContractorButton = findViewById(R.id.contractor_edit_save_button);
 
         setTitle("Company Details");
 

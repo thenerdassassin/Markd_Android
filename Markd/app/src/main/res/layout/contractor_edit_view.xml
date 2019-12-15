@@ -4,12 +4,10 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="35dp"
     android:layout_marginRight="35dp">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <!-- Edit Company Name -->
         <EditText
             android:id="@+id/contractor_edit_company_name"
@@ -20,7 +18,6 @@
             android:inputType="text"
             android:imeOptions="actionDone"
             android:hint="Company Name"/>
-
         <!-- Edit Phone Number -->
         <EditText
             android:id="@+id/contractor_edit_telephone"
@@ -32,7 +29,6 @@
             android:inputType="phone"
             android:imeOptions="actionDone"
             android:hint="Phone Number"/>
-
         <!-- Edit Website -->
         <EditText
             android:id="@+id/contractor_edit_website"
@@ -43,7 +39,6 @@
             android:inputType="text"
             android:imeOptions="actionDone"
             android:hint="Website Address"/>
-
         <!-- Edit Zip Code -->
         <EditText
             android:id="@+id/contractor_edit_zipcode"
@@ -55,7 +50,6 @@
             android:maxLength="5"
             android:imeOptions="actionDone"
             android:hint="Zip Code"/>
-
         <!-- Save Button -->
         <Button
             android:id="@+id/contractor_edit_save_button"
@@ -67,5 +61,4 @@
             android:layout_gravity="center"
             android:text="Save"/>
     </LinearLayout>
-
 </FrameLayout>

@@ -73,17 +73,6 @@ public class TempContractorData {
     private void putContractor(Contractor contractor) {
         Log.d(TAG, "putting contractor");
         database.child("users").child(uid).setValue(contractor);
-        putIntoZipCode(contractor);
-    }
-    private void putIntoZipCode(Contractor contractor) {
-        if(contractor != null && contractor.getContractorDetails() != null && contractor.getContractorDetails().getZipCode() != null) {
-            Log.i(TAG, "Putting Contractor into Zipcode:" + contractor.getContractorDetails().getZipCode());
-            database.child("zip_codes").child(contractor.getContractorDetails().getZipCode()).child(uid).setValue(contractor.getType());
-        }
-    }
-    private void removeFromOldZipCode(String zipCode) {
-        Log.i(TAG, "Removing Contractor from Zipcode:" + zipCode);
-        database.child("zip_codes").child(zipCode).child(uid).removeValue();
     }
 
     //Mark:- Home Page
@@ -94,9 +83,6 @@ public class TempContractorData {
         return null;
     }
     public void updateContractorDetails(ContractorDetails contractorDetails) {
-        if(contractor.getContractorDetails() != null) {
-            removeFromOldZipCode(contractor.getContractorDetails().getZipCode());
-        }
         contractor.setContractorDetails(contractorDetails);
         putContractor(contractor);
     }
@@ -120,42 +106,6 @@ public class TempContractorData {
         } else {
             return Collections.emptyList();
         }
-    }
-    static void addCustomerToContractor(String contractorReference, final String customerReference) {
-        final DatabaseReference customerListReference = database.child("users").child(contractorReference).child("customers");
-        customerListReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot customerListSnapshot) {
-                long listSize = customerListSnapshot.getChildrenCount();
-                customerListReference.child(String.valueOf(listSize)).setValue(customerReference);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, databaseError.toString());
-            }
-        });
-    }
-    static void removeCustomerFromContractor(String contractorReference, final String customerReference) {
-        DatabaseReference customerListReference = database.child("users").child(contractorReference).child("customers");
-        customerListReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot customerListSnapshot) {
-                List<String> customers = new ArrayList<>();
-                for(DataSnapshot customerSnapshot: customerListSnapshot.getChildren()) {
-                    String customer = customerSnapshot.getValue(String.class);
-                    if(customer != null && !customer.equals(customerReference)) {
-                        customers.add(customer);
-                    }
-                }
-                customerListSnapshot.getRef().setValue(customers);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, databaseError.toString());
-            }
-        });
     }
     public String getType() {
         if(contractor != null) {
