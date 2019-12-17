@@ -17,7 +17,11 @@ public class ProgressBarUtilities {
      * Shows the progress UI and hides the page.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public static void showProgress(final Context context, final View page, final ProgressBar progressView, final boolean show) {
+    public static void showProgress(
+            final Context context,
+            final View page,
+            final ProgressBar progressView,
+            final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.

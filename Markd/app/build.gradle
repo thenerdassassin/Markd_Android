@@ -38,26 +38,32 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.google.android.material:material:1.2.0-alpha01'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.annotation:annotation:1.1.0'
+    //https://developer.android.com/training/volley
+    implementation 'com.android.volley:volley:1.1.0'
+
     implementation 'com.google.firebase:firebase-core:17.2.1'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.google.firebase:firebase-database:19.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
     implementation 'com.firebaseui:firebase-ui-storage:2.1.0'
-    implementation 'com.android.volley:volley:1.1.0'
-    implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
-    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
-
-    testImplementation 'junit:junit:4.12'
 
     //https://firebase.google.com/docs/crashlytics/get-started
-    implementation ('com.crashlytics.sdk.android:crashlytics:2.9.0@aar') {
-        transitive = true
-    }
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+    //https://github.com/leolin310148/ShortcutBadger
+    implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
+    //https://github.com/daimajia/AndroidSwipeLayout
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
+    // https://square.github.io/picasso/
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    testImplementation 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'
