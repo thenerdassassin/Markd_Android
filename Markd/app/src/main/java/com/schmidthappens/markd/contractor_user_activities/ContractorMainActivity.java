@@ -31,11 +31,14 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.data_objects.ContractorDetails;
 import com.schmidthappens.markd.data_objects.TempContractorData;
+import com.schmidthappens.markd.file_storage.DownloadUrlListener;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +62,9 @@ public class ContractorMainActivity extends AppCompatActivity {
     private TextView companyTelephone;
     private TextView companyWebpage;
     private TextView companyZipCode;
+
+    private static final int PLACE_HOLDER_IMAGE = R.drawable.ic_action_camera;
+    private static LogoUrlListener logoUrlListener;
 
     private boolean hasImage;
     private boolean cameraPermissionGranted;
@@ -121,7 +127,7 @@ public class ContractorMainActivity extends AppCompatActivity {
 
                 if (photo != null) {
                     Log.d(TAG, "PHOTO PATH " + photo.getPathSegments().toString());
-                    MarkdFirebaseStorage.updateImage(this, fileName, photo, logoImage, new LogoLoadingListener());
+                    MarkdFirebaseStorage.updateImage(this, fileName, photo, logoUrlListener);
                     Toast.makeText(this, "Updating Logo", Toast.LENGTH_LONG).show();
                 }
             } else {
@@ -289,6 +295,8 @@ public class ContractorMainActivity extends AppCompatActivity {
     private void initializeUI() {
         Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
+        //TODO: Switch to Picasso
+        /*
         if(firstPass) {
             MarkdFirebaseStorage.loadImage(this,
                     contractorData.getLogoFileName(),
@@ -301,6 +309,7 @@ public class ContractorMainActivity extends AppCompatActivity {
                     logoImage,
                     null);
         }
+         */
     }
     private void initializeTextViews(ContractorDetails contractorDetails) {
         if(contractorDetails == null) {
@@ -330,35 +339,62 @@ public class ContractorMainActivity extends AppCompatActivity {
             Log.e(TAG, "Failed to get Data");
         }
     }
-    private class LogoLoadingListener implements ImageLoadingListener {
+    private class LogoUrlListener implements DownloadUrlListener {
         @Override
         public void onStart() {
-            Log.i(TAG, "Loading photo");
+            Log.i(TAG, "DownloadUrlListener: onStart");
             hasImage = false;
             logoFrame.setBackgroundColor(View.GONE);
             logoImage.setVisibility(View.GONE);
             logoImagePlaceholder.setVisibility(View.GONE);
-            ProgressBarUtilities.showProgress(ContractorMainActivity.this, logoFrame, progressBar, true);
+            ProgressBarUtilities.showProgress(
+                    ContractorMainActivity.this, logoFrame, progressBar, true);
         }
 
         @Override
-        public void onSuccess() {
+        public void onSuccess(final Uri url) {
             hasImage = true;
-            Log.d(TAG, "Got photo");
+            Log.d(TAG, "DownloadUrlListener: onSuccess");
 
             logoFrame.setBackgroundColor(View.VISIBLE);
             logoImage.setVisibility(View.VISIBLE);
 
             logoFrame.setBackgroundColor(Color.TRANSPARENT);
             logoImage.setLayoutParams(
-                    new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-            );
+                    new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            Gravity.START));
             logoImagePlaceholder.setVisibility(View.GONE);
+            Picasso.get()
+                    .load(url)
+                    .placeholder(PLACE_HOLDER_IMAGE)
+                    .into(logoImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ProgressBarUtilities.showProgress(
+                                    ContractorMainActivity.this, logoFrame, progressBar, false);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            ProgressBarUtilities.showProgress(
+                                    ContractorMainActivity.this, logoFrame, progressBar, false);
+                        }
+                    });
+
+        }
+
+        @Override
+        public void onCanceled() {
+            Log.d(TAG, "DownloadUrlListener: onCanceled");
             ProgressBarUtilities.showProgress(ContractorMainActivity.this, logoFrame, progressBar, false);
         }
 
         @Override
-        public void onFailed(Exception e) {
+        public void onFailed(final Exception e) {
+            Log.d(TAG, "DownloadUrlListener: onFailed");
+
             hasImage = false;
             Log.e(TAG, e.toString());
 
@@ -367,6 +403,7 @@ public class ContractorMainActivity extends AppCompatActivity {
 
             logoFrame.setBackgroundColor(getResources().getColor(R.color.colorPanel));
             logoImagePlaceholder.setVisibility(View.VISIBLE);
+
             ProgressBarUtilities.showProgress(ContractorMainActivity.this, logoFrame, progressBar, false);
         }
     }

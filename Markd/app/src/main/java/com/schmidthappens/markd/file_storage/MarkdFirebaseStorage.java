@@ -9,8 +9,7 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,7 +48,9 @@ public class MarkdFirebaseStorage {
         }).addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
-                listener.onSuccess(storageMetadata);
+                if(listener != null) {
+                    listener.onSuccess(storageMetadata);
+                }
             }
         });
     }
@@ -99,57 +100,11 @@ public class MarkdFirebaseStorage {
             });
         }
     }
-    public static void loadImage(final Activity context, final String path, final ImageView imageView, final ImageLoadingListener listener) {
-        if(listener != null) {
-            listener.onStart();
-        }
-        if(StringUtilities.isNullOrEmpty(path)) {
-            Log.d("Storage", "Not loading image");
-            if(listener != null) {
-                listener.onFailed(new IllegalArgumentException("Path is null or empty"));
-            }
-            return;
-        }
-
-        final StorageReference storageReference = storage.getReference().child("images/" + path);
-        storageReference.getMetadata().addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if(listener != null) {
-                    listener.onFailed(e);
-                }
-            }
-        }).addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-            @Override
-            public void onSuccess(StorageMetadata storageMetadata) {
-                if (!(storageMetadata.getContentType().equals("image/jpeg") || storageMetadata.getContentType().equals("image/png"))) {
-                    if (listener != null) {
-                        Log.e(TAG, "Wrong Content Type:" + storageMetadata.getContentType());
-                        listener.onFailed(new IllegalStateException("Invalid Content Type"));
-                    }
-                } else {
-                    // Load the image using Glide
-                    if (!context.isDestroyed()) {
-                        Log.d(TAG, storageReference.toString());
-                        Glide.with(context)
-                                .using(new FirebaseImageLoader())
-                                .load(storageReference)
-                                .into(imageView);
-                        if (listener != null) {
-                            listener.onSuccess();
-                            Log.d(TAG, "Success Listener");
-                        }
-                    }
-                }
-            }
-        });
-    }
     public static void updateImage(
             final Activity context,
             final String path,
             final Uri file,
-            final ImageView imageView,
-            final ImageLoadingListener listener) {
+            final DownloadUrlListener listener) {
         Log.d(TAG, path);
         if(listener != null) {
             Log.d(TAG, "Started listener");
@@ -160,12 +115,19 @@ public class MarkdFirebaseStorage {
             uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    loadImage(context, path, imageView, listener);
+                    getDownloadUrl(path, listener);
                 }
             });
         }
     }
 
+    /**
+     * Used to get PDF files.
+     * @param path
+     * @param localFile
+     * @param onSuccess
+     * @param onFailure
+     */
     public static void getFile(String path, File localFile, OnSuccessListener<FileDownloadTask.TaskSnapshot> onSuccess, OnFailureListener onFailure) {
         StorageReference storageReference = storage.getReference().child("images/" + path);
         storageReference.getFile(localFile).addOnSuccessListener(onSuccess).addOnFailureListener(onFailure);
@@ -192,5 +154,48 @@ public class MarkdFirebaseStorage {
         } catch (IOException | NullPointerException e) {
             return null;
         }
+    }
+
+    public static void getDownloadUrl(final String path, final DownloadUrlListener listener) {
+        Log.d(TAG, path);
+        if(listener != null) {
+            Log.d(TAG, "Started listener");
+            listener.onStart();
+        }
+
+        if(StringUtilities.isNullOrEmpty(path)) {
+            Log.d("Storage", "Not loading image");
+            if(listener != null) {
+                listener.onFailed(new IllegalArgumentException("Path is null or empty"));
+            }
+            return;
+        }
+        final StorageReference reference = storage.getReference().child("images/" + path);
+
+        reference.getDownloadUrl()
+                .addOnCanceledListener(new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        if(listener != null) {
+                            listener.onCanceled();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(listener != null) {
+                            listener.onFailed(e);
+                        }
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        if(listener != null) {
+                            listener.onSuccess(uri);
+                        }
+                    }
+                });
     }
 }

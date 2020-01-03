@@ -32,11 +32,14 @@ import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.HomeEditActivity;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.file_storage.DownloadUrlListener;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
 import com.schmidthappens.markd.utilities.ProgressBarUtilities;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,12 +61,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView roomInformation;
     private TextView squareFootage;
 
+    private static final int PLACE_HOLDER_IMAGE = R.drawable.ic_action_camera;
+    private static HomeUrlListener downloadUrlListener;
+
     private boolean hasImage;
     private boolean cameraPermissionGranted;
     private static final int IMAGE_REQUEST_CODE = 524;
     private static final int CAMERA_PERMISSION_CODE = 99;
     private String currentPhotoPath;
-    private boolean firstPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, true, "customer");
+        downloadUrlListener = new HomeUrlListener();
         initializeViews();
-        firstPass = true;
         checkForCameraPermission();
     }
     @Override
@@ -135,22 +140,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initializeUI() {
         fillCustomerInformation();
-        Log.d(TAG, "Current FileName: " + customerData.getHomeImageFileName());
-        if(customerData.getHomeImageFileName() == null) {
-            return;
-        }
-        if(firstPass) {
-            MarkdFirebaseStorage.loadImage(this,
-                    customerData.getHomeImageFileName(),
-                    homeImage,
-                    new HomeImageLoadingListener());
-            firstPass = false;
-        } else {
-            MarkdFirebaseStorage.loadImage(this,
-                    customerData.getHomeImageFileName(),
-                    homeImage,
-                    null);
-        }
+        setHomeImage();
     }
     private void fillCustomerInformation() {
         String preparedForString = "Prepared for " + customerData.getName();
@@ -182,6 +172,11 @@ public class MainActivity extends AppCompatActivity {
             squareFootage.setText(squareFootageString);
         }
     }
+    private void setHomeImage() {
+        Log.d(TAG, "Current FileName: " + customerData.getHomeImageFileName());
+        MarkdFirebaseStorage.getDownloadUrl(
+                customerData.getHomeImageFileName(), downloadUrlListener);
+    }
 
     //Mark:- Photo Functions
     @Override
@@ -197,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri photo = getPhotoUri(data);
 
                 if (photo != null) {
-                    MarkdFirebaseStorage.updateImage(this, fileName, photo, homeImage, new HomeImageLoadingListener());
+                    MarkdFirebaseStorage.updateImage(this, fileName, photo, downloadUrlListener);
                     Toast.makeText(this, "Updating Photo", Toast.LENGTH_LONG).show();
                 }
             } else {
@@ -345,10 +340,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailed(DatabaseError databaseError) { }
     }
-    private class HomeImageLoadingListener implements ImageLoadingListener {
+    private class HomeUrlListener implements DownloadUrlListener {
         @Override
         public void onStart() {
-            Log.i(TAG, "Loading photo");
+            Log.i(TAG, "DownloadUrlListener: onStart");
             hasImage = false;
             homeFrame.setBackgroundColor(View.GONE);
             homeImage.setVisibility(View.GONE);
@@ -357,23 +352,47 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSuccess() {
+        public void onSuccess(final Uri url) {
             hasImage = true;
-            Log.d(TAG, "Got photo");
+            Log.d(TAG, "DownloadUrlListener: onSuccess");
 
             homeFrame.setBackgroundColor(View.VISIBLE);
             homeImage.setVisibility(View.VISIBLE);
 
             homeFrame.setBackgroundColor(Color.TRANSPARENT);
             homeImage.setLayoutParams(
-                    new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START)
-            );
+                    new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            Gravity.START));
             homeImagePlaceholder.setVisibility(View.GONE);
+            Picasso.get()
+                    .load(url)
+                    .placeholder(PLACE_HOLDER_IMAGE)
+                    .into(homeImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
+                        }
+                    });
+
+        }
+
+        @Override
+        public void onCanceled() {
+            Log.d(TAG, "DownloadUrlListener: onCanceled");
             ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
         }
 
         @Override
-        public void onFailed(Exception e) {
+        public void onFailed(final Exception e) {
+            Log.d(TAG, "DownloadUrlListener: onFailed");
+
             hasImage = false;
             Log.e(TAG, e.toString());
 
@@ -382,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
 
             homeFrame.setBackgroundColor(getResources().getColor(R.color.colorPanel));
             homeImagePlaceholder.setVisibility(View.VISIBLE);
+
             ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
         }
     }

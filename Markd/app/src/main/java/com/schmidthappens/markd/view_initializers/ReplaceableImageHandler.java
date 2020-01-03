@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -24,10 +27,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageMetadata;
 import com.schmidthappens.markd.R;
+import com.schmidthappens.markd.file_storage.DownloadUrlListener;
 import com.schmidthappens.markd.file_storage.ImageLoadingListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.file_storage.StorageMetadataListener;
 import com.schmidthappens.markd.utilities.ProgressBarUtilities;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -258,10 +264,7 @@ public class ReplaceableImageHandler {
                 Log.d(TAG, "Type not PDF");
                 imageCaptureFrame.setVisibility(View.VISIBLE);
                 viewPdf.setVisibility(View.GONE);
-                MarkdFirebaseStorage.loadImage(context,
-                        fileName,
-                        imageView,
-                        new ImageLoadListener());
+                MarkdFirebaseStorage.getDownloadUrl(fileName, new ImageUrlListener());
             }
         }
 
@@ -303,23 +306,69 @@ public class ReplaceableImageHandler {
 
         }
     }
-    private class ImageLoadListener implements ImageLoadingListener {
+    private class ImageUrlListener implements DownloadUrlListener {
         @Override
         public void onStart() {
-            Log.d(TAG, "Loading image.");
+            Log.i(TAG, "DownloadUrlListener: onStart");
+            hasImage = false;
+            imageFrame.setBackgroundColor(View.GONE);
+            imageView.setVisibility(View.GONE);
+            imagePlaceholder.setVisibility(View.GONE);
+            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, true);
         }
 
         @Override
-        public void onSuccess() {
-            Log.d(TAG, "Image Loaded successfully");
-            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
+        public void onSuccess(final Uri url) {
+            hasImage = true;
+            Log.d(TAG, "DownloadUrlListener: onSuccess");
+
+            imageFrame.setBackgroundColor(View.VISIBLE);
+            imageView.setVisibility(View.VISIBLE);
+
+            imageFrame.setBackgroundColor(Color.TRANSPARENT);
+            imageView.setLayoutParams(
+                    new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            Gravity.START));
+            imagePlaceholder.setVisibility(View.GONE);
+            Picasso.get()
+                    .load(url)
+                    .placeholder(R.drawable.ic_action_camera)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+                        }
+                    });
+
         }
 
         @Override
-        public void onFailed(Exception e) {
+        public void onCanceled() {
+            Log.d(TAG, "DownloadUrlListener: onCanceled");
+            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+        }
+
+        @Override
+        public void onFailed(final Exception e) {
+            Log.d(TAG, "DownloadUrlListener: onFailed");
+
+            hasImage = false;
             Log.e(TAG, e.toString());
-            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
-            Toast.makeText(context, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+
+            imageFrame.setBackgroundColor(View.VISIBLE);
+            imageView.setVisibility(View.GONE);
+
+            imageFrame.setBackgroundColor(context.getResources().getColor(R.color.colorPanel));
+            imagePlaceholder.setVisibility(View.VISIBLE);
+
+            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
         }
     }
 

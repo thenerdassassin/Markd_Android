@@ -39,7 +39,8 @@ public class ContractorFooterViewInitializer {
         TextView phoneNumber = v.findViewById(R.id.footer_phone_number);
         TextView website = v.findViewById(R.id.footer_website);
 
-        MarkdFirebaseStorage.loadImage(ctx, photoPath, footerLogo, null);
+        //TODO: Switch to Picasso
+        //MarkdFirebaseStorage.loadImage(ctx, photoPath, footerLogo, null);
         contractorName.setText(contractor);
         phoneNumber.setText(phone);
 
