@@ -29,7 +29,9 @@
         android:theme="@style/AppTheme">
 
         <!-- Splash Image Page -->
-        <activity android:name=".account_authentication.SplashImageActivity">
+        <activity android:name=".account_authentication.SplashImageActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -38,20 +40,28 @@
 
         <!-- Login Page -->
         <activity android:name=".account_authentication.LoginActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
 
     <!-- Customer Pages -->
         <!-- Main Page -->
-        <activity android:name=".customer_menu_activities.MainActivity"/>
+        <activity android:name=".customer_menu_activities.MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
 
         <!-- Plumbing -->
         <activity
             android:name=".customer_menu_activities.PlumbingActivity"
             android:value=".MenuOptionActivities.PlumbingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
         <!-- Plumbing Sub-Activities -->
         <activity
             android:name=".customer_subactivities.ApplianceEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".customer_menu_activities.PlumbingActivity"
             android:value=".plumbing_subactivities.PlumbingEditActivity">
             <meta-data
@@ -61,6 +71,8 @@
         <!-- HVAC -->
         <activity
             android:name=".customer_menu_activities.HvacActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:value=".MenuOptionActivities.HvacActivity"
             android:launchMode="singleTop"/>
         <!-- Hvac Sub-Activities -->
@@ -68,14 +80,20 @@
         <!-- Electrical -->
         <activity
             android:name=".customer_menu_activities.ElectricalActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:value=".MenuOptionActivities.ElectricalActivity"
             android:launchMode="singleTop"/>
         <!-- Electrical Sub-Activities -->
         <activity
             android:name=".customer_subactivities.ViewPanelActivity"
-            android:value=".MenuOptionActivities.ViewPanelActivity" />
+            android:value=".MenuOptionActivities.ViewPanelActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".customer_subactivities.BreakerDetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".customer_subactivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -83,6 +101,8 @@
         </activity>
         <activity
             android:name=".customer_subactivities.PanelDetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".customer_subactivities.ViewPanelActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -92,10 +112,14 @@
         <activity
             android:name=".customer_menu_activities.PaintingActivity"
             android:value=".menu_option_activities.PaintingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
         <!-- Paint Sub-Activities -->
         <activity
             android:name=".customer_subactivities.PaintEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".customer_menu_activities.PaintingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -105,20 +129,26 @@
         <!-- Notifications -->
         <activity
             android:name=".customer_menu_activities.NotificationsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:value=".customer_menu_activities.NotificationsActivity" />
 
         <!-- Service History -->
         <activity
             android:name=".customer_menu_activities.ServiceHistoryActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:value=".customer_menu_activities.ServiceHistoryActivity" />
         <activity android:name=".customer_subactivities.ServiceDetailActivity"
             android:value=".customer_subactivities.ServiceDetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
         <activity android:name=".customer_subactivities.ServiceFileDetailActivity"
             android:value=".customer_subactivities.ServiceImageActivity"
-            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop">
             <meta-data
@@ -130,27 +160,37 @@
         <!-- Settings -->
         <activity android:name=".customer_menu_activities.SettingsActivity"
             android:value=".customer_menu_activities.SettingsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
         <activity android:name=".customer_subactivities.ProfileEditActivity"
-                android:value=".customer_subactivities.ProfileEditActivity">
+                android:value=".customer_subactivities.ProfileEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
         <activity android:name=".customer_subactivities.HomeEditActivity"
-            android:value=".customer_subactivities.HomeEditActivityV2">
+            android:value=".customer_subactivities.HomeEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
         <activity android:name=".customer_subactivities.ChangeContractorActivity"
-            android:value=".customer_subactivities.ChangeContractorActivity">
+            android:value=".customer_subactivities.ChangeContractorActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".customer_menu_activities.SettingsActivity"/>
         </activity>
         <activity android:name=".customer_subactivities.HelpActivity"
             android:value=".customer_menu_activities.HelpActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".customer_menu_activities.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -161,9 +201,13 @@
         <activity
             android:name=".contractor_user_activities.ContractorMainActivity"
             android:value=".contractor_user_activities.ContractorMainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
         <activity android:name=".contractor_user_activities.ContractorEditActivity"
             android:value=".contractor_user_activities.ContractorEditActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".contractor_user_activities.ContractorMainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -171,9 +215,13 @@
         </activity>
         <activity android:name=".contractor_user_activities.ContractorCustomersActivity"
             android:value=".contractor_user_activities.ContractorCustomersActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
         <activity android:name=".contractor_user_activities.SendNotificationsActivity"
             android:value=".contractor_user_activities.SendNotificationsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:parentActivityName=".contractor_user_activities.ContractorCustomersActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -182,6 +230,8 @@
         <activity
             android:name=".contractor_user_activities.ContractorSettingsActivity"
             android:value=".contractor_user_activities.ContractorSettingsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"/>
 
         <!-- FCM Messaging -->

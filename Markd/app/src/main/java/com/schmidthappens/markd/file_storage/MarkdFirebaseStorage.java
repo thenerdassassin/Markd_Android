@@ -157,7 +157,7 @@ public class MarkdFirebaseStorage {
     }
 
     public static void getDownloadUrl(final String path, final DownloadUrlListener listener) {
-        Log.d(TAG, path);
+        Log.d(TAG, "Download URL is: " + path);
         if(listener != null) {
             Log.d(TAG, "Started listener");
             listener.onStart();

@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.schmidthappens.markd.AdapterClasses.CreateProfileRecyclerViewAdapter;
 import com.schmidthappens.markd.AdapterClasses.EditProfileRecyclerViewAdapter;
@@ -153,7 +154,12 @@ public class ProfileEditActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "Could not create account");
                     Log.e(TAG, task.toString());
-                    Toast.makeText(activity, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+                    final Exception createAccountFailure = task.getException();
+                    if(createAccountFailure instanceof FirebaseAuthUserCollisionException) {
+                        Toast.makeText(activity, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(activity, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

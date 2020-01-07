@@ -254,7 +254,7 @@ public class ReplaceableImageHandler {
         @Override
         public void onSuccess(StorageMetadata metadata) {
             String content = metadata.getContentType();
-            if(content.equalsIgnoreCase("application/pdf")) {
+            if("application/pdf".equalsIgnoreCase(content)) {
                 Log.d(TAG, "Type PDF");
                 //Show view pdf button
                 imageCaptureFrame.setVisibility(View.GONE);

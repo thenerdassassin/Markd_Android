@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -124,6 +125,8 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             super(v);
             inputLayout = v.findViewById(R.id.input_layout);
             textView = v.findViewById(R.id.edit_text);
+            textView.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
+            textView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         }
 
         void bindData(final int position, final String hint, final String currentText) {
