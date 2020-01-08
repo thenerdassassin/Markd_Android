@@ -378,7 +378,11 @@ public class PanelDetailActivity extends AppCompatActivity {
         intentToStartMainActivity.putExtra("isContractor", isContractorViewingPage);
         intentToStartMainActivity.putExtra("customerId", customerData.getUid());
         if(panelId == -1) {
-            panelId = customerData.getPanels().size()-1;
+            if(customerData.getPanels() == null) {
+                panelId = 0;
+            } else {
+                panelId = customerData.getPanels().size() - 1;
+            }
         }
         intentToStartMainActivity.putExtra("panelId", panelId);
         startActivity(intentToStartMainActivity);

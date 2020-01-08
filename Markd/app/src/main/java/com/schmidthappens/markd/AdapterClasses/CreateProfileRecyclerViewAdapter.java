@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,12 +22,15 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class CreateProfileRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "CreateProfileRecyclrAd";
 
+    private static final String NOT_SPECIFIED = "Prefer Not To Say";
+    private static final String NOT_SPECIFIED_VALUE = "Single";
     private static final String[] namePrefixArray = {
             "Mr.",
             "Mrs.",
@@ -36,7 +40,8 @@ public class CreateProfileRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     };
     private static final String[] maritalStatusArray = {
             "Single",
-            "Married"
+            "Married",
+            NOT_SPECIFIED
     };
     private static final String[] contractorTypeArray = {
             "Plumber",
@@ -163,8 +168,10 @@ public class CreateProfileRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 context.lastName = newValue;
                 break;
             case 6:
-                if(context.userType.equalsIgnoreCase("Home Owner")
-                        || context.userType.equalsIgnoreCase("customer")) {
+                if(isCustomerAccount()) {
+                    if (NOT_SPECIFIED.equalsIgnoreCase(newValue)) {
+                        newValue = NOT_SPECIFIED_VALUE;
+                    }
                     context.maritalStatus = newValue;
                 } else {
                     context.contractorType = newValue;
@@ -174,18 +181,75 @@ public class CreateProfileRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 Log.e(TAG, String.format("No field for fieldNumber %d", fieldNumber));
         }
     }
+
+    private boolean isCustomerAccount() {
+        return context.userType.equalsIgnoreCase("Home Owner")
+                || context.userType.equalsIgnoreCase("customer");
+    }
+
     private void createUser() {
-        final String password = passwordTextField.getText().toString();
-        final String confirmPassword = confirmPasswordTextField.getText().toString();
-        if (password.isEmpty()) {
-            passwordTextField.setError("Must enter current password.");
-        } else if(confirmPassword.isEmpty()) {
-            confirmPasswordTextField.setError("Must confirm password.");
-        } else if(!password.equals(confirmPassword)) {
-            confirmPasswordTextField.setError("Passwords do not match.");
-        } else {
-            context.createUser(password);
+        if(isValidUser()) {
+            final String password = passwordTextField.getText().toString();
+            final String confirmPassword = confirmPasswordTextField.getText().toString();
+            if (password.isEmpty()) {
+                passwordTextField.setError("Must enter current password.");
+            } else if (confirmPassword.isEmpty()) {
+                confirmPasswordTextField.setError("Must confirm password.");
+            } else if (!password.equals(confirmPassword)) {
+                confirmPasswordTextField.setError("Passwords do not match.");
+            } else {
+                context.createUser(password);
+            }
         }
+    }
+
+    private boolean isValidUser() {
+        if(isCustomerAccount()) {
+            if(StringUtilities.isNullOrEmpty(context.maritalStatus)) {
+                context.maritalStatus = NOT_SPECIFIED_VALUE;
+            }
+            return isValidEmail(context.email)
+                    && isValidName(context.namePrefix, context.firstName, context.lastName);
+        } else {
+            return isValidEmail(context.email)
+                    && isValidName(context.namePrefix, context.firstName, context.lastName)
+                    && isValidContractorType(context.contractorType);
+        }
+    }
+
+    private boolean isValidEmail(final String email) {
+        if(StringUtilities.isNullOrEmpty(email)) {
+            Toast.makeText(context, "Invalid Email Address", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            int atPosition = email.indexOf("@");
+            int dotPosition = email.lastIndexOf(".");
+            if (atPosition < 2 || dotPosition < 3 || dotPosition - atPosition < 2) {
+                Toast.makeText(context, "Invalid Email Address", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+    }
+    private boolean isValidName(final String title, final String firstName, final String lastName) {
+        if(StringUtilities.isNullOrEmpty(title)) {
+            Toast.makeText(context, "Must enter title.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(StringUtilities.isNullOrEmpty(firstName)) {
+            Toast.makeText(context, "Must enter first name.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (StringUtilities.isNullOrEmpty(lastName)) {
+            Toast.makeText(context, "Must enter last name.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+    private boolean isValidContractorType(final String contractorType) {
+        if (StringUtilities.isNullOrEmpty(contractorType)) {
+            Toast.makeText(context, "Must specify Contractor Type.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void hideKeyboard(View view) {

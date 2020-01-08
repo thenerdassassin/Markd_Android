@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.AdapterClasses;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import com.schmidthappens.markd.utilities.StringUtilities;
 import java.util.List;
 
 public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final String TAG = "EditHomeRecyclerAdapter";
+    private static final String TAG = "EditPaintRecyclerAdptr";
 
     private final String EXTERIOR_TITLE = "Exterior Surfaces";
     private final String INTERIOR_TITLE = "Interior Surfaces";
@@ -43,7 +44,7 @@ public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         this.interiorPaintSurfaces = interiorPaintSurfaces;
         if (interiorPaintSurfaces.size() == 0) {
-            itemCount = 1 + INTERIOR_TITLE_INDEX;
+            itemCount = 2 + INTERIOR_TITLE_INDEX;
         } else {
             itemCount = 1 + INTERIOR_TITLE_INDEX + interiorPaintSurfaces.size();
         }
@@ -60,6 +61,7 @@ public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             case R.layout.list_row_paint:
                 return new PaintSurfaceViewHolder(view);
             default:
+                Log.e(TAG, "No view type.");
                 throw new IllegalArgumentException(String.format("No view type for %d", viewType));
         }
     }
@@ -94,6 +96,7 @@ public class PaintingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             }
         } else {
+            Log.e(TAG, String.format("No view holder for %d", position));
             throw new IllegalArgumentException(String.format("No view holder for %d", position));
         }
     }

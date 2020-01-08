@@ -39,6 +39,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -275,7 +277,32 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     showProgress(false);
                     Log.d(TAG, "Sign in failed");
-                    Toast.makeText(activity, "Unable to log in.", Toast.LENGTH_SHORT).show();
+                    final Exception signInFailure = task.getException();
+                    if(signInFailure instanceof FirebaseAuthInvalidUserException) {
+                        final FirebaseAuthInvalidUserException userException =
+                                (FirebaseAuthInvalidUserException) signInFailure;
+                        if(userException.getErrorCode().equalsIgnoreCase("ERROR_USER_NOT_FOUND")) {
+                            Toast.makeText(
+                                    activity,
+                                    "This account does not yet exist. Please create an account.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        } else if(userException.getErrorCode().equalsIgnoreCase("ERROR_USER_DISABLED")) {
+                            Toast.makeText(
+                                    activity,
+                                    "User is disabled. Email joshua@markdsoftware.com for more information.",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    } else if(signInFailure instanceof FirebaseAuthInvalidCredentialsException) {
+                        Toast.makeText(
+                                activity,
+                                signInFailure.getLocalizedMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        Toast.makeText(activity, "Unable to log in.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -289,8 +316,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 6;
+        return password.length() > 5;
     }
 
     /**

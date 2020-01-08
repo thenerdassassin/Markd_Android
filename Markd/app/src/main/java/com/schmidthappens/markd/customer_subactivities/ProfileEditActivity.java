@@ -18,8 +18,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.schmidthappens.markd.AdapterClasses.CreateProfileRecyclerViewAdapter;
 import com.schmidthappens.markd.AdapterClasses.EditProfileRecyclerViewAdapter;
@@ -29,6 +31,7 @@ import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivit
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
+import com.schmidthappens.markd.utilities.StringUtilities;
 
 /**
  * Created by joshua.schmidtibm.com on 10/14/17.
@@ -156,7 +159,18 @@ public class ProfileEditActivity extends AppCompatActivity {
                     Log.e(TAG, task.toString());
                     final Exception createAccountFailure = task.getException();
                     if(createAccountFailure instanceof FirebaseAuthUserCollisionException) {
-                        Toast.makeText(activity, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "User already exists.", Toast.LENGTH_SHORT).show();
+                    } else if(createAccountFailure instanceof FirebaseAuthWeakPasswordException) {
+                        Toast.makeText(activity, "Password is weak.", Toast.LENGTH_SHORT).show();
+                    } else if(createAccountFailure instanceof FirebaseAuthInvalidCredentialsException) {
+                        if(createAccountFailure.getMessage()
+                                .contains("email address is badly formatted")) {
+                            Toast.makeText(activity,
+                                    "The email address is badly formatted.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(activity, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(activity, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
                     }

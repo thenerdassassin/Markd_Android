@@ -27,6 +27,7 @@ import com.schmidthappens.markd.utilities.StringUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -294,11 +295,13 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new DatePickerDialog(context, date,
+                    final DatePickerDialog datePickerDialog = new DatePickerDialog(context, date,
                             myCalendar.get(Calendar.YEAR),
                             myCalendar.get(Calendar.MONTH),
                             myCalendar.get(Calendar.DAY_OF_MONTH)
-                    ).show();
+                    );
+                    datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+                    datePickerDialog.show();
                 }
             });
         }
