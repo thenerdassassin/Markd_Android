@@ -71,7 +71,6 @@ public class ContractorMainActivity extends AppCompatActivity {
     private static final int IMAGE_REQUEST_CODE = 524;
     private static final int CAMERA_PERMISSION_CODE = 107;
     private String currentPhotoPath;
-    private boolean firstPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +78,8 @@ public class ContractorMainActivity extends AppCompatActivity {
         setContentView(R.layout.contractor_main_view);
         authentication = new FirebaseAuthentication(this);
         new ActionBarInitializer(this, false, "contractor");
+        logoUrlListener = new LogoUrlListener();
         initializeXmlObjects();
-        firstPass = true;
         checkForCameraPermission();
     }
     @Override
@@ -295,21 +294,9 @@ public class ContractorMainActivity extends AppCompatActivity {
     private void initializeUI() {
         Log.d(TAG, contractorData.toString());
         initializeTextViews(contractorData.getContractorDetails());
-        //TODO: Switch to Picasso
-        /*
-        if(firstPass) {
-            MarkdFirebaseStorage.loadImage(this,
-                    contractorData.getLogoFileName(),
-                    logoImage,
-                    new LogoLoadingListener());
-            firstPass = false;
-        } else {
-            MarkdFirebaseStorage.loadImage(this,
-                    contractorData.getLogoFileName(),
-                    logoImage,
-                    null);
-        }
-         */
+        Log.d(TAG, "Current FileName: " + contractorData.getLogoFileName());
+        MarkdFirebaseStorage.getDownloadUrl(
+                contractorData.getLogoFileName(), logoUrlListener);
     }
     private void initializeTextViews(ContractorDetails contractorDetails) {
         if(contractorDetails == null) {
@@ -368,6 +355,7 @@ public class ContractorMainActivity extends AppCompatActivity {
             logoImagePlaceholder.setVisibility(View.GONE);
             Picasso.get()
                     .load(url)
+                    .resize(64, 64)
                     .placeholder(PLACE_HOLDER_IMAGE)
                     .into(logoImage, new Callback() {
                         @Override

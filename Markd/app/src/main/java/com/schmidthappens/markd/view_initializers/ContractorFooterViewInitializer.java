@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_subactivities.ChangeContractorActivity;
+import com.schmidthappens.markd.file_storage.DownloadUrlListener;
 import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 
 /**
@@ -23,24 +25,51 @@ import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 
 public class ContractorFooterViewInitializer {
     private static final String TAG = "FooterViewInitializer";
+    private static final int PLACE_HOLDER_IMAGE = R.drawable.ic_contractor_notification;
 
     public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath) {
         return createFooterView(ctx, contractor, phone, websiteUrl, photoPath, false);
     }
 
-    public static View createFooterView(final Activity ctx, String contractor, String phone, final String websiteUrl, String photoPath, boolean isRecyclerViewHolder) {
+    public static View createFooterView(
+            final Activity ctx, String contractor, String phone,
+            final String websiteUrl, String photoPath, boolean isRecyclerViewHolder) {
         LayoutInflater vi;
         vi = LayoutInflater.from(ctx);
         View v = vi.inflate(R.layout.view_footer, null);
 
         //Initialize XML Objects
-        ImageView footerLogo = v.findViewById(R.id.footer_logo);
+        final ImageView footerLogo = v.findViewById(R.id.footer_logo);
         TextView contractorName = v.findViewById(R.id.footer_contractor_name);
         TextView phoneNumber = v.findViewById(R.id.footer_phone_number);
         TextView website = v.findViewById(R.id.footer_website);
 
-        //TODO: Switch to Picasso
-        //MarkdFirebaseStorage.loadImage(ctx, photoPath, footerLogo, null);
+        MarkdFirebaseStorage.getDownloadUrl(photoPath, new DownloadUrlListener() {
+                    @Override
+                    public void onStart() {
+                        footerLogo.setImageResource(PLACE_HOLDER_IMAGE);
+                    }
+
+                    @Override
+                    public void onSuccess(Uri downloadUrl) {
+                        Picasso.get()
+                                .load(downloadUrl)
+                                .resize(30, 30)
+                                .placeholder(PLACE_HOLDER_IMAGE)
+                                .into(footerLogo);
+                    }
+
+                    @Override
+                    public void onCanceled() {
+                        footerLogo.setImageResource(PLACE_HOLDER_IMAGE);
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        footerLogo.setImageResource(PLACE_HOLDER_IMAGE);
+                    }
+                });
+
         contractorName.setText(contractor);
         phoneNumber.setText(phone);
 

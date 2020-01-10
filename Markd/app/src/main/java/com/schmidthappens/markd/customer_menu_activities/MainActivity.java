@@ -135,8 +135,6 @@ public class MainActivity extends AppCompatActivity {
         homeAddress = findViewById(R.id.home_address);
         roomInformation = findViewById(R.id.home_information_rooms);
         squareFootage = findViewById(R.id.home_information_square_footage);
-
-
     }
     private void initializeUI() {
         fillCustomerInformation();
@@ -368,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
             homeImagePlaceholder.setVisibility(View.GONE);
             Picasso.get()
                     .load(url)
+                    .resize(64, 64)
                     .placeholder(PLACE_HOLDER_IMAGE)
                     .into(homeImage, new Callback() {
                         @Override
