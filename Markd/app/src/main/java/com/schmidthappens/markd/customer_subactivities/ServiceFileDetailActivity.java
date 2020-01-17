@@ -7,10 +7,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
+import androidx.camera.core.CameraX;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureConfig;
+import androidx.camera.core.PreviewConfig;
+import androidx.camera.core.UseCaseConfig;
+import androidx.camera.core.UseCaseConfig.Builder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,6 +42,7 @@ import com.schmidthappens.markd.utilities.StringUtilities;
 import com.schmidthappens.markd.view_initializers.ReplaceableImageHandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,7 +66,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     private int serviceId;
     private int fileId; // newFile == -1
     private String originalFileName;
-    private String fileGuid;
 
     private FirebaseFile file;
 
@@ -123,7 +132,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                 file.setGuid(null);
                 String newFileName = file.getFilePath(customerData.getUid());
                 Log.d(TAG, "newFileName:" + newFileName);
-                imageHandler.updateImage(oldFileName, newFileName, data);
+                imageHandler.updateImage(newFileName, data);
             } else {
                 Log.d(TAG, "Result not okay");
             }
@@ -141,8 +150,14 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
 
         imageHandler = new ReplaceableImageHandler();
 
-        ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(imageHandler.initialize(
-                this, false, checkForCameraPermission(), IMAGE_REQUEST_CODE, progressView, serviceFileEditForm
+        ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(
+                imageHandler.initialize(
+                        this,
+                        false,
+                        checkForCameraPermission(),
+                        IMAGE_REQUEST_CODE,
+                        progressView,
+                        serviceFileEditForm
         ));
         saveButton = (Button)findViewById(R.id.service_file_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -185,9 +200,6 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                     editFileName.setText(originalFileName);
                     editFileName.setSelection(originalFileName.length());
                 }
-                if(intent.hasExtra("fileGuid")) {
-                    fileGuid = intent.getStringExtra("fileGuid");
-                }
             }
 
             imageHandler.loadImage(getFile().getFilePath(customerData.getUid()));
@@ -214,6 +226,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             return;
         }
         FirebaseFile file = getFile();
+        Log.d(TAG, "File is: " + file.toString());
         file.setFileName(editFileName.getText().toString());
         ContractorService service = customerData.getServices(serviceType).get(serviceId);
         List<FirebaseFile> files = service.getFiles();
@@ -225,6 +238,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         } else {
             files.set(fileId, file);
         }
+        Log.d(TAG, files.toString());
         service.setFiles(files);
         customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
         goBackToActivity();
@@ -268,7 +282,12 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     }
     private boolean checkForCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE }, CAMERA_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(
+                    this, new String[] {
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE },
+                    CAMERA_PERMISSION_CODE);
             return false;
         } else {
             return true;

@@ -8,16 +8,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPanel">
-    <ImageView
-        android:id="@+id/replaceable_image_placeholder"
-        android:layout_width="@dimen/square_icon"
-        android:layout_height="@dimen/square_icon"
-        android:layout_gravity="center"
-        android:background="@drawable/ic_action_camera" />
-    <ImageView
-        android:id="@+id/replaceable_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/replaceable_image_placeholder"
+            android:layout_width="@dimen/square_icon"
+            android:layout_height="@dimen/square_icon"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_action_camera"
+            android:adjustViewBounds="true"/>
+        <ImageView
+            android:id="@+id/replaceable_image"
+            android:layout_width="300dp"
+            android:layout_height="400dp" />
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatButton

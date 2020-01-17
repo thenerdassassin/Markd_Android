@@ -64,7 +64,13 @@ public class ReplaceableImageHandler {
     private ProgressBar progressBar;
     private LinearLayout layoutToHide;
 
-    public View initialize(Activity context, boolean hasImage, boolean cameraPermissionGranted, int imageRequestCode, ProgressBar progressBar, LinearLayout layoutToHide) {
+    public View initialize(
+            final Activity context,
+            boolean hasImage,
+            boolean cameraPermissionGranted,
+            int imageRequestCode,
+            final ProgressBar progressBar,
+            final LinearLayout layoutToHide) {
         this.context = context;
         this.hasImage = hasImage;
         this.cameraPermissionGranted = cameraPermissionGranted;
@@ -92,7 +98,7 @@ public class ReplaceableImageHandler {
         this.firebasePath = fileName;
         MarkdFirebaseStorage.getFileType(fileName, new StorageMetadataGetter(fileName));
     }
-    public void updateImage(String oldFileName, String newFileName, Intent data) {
+    public void updateImage(String newFileName, Intent data) {
         Uri photo = getPhotoUri(data);
 
         if (photo != null) {
@@ -101,7 +107,7 @@ public class ReplaceableImageHandler {
                     newFileName,
                     photo,
                     context.getContentResolver(),
-                    new SaveFileListener(oldFileName, newFileName));
+                    new SaveFileListener(newFileName));
         } else {
             Log.d(TAG, "photo is null");
         }
@@ -276,12 +282,10 @@ public class ReplaceableImageHandler {
     }
     private class SaveFileListener implements ImageLoadingListener {
         private String fileName;
-        private String oldFileName;
 
-        SaveFileListener(String oldFileName, String fileName) {
+        SaveFileListener(String fileName) {
             this.fileName = fileName;
             firebasePath = fileName;
-            this.oldFileName = oldFileName;
         }
         @Override
         public void onStart() {
@@ -293,8 +297,6 @@ public class ReplaceableImageHandler {
         public void onSuccess() {
             Log.d(TAG, "Image Saved successfully");
             hasImage = true;
-            Log.d(TAG, "Deleting image from - " + oldFileName);
-            //MarkdFirebaseStorage.deleteImage(oldFileName);
             loadImage(fileName);
         }
 
@@ -311,10 +313,10 @@ public class ReplaceableImageHandler {
         public void onStart() {
             Log.i(TAG, "DownloadUrlListener: onStart");
             hasImage = false;
-            imageFrame.setBackgroundColor(View.GONE);
+            imageCaptureFrame.setBackgroundColor(View.GONE);
             imageView.setVisibility(View.GONE);
             imagePlaceholder.setVisibility(View.GONE);
-            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, true);
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, true);
         }
 
         @Override
@@ -322,28 +324,31 @@ public class ReplaceableImageHandler {
             hasImage = true;
             Log.d(TAG, "DownloadUrlListener: onSuccess");
 
-            imageFrame.setBackgroundColor(View.VISIBLE);
+            imageCaptureFrame.setBackgroundColor(View.VISIBLE);
             imageView.setVisibility(View.VISIBLE);
 
-            imageFrame.setBackgroundColor(Color.TRANSPARENT);
+            imageCaptureFrame.setBackgroundColor(Color.TRANSPARENT);
             imageView.setLayoutParams(
                     new FrameLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             Gravity.START));
             imagePlaceholder.setVisibility(View.GONE);
+
             Picasso.get()
                     .load(url)
                     .placeholder(R.drawable.ic_action_camera)
                     .into(imageView, new Callback() {
                         @Override
                         public void onSuccess() {
-                            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+                            Log.d(TAG, "Successfully loaded image");
+                            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
                         }
 
                         @Override
-                        public void onError(Exception e) {
-                            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+                        public void onError(final Exception e) {
+                            Log.e(TAG, e.getMessage());
+                            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
                         }
                     });
 
@@ -352,7 +357,7 @@ public class ReplaceableImageHandler {
         @Override
         public void onCanceled() {
             Log.d(TAG, "DownloadUrlListener: onCanceled");
-            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
         }
 
         @Override
@@ -362,13 +367,13 @@ public class ReplaceableImageHandler {
             hasImage = false;
             Log.e(TAG, e.toString());
 
-            imageFrame.setBackgroundColor(View.VISIBLE);
+            imageCaptureFrame.setBackgroundColor(View.VISIBLE);
             imageView.setVisibility(View.GONE);
 
-            imageFrame.setBackgroundColor(context.getResources().getColor(R.color.colorPanel));
+            imageCaptureFrame.setBackgroundColor(context.getResources().getColor(R.color.colorPanel));
             imagePlaceholder.setVisibility(View.VISIBLE);
 
-            ProgressBarUtilities.showProgress(context, imageFrame, progressBar, false);
+            ProgressBarUtilities.showProgress(context, layoutToHide, progressBar, false);
         }
     }
 
@@ -398,8 +403,8 @@ public class ReplaceableImageHandler {
 
         return pdf;
     }
-    private static boolean deletePdfFile(File pdf) {
-        return pdf.delete();
+    private static void deletePdfFile(File pdf) {
+        pdf.delete();
     }
 
     private View.OnClickListener viewPdfClick = new View.OnClickListener() {
@@ -438,7 +443,9 @@ public class ReplaceableImageHandler {
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
             } finally {
-                deletePdfFile(localFile);
+                if (localFile != null) {
+                    deletePdfFile(localFile);
+                }
             }
         }
     };

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputType;
@@ -24,15 +26,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
-import com.schmidthappens.markd.customer_menu_activities.ElectricalActivity;
-import com.schmidthappens.markd.customer_menu_activities.HvacActivity;
-import com.schmidthappens.markd.customer_menu_activities.MainActivity;
-import com.schmidthappens.markd.customer_menu_activities.PlumbingActivity;
 import com.schmidthappens.markd.customer_menu_activities.ServiceHistoryActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
-import com.schmidthappens.markd.file_storage.MarkdFirebaseStorage;
 import com.schmidthappens.markd.utilities.DateUtitilities;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
 
@@ -46,6 +43,7 @@ import java.util.List;
 public class ServiceDetailActivity extends AppCompatActivity {
     private final static String TAG = "ServiceDetailActivity";
     FirebaseAuthentication authentication;
+    //TODO: Should I remove customerData and have it handled by ServiceHistoryActivity?
     TempCustomerData customerData;
     AlertDialog alertDialog;
 
@@ -59,7 +57,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
     boolean isContractorEditingPage;
     String serviceType;
     int serviceId;
-    boolean isAddService;
+    boolean isNewService;
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -69,7 +67,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
         setTitle("Edit Service");
         if(getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } else if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -79,7 +77,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         if(!authentication.checkLogin()) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            final Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
@@ -102,19 +100,25 @@ public class ServiceDetailActivity extends AppCompatActivity {
     }
     private void saveServiceData() {
         if(serviceId < 0) {
-            //New Service
-            ContractorService serviceToAdd = new ContractorService(DateUtitilities.getCurrentMonth()+1, DateUtitilities.getCurrentDay(), DateUtitilities.getCurrentYear(),
-                    editContractor.getText().toString(), editServiceDescription.getText().toString(), null);
-            addService(serviceToAdd);
+            // New Service
+            final ContractorService service = new ContractorService(
+                    DateUtitilities.getCurrentMonth()+1,
+                    DateUtitilities.getCurrentDay(),
+                    DateUtitilities.getCurrentYear(),
+                    editContractor.getText().toString(),
+                    editServiceDescription.getText().toString(),
+                    null);
+            addService(service);
         } else {
             updateService(
                     serviceId,
                     editContractor.getText().toString(),
                     editServiceDescription.getText().toString(),
-                    customerData.getServices(serviceType).get(serviceId).getFiles());
+                    customerData.getServices(serviceType).get(serviceId).getFiles()
+            );
         }
     }
-    private void addService(ContractorService service) {
+    private void addService(final ContractorService service) {
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
         } else {
@@ -163,9 +167,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
     }
 
     private void initializeXMLObjects() {
-        editContractor = (EditText)findViewById(R.id.service_edit_contractor);
+        editContractor = findViewById(R.id.service_edit_contractor);
         setEnterButtonToKeyboardDismissal(editContractor);
-        editServiceDescription = (EditText)findViewById(R.id.service_edit_description);
+        editServiceDescription = findViewById(R.id.service_edit_description);
         setEnterButtonToKeyboardDismissal(editServiceDescription);
         
         //Used to show done button but still allow multiple lines
@@ -191,7 +195,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
                 hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
                 if(serviceId < 0) {
                     goBackToActivity();
-
                 } else {
                     showRemoveServiceWarning();
                 }
@@ -214,7 +217,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
             serviceId = intent.getIntExtra("serviceId", -1);
             if(serviceId < 0) {
-                isAddService = true;
+                isNewService = true;
             } else {
                 //Editing Service
                 if(intent.hasExtra("description")) {
@@ -225,9 +228,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
             customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
             customerData.attachListener(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     List<FirebaseFile> files = new ArrayList<>();
-                    if(isAddService) {
+                    if(isNewService) {
                         //Create New Service if new to be able to store information
                         saveServiceData();
                         serviceId = 0;
@@ -253,7 +256,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull final DatabaseError databaseError) {
                     Log.e(TAG, databaseError.toString());
                 }
             });
@@ -271,11 +274,9 @@ public class ServiceDetailActivity extends AppCompatActivity {
         Log.i(TAG, "Navigate Up");
         hideKeyboard(this.getCurrentFocus());
         goBackToActivity();
-        if(isAddService) {
+        if(isNewService) {
             //delete service
             customerData.removeService(serviceId, serviceType);
-        } else {
-            //Do nothing
         }
         return true;
     }
@@ -306,13 +307,20 @@ public class ServiceDetailActivity extends AppCompatActivity {
     }
     private void hideKeyboard(View v) {
         if (v != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            final InputMethodManager imm =
+                    (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
         }
     }
     private void sendErrorMessage(String message) {
         Log.e(TAG, message);
-        Toast.makeText(getApplicationContext(), "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                getApplicationContext(),
+                "Oops...something went wrong.",
+                Toast.LENGTH_SHORT
+        ).show();
         goBackToActivity();
     }
 }

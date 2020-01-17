@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
             homeImagePlaceholder.setVisibility(View.GONE);
             Picasso.get()
                     .load(url)
-                    .resize(64, 64)
+                    .resize(512, 512)
                     .placeholder(PLACE_HOLDER_IMAGE)
                     .into(homeImage, new Callback() {
                         @Override
@@ -379,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
                             ProgressBarUtilities.showProgress(MainActivity.this, homeFrame, progressBar, false);
                         }
                     });
-
         }
 
         @Override

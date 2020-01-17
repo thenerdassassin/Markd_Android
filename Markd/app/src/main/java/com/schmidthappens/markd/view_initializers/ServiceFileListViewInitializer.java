@@ -52,18 +52,20 @@ public class ServiceFileListViewInitializer {
                 View v = viewInflater.inflate(R.layout.list_row_file, null);
 
                 if (fileName != null) {
-                    TextView fileNameTextView = (TextView) v.findViewById(R.id.file_name);
+                    TextView fileNameTextView = v.findViewById(R.id.file_name);
 
                     if (fileNameTextView != null) {
-                        fileNameTextView.setPaintFlags(fileNameTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                        fileNameTextView.setPaintFlags(
+                                fileNameTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                         fileNameTextView.setText(fileName);
                         fileNameTextView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Log.d(TAG, "View file:" + fileName);
-                                ctx.startActivity(
-                                        createServiceFileIntent(ctx, uid, serviceType, serviceId, fileIdFinal, fileName, fileGuid)
+                                final Intent serviceFileDetailIntent = createServiceFileIntent(
+                                        ctx, uid, serviceType, serviceId, fileIdFinal, fileName, fileGuid
                                 );
+                                ctx.startActivity(serviceFileDetailIntent);
                             }
                         });
                     }
@@ -75,22 +77,41 @@ public class ServiceFileListViewInitializer {
         return view;
     }
 
+    /**
+     * Create intent for creating a new file.
+     */
     private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId) {
-        Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
+        Log.d(TAG, String.format(
+                "Starting ServiceFileDetailActivity with customerId: %s, serviceType: %s, serviceId: %d, fileId: -1",
+                uid,
+                serviceType,
+                serviceId));
+        final Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
         intentToCreateServiceFile.putExtra("customerId", uid);
         intentToCreateServiceFile.putExtra("serviceType", serviceType);
         intentToCreateServiceFile.putExtra("serviceId", serviceId);
         intentToCreateServiceFile.putExtra("fileId", -1);
-        return  intentToCreateServiceFile;
+        return intentToCreateServiceFile;
     }
+    /**
+     * Create intent for editing a file.
+     */
     private static Intent createServiceFileIntent(Context context, String uid, String serviceType, int serviceId, int fileId, String fileName, String fileGuid) {
-        Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
+        Log.d(TAG, String.format(
+                "Starting ServiceFileDetailActivity with customerId: %s, serviceType: %s, serviceId: %d, fileId: %d, fileName: %s, fileGuid: %s",
+                uid,
+                serviceType,
+                serviceId,
+                fileId,
+                fileName,
+                fileGuid));
+        final Intent intentToCreateServiceFile = new Intent(context, ServiceFileDetailActivity.class);
         intentToCreateServiceFile.putExtra("customerId", uid);
         intentToCreateServiceFile.putExtra("serviceType", serviceType);
         intentToCreateServiceFile.putExtra("serviceId", serviceId);
         intentToCreateServiceFile.putExtra("fileId", fileId);
         intentToCreateServiceFile.putExtra("fileName", fileName);
         intentToCreateServiceFile.putExtra("fileGuid", fileGuid);
-        return  intentToCreateServiceFile;
+        return intentToCreateServiceFile;
     }
 }

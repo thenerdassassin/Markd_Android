@@ -17,7 +17,6 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
 import com.schmidthappens.markd.customer_subactivities.ServiceDetailActivity;
-import com.schmidthappens.markd.data_objects.Contractor;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
@@ -111,6 +110,10 @@ public class ServiceHistoryActivity extends AppCompatActivity {
                         paintingServices));
     }
 
+    /**
+     * Go to ServiceDetailActivity to  create new ContractorService
+     * @param serviceType - Contractor Type for Service
+     */
     public void addNewService(final String serviceType) {
         final Intent intentToReturn = new Intent(this, ServiceDetailActivity.class);
         intentToReturn.putExtra("serviceType", serviceType);
@@ -119,6 +122,12 @@ public class ServiceHistoryActivity extends AppCompatActivity {
         startActivity(intentToReturn);
     }
 
+    /**
+     * Go to ServiceDetailActivity with ContractorService
+     * @param service - Contractor Service to Edit
+     * @param serviceType - Contractor Type for Service
+     * @param position - index of service
+     */
     public void getServiceDetail(
             @NonNull final ContractorService service,
             final String serviceType,

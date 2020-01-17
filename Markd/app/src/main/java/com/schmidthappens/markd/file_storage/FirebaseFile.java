@@ -11,7 +11,6 @@ import java.util.UUID;
 public class FirebaseFile {
     private String fileName;
     private String guid;
-    //ContentType?
 
     public FirebaseFile() {
         // Default constructor required for calls to DataSnapshot.getValue(ContractorService.class)
