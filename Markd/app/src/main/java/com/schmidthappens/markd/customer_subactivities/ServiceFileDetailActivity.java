@@ -7,19 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.camera.core.CameraX;
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureConfig;
-import androidx.camera.core.PreviewConfig;
-import androidx.camera.core.UseCaseConfig;
-import androidx.camera.core.UseCaseConfig.Builder;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
-
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,6 +19,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -42,7 +34,6 @@ import com.schmidthappens.markd.utilities.StringUtilities;
 import com.schmidthappens.markd.view_initializers.ReplaceableImageHandler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

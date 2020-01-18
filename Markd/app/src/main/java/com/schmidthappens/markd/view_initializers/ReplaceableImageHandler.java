@@ -396,7 +396,7 @@ public class ReplaceableImageHandler {
         }
         if(pdf.exists()) {
             Log.e(TAG, "Image exists");
-            Log.e(TAG, "Path:"+pdf.getAbsolutePath());
+            Log.e(TAG, "Path:" + pdf.getAbsolutePath());
         } else {
             Log.e(TAG, "Image does not exist");
         }
@@ -419,28 +419,28 @@ public class ReplaceableImageHandler {
                 final Uri pdfUri = FileProvider.getUriForFile(
                         context, "com.schmidthappens.markd.provider", localFile
                 );
-                MarkdFirebaseStorage.getFile(firebasePath, localFile, new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        // Local temp file has been created
-                        Intent target = new Intent(Intent.ACTION_VIEW);
-                        target.setDataAndType(pdfUri, "application/pdf");
-                        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        try {
-                            Intent intent = Intent.createChooser(target, "Open File");
-                            context.startActivity(intent);
-                        } catch (ActivityNotFoundException e) {
-                            Toast.makeText(context, "Download a pdf viewer from the app store.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle any errors
+                Log.d(TAG, "PDF file: " + localFile.getAbsolutePath());
+                MarkdFirebaseStorage.getFile(firebasePath, localFile, taskSnapshot -> {
+                    // Local temp file has been created
+                    final Intent target = new Intent(Intent.ACTION_VIEW);
+                    target.setDataAndType(pdfUri, "application/pdf");
+                    target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    target.addFlags(
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    try {
+                        context.startActivity(Intent.createChooser(target, "Open File"));
+                    } catch (final ActivityNotFoundException e) {
+                        Toast.makeText(context, "Download a pdf viewer from the app store.", Toast.LENGTH_SHORT).show();
+                    } catch (final Exception e) {
                         Log.e(TAG, e.toString());
                     }
+                }, exception -> {
+                    // Handle any errors
+                    Log.e(TAG, exception.toString());
                 });
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Log.e(TAG, e.toString());
             } finally {
                 if (localFile != null) {
