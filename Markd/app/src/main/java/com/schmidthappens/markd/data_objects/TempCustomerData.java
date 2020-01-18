@@ -303,8 +303,14 @@ public class TempCustomerData {
         customer.addService(service, serviceType);
         putCustomer(customer);
     }
-    public void updateService(int serviceId, String contractor, String comments, List<FirebaseFile> files, String serviceType) {
-        customer.updateService(serviceId, contractor, comments, files, serviceType);
+    public void updateService(
+            int serviceId,
+            String contractor,
+            String date,
+            String comments,
+            List<FirebaseFile> files,
+            String serviceType) {
+        customer.updateService(serviceId, contractor, date, comments, files, serviceType);
         putCustomer(customer);
     }
     public void removeService(int serviceId, String serviceType) {

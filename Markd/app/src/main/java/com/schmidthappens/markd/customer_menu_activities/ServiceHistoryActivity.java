@@ -20,6 +20,7 @@ import com.schmidthappens.markd.customer_subactivities.ServiceDetailActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.utilities.OnGetDataListener;
+import com.schmidthappens.markd.utilities.StringUtilities;
 import com.schmidthappens.markd.view_initializers.ActionBarInitializer;
 
 import java.util.ArrayList;
@@ -135,6 +136,12 @@ public class ServiceHistoryActivity extends AppCompatActivity {
         final Intent intentToReturn = new Intent(this, ServiceDetailActivity.class);
         intentToReturn.putExtra("serviceId", position);
         intentToReturn.putExtra("contractor", service.getContractor());
+        intentToReturn.putExtra("serviceDate",
+                StringUtilities.getDateString(
+                        service.getMonth(),
+                        service.getDay(),
+                        service.getYear()
+                ));
         intentToReturn.putExtra("description", service.getComments());
         intentToReturn.putExtra("isContractor", isContractorViewingPage);
         intentToReturn.putExtra("customerId", customerData.getUid());

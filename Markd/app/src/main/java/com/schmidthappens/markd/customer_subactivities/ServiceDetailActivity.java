@@ -1,5 +1,8 @@
 package com.schmidthappens.markd.customer_subactivities;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -31,9 +35,11 @@ import com.schmidthappens.markd.data_objects.ContractorService;
 import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.file_storage.FirebaseFile;
 import com.schmidthappens.markd.utilities.DateUtitilities;
+import com.schmidthappens.markd.utilities.StringUtilities;
 import com.schmidthappens.markd.view_initializers.ServiceFileListViewInitializer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -43,12 +49,12 @@ import java.util.List;
 public class ServiceDetailActivity extends AppCompatActivity {
     private final static String TAG = "ServiceDetailActivity";
     FirebaseAuthentication authentication;
-    //TODO: Should I remove customerData and have it handled by ServiceHistoryActivity?
     TempCustomerData customerData;
     AlertDialog alertDialog;
 
     //XML Objects
     EditText editContractor;
+    TextView editServiceDate;
     EditText editServiceDescription;
     FrameLayout fileList;
     Button saveButton;
@@ -99,12 +105,13 @@ public class ServiceDetailActivity extends AppCompatActivity {
         }
     }
     private void saveServiceData() {
+        final String dateString = editServiceDate.getText().toString();
         if(serviceId < 0) {
             // New Service
             final ContractorService service = new ContractorService(
-                    DateUtitilities.getCurrentMonth()+1,
-                    DateUtitilities.getCurrentDay(),
-                    DateUtitilities.getCurrentYear(),
+                    StringUtilities.getMonthFromDotFormattedString(dateString),
+                    StringUtilities.getDayFromDotFormmattedString(dateString),
+                    StringUtilities.getYearFromDotFormmattedString(dateString),
                     editContractor.getText().toString(),
                     editServiceDescription.getText().toString(),
                     null);
@@ -113,6 +120,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
             updateService(
                     serviceId,
                     editContractor.getText().toString(),
+                    dateString,
                     editServiceDescription.getText().toString(),
                     customerData.getServices(serviceType).get(serviceId).getFiles()
             );
@@ -126,12 +134,12 @@ public class ServiceDetailActivity extends AppCompatActivity {
             customerData.addService(service, serviceType);
         }
     }
-    private void updateService(int serviceId, String contractor, String description, List<FirebaseFile> files) {
+    private void updateService(int serviceId, String contractor, String date, String description, List<FirebaseFile> files) {
         if(serviceType == null) {
             sendErrorMessage("Activity does not match");
         } else {
             Log.d(TAG, "Edit " + serviceType + "service-" + serviceId);
-            customerData.updateService(serviceId, contractor, description, files, serviceType);
+            customerData.updateService(serviceId, contractor, date, description, files, serviceType);
         }
     }
     private void showRemoveServiceWarning() {
@@ -171,35 +179,35 @@ public class ServiceDetailActivity extends AppCompatActivity {
         setEnterButtonToKeyboardDismissal(editContractor);
         editServiceDescription = findViewById(R.id.service_edit_description);
         setEnterButtonToKeyboardDismissal(editServiceDescription);
+
+        editServiceDate = findViewById(R.id.service_edit_date);
+        editServiceDate.setOnClickListener(view -> {
+            DialogFragment newFragment = new DatePickerFragment();
+            newFragment.show(getFragmentManager(), "datePicker");
+        });
         
         //Used to show done button but still allow multiple lines
         editServiceDescription.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editServiceDescription.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
-        fileList = (FrameLayout)findViewById(R.id.service_file_list);
+        fileList = findViewById(R.id.service_file_list);
 
-        saveButton = (Button)findViewById(R.id.service_edit_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
-                saveServiceData();
-                goBackToActivity();
-            }
+        saveButton = findViewById(R.id.service_edit_save_button);
+        saveButton.setOnClickListener(v -> {
+            hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
+            saveServiceData();
+            goBackToActivity();
         });
 
-        deleteButton = (Button)findViewById(R.id.service_edit_delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        deleteButton = findViewById(R.id.service_edit_delete_button);
+        deleteButton.setOnClickListener(v -> {
                 hideKeyboard(ServiceDetailActivity.this.getCurrentFocus());
                 if(serviceId < 0) {
                     goBackToActivity();
                 } else {
                     showRemoveServiceWarning();
                 }
-            }
-        });
+            });
     }
     private void processIntent(final Intent intent) {
         Log.d(TAG, "Processing intent");
@@ -213,6 +221,15 @@ public class ServiceDetailActivity extends AppCompatActivity {
             if(intent.hasExtra("contractor")) {
                 editContractor.setText(intent.getStringExtra("contractor"));
                 editContractor.setSelection(editContractor.getText().length());
+            }
+
+            if(intent.hasExtra("serviceDate")) {
+                editServiceDate.setText(intent.getStringExtra("serviceDate"));
+            } else {
+                changeInstallDate(
+                        DateUtitilities.getCurrentMonth()+1,
+                        DateUtitilities.getCurrentDay(),
+                        DateUtitilities.getCurrentYear());
             }
 
             serviceId = intent.getIntExtra("serviceId", -1);
@@ -322,5 +339,35 @@ public class ServiceDetailActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT
         ).show();
         goBackToActivity();
+    }
+
+    private void changeInstallDate(int month, int day, int year) {
+        editServiceDate.setText(StringUtilities.getDateString(month, day, year));
+    }
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Create a new instance of DatePickerDialog and return it
+            Calendar calendar = Calendar.getInstance();
+            DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            pickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+            return pickerDialog;
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            Calendar selected = Calendar.getInstance();
+            selected.set(year, month, dayOfMonth);
+            Calendar current = Calendar.getInstance();
+
+            //Check to make sure date is not in future
+            if (selected.getTime().after(current.getTime())) {
+                Log.i(TAG, "Selected Invalid Date");
+                Toast.makeText(getActivity().getApplicationContext(), "Install date must not be in future.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ((ServiceDetailActivity)getActivity())
+                    .changeInstallDate(month + 1, dayOfMonth, year);
+        }
     }
 }

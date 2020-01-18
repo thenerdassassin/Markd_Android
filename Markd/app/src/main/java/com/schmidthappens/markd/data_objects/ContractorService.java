@@ -95,8 +95,11 @@ public class ContractorService implements Comparable<ContractorService> {
         }
     }
 
-    public ContractorService update(String contractor, String comments, List<FirebaseFile> files) {
+    public ContractorService update(String contractor, String date, String comments, List<FirebaseFile> files) {
         this.contractor = contractor;
+        this.month = StringUtilities.getMonthFromDotFormattedString(date);
+        this.day = StringUtilities.getDayFromDotFormmattedString(date);
+        this.year = StringUtilities.getYearFromDotFormmattedString(date);
         this.comments = comments;
         this.files = files;
         return this;

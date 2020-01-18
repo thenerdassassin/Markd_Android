@@ -27,6 +27,16 @@
             android:imeOptions="actionDone"
             android:hint="Contractor"/>
 
+        <!-- Edit Service Date -->
+        <TextView
+            android:id="@+id/service_edit_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edit_text"
+            android:layout_marginTop="15dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
         <!-- Edit Service Description -->
         <EditText
             android:id="@+id/service_edit_description"

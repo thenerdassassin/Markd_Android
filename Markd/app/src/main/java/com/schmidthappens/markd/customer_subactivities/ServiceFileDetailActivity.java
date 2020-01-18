@@ -7,9 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -18,11 +21,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
@@ -43,12 +49,10 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     private final static String TAG = "ServiceFileDetailActvty";
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
-    private AlertDialog alertDialog;
 
     //XML Objects
-    private ProgressBar progressBar;
-    private LinearLayout serviceFileEditForm;
-    private EditText editFileName;
+    private TextInputEditText editFileName;
+    private AlertDialog alertDialog;
 
     private String serviceType;
     private int serviceId;
@@ -101,7 +105,10 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 imageHandler.grantCameraPermission();
@@ -131,21 +138,18 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     }
 
     private void initializeXMLObjects() {
-        serviceFileEditForm = (LinearLayout)findViewById(R.id.service_file_edit_form) ;
-        progressBar = (ProgressBar)findViewById(R.id.service_file_progress);
-        editFileName = (EditText)findViewById(R.id.service_file_edit_name);
+        editFileName = findViewById(R.id.file_name);
         setEnterButtonToKeyboardDismissal(editFileName);
 
         imageHandler = new ReplaceableImageHandler();
-
         ((FrameLayout)findViewById(R.id.service_file_replaceable_image)).addView(
                 imageHandler.initialize(
                         this,
                         false,
                         checkForCameraPermission(),
                         IMAGE_REQUEST_CODE,
-                        progressBar,
-                        serviceFileEditForm
+                        findViewById(R.id.service_file_progress),
+                        findViewById(R.id.service_file_edit_form)
         ));
         findViewById(R.id.service_file_delete_button)
                 .setOnClickListener(v -> {
@@ -187,7 +191,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         } else {
             if(fileId < 0) {
                 Log.d(TAG, "Creating new file");
-                return new FirebaseFile(editFileName.getText().toString());
+                return new FirebaseFile(getFileName());
             } else {
                 ContractorService service = customerData.getServices(serviceType).get(serviceId);
                 List<FirebaseFile> files = service.getFiles();
@@ -198,13 +202,10 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     }
     private void saveFile() {
         hideKeyboard(this.getCurrentFocus());
-        if(StringUtilities.isNullOrEmpty(editFileName.getText().toString())) {
-            Toast.makeText(this, "File name can not be empty.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         FirebaseFile file = getFile();
         Log.d(TAG, "File is: " + file.toString());
-        file.setFileName(editFileName.getText().toString());
+        file.setFileName(getFileName());
 
         final ContractorService service = customerData.getServices(serviceType).get(serviceId);
         List<FirebaseFile> files = service.getFiles();
@@ -222,8 +223,17 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         customerData.updateService(
                 serviceId,
                 service.getContractor(),
-                service.getComments(), files,
+                service.getDate(),
+                service.getComments(),
+                files,
                 serviceType);
+    }
+    private String getFileName() {
+        String fileName = editFileName.getText().toString();
+        if(StringUtilities.isNullOrEmpty(fileName)) {
+            fileName = "File";
+        }
+        return fileName;
     }
     private void showRemoveFileWarning() {
         alertDialog = new AlertDialog.Builder(this)
@@ -252,7 +262,13 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         List<FirebaseFile> files = service.getFiles();
         files.remove(fileId);
         service.setFiles(files);
-        customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
+        customerData.updateService(
+                serviceId,
+                service.getContractor(),
+                service.getDate(),
+                service.getComments(),
+                files,
+                serviceType);
         goBackToActivity();
     }
 
