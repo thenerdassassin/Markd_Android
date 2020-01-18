@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -47,16 +46,13 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
 
     //XML Objects
-    private ProgressBar progressView;
+    private ProgressBar progressBar;
     private LinearLayout serviceFileEditForm;
     private EditText editFileName;
-    private Button saveButton;
-    private Button deleteButton;
 
     private String serviceType;
     private int serviceId;
     private int fileId; // newFile == -1
-    private String originalFileName;
 
     private FirebaseFile file;
 
@@ -124,6 +120,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                 String newFileName = file.getFilePath(customerData.getUid());
                 Log.d(TAG, "newFileName:" + newFileName);
                 imageHandler.updateImage(newFileName, data);
+                saveFile();
             } else {
                 Log.d(TAG, "Result not okay");
             }
@@ -135,7 +132,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
 
     private void initializeXMLObjects() {
         serviceFileEditForm = (LinearLayout)findViewById(R.id.service_file_edit_form) ;
-        progressView = (ProgressBar)findViewById(R.id.service_file_progress);
+        progressBar = (ProgressBar)findViewById(R.id.service_file_progress);
         editFileName = (EditText)findViewById(R.id.service_file_edit_name);
         setEnterButtonToKeyboardDismissal(editFileName);
 
@@ -147,30 +144,18 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
                         false,
                         checkForCameraPermission(),
                         IMAGE_REQUEST_CODE,
-                        progressView,
+                        progressBar,
                         serviceFileEditForm
         ));
-        saveButton = (Button)findViewById(R.id.service_file_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
-                saveFile();
-            }
-        });
-
-        deleteButton = (Button)findViewById(R.id.service_file_delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
-                if(fileId < 0) {
-                    goBackToActivity();
-                } else {
-                    showRemoveFileWarning();
-                }
-            }
-        });
+        findViewById(R.id.service_file_delete_button)
+                .setOnClickListener(v -> {
+                    hideKeyboard(ServiceFileDetailActivity.this.getCurrentFocus());
+                    if(fileId < 0) {
+                        goBackToActivity();
+                    } else {
+                        showRemoveFileWarning();
+                    }
+                });
     }
     private void processIntent(Intent intent) {
         if(intent != null) {
@@ -187,7 +172,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             } else {
                 setTitle("Edit File");
                 if(intent.hasExtra("fileName")) {
-                    originalFileName = intent.getStringExtra("fileName");
+                    final String originalFileName = intent.getStringExtra("fileName");
                     editFileName.setText(originalFileName);
                     editFileName.setSelection(originalFileName.length());
                 }
@@ -212,6 +197,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         }
     }
     private void saveFile() {
+        hideKeyboard(this.getCurrentFocus());
         if(StringUtilities.isNullOrEmpty(editFileName.getText().toString())) {
             Toast.makeText(this, "File name can not be empty.", Toast.LENGTH_SHORT).show();
             return;
@@ -219,7 +205,8 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         FirebaseFile file = getFile();
         Log.d(TAG, "File is: " + file.toString());
         file.setFileName(editFileName.getText().toString());
-        ContractorService service = customerData.getServices(serviceType).get(serviceId);
+
+        final ContractorService service = customerData.getServices(serviceType).get(serviceId);
         List<FirebaseFile> files = service.getFiles();
         if(fileId < 0) {
             if(files == null) {
@@ -229,10 +216,14 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
         } else {
             files.set(fileId, file);
         }
+
         Log.d(TAG, files.toString());
         service.setFiles(files);
-        customerData.updateService(serviceId, service.getContractor(), service.getComments(), files, serviceType);
-        goBackToActivity();
+        customerData.updateService(
+                serviceId,
+                service.getContractor(),
+                service.getComments(), files,
+                serviceType);
     }
     private void showRemoveFileWarning() {
         alertDialog = new AlertDialog.Builder(this)
@@ -268,6 +259,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp(){
         Log.i(TAG, "Navigate Up");
+        saveFile();
         goBackToActivity();
         return true;
     }
