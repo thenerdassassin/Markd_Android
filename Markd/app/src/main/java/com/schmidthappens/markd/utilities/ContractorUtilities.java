@@ -1,5 +1,6 @@
 package com.schmidthappens.markd.utilities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
@@ -65,15 +66,15 @@ public class ContractorUtilities {
     }
 
     @Nullable
-    public static Class getClassFromContractorType(String contractorType) {
-        switch (contractorType){
-            case("Plumber"):
+    public static Class getClassFromContractorType(@NonNull String contractorType) {
+        switch (contractorType.toLowerCase()){
+            case("plumber"):
                 return PlumbingActivity.class;
-            case("Electrician"):
+            case("electrician"):
                 return ElectricalActivity.class;
-            case("Painter"):
+            case("painter"):
                 return PaintingActivity.class;
-            case("Hvac"):
+            case("hvac"):
                 return HvacActivity.class;
             default:
                 Log.e(TAG, "No match for userType:" + contractorType);

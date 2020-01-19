@@ -71,6 +71,7 @@ public class HvacActivity extends AppCompatActivity {
         Intent intentToProcess = getIntent();
         isContractorViewingPage = intentToProcess.getBooleanExtra("isContractor", false);
         if(isContractorViewingPage) {
+            Log.d(TAG, "Is Contractor On Page");
             new ActionBarInitializer(this, true, "contractor");
             if(intentToProcess.hasExtra("customerId")) {
                 customerData = new TempCustomerData(intentToProcess.getStringExtra("customerId"), new HVACGetDataListener());
@@ -79,6 +80,7 @@ public class HvacActivity extends AppCompatActivity {
                 Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
             }
         } else {
+            Log.d(TAG, "Is Customer On Page");
             new ActionBarInitializer(this, true, "customer");
             customerData = new TempCustomerData(authentication, new HVACGetDataListener());
         }
@@ -141,7 +143,7 @@ public class HvacActivity extends AppCompatActivity {
     private void initializeFooter(Contractor hvacTechnician, String hvacTechnicianId) {
         hvacContractor = (FrameLayout)findViewById(R.id.hvac_footer);
         if(hvacTechnician == null || hvacTechnician.getContractorDetails() == null) {
-            Log.d(TAG, "No plumber data");
+            Log.d(TAG, "No HVAC Tech data");
             View v = ContractorFooterViewInitializer.createFooterView(HvacActivity.this, "Hvac");
             hvacContractor.addView(v);
         } else {
@@ -189,6 +191,9 @@ public class HvacActivity extends AppCompatActivity {
             intent.putExtra("installDate", appliance.installDateAsString());
             intent.putExtra("lifespanInteger", appliance.getLifeSpan());
             intent.putExtra("units", appliance.getUnits());
+            intent.putExtra("isContractor", isContractorViewingPage);
+            intent.putExtra("customerId", customerData.getUid());
+        } else {
             intent.putExtra("isContractor", isContractorViewingPage);
             intent.putExtra("customerId", customerData.getUid());
         }

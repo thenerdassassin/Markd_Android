@@ -92,7 +92,9 @@ public class ContractorMainActivity extends AppCompatActivity {
             return;
         }
         hasImage = false;
-        contractorData = new TempContractorData((authentication.getCurrentUser().getUid()), new ContractorMainGetDataListener());
+        contractorData = new TempContractorData(
+                (authentication.getCurrentUser().getUid()),
+                new ContractorMainGetDataListener());
         logoFrame.setOnClickListener(photoClick);
         logoFrame.setOnLongClickListener(photoLongClick);
     }
@@ -355,7 +357,7 @@ public class ContractorMainActivity extends AppCompatActivity {
             logoImagePlaceholder.setVisibility(View.GONE);
             Picasso.get()
                     .load(url)
-                    .resize(64, 64)
+                    .resize(512, 512)
                     .placeholder(PLACE_HOLDER_IMAGE)
                     .into(logoImage, new Callback() {
                         @Override

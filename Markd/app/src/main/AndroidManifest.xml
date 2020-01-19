@@ -63,6 +63,7 @@
             android:name=".customer_subactivities.ApplianceEditActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".customer_menu_activities.PlumbingActivity"
             android:value=".plumbing_subactivities.PlumbingEditActivity">
             <meta-data

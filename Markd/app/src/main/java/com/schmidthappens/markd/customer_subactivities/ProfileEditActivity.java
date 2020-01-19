@@ -179,21 +179,18 @@ public class ProfileEditActivity extends AppCompatActivity {
         });
     }
     private void authenticateUser(final FirebaseUser user, final AuthCredential credential) {
-        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()) {
-                    Log.i(TAG, "reauthenticate:success");
-                    updateProfile(user);
+        user.reauthenticate(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.i(TAG, "reauthenticate:success");
+                updateProfile(user);
+            } else {
+                if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                    Toast.makeText(ProfileEditActivity.this, "Wrong password.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if(task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(ProfileEditActivity.this, "Wrong password.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        if(task.getException() != null) {
-                            Log.e(TAG, task.getException().toString());
-                        }
-                        Toast.makeText(ProfileEditActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
+                    if (task.getException() != null) {
+                        Log.e(TAG, task.getException().toString());
                     }
+                    Toast.makeText(ProfileEditActivity.this, "Oops...something went wrong.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

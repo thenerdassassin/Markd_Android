@@ -84,7 +84,7 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     }
     @Override
     public int getItemViewType(int position) {
-        if(position <= 1) {
+        if(position < 2) {
             return R.layout.view_holder_edit_text;
         } else if(position == 2) {
             return 2;
@@ -112,6 +112,7 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
                 } catch (final Exception e) {
                     Log.e(TAG, e.toString());
                 }
+                break;
             default:
                 Log.e(TAG, String.format("No field for fieldNumber %d", fieldNumber));
         }
@@ -126,8 +127,17 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             super(v);
             inputLayout = v.findViewById(R.id.input_layout);
             textView = v.findViewById(R.id.edit_text);
-            textView.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
+            textView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             textView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+            textView.setOnFocusChangeListener((focusedView, hasFocus) -> {
+                if(focusedView.equals(textView)) {
+                    Log.d(TAG, "TEXT VIEW Is View");
+                }
+                if(hasFocus) {
+                    Log.d(TAG, "TEXT VIEW GOT FOCUS");
+
+                }
+            });
         }
 
         void bindData(final int position, final String hint, final String currentText) {
@@ -162,27 +172,22 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             unitTextView = v.findViewById(R.id.units_dropdown);
             unitTextView.setInputType(InputType.TYPE_NULL);
             unitTextView.setAdapter(adapter);
-            unitTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d(TAG, "Item Clicked: " + adapter.getItem(position));
-                    final String lifespan = lifespanTextView.getText().toString();
-                    final String timeUnits = adapter.getItem(position);
-                    if(validateValue(lifespan, timeUnits)) {
-                        timeUnitsSelected = timeUnits;
-                        updateField(fieldNumber, lifespan + " " + timeUnits);
-                        clearError();
-                    } else {
-                        setError(timeUnits);
-                    }
+            unitTextView.setOnItemClickListener((parent, view, position, id) -> {
+                Log.d(TAG, "Item Clicked: " + adapter.getItem(position));
+                final String lifespan = lifespanTextView.getText().toString();
+                final String timeUnits = adapter.getItem(position);
+                if(validateValue(lifespan, timeUnits)) {
+                    timeUnitsSelected = timeUnits;
+                    updateField(fieldNumber, lifespan + " " + timeUnits);
+                    clearError();
+                } else {
+                    setError(timeUnits);
                 }
             });
-            unitTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View focusedView, boolean hasFocus) {
-                    if(hasFocus) {
-                        context.hideKeyboard(focusedView);
-                    }
+            unitTextView.setOnFocusChangeListener((focusedView, hasFocus) -> {
+                if(focusedView.equals(unitTextView) && hasFocus) {
+                    Log.d(TAG, "Hiding Keyborad");
+                    context.hideKeyboard(focusedView);
                 }
             });
         }
@@ -292,17 +297,14 @@ public class EditApplianceRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
             inputLayout.setHint("Install Date");
             textView.setText(currentText);
 
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final DatePickerDialog datePickerDialog = new DatePickerDialog(context, date,
-                            myCalendar.get(Calendar.YEAR),
-                            myCalendar.get(Calendar.MONTH),
-                            myCalendar.get(Calendar.DAY_OF_MONTH)
-                    );
-                    datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
-                    datePickerDialog.show();
-                }
+            textView.setOnClickListener(v -> {
+                final DatePickerDialog datePickerDialog = new DatePickerDialog(context, date,
+                        myCalendar.get(Calendar.YEAR),
+                        myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)
+                );
+                datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
+                datePickerDialog.show();
             });
         }
 

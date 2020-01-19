@@ -107,13 +107,16 @@ public class ApplianceEditActivity extends AppCompatActivity {
             } else {
                 installDate = intent.getStringExtra("installDate");
             }
-            lifespan = intent.getIntExtra("lifespanInteger", 0);
+            lifespan = intent.getIntExtra("lifespanInteger", 1);
             if(intent.hasExtra("units")) {
                 units = intent.getStringExtra("units");
             }
             isContractorEditingPage = intent.getBooleanExtra("isContractor", false);
             if(isContractorEditingPage && intent.hasExtra("customerId")) {
+                Log.d(TAG, "Contractor is Editing:" + intent.getStringExtra("customerId"));
                 customerData = new TempCustomerData(intent.getStringExtra("customerId"), null);
+            } else {
+                Log.d(TAG, "Customer Editing");
             }
         }
     }
@@ -122,6 +125,7 @@ public class ApplianceEditActivity extends AppCompatActivity {
                 InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
     private void saveAppliance() {
+        Log.d(TAG, "saveAppliance Customer ID: " + customerData.getUid());
         Class activityToGoTo = null;
         if(getTitle().equals("Domestic Hot Water")) {
             Log.i(TAG, "Save Hot Water Changes");
