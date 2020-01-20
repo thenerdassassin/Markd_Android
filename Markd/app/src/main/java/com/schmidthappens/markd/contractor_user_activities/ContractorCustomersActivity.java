@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ import com.schmidthappens.markd.AdapterClasses.CustomerListRecyclerViewAdapter;
 import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.account_authentication.FirebaseAuthentication;
 import com.schmidthappens.markd.account_authentication.LoginActivity;
+import com.schmidthappens.markd.customer_menu_activities.ServiceHistoryActivity;
 import com.schmidthappens.markd.data_objects.Customer;
 import com.schmidthappens.markd.data_objects.TempContractorData;
 import com.schmidthappens.markd.utilities.ContractorUtilities;
@@ -51,8 +54,9 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     private List<Customer> customers;
     private List<String> customerReferences;
     private final String[] alertDialogOptions = {
-            "Send Push Notification",
-            "Edit Customer Page"
+            "Send Notification",
+            "Edit Home Details",
+            "Edit Service History"
     };
 
     @Override
@@ -89,8 +93,13 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 String lastNameFilter = textView.getText().toString();
-                Log.d(TAG, "LastName - " +textView.getText().toString());
-                customerRecyclerView.setAdapter(new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences, lastNameFilter));
+                Log.d(TAG, "LastName - " + textView.getText().toString());
+                customerRecyclerView.setAdapter(
+                        new CustomerListRecyclerViewAdapter(
+                                ContractorCustomersActivity.this,
+                                customers,
+                                customerReferences,
+                                lastNameFilter));
                 Log.d(TAG, "Customers size:" + customers.size());
                 return false;
             }
@@ -109,19 +118,21 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
             noCustomerTextView.setVisibility(View.GONE);
             FirebaseDatabase.getInstance().getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Log.v(TAG, dataSnapshot.toString());
-                    Map<String, Customer> customerMap = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
-                    //customers = CustomerGetter.getCustomersFromReferences(customerReferences, dataSnapshot);
+                    final Map<String, Customer> customerMap = CustomerGetter
+                            .getCustomersFromReferences(customerReferences, dataSnapshot);
                     customers = new ArrayList<>(customerMap.values());
                     customerReferences = new ArrayList<>(customerMap.keySet());
                     customerRecyclerView.setAdapter(
-                            new CustomerListRecyclerViewAdapter(ContractorCustomersActivity.this, customers, customerReferences)
-                    );
+                            new CustomerListRecyclerViewAdapter(
+                                    ContractorCustomersActivity.this,
+                                    customers,
+                                    customerReferences));
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.e(TAG, databaseError.toString());
                     Toast.makeText(ContractorCustomersActivity.this, "Oops..something went wrong.", Toast.LENGTH_SHORT).show();
                 }
@@ -138,28 +149,28 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
     private void showAlertDialog(final String customerId) {
         new AlertDialog.Builder(ContractorCustomersActivity.this)
                 .setTitle("What would you like to do?")
-                .setItems(alertDialogOptions, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                .setItems(alertDialogOptions, (DialogInterface dialog, int which) -> {
                         // The 'which' argument contains the index position
                         // of the selected item
                         if(which == 0) {
                             Log.i(TAG, "Push Notification:" + customerId);
                             goToNotificationsPage(customerId);
-                        } else {
+                        } else if (which == 1) {
                             Log.i(TAG, "Go to page:" + customerId);
-                            goToCustomerPage(customerId);
+                            editHomeDetails(customerId);
+                        } else if (which == 2) {
+                            Log.i(TAG, "Edit Service History: " + customerId);
+                            editServiceHistory(customerId);
                         }
-                    }
-                })
-                .create().show();
+                }).create().show();
     }
-    private void goToNotificationsPage(String customerId) {
-        Intent goToSendNotifactionsPage = new Intent(this, SendNotificationsActivity.class)
+    private void goToNotificationsPage(final String customerId) {
+        final Intent goToSendNotifactionsPage = new Intent(this, SendNotificationsActivity.class)
                 .putExtra("customerId", customerId);
         startActivity(goToSendNotifactionsPage);
     }
-    private void goToCustomerPage(String customerId) {
-        Class contractorClass = ContractorUtilities.getClassFromContractorType(contractorData.getType());
+    private void editHomeDetails(final String customerId) {
+        final Class contractorClass = ContractorUtilities.getClassFromContractorType(contractorData.getType());
         if(contractorClass == null) {
             Log.e(TAG, "contractorClass is null");
         } else {
@@ -168,6 +179,13 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
                     .putExtra("customerId", customerId);
             startActivity(goToCustomerPage);
         }
+    }
+    private void editServiceHistory(final String customerId) {
+        final Intent goToCustomerPage = new Intent(this, ServiceHistoryActivity.class)
+                    .putExtra("contractorType", contractorData.getType())
+                    .putExtra("isContractor", true)
+                    .putExtra("customerId", customerId);
+        startActivity(goToCustomerPage);
     }
     private class ContractorCustomersGetDataListener implements OnGetDataListener {
         @Override
@@ -187,10 +205,9 @@ public class ContractorCustomersActivity extends AppCompatActivity implements Cu
             Log.e(TAG, databaseError.toString());
         }
     }
-    private View.OnClickListener messageAllClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            startActivity(new Intent(ContractorCustomersActivity.this, SendNotificationsActivity.class));
-        }
+    private View.OnClickListener messageAllClickListener = view -> {
+        startActivity(new Intent(
+                ContractorCustomersActivity.this,
+                SendNotificationsActivity.class));
     };
 }

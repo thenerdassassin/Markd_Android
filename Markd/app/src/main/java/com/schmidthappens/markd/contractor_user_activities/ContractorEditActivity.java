@@ -125,15 +125,13 @@ public class ContractorEditActivity extends AppCompatActivity {
     }
 
     //Makes the enter button dismiss soft keyboard
-    private void setEnterButtonToKeyboardDismissal(final EditText view) {
-        view.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    hideKeyboard(v);
-                    return true;
-                }
-                return false;
+    private void setEnterButtonToKeyboardDismissal(final EditText editText) {
+        editText.setOnEditorActionListener((view, actionId, event) -> {
+            if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                hideKeyboard(view);
+                return true;
             }
+            return false;
         });
     }
 
@@ -141,7 +139,11 @@ public class ContractorEditActivity extends AppCompatActivity {
     private void hideKeyboard(View v) {
         if (v != null) {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            if(imm != null) {
+                imm.hideSoftInputFromWindow(
+                        v.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+            }
         }
     }
 }

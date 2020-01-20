@@ -32,6 +32,7 @@ public class ServiceHistoryActivity extends AppCompatActivity {
     private FirebaseAuthentication authentication;
     private TempCustomerData customerData;
     private boolean isContractorViewingPage;
+    String contractorType;
 
     @Override
     public void onCreate(Bundle savedInstance){
@@ -63,6 +64,14 @@ public class ServiceHistoryActivity extends AppCompatActivity {
         if(intentToProcess.getBooleanExtra("isContractor", false)) {
             isContractorViewingPage = true;
             new ActionBarInitializer(this, true, "contractor");
+            // Set Up Contractor Type
+            if(intentToProcess.hasExtra("contractorType")) {
+                contractorType = intentToProcess.getStringExtra("contractorType");
+            } else {
+                Log.e(TAG, "No Contractor Type");
+                Toast.makeText(this, "Oops...something went wrong", Toast.LENGTH_SHORT).show();
+            }
+            // Set up Customer Info
             if(intentToProcess.hasExtra("customerId")) {
                 customerData = new TempCustomerData(
                         intentToProcess.getStringExtra("customerId"),
@@ -84,31 +93,37 @@ public class ServiceHistoryActivity extends AppCompatActivity {
         serviceHistoryRecyclerView.setLayoutManager(layoutManager);
         serviceHistoryRecyclerView.setHasFixedSize(false);
 
-        final List<ContractorService> electricalServices =
-                customerData.getElectricalServices() == null ?
-                        new ArrayList<ContractorService>() :
-                        customerData.getElectricalServices();
+        if (isContractorViewingPage) {
+            final List<ContractorService> services = customerData.getServices(contractorType);
+            serviceHistoryRecyclerView.setAdapter(
+                    new ServiceHistoryRecyclerViewAdapter(this, contractorType, services));
+        } else {
+            final List<ContractorService> electricalServices =
+                    customerData.getElectricalServices() == null ?
+                            new ArrayList<ContractorService>() :
+                            customerData.getElectricalServices();
 
-        final List<ContractorService> plumbingServices =
-                customerData.getPlumbingServices() == null ?
-                        new ArrayList<ContractorService>() :
-                        customerData.getPlumbingServices();
+            final List<ContractorService> plumbingServices =
+                    customerData.getPlumbingServices() == null ?
+                            new ArrayList<ContractorService>() :
+                            customerData.getPlumbingServices();
 
-        final List<ContractorService> hvacServices =
-                customerData.getHvacServices() == null ?
-                        new ArrayList<ContractorService>() :
-                        customerData.getHvacServices();
+            final List<ContractorService> hvacServices =
+                    customerData.getHvacServices() == null ?
+                            new ArrayList<ContractorService>() :
+                            customerData.getHvacServices();
 
-        final List<ContractorService> paintingServices =
-                customerData.getPaintingServices() == null ?
-                        new ArrayList<ContractorService>() :
-                        customerData.getPaintingServices();
-        serviceHistoryRecyclerView.setAdapter(
-                new ServiceHistoryRecyclerViewAdapter(this,
-                        plumbingServices,
-                        hvacServices,
-                        electricalServices,
-                        paintingServices));
+            final List<ContractorService> paintingServices =
+                    customerData.getPaintingServices() == null ?
+                            new ArrayList<ContractorService>() :
+                            customerData.getPaintingServices();
+            serviceHistoryRecyclerView.setAdapter(
+                    new ServiceHistoryRecyclerViewAdapter(this,
+                            plumbingServices,
+                            hvacServices,
+                            electricalServices,
+                            paintingServices));
+        }
     }
 
     /**

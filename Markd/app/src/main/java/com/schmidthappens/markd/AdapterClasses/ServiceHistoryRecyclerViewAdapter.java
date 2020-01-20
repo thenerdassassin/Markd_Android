@@ -14,6 +14,7 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.customer_menu_activities.ServiceHistoryActivity;
 import com.schmidthappens.markd.data_objects.ContractorService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceHistoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -24,18 +25,40 @@ public class ServiceHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     private final String HVAC_TITLE = "Hvac Services";
     private final String ELECTRICAL_TITLE = "Electrical Services";
     private final String PAINTING_TITLE = "Painting Services";
+    private final String CONTRACTOR_TITLE = "Service History";
 
-    private final int PLUMBING_TITLE_INDEX = 0;
-    private final int HVAC_TITLE_INDEX;
-    private final int ELECTRICAL_TITLE_INDEX;
-    private final int PAINTING_TITLE_INDEX;
-
-    private final List<ContractorService> plumbingServices;
-    private final List<ContractorService> hvacServices;
-    private final List<ContractorService> electricalServices;
-    private final List<ContractorService> paintingServices;
-
+    private int PLUMBING_TITLE_INDEX = 0;
+    private int HVAC_TITLE_INDEX;
+    private int ELECTRICAL_TITLE_INDEX;
+    private int PAINTING_TITLE_INDEX;
     private final int itemCount;
+
+    private List<ContractorService> plumbingServices;
+    private List<ContractorService> hvacServices;
+    private List<ContractorService> electricalServices;
+    private List<ContractorService> paintingServices;
+
+    private boolean isContractor;
+    private String contractorType;
+    private List<ContractorService> contractorServices;
+
+
+    public ServiceHistoryRecyclerViewAdapter(
+            final ServiceHistoryActivity context,
+            final String contractorType,
+            @NonNull final List<ContractorService> services) {
+        this.context = context;
+        isContractor = true;
+        this.contractorType = contractorType;
+        if (services == null) {
+            itemCount = 2;
+            contractorServices = new ArrayList<>();
+        } else {
+            itemCount = 1 + services.size();
+            contractorServices = services;
+        }
+        Log.d(TAG, "TOTAL ITEMS: " + itemCount);
+    }
 
     public ServiceHistoryRecyclerViewAdapter(
             final ServiceHistoryActivity context,
@@ -105,8 +128,31 @@ public class ServiceHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     }
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        if (isContractor) {
+            bindContractorData(viewHolder, position);
+        } else {
+            bindCustomerData(viewHolder, position);
+        }
+
+    }
+    private void bindContractorData(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof TitleButtonViewHolder) {
-            if(position == PLUMBING_TITLE_INDEX) {
+            ((TitleButtonViewHolder) viewHolder).bindData(CONTRACTOR_TITLE, contractorType);
+        } else if (viewHolder instanceof ServiceHistoryViewHolder) {
+            if (contractorServices.size() == 0) {
+                ((ServiceHistoryViewHolder) viewHolder).bindData();
+            } else {
+                int index = position - 1;
+                ((ServiceHistoryViewHolder) viewHolder)
+                        .bindData(contractorServices.get(index), contractorType, index);
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("No view holder for %d", position));
+        }
+    }
+    private void bindCustomerData(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        if (viewHolder instanceof TitleButtonViewHolder) {
+            if (position == PLUMBING_TITLE_INDEX) {
                 ((TitleButtonViewHolder) viewHolder).bindData(PLUMBING_TITLE, "plumber");
             } else if (position == HVAC_TITLE_INDEX) {
                 ((TitleButtonViewHolder) viewHolder).bindData(HVAC_TITLE, "hvac");
@@ -210,11 +256,8 @@ public class ServiceHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         void bindData(final String title, final String serviceType) {
             textView.setText(title);
             button.setImageResource(R.drawable.add_button_round_black);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.addNewService(serviceType);
-                }
+            button.setOnClickListener(v -> {
+                context.addNewService(serviceType);
             });
         }
     }
@@ -231,11 +274,8 @@ public class ServiceHistoryRecyclerViewAdapter extends RecyclerView.Adapter<Recy
             super(v);
             this.view = v;
             view.setClickable(true);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.getServiceDetail(service, serviceType, index);
-                }
+            view.setOnClickListener((view) -> {
+                context.getServiceDetail(service, serviceType, index);
             });
             contractorTextView = v.findViewById(R.id.contractor_name);
             serviceDate = v.findViewById(R.id.service_date);

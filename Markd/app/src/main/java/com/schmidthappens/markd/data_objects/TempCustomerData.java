@@ -321,13 +321,13 @@ public class TempCustomerData {
         if(customer == null) {
             return new ArrayList<>();
         } else {
-            if (serviceType.equalsIgnoreCase("Plumber")) {
+            if ("Plumber".equalsIgnoreCase(serviceType)) {
                 return customer.getPlumbingServices();
-            } else if (serviceType.equalsIgnoreCase("Electrician")) {
+            } else if ("Electrician".equalsIgnoreCase(serviceType)) {
                 return customer.getElectricalServices();
-            } else if (serviceType.equalsIgnoreCase("Hvac")) {
+            } else if ("Hvac".equalsIgnoreCase(serviceType)) {
                 return customer.getHvacServices();
-            } else if (serviceType.equalsIgnoreCase("painter")) {
+            } else if ("painter".equalsIgnoreCase(serviceType)) {
                 return customer.getPaintingServices();
             } else {
                 Log.e(TAG, "No matching ServiceType");

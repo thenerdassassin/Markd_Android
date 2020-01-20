@@ -303,6 +303,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
         originalActivityIntent.putExtra("isContractor", isContractorEditingPage);
         if(customerData != null) {
             originalActivityIntent.putExtra("customerId", customerData.getUid());
+            originalActivityIntent.putExtra("contractorType", serviceType);
         } else {
             Log.e(TAG, "customerData was null");
         }
