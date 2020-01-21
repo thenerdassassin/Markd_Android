@@ -56,6 +56,7 @@ public class CreateProfileRecyclerViewAdapter extends RecyclerView.Adapter<Recyc
     private TextInputEditText confirmPasswordTextField;
 
     public CreateProfileRecyclerViewAdapter(final ProfileEditActivity context) {
+        Log.d(TAG, "Creating Account");
         this.context = context;
         IMM = (InputMethodManager)context.getSystemService(INPUT_METHOD_SERVICE);
     }

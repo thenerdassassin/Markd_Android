@@ -127,6 +127,9 @@ public class ApplianceEditActivity extends AppCompatActivity {
     private void saveAppliance() {
         Log.d(TAG, "saveAppliance Customer ID: " + customerData.getUid());
         Class activityToGoTo = null;
+        if(units == null) {
+            units = "years";
+        }
         if(getTitle().equals("Domestic Hot Water")) {
             Log.i(TAG, "Save Hot Water Changes");
             customerData.updateHotWater(

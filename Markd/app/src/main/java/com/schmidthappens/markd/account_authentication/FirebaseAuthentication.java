@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
+import com.schmidthappens.markd.data_objects.TempCustomerData;
 import com.schmidthappens.markd.firebase_cloud_messaging.MarkdFirebaseInstanceIDService;
 
 /**
@@ -112,19 +113,17 @@ public class FirebaseAuthentication {
 
     @NonNull
     Task<AuthResult> signIn(final Activity ctx, final String email, final String password) {
-        return firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(ctx, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithEmail:success");
-                            currentUser = firebaseAuth.getCurrentUser();
-                            MarkdFirebaseInstanceIDService.saveToken(currentUser, ctx);
-                        } else {
-                            currentUser = null;
-                        }
+        return firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(ctx,
+                (@NonNull Task<AuthResult> task) -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "signInWithEmail:success");
+                        currentUser = firebaseAuth.getCurrentUser();
+                        MarkdFirebaseInstanceIDService.saveToken(currentUser, ctx);
+                    } else {
+                        currentUser = null;
                     }
                 });
-    }
+    };
     public void sendPasswordResetEmail(final Activity activity, final String email) {
         if(email == null) {
             Log.e(TAG, "Current user email is null");
@@ -157,6 +156,7 @@ public class FirebaseAuthentication {
             Log.d(TAG, "currentUser was null");
         }
         firebaseAuth.signOut();
+        (new TempCustomerData("", null)).clearCustomerData();
         currentUser = null;
     }
 }

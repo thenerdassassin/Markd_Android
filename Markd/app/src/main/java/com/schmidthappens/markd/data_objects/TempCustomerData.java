@@ -3,6 +3,8 @@ package com.schmidthappens.markd.data_objects;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,6 +69,11 @@ public class TempCustomerData {
     private Customer getCustomer() {
         return customer;
     }
+    public void clearCustomerData() {
+        removeListeners();
+        userReference.keepSynced(false);
+        customer = null;
+    }
     private void putCustomer(Customer customer) {
         Log.d(TAG, "putting customer");
         database.child(uid).setValue(customer);
@@ -77,7 +84,7 @@ public class TempCustomerData {
         }
         reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(contractorListener != null) {
                     contractorListener.onSuccess(dataSnapshot);
                 }
@@ -400,222 +407,5 @@ public class TempCustomerData {
         }
         customer.updateHome(street, city, state, zipcode, bedrooms, bathrooms, squareFootage);
         putCustomer(customer);
-    }
-
-   //TODO: Remove with database reset
-    public static Customer makeCustomer() {
-        Customer newCustomer = new Customer();
-        //Home Page
-        newCustomer.setNamePrefix("Mr.");
-        newCustomer.setFirstName("Joshua");
-        newCustomer.setLastName("Schmidt");
-        newCustomer.setMaritalStatus("Married");
-        newCustomer.setAddress(new Address("1234 Travelers Blvd", "Darien", "CT", "06820"));
-        newCustomer.setHome(new Home(5.0, 2.5, 1250));
-        //newCustomer.setArchitect(new ContractorDetails("", "", "", ""));
-        //newCustomer.setArchitect(new ContractorDetails("", "", "", ""));
-
-        //Plumbing
-        newCustomer.setHotWater(initialHotWater());
-        newCustomer.setBoiler(initialBoiler());
-        newCustomer.setPlumber("s5VWMQvH17ZJnVqxtOkqvWpufmu2");
-        newCustomer.setPlumbingServices(TempContractorServiceData.getInstance().getPlumbingServices());
-
-        //HVAC
-        newCustomer.setAirHandler(initialAirHandler());
-        newCustomer.setCompressor(initialCompressor());
-        newCustomer.setHvactechnician("defaultHvacOne");
-        newCustomer.setHvacServices(TempContractorServiceData.getInstance().getHvacServices());
-
-        //Electrical
-        newCustomer.setPanels(initialPanelList());
-        newCustomer.setElectricianReference("defaultElectricianThree");
-        newCustomer.setElectricalServices(TempContractorServiceData.getInstance().getElectricalServices());
-
-        //Painting
-        newCustomer.setInteriorPaintSurfaces(initialInteriorSurfaces());
-        newCustomer.setExteriorPaintSurfaces(initialExteriorSurfaces());
-        newCustomer.setPainter("defaultPainterOne");
-
-        return newCustomer;
-    }
-    private static HotWater initialHotWater() {
-        HotWater hotWater = new HotWater();
-        hotWater.setManufacturer("Bosch");
-        hotWater.setModel("C950 ES NG");
-        hotWater.setMonth(1);
-        hotWater.setDay(17);
-        hotWater.setYear(2012);
-        hotWater.setLifeSpan(12);
-        hotWater.setUnits("years");
-        return hotWater;
-    }
-    private static Boiler initialBoiler() {
-        Boiler boiler = new Boiler();
-        boiler.setManufacturer("Westinghouse");
-        boiler.setModel("WBRCLP140W");
-        boiler.setMonth(11);
-        boiler.setDay(7);
-        boiler.setYear(2012);
-        boiler.setLifeSpan(9);
-        boiler.setUnits("years");
-        return boiler;
-    }
-    private static AirHandler initialAirHandler() {
-        AirHandler airHandler = new AirHandler();
-        airHandler.setManufacturer("Goodman");
-        airHandler.setModel("ARUF24B14");
-        airHandler.setMonth(8);
-        airHandler.setDay(13);
-        airHandler.setYear(2013);
-        airHandler.setLifeSpan(20);
-        airHandler.setUnits("years");
-        return airHandler;
-    }
-    private static Compressor initialCompressor() {
-        Compressor compressor = new Compressor();
-        compressor.setManufacturer("Goodman");
-        compressor.setModel("GSX130361");
-        compressor.setMonth(1);
-        compressor.setDay(27);
-        compressor.setYear(2014);
-        compressor.setLifeSpan(6);
-        compressor.setUnits("years");
-        return compressor;
-    }
-    private static List<PaintSurface> initialExteriorSurfaces() {
-        List<PaintSurface> exteriorSurfaces = new ArrayList<>();
-
-        PaintSurface surface1 = new PaintSurface();
-        surface1.setMonth(2);
-        surface1.setDay(4);
-        surface1.setYear(2017);
-        surface1.setLocation("Siding");
-        surface1.setBrand("Behr");
-        surface1.setColor("Cream");
-        exteriorSurfaces.add(surface1);
-
-        PaintSurface surface2 = new PaintSurface();
-        surface2.setMonth(6);
-        surface2.setDay(24);
-        surface2.setYear(2006);
-        surface2.setLocation("Garage");
-        surface2.setBrand("Behr");
-        surface2.setColor("Translucent Silk");
-        exteriorSurfaces.add(surface2);
-
-        return exteriorSurfaces;
-    }
-    private static List<PaintSurface> initialInteriorSurfaces() {
-        List<PaintSurface> interiorSurfaces = new ArrayList<>();
-
-        PaintSurface surface1 = new PaintSurface();
-        surface1.setMonth(8);
-        surface1.setDay(8);
-        surface1.setYear(2017);
-        surface1.setLocation("Living Room");
-        surface1.setBrand("Sherwin Williams");
-        surface1.setColor("Light Blue");
-        interiorSurfaces.add(surface1);
-
-        PaintSurface surface2 = new PaintSurface();
-        surface2.setMonth(8);
-        surface2.setDay(1);
-        surface2.setYear(2017);
-        surface2.setLocation("Master bedroom");
-        surface2.setBrand("Sherwin Williams");
-        surface2.setColor("Yellow");
-        interiorSurfaces.add(surface2);
-
-        PaintSurface surface3 = new PaintSurface();
-        surface3.setMonth(1);
-        surface3.setDay(5);
-        surface3.setYear(2014);
-        surface3.setLocation("Bathroom");
-        surface3.setBrand("Sherwin Williams");
-        surface3.setColor("Loch Blue");
-        interiorSurfaces.add(surface3);
-
-        PaintSurface surface4 = new PaintSurface();
-        surface4.setMonth(11);
-        surface4.setDay(6);
-        surface4.setYear(2013);
-        surface4.setLocation("Dining Room");
-        surface4.setBrand("Sherwin Williams");
-        surface4.setColor("Grape Harvest");
-        interiorSurfaces.add(surface4);
-
-        PaintSurface surface5 = new PaintSurface();
-        surface5.setMonth(11);
-        surface5.setDay(6);
-        surface5.setYear(2013);
-        surface5.setLocation("Kitchen");
-        surface5.setBrand("Sherwin Williams");
-        surface5.setColor("Decor White");
-        interiorSurfaces.add(surface5);
-
-        return interiorSurfaces;
-    }
-    private static List<Panel> initialPanelList() {
-        List<Panel> panels = new ArrayList<>();
-
-        List<Breaker> breakerList = new LinkedList<Breaker>();
-        breakerList.add(new Breaker(1, "Master Bedroom Receptacles"));
-        breakerList.add(new Breaker(2, "Master Bedroom Lighting"));
-        breakerList.add(new Breaker(3, "Master Bathroom GFCI"));
-        breakerList.add(new Breaker(4, "Master Bathroom Floor Heat"));
-        breakerList.add(new Breaker(5, "Bedroom Receptacles"));
-        breakerList.add(new Breaker(6, "2nd Floor Hallway Lighting"));
-        breakerList.add(new Breaker(7, "Washing Machine"));
-        breakerList.add(new Breaker(8, "Dryer"));
-        breakerList.add(new Breaker(9, "Hot water Heater"));
-        breakerList.add(new Breaker(10, "Well pump"));
-        breakerList.add(new Breaker(11, "Refrigerator"));
-        breakerList.add(new Breaker(12, "Microwave"));
-        breakerList.add(new Breaker(13, "Oven"));
-        breakerList.add(new Breaker(14, "Kitchen Receptacles"));
-        breakerList.add(new Breaker(15, "Kitchen Island Receptacles"));
-        breakerList.add(new Breaker(16, "Kitchen Lighting"));
-        breakerList.add(new Breaker(17, "Spot Lights"));
-        breakerList.add(new Breaker(18, "Garbage Disposal"));
-        breakerList.add(new Breaker(19, "Dishwasher"));
-        breakerList.add(new Breaker(20, "Kitchen Hood"));
-        breakerList.add(new Breaker(21, "Dining Room Receptacles"));
-        breakerList.add(new Breaker(22, "Dining Room Lighting"));
-        breakerList.add(new Breaker(23, "Living Room Receptacles"));
-        breakerList.add(new Breaker(24, "Family Room Lighting"));
-        breakerList.add(new Breaker(25, "Foyer Receptacles"));
-        breakerList.add(new Breaker(26, "Foyer Lighting"));
-        breakerList.add(new Breaker(27, "Furnace"));
-        breakerList.add(new Breaker(28, "Air Compressor"));
-        breakerList.add(new Breaker(29, "Air Handler"));
-        breakerList.add(new Breaker(30, "Central Vacuum"));
-        breakerList.add(new Breaker(31, "Sump Pump"));
-        breakerList.add(new Breaker(32, "Basement Lighting"));
-        breakerList.add(new Breaker(33, "Exterior Lighting"));
-        breakerList.add(new Breaker(34, "Landscape Lighting"));
-        breakerList.add(new Breaker(35, "Garage Door Receptacles"));
-        panels.add(0, new Panel(true, Panel.TwoHundred, breakerList));
-        panels.get(0).setPanelDescription("Attic Panel");
-        panels.get(0).setInstallDate("11", "07", "16");
-
-        List<Breaker> breakerList2 = new LinkedList<Breaker>();
-        breakerList2.add(new Breaker(1, "Master Bedroom Receptacles"));
-        breakerList2.add(new Breaker(2, "Master Bedroom Lighting"));
-        breakerList2.add(new Breaker(3, "Master Bathroom GFCI"));
-        breakerList2.add(new Breaker(4, "Master Bathroom Floor Heat"));
-        breakerList2.add(new Breaker(5, "Bedroom Receptacles"));
-        breakerList2.add(new Breaker(6, "2nd Floor Hallway Lighting"));
-        breakerList2.add(new Breaker(7, "Washing Machine"));
-        breakerList2.add(new Breaker(8, "Dryer"));
-        breakerList2.add(new Breaker(9, "Hot water Heater"));
-        breakerList2.add(new Breaker(10, "Well pump"));
-        breakerList2.add(new Breaker(11, "Refrigerator"));
-        breakerList2.add(new Breaker(12, "Microwave"));
-        panels.add(1, new Panel(false, Panel.OneHundredTwentyFive, breakerList2));
-        panels.get(1).setPanelDescription("Basement Panel");
-        panels.get(1).setInstallDate("01", "11", "17");
-
-        return panels;
     }
 }

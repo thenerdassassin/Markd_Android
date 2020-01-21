@@ -50,6 +50,7 @@ public class EditProfileRecyclerViewAdapter extends RecyclerView.Adapter<Recycle
     private TextInputEditText passwordTextField;
 
     public EditProfileRecyclerViewAdapter(final ProfileEditActivity context) {
+        Log.d(TAG, "Editing Account");
         this.context = context;
         IMM = (InputMethodManager)context.getSystemService(INPUT_METHOD_SERVICE);
     }

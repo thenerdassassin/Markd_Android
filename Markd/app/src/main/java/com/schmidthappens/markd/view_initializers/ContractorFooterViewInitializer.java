@@ -54,7 +54,7 @@ public class ContractorFooterViewInitializer {
                     public void onSuccess(Uri downloadUrl) {
                         Picasso.get()
                                 .load(downloadUrl)
-                                .resize(30, 30)
+                                .resize(128, 128)
                                 .placeholder(PLACE_HOLDER_IMAGE)
                                 .into(footerLogo);
                     }

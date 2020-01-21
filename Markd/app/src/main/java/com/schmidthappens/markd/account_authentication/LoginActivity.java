@@ -5,21 +5,15 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -28,8 +22,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,12 +40,6 @@ import com.schmidthappens.markd.R;
 import com.schmidthappens.markd.contractor_user_activities.ContractorMainActivity;
 import com.schmidthappens.markd.customer_menu_activities.MainActivity;
 import com.schmidthappens.markd.customer_subactivities.ProfileEditActivity;
-import com.schmidthappens.markd.utilities.DatabaseResetter;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -87,15 +73,12 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
         mPasswordView = findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+        mPasswordView.setOnEditorActionListener((TextView textView, int id, KeyEvent keyEvent) -> {
+            if (id == 987 || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                return true;
             }
+            return false;
         });
 
         Button mEmailSignInButton = (Button)findViewById(R.id.email_sign_in_button);
@@ -107,32 +90,28 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         Button mCreateAccountButton = (Button)findViewById(R.id.create_account);
-        mCreateAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new MaterialAlertDialogBuilder(
-                        LoginActivity.this,
-                        R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
-                        .setItems(
-                                new String[]{"Home Owner", "Contractor"},
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        if (which == 0) {
-                                            createAccount("Home Owner");
-                                        } else {
-                                            createAccount("Contractor");
-                                        }
+        mCreateAccountButton.setOnClickListener((View view) -> {
+            new MaterialAlertDialogBuilder(
+                    LoginActivity.this,
+                    R.style.Theme_MaterialComponents_DayNight_Dialog_Alert)
+                    .setItems(
+                            new String[]{"Home Owner", "Contractor"},
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    if (which == 0) {
+                                        createAccount("Home Owner");
+                                    } else {
+                                        createAccount("Contractor");
                                     }
                                 }
-                        ).create().show();
-            }
+                            }
+                    ).create().show();
         });
 
         TextView mForgotPasswordView = (TextView)findViewById(R.id.forgot_password);
         mForgotPasswordView.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 final String email = mEmailView.getText().toString();
@@ -215,14 +194,6 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            if(email.equals("adminreset@gmail.com") && password.equals("reset2017")) {
-                DatabaseResetter.resetDatabase();
-                email = "user@gmail.com";
-                password = "password";
-                Log.i(TAG, "Database reset. Logging in as user@gmail.com");
-            }
             showProgress(true);
             Log.d(TAG, "about to attempt sign in");
             attemptSignIn(LoginActivity.this, email, password);
@@ -230,6 +201,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void createAccount(final String accountType) {
+        Log.d(TAG, "Creating Account");
         final Intent createAccountActivity = new Intent(this, ProfileEditActivity.class);
         createAccountActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         createAccountActivity.putExtra("isNew", true);
