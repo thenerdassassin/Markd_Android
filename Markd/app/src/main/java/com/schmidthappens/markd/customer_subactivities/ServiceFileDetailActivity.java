@@ -170,6 +170,7 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
             }
             serviceType = intent.getStringExtra("serviceType");
             serviceId = intent.getIntExtra("serviceId", -1);
+            Log.d(TAG, "Setting file id");
             fileId = intent.getIntExtra("fileId", -1);
             if(fileId == -1) {
                 setTitle("Add File");
@@ -209,16 +210,20 @@ public class ServiceFileDetailActivity extends AppCompatActivity {
 
         final ContractorService service = customerData.getServices(serviceType).get(serviceId);
         List<FirebaseFile> files = service.getFiles();
+        Log.d(TAG, "Saving file " + fileId);
         if(fileId < 0) {
             if(files == null) {
                 files = new ArrayList<>();
             }
+            // Setting file id since the file is being saved and we want the saved
+            // one updated if it is saved again and not creating duplicates
+            getIntent().putExtra("fileId", files.size());
             files.add(file);
         } else {
             files.set(fileId, file);
         }
 
-        Log.d(TAG, files.toString());
+        Log.d(TAG, "Saving Files: " + files.toString());
         service.setFiles(files);
         customerData.updateService(
                 serviceId,
