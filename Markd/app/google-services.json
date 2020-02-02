@@ -1,52 +1,44 @@
 {
   "project_info": {
-    "project_number": "302940232325",
-    "firebase_url": "https://markd-schmidt-happens.firebaseio.com",
-    "project_id": "markd-schmidt-happens",
-    "storage_bucket": "markd-schmidt-happens.appspot.com"
+    "project_number": "659561774379",
+    "firebase_url": "https://markd-home.firebaseio.com",
+    "project_id": "markd-home",
+    "storage_bucket": "markd-home.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:302940232325:android:9cdf23137b54e7dd",
+        "mobilesdk_app_id": "1:659561774379:android:bb2c18287e3f6ba444196e",
         "android_client_info": {
-          "package_name": "com.schmidthappens.markd"
+          "package_name": "com.markd.applications.android.home"
         }
       },
       "oauth_client": [
         {
-          "client_id": "302940232325-9lrjjisj4bh5513ve4ni1ragvpgihce0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.schmidthappens.markd",
-            "certificate_hash": "8892e6c5babb1f1936d995a6ecde732d8e727a24"
-          }
-        },
-        {
-          "client_id": "302940232325-em6n7rmmj8q6p5o0idbgpa917q39jg4e.apps.googleusercontent.com",
+          "client_id": "659561774379-2kafjkpk53v17fksvl3njhol570fqpam.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC7iX2JOzOkzXH7f-D9F7R6rMpw9zAMZVQ"
+          "current_key": "AIzaSyCJqne4SE3nicNBZm85lVyhql8jmpTYYwc"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "302940232325-em6n7rmmj8q6p5o0idbgpa917q39jg4e.apps.googleusercontent.com",
+              "client_id": "659561774379-2kafjkpk53v17fksvl3njhol570fqpam.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "659561774379-d0sd1odcmlkqg5kpv4pnm02ghhr5pnr0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.markd.applications.ios.home"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

@@ -184,8 +184,6 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                     -->
-
-                    <!-- TODO: Decide if want to add these later -->
                     <TextView
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="15dp"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.schmidthappens.markd">
+    package="com.markd.applications.android.home">
 
     <!-- Necessary to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
@@ -258,15 +259,12 @@
         <!-- FileProvider Configuration -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.schmidthappens.markd.provider"
+            android:authorities="com.markd.applications.android.home.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="96fb45cd181be03db1b6c44756eeb2d4d2bc35c5" />
     </application>
 </manifest>

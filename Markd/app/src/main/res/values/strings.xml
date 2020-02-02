@@ -33,6 +33,7 @@
         <item>ic_action_customers</item>
         <item>ic_action_settings</item>
     </string-array>
+
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer closed</string>
     <string name="middot">&#8226;</string>
@@ -65,4 +66,9 @@
 
     <!-- String related to Painting Page -->
     <string name="add_paint">Add some paint!</string>
+
+    <!-- String related to Billing -->
+    <string name="annual_contractor_subscription">
+        com.markd.applications.android.home.contractor.annual
+    </string>
 </resources>
