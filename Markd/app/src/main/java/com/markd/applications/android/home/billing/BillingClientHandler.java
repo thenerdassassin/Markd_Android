@@ -24,8 +24,7 @@ public class BillingClientHandler {
     private final String contractorSubscriptionProductId;
 
     private Activity activity;
-    private BillingClient billingClient;
-    private List<SkuDetails> skuDetailsList;
+    private final BillingClient billingClient;
     private SkuDetails contractorSubscriptionSku;
 
     public BillingClientHandler(
@@ -46,7 +45,6 @@ public class BillingClientHandler {
 
     public void endConnection()  {
         billingClient.endConnection();
-        billingClient = null;
     }
 
     // https://developer.android.com/google/play/billing/billing_library_overview#Query
@@ -70,22 +68,11 @@ public class BillingClientHandler {
         @Override
         public void onBillingSetupFinished(BillingResult billingResult) {
             Log.d(TAG, "BillingSetupFinished: " + billingResult.getResponseCode());
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                    && skuDetailsList != null) {
-                Log.d(TAG, "SkuDetails: " + skuDetailsList.toString());
-                // The BillingClient is ready. You can query purchases here.
-                for(SkuDetails skuDetails : skuDetailsList) {
-                    Log.d(TAG, skuDetails.getDescription());
-                    Log.d(TAG, skuDetails.getPrice());
-                    Log.d(TAG, skuDetails.getTitle());
-                    if (skuDetails.getSku().equals(contractorSubscriptionProductId)) {
-                        contractorSubscriptionSku = skuDetails;
-                    }
-                }
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                Log.d(TAG, "BillingClient.BillingResponseCode.OK");
+                queryForProductDetails();
             } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ERROR) {
                 Log.e(TAG, billingResult.getDebugMessage());
-            } else if (skuDetailsList == null) {
-                queryForProductDetails();
             }
         }
 
@@ -116,7 +103,14 @@ public class BillingClientHandler {
 
             Log.d(TAG, "SkuDetails: " + skus.toString());
             // Process the result.
-            skuDetailsList = skus;
+            for(SkuDetails skuDetails : skus) {
+                Log.d(TAG, skuDetails.getDescription());
+                Log.d(TAG, skuDetails.getPrice());
+                Log.d(TAG, skuDetails.getTitle());
+                if (skuDetails.getSku().equals(contractorSubscriptionProductId)) {
+                    contractorSubscriptionSku = skuDetails;
+                }
+            }
         }
     };
 
