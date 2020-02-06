@@ -9,7 +9,7 @@ android {
         applicationId "com.markd.applications.android.home"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 2
+        versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -17,6 +17,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
         }
     }
     compileOptions {
@@ -40,9 +41,9 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.google.firebase:firebase-auth:19.2.0'
-    implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
 
     //https://firebase.google.com/docs/crashlytics/get-started
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
